@@ -4,10 +4,12 @@
  */
 package dao;
 
+import util.DBContext;
+
 /**
  *
  * @author NgoThinh1902
  */
-public class UserDAO {
+public class UserDAO extends DBContext{
     
 }
