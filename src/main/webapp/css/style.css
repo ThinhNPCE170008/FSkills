@@ -966,6 +966,86 @@ body {
     }
 }
 
+.create-announcement-popup textarea,
+.create-announcement-popup input {
+    width: 100%;
+    background-color: #f0f0f0;
+    border: 1px solid #d0d0d0;
+    color: #000000;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 1rem;
+    margin-bottom: 20px;
+}
+
+.create-announcement-popup textarea:focus,
+.create-announcement-popup input:focus {
+    outline: none;
+    border-color: #0066cc;
+    box-shadow: 0 0 5px rgba(0, 102, 204, 0.5);
+}
+
+.create-announcement-popup .send-btn {
+    background-color: #0066cc;
+    color: #ffffff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.create-announcement-popup .send-btn:hover {
+    background-color: #005bb5;
+}
+
+.create-announcement-popup .popup-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Ẩn mặc định */
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 400px;
+    max-width: 90%;
+    background: white;
+    transform: translate(-50%, -50%);
+    z-index: 1001;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Khi popup được bật */
+.popup.active {
+    display: block;
+}
+
+/* Overlay mờ nền */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+}
+
+/* Khi overlay được bật */
+.overlay.active {
+    display: block;
+}
+
+
 @media (max-width: 767.98px) {
     .header .navbar-collapse {
         order: 2; /* Move navbar below logo and buttons */
