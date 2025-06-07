@@ -26,6 +26,12 @@ public class User {
     private int reportAmount;
     private String phoneNumber;
 
+    public User(int userId, String userName, String displayName) {
+        this.userId = userId;
+        this.userName = userName;
+        this.displayName = displayName;
+    }
+
     public User() {
     }
 

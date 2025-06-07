@@ -14,6 +14,84 @@ public class Announcement {
     private int annoucementID;
     private String title;
     private String annoucementText;
-    private Timestamp publishDate;
+    private Timestamp createDate;
     private Timestamp TakeDownDate;
+    private String announcementImage;
+    private User userId;
+
+    public Announcement() {
+    }
+
+    public Announcement(int annoucementID, String title, String annoucementText, Timestamp createDate, Timestamp TakeDownDate, String announcementImage, User userId) {
+        this.annoucementID = annoucementID;
+        this.title = title;
+        this.annoucementText = annoucementText;
+        this.createDate = createDate;
+        this.TakeDownDate = TakeDownDate;
+        this.announcementImage = announcementImage;
+        this.userId = userId;
+    }
+
+    public int getAnnoucementID() {
+        return annoucementID;
+    }
+
+    public void setAnnoucementID(int annoucementID) {
+        this.annoucementID = annoucementID;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAnnoucementText() {
+        return annoucementText;
+    }
+
+    public void setAnnoucementText(String annoucementText) {
+        this.annoucementText = annoucementText;
+    }
+
+    public Timestamp getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Timestamp createDate) {
+        this.createDate = createDate;
+    }
+
+    public Timestamp getTakeDownDate() {
+        return TakeDownDate;
+    }
+
+    public void setTakeDownDate(Timestamp TakeDownDate) {
+        this.TakeDownDate = TakeDownDate;
+    }
+
+    public String getAnnouncementImage() {
+        return announcementImage;
+    }
+
+    public void setAnnouncementImage(String announcementImage) {
+        this.announcementImage = announcementImage;
+    }
+
+    public User getUserId() {
+        return userId;
+    }
+
+    public void setUserId(User userId) {
+        this.userId = userId;
+    }
+
+    @Override
+    public String toString() {
+        return "Announcement{" + "annoucementID=" + annoucementID + ", title=" + title + ", annoucementText=" + annoucementText + ", createDate=" + createDate + ", TakeDownDate=" + TakeDownDate + ", announcementImage=" + announcementImage + ", userId=" + userId + '}';
+    }
+    
+    
 }
