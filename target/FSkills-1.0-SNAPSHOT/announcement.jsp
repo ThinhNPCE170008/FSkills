@@ -4,11 +4,13 @@
     Author     : Duykh
 --%>
 
+<%@page import="model.User"%>
 <%@page import="model.Announcement"%>
 <%@page import="java.util.List"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DdOCTYPE html>
 <%
+    List<User> AccountInfo = (List<User>) request.getAttribute("AccountInfo");
     List<Announcement> listAnnouncement = (List<Announcement>) request.getAttribute("listAnnouncement");
 %>
 <html lang="vi">
@@ -100,7 +102,15 @@
                     <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-xl font-semibold">
                     </div>
                     <div>
-                        <p class="font-semibold text-gray-800">Gavano</p>
+                        <p class="font-semibold text-gray-800">
+                            <%
+                                if (AccountInfo != null && !AccountInfo.isEmpty()) {
+                                    for (User a : AccountInfo) {
+                                        a.getDisplayName();
+                                    }
+                                }
+                            %>
+                        </p>
                         <p class="text-sm text-gray-500">Hi Admin</p>
                     </div>
                 </div>
@@ -196,15 +206,15 @@
                                     <td class="py-3 px-4 border-b"><%= ann.getCreateDate()%></td>
                                     <td class="py-3 px-4 border-b"><%= ann.getUserId().getDisplayName()%></td>
                                     <td class="py-3 px-4 border-b text-center">
-                                        <a href="#" class="btn btn-sm btn-primary me-1" title="Edit">
+                                        <button href="Announcement?action=update&id=<%=ann.getAnnoucementID()%>" class="btn btn-sm btn-primary me-1" title="Edit">
                                             <i class="bi bi-pencil-square"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-sm btn-danger me-1" title="Delete">
+                                        </button>
+                                        <button href="Announcement?action=delete&id=<%=ann.getAnnoucementID()%>" class="btn btn-sm btn-danger me-1 trash" title="Delete">
                                             <i class="bi bi-trash"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-sm btn-info" title="Detail">
+                                        </button>
+                                        <button href="#" class="btn btn-sm btn-info" title="Detail">
                                             <i class="bi bi-eye"></i>
-                                        </a>
+                                        </button>
                                     </td>
                                 </tr>
                                 <%
@@ -227,16 +237,32 @@
         </div>
 
         <div class="overlay" id="overlay"></div>
+        <form enctype="multipart/form-data">
+            <div class="popup create-announcement-popup" id="createAnnouncementPopup">
+                <h4 class="text-center">Create Announcement</h4>
 
-        <div class="popup create-announcement-popup" id="createAnnouncementPopup">
-            <h4>Create Announcement</h4>
-            <input type="text" placeholder="Enter title..." id="announcementTitle" class="popup-input" />
-            <textarea placeholder="Enter content..." id="announcementContent" class="popup-textarea"></textarea>
-            <div class="popup-buttons">
-                <button class="popup-back-btn" onclick="closeCreateAnnouncementPopup()">Cancel</button>
-                <button class="send-btn" onclick="sendCreateAnnouncement()">Create</button>
+                <input type="text" placeholder="Enter title..." name="announcementTitle" id="announcementTitle" class="popup-input" />
+
+                <textarea placeholder="Enter content..." name="announcementText" id="announcementText" class="popup-textarea"></textarea>
+
+
+                <label for="takeDownDate" class="popup-label">Take Down Date & Time:</label>
+                <input type="datetime-local" name="takeDownDate" id="takeDownDate" class="popup-input" />
+
+
+                <label for="announcementImage" class="popup-label">Select Image:</label>
+                <input type="file" name="announcementImage" id="announcementImage" class="popup-input" accept="image/*" />
+
+                <div class="popup-buttons">
+                    <button class="popup-back-btn" onclick="closeCreateAnnouncementPopup()">Cancel</button>
+                    <button class="send-btn" onclick="sendCreateAnnouncement()">Create</button>
+                </div>
             </div>
-        </div>
+        </form>
+        
+     
+
+
         <script>
             // Lấy các phần tử cần thiết
             const notificationBell = document.getElementById('notification-bell');
@@ -315,25 +341,52 @@
                 document.getElementById('createAnnouncementPopup').classList.add('active');
                 showOverlay();
             }
+            function showEditAnnouncementPopup() {
+                document.getElementById('editAnnouncementPopup').classList.add('active');
+                showOverlay();
+            }
+            function showDetailAnnouncementPopup() {
+                document.getElementById('detailAnnouncementPopup').classList.add('active');
+                showOverlay();
+            }
+            function showDeleteAnnouncementPopup() {
+                document.getElementById('deleteAnnouncementPopup').classList.add('active');
+                showOverlay();
+            }
 
             function closeCreateAnnouncementPopup() {
                 document.getElementById('createAnnouncementPopup').classList.remove('active');
                 hideOverlay();
             }
-
-            function sendCreateAnnouncement() {
-                const title = document.getElementById('announcementTitle').value.trim();
-                const content = document.getElementById('announcementContent').value.trim();
-
-                if (title && content) {
-                    alert("Announcement has been created successfully!");
-                    closeCreateAnnouncementPopup();
-                    // TODO: Gửi dữ liệu tới server bằng form submit hoặc AJAX
-                } else {
-                    alert("Please enter both title and content before creating announcement!");
-                }
+            function closeEditAnnouncementPopup() {
+                document.getElementById('editAnnouncementPopup').classList.remove('active');
+                hideOverlay();
+            }
+            function closeDetailAnnouncementPopup() {
+                document.getElementById('detailAnnouncementPopup').classList.remove('active');
+                hideOverlay();
+            }
+            function closeDeleteAnnouncementPopup() {
+                document.getElementById('deleteAnnouncementPopup').classList.remove('active');
+                hideOverlay();
             }
 
+//            $(document).ready(jQuery(function () {
+//                jQuery(".trash").click(function () {
+//                    swal({
+//                        title: "Cảnh báo",
+//                        text: "Bạn có chắc chắn là muốn xóa sản phẩm này?",
+//                        buttons: ["Hủy bỏ", "Đồng ý"],
+//                    })
+//                            .then((willDelete) => {
+//                                if (willDelete) {
+//                                    window.location = "Announcement?action=deleteannouncement&product_id=" + $(this).attr("value");
+//                                    swal("Đã xóa thành công.!", {
+//                                    });
+//                                }
+//                            });
+//                });
+//            }));
         </script>
     </body>
 </html>
