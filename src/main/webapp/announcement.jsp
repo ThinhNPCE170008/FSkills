@@ -4,11 +4,13 @@
     Author     : Duykh
 --%>
 
+<%@page import="model.User"%>
 <%@page import="model.Announcement"%>
 <%@page import="java.util.List"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DdOCTYPE html>
 <%
+    List<User> AccountInfo = (List<User>) request.getAttribute("AccountInfo");
     List<Announcement> listAnnouncement = (List<Announcement>) request.getAttribute("listAnnouncement");
 %>
 <html lang="vi">
@@ -20,7 +22,8 @@
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <!-- Bootstrap Icons -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="css/style.css"/>
         <style>
@@ -100,7 +103,15 @@
                     <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-xl font-semibold">
                     </div>
                     <div>
-                        <p class="font-semibold text-gray-800">Gavano</p>
+                        <p class="font-semibold text-gray-800">
+                            <%
+                                if (AccountInfo != null && !AccountInfo.isEmpty()) {
+                                    for (User a : AccountInfo) {
+                                        a.getDisplayName();
+                                    }
+                                }
+                            %>
+                        </p>
                         <p class="text-sm text-gray-500">Hi Admin</p>
                     </div>
                 </div>
@@ -167,8 +178,8 @@
             <main class="flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
                 <div class="bg-white p-6 rounded shadow-sm">
                     <div class="col-sm-2">
-                        <button type="button" class="btn btn-add btn-sm" onclick="showCreateAnnouncementPopup()">
-                            <i class="fas fa-plus"></i> Tạo mới
+                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#createModal">
+                            <i class="bi bi-pencil-square"></i> Create new
                         </button>
                     </div>
 
@@ -182,7 +193,7 @@
                                     <th class="py-3 px-4 border-b text-center">#ID</th>
                                     <th class="py-3 px-4 border-b text-left">Title</th>
                                     <th class="py-3 px-4 border-b text-left">Created At</th>
-                                    <th class="py-3 px-4 border-b text-left">Created By</th>
+                                    <th class="py-3 px-4 border-b text-left">Image</th>
                                     <th class="py-3 px-4 border-b text-center">Actions</th>
                                 </tr>
                             </thead>
@@ -194,17 +205,20 @@
                                     <td class="py-3 px-4 border-b text-center"><%= ann.getAnnoucementID()%></td>
                                     <td class="py-3 px-4 border-b"><%= ann.getTitle()%></td>
                                     <td class="py-3 px-4 border-b"><%= ann.getCreateDate()%></td>
-                                    <td class="py-3 px-4 border-b"><%= ann.getUserId().getDisplayName()%></td>
+                                    <td class="py-3 px-4 border-b">
+                                        <img src="<%= ann.getAnnouncementImage()%>" alt="Announcement Image" style="max-height: 80px;" />
+                                    </td>
+
                                     <td class="py-3 px-4 border-b text-center">
-                                        <a href="#" class="btn btn-sm btn-primary me-1" title="Edit">
+                                        <button href="Announcement?action=update&id=<%=ann.getAnnoucementID()%>" class="btn btn-sm btn-primary me-1" title="Edit">
                                             <i class="bi bi-pencil-square"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-sm btn-danger me-1" title="Delete">
+                                        </button>
+                                        <button href="Announcement?action=delete&id=<%=ann.getAnnoucementID()%>" class="btn btn-sm btn-danger me-1 trash" title="Delete">
                                             <i class="bi bi-trash"></i>
-                                        </a>
-                                        <a href="#" class="btn btn-sm btn-info" title="Detail">
+                                        </button>
+                                        <button href="#" class="btn btn-sm btn-info" title="Detail">
                                             <i class="bi bi-eye"></i>
-                                        </a>
+                                        </button>
                                     </td>
                                 </tr>
                                 <%
@@ -223,20 +237,57 @@
                         }
                     %>
                 </div>
+
             </main>
+
         </div>
+        <!-- Create Modal -->
+        <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
 
-        <div class="overlay" id="overlay"></div>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createModalLabel">Create New Announcement</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
 
-        <div class="popup create-announcement-popup" id="createAnnouncementPopup">
-            <h4>Create Announcement</h4>
-            <input type="text" placeholder="Enter title..." id="announcementTitle" class="popup-input" />
-            <textarea placeholder="Enter content..." id="announcementContent" class="popup-textarea"></textarea>
-            <div class="popup-buttons">
-                <button class="popup-back-btn" onclick="closeCreateAnnouncementPopup()">Cancel</button>
-                <button class="send-btn" onclick="sendCreateAnnouncement()">Create</button>
+                    <form method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="action" value="create">
+
+                        <div class="modal-body">
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label for="title" class="form-label">Title</label>
+                                    <input type="text" class="form-control" id="announcementTitle" name="announcementTitle"
+                                           placeholder="Enter title..." required>
+                                </div>
+
+                                <div class="col">
+                                    <label for="text" class="form-label">Content</label>
+                                    <input type="text" class="form-control" id="announcementText" name="announcementText"
+                                           placeholder="Enter content of announcement..." required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">TakeDownDate</label>
+                                <input type="datetime-local" class="form-control" id="takeDownDate" name="takeDownDate" required>
+
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Image</label>
+                                <input type="file" class="form-control" id="announcementImage" name="announcementImage" accept="image/*">
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Create</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
+
         <script>
             // Lấy các phần tử cần thiết
             const notificationBell = document.getElementById('notification-bell');
@@ -303,37 +354,7 @@
                     messageBox.addEventListener('transitionend', () => messageBox.remove());
                 }, 3000); // Ẩn sau 3 giây
             }
-
-            function showOverlay() {
-                document.getElementById('overlay').classList.add('active');
-            }
-            function hideOverlay() {
-                document.getElementById('overlay').classList.remove('active');
-            }
-
-            function showCreateAnnouncementPopup() {
-                document.getElementById('createAnnouncementPopup').classList.add('active');
-                showOverlay();
-            }
-
-            function closeCreateAnnouncementPopup() {
-                document.getElementById('createAnnouncementPopup').classList.remove('active');
-                hideOverlay();
-            }
-
-            function sendCreateAnnouncement() {
-                const title = document.getElementById('announcementTitle').value.trim();
-                const content = document.getElementById('announcementContent').value.trim();
-
-                if (title && content) {
-                    alert("Announcement has been created successfully!");
-                    closeCreateAnnouncementPopup();
-                    // TODO: Gửi dữ liệu tới server bằng form submit hoặc AJAX
-                } else {
-                    alert("Please enter both title and content before creating announcement!");
-                }
-            }
-
         </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     </body>
 </html>
