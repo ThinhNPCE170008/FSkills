@@ -81,12 +81,12 @@ public class AnnouncementServlet extends HttpServlet {
             request.setAttribute("AccountInfo", acc);
             request.setAttribute("listAnnouncement", listAnnouncement);
             request.getRequestDispatcher("announcement.jsp").forward(request, response);
-        }else if (action.equalsIgnoreCase("update")) {
+        } else if (action.equalsIgnoreCase("update")) {
             String idRaw = request.getParameter("id");
             int id = 0;
             try {
                 id = Integer.parseInt(idRaw);
-                Announcement ann  = announcementDAO.getAnnouncementById(id);
+                Announcement ann = announcementDAO.getAnnouncementById(id);
                 request.setAttribute("dataAnn", ann);
                 request.getRequestDispatcher("update-product.jsp").forward(request, response);
             } catch (Exception e) {
@@ -114,16 +114,11 @@ public class AnnouncementServlet extends HttpServlet {
             String announcementTitle = request.getParameter("announcementTitle");
             String announcementText = request.getParameter("announcementText");
             String takeDownDate = request.getParameter("takeDownDate");
-            String UserIDStr = "1";
-
-            // Lấy ngày hiện tại (trong Java)
-            String CreateAt = java.time.LocalDateTime.now().toString(); // hoặc format lại nếu cần
-
-            // Nếu bạn upload ảnh (file input), bạn phải dùng request.getPart
+            // Nhận file
             Part filePart = request.getPart("announcementImage");
             String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
 
-            // Lưu file ảnh nếu cần (ví dụ lưu trong thư mục server)
+            // Lưu file vào thư mục trên server
             String uploadPath = getServletContext().getRealPath("") + File.separator + "uploads";
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) {
@@ -132,9 +127,14 @@ public class AnnouncementServlet extends HttpServlet {
 
             filePart.write(uploadPath + File.separator + fileName);
 
+            // Lưu tên file hoặc đường dẫn vào DB nếu cần
+            String imagePath = "uploads/" + fileName;
+
+            // Sau đó insert dữ liệu vào DB với imagePath
+            String UserIDStr = "1";
             try {
                 int UserID = Integer.parseInt(UserIDStr);
-                int res = AnnounDAO.insert(announcementTitle, announcementText, CreateAt, takeDownDate, fileName, UserID);
+                int res = AnnounDAO.insert(announcementTitle, announcementText, takeDownDate, imagePath, UserID);
 
                 if (res == 1) {
                     response.sendRedirect("Announcement");

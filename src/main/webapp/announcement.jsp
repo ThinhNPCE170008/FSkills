@@ -22,7 +22,8 @@
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <!-- Bootstrap Icons -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="css/style.css"/>
         <style>
@@ -177,8 +178,8 @@
             <main class="flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
                 <div class="bg-white p-6 rounded shadow-sm">
                     <div class="col-sm-2">
-                        <button type="button" class="btn btn-add btn-sm" onclick="showCreateAnnouncementPopup()">
-                            <i class="fas fa-plus"></i> Tạo mới
+                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#createModal">
+                            <i class="bi bi-pencil-square"></i> Create new
                         </button>
                     </div>
 
@@ -192,7 +193,7 @@
                                     <th class="py-3 px-4 border-b text-center">#ID</th>
                                     <th class="py-3 px-4 border-b text-left">Title</th>
                                     <th class="py-3 px-4 border-b text-left">Created At</th>
-                                    <th class="py-3 px-4 border-b text-left">Created By</th>
+                                    <th class="py-3 px-4 border-b text-left">Image</th>
                                     <th class="py-3 px-4 border-b text-center">Actions</th>
                                 </tr>
                             </thead>
@@ -204,7 +205,10 @@
                                     <td class="py-3 px-4 border-b text-center"><%= ann.getAnnoucementID()%></td>
                                     <td class="py-3 px-4 border-b"><%= ann.getTitle()%></td>
                                     <td class="py-3 px-4 border-b"><%= ann.getCreateDate()%></td>
-                                    <td class="py-3 px-4 border-b"><%= ann.getUserId().getDisplayName()%></td>
+                                    <td class="py-3 px-4 border-b">
+                                        <img src="<%= ann.getAnnouncementImage()%>" alt="Announcement Image" style="max-height: 80px;" />
+                                    </td>
+
                                     <td class="py-3 px-4 border-b text-center">
                                         <button href="Announcement?action=update&id=<%=ann.getAnnoucementID()%>" class="btn btn-sm btn-primary me-1" title="Edit">
                                             <i class="bi bi-pencil-square"></i>
@@ -233,35 +237,56 @@
                         }
                     %>
                 </div>
+
             </main>
+
         </div>
+        <!-- Create Modal -->
+        <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
 
-        <div class="overlay" id="overlay"></div>
-        <form enctype="multipart/form-data">
-            <div class="popup create-announcement-popup" id="createAnnouncementPopup">
-                <h4 class="text-center">Create Announcement</h4>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createModalLabel">Create New Announcement</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
 
-                <input type="text" placeholder="Enter title..." name="announcementTitle" id="announcementTitle" class="popup-input" />
+                    <form method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="action" value="create">
 
-                <textarea placeholder="Enter content..." name="announcementText" id="announcementText" class="popup-textarea"></textarea>
+                        <div class="modal-body">
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label for="title" class="form-label">Title</label>
+                                    <input type="text" class="form-control" id="announcementTitle" name="announcementTitle"
+                                           placeholder="Enter title..." required>
+                                </div>
 
+                                <div class="col">
+                                    <label for="text" class="form-label">Content</label>
+                                    <input type="text" class="form-control" id="announcementText" name="announcementText"
+                                           placeholder="Enter content of announcement..." required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">TakeDownDate</label>
+                                <input type="datetime-local" class="form-control" id="takeDownDate" name="takeDownDate" required>
 
-                <label for="takeDownDate" class="popup-label">Take Down Date & Time:</label>
-                <input type="datetime-local" name="takeDownDate" id="takeDownDate" class="popup-input" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Image</label>
+                                <input type="file" class="form-control" id="announcementImage" name="announcementImage" accept="image/*">
+                            </div>
+                        </div>
 
-
-                <label for="announcementImage" class="popup-label">Select Image:</label>
-                <input type="file" name="announcementImage" id="announcementImage" class="popup-input" accept="image/*" />
-
-                <div class="popup-buttons">
-                    <button class="popup-back-btn" onclick="closeCreateAnnouncementPopup()">Cancel</button>
-                    <button class="send-btn" onclick="sendCreateAnnouncement()">Create</button>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Create</button>
+                        </div>
+                    </form>
                 </div>
             </div>
-        </form>
-        
-     
-
+        </div>
 
         <script>
             // Lấy các phần tử cần thiết
@@ -329,64 +354,7 @@
                     messageBox.addEventListener('transitionend', () => messageBox.remove());
                 }, 3000); // Ẩn sau 3 giây
             }
-
-            function showOverlay() {
-                document.getElementById('overlay').classList.add('active');
-            }
-            function hideOverlay() {
-                document.getElementById('overlay').classList.remove('active');
-            }
-
-            function showCreateAnnouncementPopup() {
-                document.getElementById('createAnnouncementPopup').classList.add('active');
-                showOverlay();
-            }
-            function showEditAnnouncementPopup() {
-                document.getElementById('editAnnouncementPopup').classList.add('active');
-                showOverlay();
-            }
-            function showDetailAnnouncementPopup() {
-                document.getElementById('detailAnnouncementPopup').classList.add('active');
-                showOverlay();
-            }
-            function showDeleteAnnouncementPopup() {
-                document.getElementById('deleteAnnouncementPopup').classList.add('active');
-                showOverlay();
-            }
-
-            function closeCreateAnnouncementPopup() {
-                document.getElementById('createAnnouncementPopup').classList.remove('active');
-                hideOverlay();
-            }
-            function closeEditAnnouncementPopup() {
-                document.getElementById('editAnnouncementPopup').classList.remove('active');
-                hideOverlay();
-            }
-            function closeDetailAnnouncementPopup() {
-                document.getElementById('detailAnnouncementPopup').classList.remove('active');
-                hideOverlay();
-            }
-            function closeDeleteAnnouncementPopup() {
-                document.getElementById('deleteAnnouncementPopup').classList.remove('active');
-                hideOverlay();
-            }
-
-//            $(document).ready(jQuery(function () {
-//                jQuery(".trash").click(function () {
-//                    swal({
-//                        title: "Cảnh báo",
-//                        text: "Bạn có chắc chắn là muốn xóa sản phẩm này?",
-//                        buttons: ["Hủy bỏ", "Đồng ý"],
-//                    })
-//                            .then((willDelete) => {
-//                                if (willDelete) {
-//                                    window.location = "Announcement?action=deleteannouncement&product_id=" + $(this).attr("value");
-//                                    swal("Đã xóa thành công.!", {
-//                                    });
-//                                }
-//                            });
-//                });
-//            }));
         </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     </body>
 </html>

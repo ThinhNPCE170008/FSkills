@@ -48,39 +48,27 @@ public class AnnouncementDAO extends DBContext {
         return list;
     }
 
-    public int insert(String Title, String AnnouncementText, String CreateAt, String TakeDownDate,
+    public int insert(String Title, String AnnouncementText, String TakeDownDate,
             String AnnouncementImage, int UserID) {
-        String sql = "INSERT INTO Announcement (Title, AnnouncementText,CreateAt,TakeDownDate,"
-                + "AnnouncementImage,UserID) VALUES (?,?,?,?,?,?);";
+        String sql = "INSERT INTO Announcement (Title, AnnouncementText,CreateAt,TakeDownDate,AnnouncementImage,UserID) VALUES (?,?,GETDATE(),?,?,?);";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-
-                try {
-                    ps.setString(1, Title);
-                    ps.setString(2, AnnouncementText);
-                    ps.setString(3, CreateAt);
-                    ps.setString(4, TakeDownDate);
-                    ps.setString(5, AnnouncementImage);
-                    ps.setInt(6, UserID);
-                    int row = ps.executeUpdate();
-                    if (row > 0) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                    return 0;
-                }
-
+            ps.setString(1, Title);
+            ps.setString(2, AnnouncementText);
+            Timestamp takeDownTimestamp = Timestamp.valueOf(TakeDownDate.replace("T", " ") + ":00");
+            ps.setTimestamp(3, takeDownTimestamp);
+            ps.setString(4, AnnouncementImage);
+            ps.setInt(5, 1);
+            int row = ps.executeUpdate();
+            if (row > 0) {
+                return 1;
+            } else {
+                return 0;
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return 0;
         }
-        return 0;
     }
 
     public Announcement getAnnouncementById(int id) {
@@ -108,11 +96,11 @@ public class AnnouncementDAO extends DBContext {
         }
         return ann;
     }
-    
-    public boolean update(String title, String announcementText, String createAt, String takeDownDate, 
+
+    public boolean update(String title, String announcementText, String createAt, String takeDownDate,
             String announcementImage, int annoucementID) {
-        String sql = "UPDATE Announcement SET Title =?, AnnouncementText=?, CreateAt=?, TakeDownDate=?, \n" +
-"AnnouncementImage = ? WHERE AnnoucementID = ?";
+        String sql = "UPDATE Announcement SET Title =?, AnnouncementText=?, CreateAt=?, TakeDownDate=?, \n"
+                + "AnnouncementImage = ? WHERE AnnoucementID = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, title);
@@ -132,7 +120,7 @@ public class AnnouncementDAO extends DBContext {
         }
         return false;
     }
-    
+
     public int delete(int id) {
         String sql = "DELETE FROM Announcement WHERE AnnoucementID = ?";
         try {
