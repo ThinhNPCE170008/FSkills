@@ -117,69 +117,69 @@ public class UserDAO extends DBContext {
             return i > 0;
         }
     }
-    
+
     public List<User> showAllInform(String informUser) throws SQLException {
-        List<User> us = new ArrayList<>(); 
+        List<User> us = new ArrayList<>();
         String sql = "SELECT UserName, DisplayName, Email, Password, Role, DateOfBirth, UserCreateDate, Info, Ban, Reports FROM Users WHERE UserName = ?";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, informUser);
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
-                User u = new User();
-                u.setUserName(rs.getString("UserName"));
-                u.setDisplayName(rs.getString("DisplayName"));
-                u.setEmail(rs.getString("Email"));
-                u.setPassword(rs.getString("Password"));
-                int roleInt = rs.getInt("Role");
-                switch (roleInt) {
-                    case 0:
-                        u.setRole(Role.STUDENT);
-                        break;
-                    case 1:
-                        u.setRole(Role.INSTRUCTOR);
-                        break;
-                    case 2:
-                        u.setRole(Role.ADMIN);
-                        break;
-                }
-                u.setDateOfBirth(rs.getTimestamp("DateOfBirth"));
-                u.setUserCreateDate(rs.getTimestamp("UserCreateDate"));
-                u.setInfo(rs.getString("Info"));
-                int banInt = rs.getInt("Ban");
-                switch (banInt) {
-                    case 0:
-                        u.setBan(Ban.NORMAL);
-                        break;
-                    case 1:
-                        u.setBan(Ban.BANNED);
-                        break;
-                }
-                u.setReports(rs.getInt("Reports"));
-                us.add(u);
+            User u = new User();
+            u.setUserName(rs.getString("UserName"));
+            u.setDisplayName(rs.getString("DisplayName"));
+            u.setEmail(rs.getString("Email"));
+            u.setPassword(rs.getString("Password"));
+            int roleInt = rs.getInt("Role");
+            switch (roleInt) {
+                case 0:
+                    u.setRole(Role.STUDENT);
+                    break;
+                case 1:
+                    u.setRole(Role.INSTRUCTOR);
+                    break;
+                case 2:
+                    u.setRole(Role.ADMIN);
+                    break;
             }
+            u.setDateOfBirth(rs.getTimestamp("DateOfBirth"));
+            u.setUserCreateDate(rs.getTimestamp("UserCreateDate"));
+            u.setInfo(rs.getString("Info"));
+            int banInt = rs.getInt("Ban");
+            switch (banInt) {
+                case 0:
+                    u.setBan(Ban.NORMAL);
+                    break;
+                case 1:
+                    u.setBan(Ban.BANNED);
+                    break;
+            }
+            u.setReports(rs.getInt("Reports"));
+            us.add(u);
+        }
         return us;
     }
-    
+
     public boolean updateUser(User user) throws SQLException {
         String sql = "UPDATE Users SET DisplayName = ?, Email = ?, Role = ?, Ban = ?, Reports = ?, DateOfBirth = ?, Info = ? WHERE UserName = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
 
             int i = 1;
 
             ps.setString(i++, user.getDisplayName());
             ps.setString(i++, user.getEmail());
-            
+
             if (user.getRole() != null) {
                 ps.setInt(i++, user.getRole().ordinal());
             }
 
             if (user.getBan() != null) {
-                ps.setInt(i++, user.getBan().ordinal()); 
+                ps.setInt(i++, user.getBan().ordinal());
             }
 
             ps.setInt(i++, user.getReports());
-            ps.setTimestamp(i++, user.getDateOfBirth()); 
+            ps.setTimestamp(i++, user.getDateOfBirth());
             ps.setString(i++, user.getInfo());
             ps.setString(i++, user.getUserName());
 
@@ -187,7 +187,7 @@ public class UserDAO extends DBContext {
             return rowsAffected > 0;
         }
     }
-    
+
     public String hashMD5(String pass) {
         try {
             MessageDigest mes = MessageDigest.getInstance("MD5");
@@ -207,7 +207,7 @@ public class UserDAO extends DBContext {
         }
         return "";
     }
-    
+
     public List<User> verifyMD5(String UserName, String Password) {
         List<User> acc = new ArrayList<>();
         //acc.setId(-1); // Đảm bảo id mặc định là -1 nếu không tìm thấy tài khoản
@@ -223,17 +223,42 @@ public class UserDAO extends DBContext {
                 String DisplayName = rs.getString("DisplayName");
                 String Email = rs.getString("Email");
                 Password = rs.getString("Password");
-                int Role = rs.getInt("Role");
-                Boolean Gender = rs.getBoolean("Gender");
+                int roleInt = rs.getInt("Role");
+                Role userRole = null;
+                switch (roleInt) {
+                    case 0:
+                        userRole = Role.STUDENT;
+                        break;
+                    case 1:
+                        userRole = Role.INSTRUCTOR;
+                        break;
+                    case 2:
+                        userRole = Role.ADMIN;
+                        break;
+                    default:
+                        System.err.println("Invalid role value from DB: " + roleInt);
+                }
+                int Gender = rs.getInt("Gender");
                 Timestamp BirthOfDay = rs.getTimestamp("DateOfBirth");
                 Timestamp TimeCreate = rs.getTimestamp("UserCreateDate");
                 String Avatar = rs.getString("Avatar");
                 String Info = rs.getString("Info");
-                Boolean Ban = rs.getBoolean("BanStatus");
+                int banInt = rs.getInt("Ban");
+                Ban userBan = null;
+                switch (banInt) {
+                    case 0:
+                        userBan = Ban.NORMAL;
+                        break;
+                    case 1:
+                        userBan = Ban.BANNED;
+                        break;
+                    default:
+                        System.err.println("Invalid ban value from DB: " + banInt);
+                    }
                 int ReportAmount = rs.getInt("ReportAmount");
                 String PhoneNumber = rs.getString("PhoneNumber");
-                acc.add(new User(UserId, UserName, DisplayName, Email, Password, Role, Gender, 
-                        BirthOfDay, TimeCreate, Avatar, Info, Ban, ReportAmount, PhoneNumber));
+                acc.add(new User(UserId, UserName, DisplayName, Email, Password, userRole, Gender,
+                        BirthOfDay, TimeCreate, Avatar, Info, userBan, ReportAmount, PhoneNumber));
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());

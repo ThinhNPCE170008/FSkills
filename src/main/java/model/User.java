@@ -25,9 +25,9 @@ public class User {
     private String info;
     private Ban ban;
     private int reports;
-    private int phone;
+    private String phone;
 
-    public User(int userId, String userName, String displayName, String email, String password, Role role, int gender, Timestamp dateOfBirth, Timestamp userCreateDate, String avatar, String info, Ban ban, int reports, int phone) {
+    public User(int userId, String userName, String displayName, String email, String password, Role role, int gender, Timestamp dateOfBirth, Timestamp userCreateDate, String avatar, String info, Ban ban, int reports, String phone) {
         this.userId = userId;
         this.userName = userName;
         this.displayName = displayName;
@@ -46,6 +46,24 @@ public class User {
 
     public User() {
         
+    }
+    
+    public User(int userId, String userName, String displayName) {
+        this.userId = userId;
+        this.userName = userName;
+        this.displayName = displayName;
+        // Gán giá trị mặc định cho các thuộc tính còn lại
+        this.email = null;
+        this.password = null;
+        this.role = Role.STUDENT; // Hoặc một Role mặc định khác, ví dụ: Role.UNKNOWN
+        this.gender = 0; // Hoặc một giá trị mặc định khác
+        this.dateOfBirth = null;
+        this.userCreateDate = null;
+        this.avatar = null;
+        this.info = null;
+        this.ban = Ban.NORMAL; // Hoặc một Ban mặc định khác
+        this.reports = 0;
+        this.phone = "0999111111"; // Hoặc một giá trị mặc định khác
     }
 
     public int getUserId() {
@@ -84,11 +102,11 @@ public class User {
         return password;
     }
 
-    public int getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(int phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
