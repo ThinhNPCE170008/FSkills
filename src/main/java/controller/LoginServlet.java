@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import model.User;
+import model.UserGoogle;
 import util.GoogleLogin;
 
 /**
@@ -64,32 +65,26 @@ public class LoginServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-        
+
         String code = request.getParameter("code");
 
         if (code != null) {
             GoogleLogin googleLogin = new GoogleLogin();
             String accessToken = googleLogin.getToken(code);
-            User userGoogle = googleLogin.getUserInfo(accessToken);
+
+            UserGoogle userGoogle = googleLogin.getUserInfo(accessToken);
 
             UserDAO dao = new UserDAO();
-            User user = dao.findByGoogleID(userGoogle.getGoogleID());
+            User user = dao.findByGoogleID(userGoogle.getId());
 
             if (user == null) {
                 user = dao.findByEmail(userGoogle.getEmail());
                 if (user == null) {
-                    // Tạo tài khoản mới
-                    user = new User();
-                    user.setDisplayName(userGoogle.getDisplayName());
-                    user.setEmail(userGoogle.getEmail());
-                    user.setGoogleID(userGoogle.getGoogleID());
-                    user.setIsVerified(true);
-                    user.setRole(false); // mặc định là user
-                    dao.insertGoogle(user);
+                    dao.insertGoogle(userGoogle);
+                    user = dao.findByGoogleID(userGoogle.getId()); // Lấy lại user đã insert để lưu vào session
                 } else {
-                    // Cập nhật GoogleID nếu chưa có
-                    user.setGoogleID(userGoogle.getGoogleID());
-//                    dao.update(user);
+                    user.setGoogleID(userGoogle.getId());
+//                    dao.update(user); // Nếu bạn có phương thức update
                 }
             }
 
