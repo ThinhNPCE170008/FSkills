@@ -8,34 +8,26 @@ import java.sql.Timestamp;
 
 /**
  *
- * @author NgoThinh1902
+ * @author DELL
  */
 public class User {
+
     private int userId;
     private String userName;
     private String displayName;
     private String email;
     private String password;
-    private int role;
-    private Boolean gender;
-    private Timestamp birthOfDay;
-    private Timestamp timeCreate;
+    private Role role;
+    private int gender;
+    private Timestamp dateOfBirth;
+    private Timestamp userCreateDate;
     private String avatar;
     private String info;
-    private Boolean ban;
-    private int reportAmount;
-    private String phoneNumber;
+    private Ban ban;
+    private int reports;
+    private int phone;
 
-    public User(int userId, String userName, String displayName) {
-        this.userId = userId;
-        this.userName = userName;
-        this.displayName = displayName;
-    }
-
-    public User() {
-    }
-
-    public User(int userId, String userName, String displayName, String email, String password, int role, Boolean gender, Timestamp birthOfDay, Timestamp timeCreate, String avatar, String info, Boolean ban, int reportAmount, String phoneNumber) {
+    public User(int userId, String userName, String displayName, String email, String password, Role role, int gender, Timestamp dateOfBirth, Timestamp userCreateDate, String avatar, String info, Ban ban, int reports, int phone) {
         this.userId = userId;
         this.userName = userName;
         this.displayName = displayName;
@@ -43,13 +35,17 @@ public class User {
         this.password = password;
         this.role = role;
         this.gender = gender;
-        this.birthOfDay = birthOfDay;
-        this.timeCreate = timeCreate;
+        this.dateOfBirth = dateOfBirth;
+        this.userCreateDate = userCreateDate;
         this.avatar = avatar;
         this.info = info;
         this.ban = ban;
-        this.reportAmount = reportAmount;
-        this.phoneNumber = phoneNumber;
+        this.reports = reports;
+        this.phone = phone;
+    }
+
+    public User() {
+        
     }
 
     public int getUserId() {
@@ -88,40 +84,48 @@ public class User {
         return password;
     }
 
+    public int getPhone() {
+        return phone;
+    }
+
+    public void setPhone(int phone) {
+        this.phone = phone;
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public int getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(int role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
-    public Boolean getGender() {
+    public int getGender() {
         return gender;
     }
 
-    public void setGender(Boolean gender) {
+    public void setGender(int gender) {
         this.gender = gender;
     }
 
-    public Timestamp getBirthOfDay() {
-        return birthOfDay;
+    public Timestamp getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    public void setBirthOfDay(Timestamp birthOfDay) {
-        this.birthOfDay = birthOfDay;
+    public void setDateOfBirth(Timestamp dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
-    public Timestamp getTimeCreate() {
-        return timeCreate;
+    public Timestamp getUserCreateDate() {
+        return userCreateDate;
     }
 
-    public void setTimeCreate(Timestamp timeCreate) {
-        this.timeCreate = timeCreate;
+    public void setUserCreateDate(Timestamp userCreateDate) {
+        this.userCreateDate = userCreateDate;
     }
 
     public String getAvatar() {
@@ -140,35 +144,31 @@ public class User {
         this.info = info;
     }
 
-    public Boolean getBan() {
+    public Ban getBan() {
         return ban;
     }
 
-    public void setBan(Boolean ban) {
+    public void setBan(Ban ban) {
         this.ban = ban;
     }
 
-    public int getReportAmount() {
-        return reportAmount;
+    public int getReports() {
+        return reports;
     }
 
-    public void setReportAmount(int reportAmount) {
-        this.reportAmount = reportAmount;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setReports(int reports) {
+        this.reports = reports;
     }
 
     @Override
     public String toString() {
-        return "User{" + "userId=" + userId + ", userName=" + userName + ", displayName=" + displayName + ", email=" + email + ", password=" + password + ", role=" + role + ", gender=" + gender + ", birthOfDay=" + birthOfDay + ", timeCreate=" + timeCreate + ", avatar=" + avatar + ", info=" + info + ", ban=" + ban + ", reportAmount=" + reportAmount + ", phoneNumber=" + phoneNumber + '}';
+        return "User{"
+                + "userId=" + userId
+                + ", userName='" + userName + '\''
+                + ", displayName='" + displayName + '\''
+                + ", email='" + email + '\''
+                + ", role=" + (role == Role.STUDENT ? "STUDENT" : (role == Role.INSTRUCTOR ? "INSTRUCTOR" : "ADMIN"))
+                + ", ban=" + (ban == Ban.BANNED ? "BANNED" : "NOTBANNED")
+                + '}';
     }
-    
-    
-    
 }
