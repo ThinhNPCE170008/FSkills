@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Timestamp;
+import model.UserGoogle;
 
 /**
  *
@@ -317,14 +318,14 @@ public class UserDAO extends DBContext {
         return null;
     }
 
-    public int insertGoogle(User user) {
+    public int insertGoogle(UserGoogle user) {
         String sql = "INSERT INTO Users (UserName, DisplayName, Email, Password, Role, Avatar, GoogleID, IsVerified) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             String email = user.getEmail();
-            String name = user.getDisplayName();
-            String picture = user.getAvatar();
-            String googleID = user.getGoogleID();
+            String name = user.getName();
+            String picture = user.getPicture();
+            String googleID = user.getId();
 
             String username = email.split("@")[0];
             String password = generateRandomPassword(10); // tạo password ngẫu nhiên
