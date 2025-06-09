@@ -17,17 +17,23 @@ public class User {
     private String displayName;
     private String email;
     private String password;
-    private Role role;
+    private boolean role;
     private int gender;
     private Timestamp dateOfBirth;
     private Timestamp userCreateDate;
     private String avatar;
     private String info;
-    private Ban ban;
+    private Timestamp ban;
     private int reports;
     private String phone;
+    private boolean isVerified;
+    private String googleID;
 
-    public User(int userId, String userName, String displayName, String email, String password, Role role, int gender, Timestamp dateOfBirth, Timestamp userCreateDate, String avatar, String info, Ban ban, int reports, String phone) {
+    public User() {
+
+    }
+
+    public User(int userId, String userName, String displayName, String email, String password, boolean role, int gender, Timestamp dateOfBirth, Timestamp userCreateDate, String avatar, String info, Timestamp ban, int reports, String phone, boolean isVerified, String googleID) {
         this.userId = userId;
         this.userName = userName;
         this.displayName = displayName;
@@ -42,12 +48,22 @@ public class User {
         this.ban = ban;
         this.reports = reports;
         this.phone = phone;
+        this.isVerified = isVerified;
+        this.googleID = googleID;
     }
 
-    public User() {
-        
+
+    public User(String userName, String displayName, String email, String password, boolean role, String avatar, boolean isVerified, String googleID) {
+        this.userName = userName;
+        this.displayName = displayName;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.avatar = avatar;
+        this.isVerified = isVerified;
+        this.googleID = googleID;
     }
-    
+
     public User(int userId, String userName, String displayName) {
         this.userId = userId;
         this.userName = userName;
@@ -55,13 +71,13 @@ public class User {
         // Gán giá trị mặc định cho các thuộc tính còn lại
         this.email = null;
         this.password = null;
-        this.role = Role.STUDENT; // Hoặc một Role mặc định khác, ví dụ: Role.UNKNOWN
+        this.role = role; // Hoặc một Role mặc định khác, ví dụ: Role.UNKNOWN
         this.gender = 0; // Hoặc một giá trị mặc định khác
         this.dateOfBirth = null;
         this.userCreateDate = null;
         this.avatar = null;
         this.info = null;
-        this.ban = Ban.NORMAL; // Hoặc một Ban mặc định khác
+        this.ban = ban; // Hoặc một Ban mặc định khác
         this.reports = 0;
         this.phone = "0999111111"; // Hoặc một giá trị mặc định khác
     }
@@ -102,23 +118,15 @@ public class User {
         return password;
     }
 
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public Role getRole() {
+    public boolean isRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(boolean role) {
         this.role = role;
     }
 
@@ -162,11 +170,11 @@ public class User {
         this.info = info;
     }
 
-    public Ban getBan() {
+    public Timestamp getBan() {
         return ban;
     }
 
-    public void setBan(Ban ban) {
+    public void setBan(Timestamp ban) {
         this.ban = ban;
     }
 
@@ -178,15 +186,33 @@ public class User {
         this.reports = reports;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public boolean isIsVerified() {
+        return isVerified;
+    }
+
+    public void setIsVerified(boolean isVerified) {
+        this.isVerified = isVerified;
+    }
+
+    public String getGoogleID() {
+        return googleID;
+    }
+
+    public void setGoogleID(String googleID) {
+        this.googleID = googleID;
+    }
+
     @Override
     public String toString() {
-        return "User{"
-                + "userId=" + userId
-                + ", userName='" + userName + '\''
-                + ", displayName='" + displayName + '\''
-                + ", email='" + email + '\''
-                + ", role=" + (role == Role.STUDENT ? "STUDENT" : (role == Role.INSTRUCTOR ? "INSTRUCTOR" : "ADMIN"))
-                + ", ban=" + (ban == Ban.BANNED ? "BANNED" : "NOTBANNED")
-                + '}';
+        return "User{" + "userId=" + userId + ", userName=" + userName + ", displayName=" + displayName + ", email=" + email + ", password=" + password + ", role=" + role + ", gender=" + gender + ", dateOfBirth=" + dateOfBirth + ", userCreateDate=" + userCreateDate + ", avatar=" + avatar + ", info=" + info + ", ban=" + ban + ", reports=" + reports + ", phone=" + phone + ", isVerified=" + isVerified + ", googleID=" + googleID + '}';
     }
+
 }
