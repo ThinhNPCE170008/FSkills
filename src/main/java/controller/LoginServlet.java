@@ -15,12 +15,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import model.User;
+import util.GoogleLogin;
 
 /**
  *
- * @author Hua Khanh Duy - CE180230 - SE1814
+ * @author Hua Khanh Duy - CE180230 - SE1815
+ * @author Ngo Phuoc Thinh - CE170008 - SE1815
  */
-@WebServlet(name = "Login", urlPatterns = {"/Login"})
+@WebServlet(name = "Login", urlPatterns = {"/login"})
 public class LoginServlet extends HttpServlet {
 
     /**
@@ -61,7 +63,45 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("login.jsp").forward(request, response);
+        HttpSession session = request.getSession();
+        
+        String code = request.getParameter("code");
+
+        if (code != null) {
+            // 👉 Đây là callback từ Google Login
+            GoogleLogin googleLogin = new GoogleLogin();
+            String accessToken = googleLogin.getToken(code);
+            User userGoogle = googleLogin.getUserInfo(accessToken);
+
+            UserDAO dao = new UserDAO();
+            User user = dao.findByGoogleID(userGoogle.getGoogleID());
+
+            if (user == null) {
+                user = dao.findByEmail(userGoogle.getEmail());
+                if (user == null) {
+                    // Tạo tài khoản mới
+                    user = new User();
+                    user.setDisplayName(userGoogle.getDisplayName());
+                    user.setEmail(userGoogle.getEmail());
+                    user.setGoogleID(userGoogle.getGoogleID());
+                    user.setIsVerified(true);
+                    user.setRole(false); // mặc định là user
+                    dao.insertGoogle(user);
+                } else {
+                    // Cập nhật GoogleID nếu chưa có
+                    user.setGoogleID(userGoogle.getGoogleID());
+//                    dao.update(user);
+                }
+            }
+
+            // Lưu user vào session và chuyển hướng
+            session.setAttribute("user", user);
+            response.sendRedirect("adminDashboard");
+        } else {
+            // 👉 Người dùng truy cập trực tiếp /LoginServlet (không có code)
+            // → Hiển thị trang login
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+        }
     }
 
     /**
@@ -75,16 +115,20 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String user = "admin";
-        String pass = "202cb962ac59075b964b07152d234b70";
-        UserDAO dao = new UserDAO();
-        HttpSession session = request.getSession();
-        List<User> acc = dao.verifyMD5(user, pass);
-        for (User a : acc) {
-            if (a.getUserId() == -1) {
-                session.setAttribute("Acc", acc);
-                response.sendRedirect("Announcement");
+        if (request.getMethod().equalsIgnoreCase("POST")) {
+            UserDAO dao = new UserDAO();
+            HttpSession session = request.getSession();
+
+            String username = request.getParameter("username");
+            String password = request.getParameter("password");
+
+            User user = dao.verifyMD5(username, password);
+
+            if (user != null) {
+                session.setAttribute("login", user);
+                response.sendRedirect("adminDashboard");
             } else {
+                request.setAttribute("err", "<h1 style=\"color: red; text-align: center\">The user or password are wrong</h1>");
                 request.getRequestDispatcher("login.jsp").forward(request, response);
             }
         }
