@@ -26,25 +26,33 @@
             <div class="login-container text-center">
                 <img src="img/logo.png" alt="Logo" class="logo-img"/>
 
-                <form>
+                <form method="POST" action="login">
                     <div class="mb-3">
-                        <input type="text" class="form-control" placeholder="Username or Email" />
+                        <input type="text" class="form-control" name="username" placeholder="Username or Email" />
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" placeholder="Password" />
+                        <input type="password" class="form-control" name="password" placeholder="Password" />
                     </div>
-                    <button type="submit" class="btn btn-primary">LOGIN</button>
+                    <button type="submit" class="btn btn-primary">Login</button>
                 </form>
+
+                <%
+                    String err = (String) request.getAttribute("err");
+                    if (err != null) {
+                        out.println(err);
+                    }
+                %>
 
                 <div class="forgot-text mt-3 ">
                     <a href="#" class="login-signup-forgot-link">Forgot Password?</a>
                 </div>
 
                 <div class="mt-3">
-                    <button class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center">
+                    <a href="https://accounts.google.com/o/oauth2/auth?scope=email profile openid&redirect_uri=http://localhost:8080/FSkills/login&response_type=code&client_id=918765723091-gobp8bur9jsd1d4rhkk2e9dkvvdm6eh2.apps.googleusercontent.com&approval_prompt=force" 
+                       class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center">
                         <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google Logo" class="me-2" />
                         Continue with Google
-                    </button>
+                    </a>
                 </div>
 
                 <div class="mt-3">
