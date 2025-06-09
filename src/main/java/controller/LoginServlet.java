@@ -68,7 +68,6 @@ public class LoginServlet extends HttpServlet {
         String code = request.getParameter("code");
 
         if (code != null) {
-            // 👉 Đây là callback từ Google Login
             GoogleLogin googleLogin = new GoogleLogin();
             String accessToken = googleLogin.getToken(code);
             User userGoogle = googleLogin.getUserInfo(accessToken);
@@ -98,8 +97,6 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("user", user);
             response.sendRedirect("adminDashboard");
         } else {
-            // 👉 Người dùng truy cập trực tiếp /LoginServlet (không có code)
-            // → Hiển thị trang login
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }
     }
