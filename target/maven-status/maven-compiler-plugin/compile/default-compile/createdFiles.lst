@@ -24,4 +24,5 @@ controller\AboutInformServlet.class
 model\Announcement.class
 util\DBContext.class
 controller\AdminDashboardServlet.class
+controller\LogoutServlet.class
 dao\NotificationDAO.class

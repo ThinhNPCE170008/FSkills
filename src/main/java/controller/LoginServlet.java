@@ -9,11 +9,19 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.User;
 import model.UserGoogle;
 import util.GoogleLogin;
@@ -92,6 +100,35 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("user", user);
             response.sendRedirect("adminDashboard");
         } else {
+            String token = null;
+            String usernameCookieSaved = "";
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().equals("REMEMBER_TOKEN")) {
+                        token = cookie.getValue();
+                    }
+                    if (cookie.getName().equals("COOKIE_INPUT")) {
+                        usernameCookieSaved = cookie.getValue();
+                    }
+                }
+            }
+            
+            if (token != null) {
+                try {
+                    UserDAO dao = new UserDAO();
+                    User user = dao.findByToken(token);
+                    if (user != null) {
+                        session.setAttribute("user", user);
+                        response.sendRedirect("adminDashboard");
+                        return;
+                    }
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+            
+            request.setAttribute("usernameCookieSaved", usernameCookieSaved);
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }
     }
@@ -113,14 +150,40 @@ public class LoginServlet extends HttpServlet {
 
             String username = request.getParameter("username");
             String password = request.getParameter("password");
+            String rememberMe = request.getParameter("rememberMe");
 
             User user = dao.verifyMD5(username, password);
 
             if (user != null) {
                 session.setAttribute("login", user);
+
+                if ("on".equalsIgnoreCase(rememberMe)) {
+                    try {
+                        String token = UUID.randomUUID().toString();
+                        Timestamp expiryDate = Timestamp.from(Instant.now().plus(30, ChronoUnit.DAYS));
+                        dao.saveToken(user.getUserId(), token, expiryDate);
+                        
+                        Cookie tokenCookie = new Cookie("REMEMBER_TOKEN", token);
+                        tokenCookie.setMaxAge(30 * 24 * 60 * 60); // 30 ngày
+                        tokenCookie.setPath("/");
+                        tokenCookie.setHttpOnly(true);
+                        tokenCookie.setSecure(true);
+                        response.addCookie(tokenCookie);
+                        
+                        Cookie usernameCookie = new Cookie("COOKIE_INPUT", username);
+                        usernameCookie.setMaxAge(30 * 24 * 60 * 60);
+                        usernameCookie.setPath("/");
+                        usernameCookie.setHttpOnly(true);
+                        usernameCookie.setSecure(true);
+                        response.addCookie(usernameCookie);
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+
                 response.sendRedirect("adminDashboard");
             } else {
-                request.setAttribute("err", "<h1 style=\"color: red; text-align: center\">The user or password are wrong</h1>");
+                request.setAttribute("err", "<p style=\"color: red; text-align: center\">The user or password are wrong</p>");
                 request.getRequestDispatcher("login.jsp").forward(request, response);
             }
         }
