@@ -28,10 +28,14 @@
 
                 <form method="POST" action="login">
                     <div class="mb-3">
-                        <input type="text" class="form-control" name="username" placeholder="Username or Email" />
+                        <input type="text" class="form-control" name="username" value="${usernameCookieSaved}" placeholder="Username or Email" required/>
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" name="password" placeholder="Password" />
+                        <input type="password" class="form-control" name="password" placeholder="Password"/>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" name="rememberMe" id="rememberMe" />
+                        <label class="form-check-label" for="rememberMe">Remember</label>
                     </div>
                     <button type="submit" class="btn btn-primary">Login</button>
                 </form>
