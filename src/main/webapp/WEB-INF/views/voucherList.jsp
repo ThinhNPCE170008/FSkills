@@ -162,6 +162,7 @@
     </head>
     <body>
         <div class="container">
+            <a class="nav-link active" href="adminDashboard">Return</a>
             <h2>List of Vouchers</h2>
 
             <c:if test="${not empty globalMessage}">

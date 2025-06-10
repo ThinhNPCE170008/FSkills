@@ -17,13 +17,13 @@ public class User {
     private String displayName;
     private String email;
     private String password;
-    private boolean role;
+    private Role role;
     private int gender;
     private Timestamp dateOfBirth;
     private Timestamp userCreateDate;
     private String avatar;
     private String info;
-    private Timestamp ban;
+    private Ban ban;
     private int reports;
     private String phone;
     private boolean isVerified;
@@ -33,7 +33,7 @@ public class User {
 
     }
 
-    public User(int userId, String userName, String displayName, String email, String password, boolean role, int gender, Timestamp dateOfBirth, Timestamp userCreateDate, String avatar, String info, Timestamp ban, int reports, String phone, boolean isVerified, String googleID) {
+    public User(int userId, String userName, String displayName, String email, String password, Role role, int gender, Timestamp dateOfBirth, Timestamp userCreateDate, String avatar, String info, Ban ban, int reports, String phone, boolean isVerified, String googleID) {
         this.userId = userId;
         this.userName = userName;
         this.displayName = displayName;
@@ -53,7 +53,7 @@ public class User {
     }
 
 
-    public User(String userName, String displayName, String email, String password, boolean role, String avatar, boolean isVerified, String googleID) {
+    public User(String userName, String displayName, String email, String password, Role role, String avatar, boolean isVerified, String googleID) {
         this.userName = userName;
         this.displayName = displayName;
         this.email = email;
@@ -122,11 +122,11 @@ public class User {
         this.password = password;
     }
 
-    public boolean isRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(boolean role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
@@ -170,11 +170,11 @@ public class User {
         this.info = info;
     }
 
-    public Timestamp getBan() {
+    public Ban getBan() {
         return ban;
     }
 
-    public void setBan(Timestamp ban) {
+    public void setBan(Ban ban) {
         this.ban = ban;
     }
 
