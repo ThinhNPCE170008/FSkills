@@ -4,6 +4,8 @@
  */
 package controller;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import dao.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -179,10 +181,16 @@ public class LoginServlet extends HttpServlet {
         }
         in.close();
 
+        JsonObject json = JsonParser.parseString(responseStr.toString()).getAsJsonObject();
+
         // Kiểm tra kết quả trả về
-        boolean success = responseStr.toString().contains("\"success\":true");
+        boolean success = json.get("success").getAsBoolean();
         if (!success) {
-            request.setAttribute("err", "<p style='color: red; text-align: center'>Captcha verification failed.</p>");
+            String errorMsg = "Captcha verification failed.";
+            if (json.has("error-codes")) {
+                errorMsg += " Error codes: " + json.get("error-codes").toString();
+            }
+            request.setAttribute("err", "<p style='color: red; text-align: center'>" + errorMsg + "</p>");
             request.getRequestDispatcher("login.jsp").forward(request, response);
             return;
         }
