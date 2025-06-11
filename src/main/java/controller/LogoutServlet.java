@@ -104,7 +104,7 @@ public class LogoutServlet extends HttpServlet {
         usernameCookie.setPath("/");
         response.addCookie(usernameCookie);
 
-        response.sendRedirect("login");
+        response.sendRedirect("homePage_Guest.jsp");
     }
 
 /**
