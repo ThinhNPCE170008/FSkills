@@ -39,7 +39,7 @@
                         <label for="search" class="visually-hidden">Search</label>
                         <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
                     </div>
-                    <a href="login.jsp" class="btn btn-primary btn-custom">Login</a>
+                    <a href="login" class="btn btn-primary btn-custom">Login</a>
                     <a href="register.jsp" class="btn btn-primary btn-custom">Register</a>
                 </div>
             </div>

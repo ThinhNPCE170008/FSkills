@@ -33,6 +33,7 @@ import java.util.logging.Logger;
 import model.User;
 import model.UserGoogle;
 import util.GoogleLogin;
+import util.RoleRedirect;
 
 /**
  *
@@ -106,7 +107,7 @@ public class LoginServlet extends HttpServlet {
 
             // Lưu user vào session và chuyển hướng
             session.setAttribute("user", user);
-            response.sendRedirect("adminDashboard");
+            RoleRedirect.redirect(user, response);
         } else {
             String token = null;
             String usernameCookieSaved = "";
@@ -128,7 +129,7 @@ public class LoginServlet extends HttpServlet {
                     User user = dao.findByToken(token);
                     if (user != null) {
                         session.setAttribute("user", user);
-                        response.sendRedirect("adminDashboard");
+                        RoleRedirect.redirect(user, response);
                         return;
                     }
                 } catch (Exception e) {
@@ -206,7 +207,7 @@ public class LoginServlet extends HttpServlet {
             User user = dao.verifyMD5(username, password);
 
             if (user != null) {
-                session.setAttribute("login", user);
+                session.setAttribute("user", user);
 
                 if ("on".equalsIgnoreCase(rememberMe)) {
                     try {
@@ -232,14 +233,14 @@ public class LoginServlet extends HttpServlet {
                     }
                 }
 
-                response.sendRedirect("adminDashboard");
+                RoleRedirect.redirect(user, response);
             } else {
                 request.setAttribute("err", "<p style=\"color: red; text-align: center\">The user or password are wrong</p>");
                 request.getRequestDispatcher("login.jsp").forward(request, response);
             }
         }
     }
-
+    
     /**
      * Returns a short description of the servlet.
      *
