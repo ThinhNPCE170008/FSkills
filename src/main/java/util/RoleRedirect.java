@@ -10,7 +10,7 @@ import model.User;
 
 /**
  *
- * @author NgoThinh1902
+ * @author Ngo Phuoc Thinh - CE170008 - SE1815
  */
 public class RoleRedirect {
     public static void redirect(User user, HttpServletResponse response) throws IOException {

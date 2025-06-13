@@ -477,6 +477,23 @@ public class UserDAO extends DBContext {
         return null;
     }
 
+    public int updateGoogleID(User user) {
+        String sql = "UPDATE Users SET GoogleID = ?, IsVerified = ? WHERE UserID = ?";
+        
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, user.getGoogleID());
+            ps.setBoolean(2, true);
+            ps.setInt(3, user.getUserId());
+            
+            int result = ps.executeUpdate();
+            return result > 0 ? 1 : 0; 
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
+
     public int insertGoogle(UserGoogle user) {
         String sql = "INSERT INTO Users (UserName, DisplayName, Email, Password, Role, Avatar, GoogleID, IsVerified) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -608,10 +625,10 @@ public class UserDAO extends DBContext {
         }
         return 0;
     }
-    
+
     public int deleteAllTokens(int userId) {
         String sql = "DELETE FROM RememberTokens WHERE user_id = ?";
-        
+
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, userId);
@@ -640,12 +657,19 @@ public class UserDAO extends DBContext {
 //
 //        User acc = dao.verifyMD5(email, password);
 //        System.out.println(acc);
-
 //            Timestamp expiryDate = Timestamp.from(Instant.now().plus(30, ChronoUnit.DAYS));
 //            int result = dao.saveToken(1, "1234567", expiryDate);
 //            
 //        } catch (SQLException ex) {
 //            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+
+//        String email = "student02@example.com";
+//        User acc = dao.findByEmail(email);
+//        if (acc != null) {
+//            acc.setGoogleID("222333444555");
+//            int result = dao.updateGoogleID(acc);
+//            System.out.println(result);
 //        }
     }
 }
