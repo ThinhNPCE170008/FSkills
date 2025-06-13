@@ -9,6 +9,6 @@ package model;
  * @author DELL
  */
 public enum Role {
-    STUDENT, INSTRUCTOR, ADMIN
+    LEARNER, INSTRUCTOR, ADMIN
 }
 

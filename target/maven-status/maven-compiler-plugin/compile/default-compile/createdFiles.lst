@@ -3,6 +3,7 @@ controller\AnnouncementServlet.class
 model\UserGoogle.class
 controller\EditVoucherServlet.class
 controller\DeleteAccountServlet.class
+util\RoleRedirect$1.class
 controller\BanAccountServlet.class
 model\Role.class
 dao\AnnouncementDAO.class
@@ -12,6 +13,7 @@ controller\UpdateUserServlet.class
 dao\UserDAO.class
 controller\UserServlet.class
 model\Voucher.class
+util\RoleRedirect.class
 dao\VoucherDAO.class
 model\User.class
 model\Notification.class
@@ -24,4 +26,5 @@ controller\AboutInformServlet.class
 model\Announcement.class
 util\DBContext.class
 controller\AdminDashboardServlet.class
+controller\LogoutServlet.class
 dao\NotificationDAO.class

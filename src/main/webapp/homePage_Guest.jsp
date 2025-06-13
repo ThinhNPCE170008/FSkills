@@ -39,8 +39,8 @@
                         <label for="search" class="visually-hidden">Search</label>
                         <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
                     </div>
-                    <a href="login.html" class="btn btn-primary btn-custom">Login</a>
-                    <a href="register.html" class="btn btn-primary btn-custom">Register</a>
+                    <a href="login.jsp" class="btn btn-primary btn-custom">Login</a>
+                    <a href="register.jsp" class="btn btn-primary btn-custom">Register</a>
                 </div>
             </div>
         </header>

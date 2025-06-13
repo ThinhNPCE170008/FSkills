@@ -17,6 +17,8 @@ C:\SWP\Project\FSkills\src\main\java\model\Role.java
 C:\SWP\Project\FSkills\src\main\java\util\GoogleLogin.java
 C:\SWP\Project\FSkills\src\main\java\controller\DeleteAccountServlet.java
 C:\SWP\Project\FSkills\src\main\java\controller\UpdateVoucherServlet.java
+C:\SWP\Project\FSkills\src\main\java\controller\LogoutServlet.java
+C:\SWP\Project\FSkills\src\main\java\util\RoleRedirect.java
 C:\SWP\Project\FSkills\src\main\java\controller\UserServlet.java
 C:\SWP\Project\FSkills\src\main\java\controller\AboutInformServlet.java
 C:\SWP\Project\FSkills\src\main\java\model\Voucher.java

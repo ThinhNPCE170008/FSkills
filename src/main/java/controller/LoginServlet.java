@@ -4,19 +4,36 @@
  */
 package controller;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import dao.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.User;
 import model.UserGoogle;
 import util.GoogleLogin;
+import util.RoleRedirect;
 
 /**
  *
@@ -90,8 +107,37 @@ public class LoginServlet extends HttpServlet {
 
             // Lưu user vào session và chuyển hướng
             session.setAttribute("user", user);
-            response.sendRedirect("adminDashboard");
+            RoleRedirect.redirect(user, response);
         } else {
+            String token = null;
+            String usernameCookieSaved = "";
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().equals("REMEMBER_TOKEN")) {
+                        token = cookie.getValue();
+                    }
+                    if (cookie.getName().equals("COOKIE_INPUT")) {
+                        usernameCookieSaved = cookie.getValue();
+                    }
+                }
+            }
+
+            if (token != null) {
+                try {
+                    UserDAO dao = new UserDAO();
+                    User user = dao.findByToken(token);
+                    if (user != null) {
+                        session.setAttribute("user", user);
+                        RoleRedirect.redirect(user, response);
+                        return;
+                    }
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+
+            request.setAttribute("usernameCookieSaved", usernameCookieSaved);
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }
     }
@@ -107,25 +153,94 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String turnstileToken = request.getParameter("cf-turnstile-response");
+        if (turnstileToken == null || turnstileToken.isEmpty()) {
+            request.setAttribute("err", "<p style='color: red; text-align: center'>Captcha verification failed.</p>");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+            return;
+        }
+
+        // Xác minh với Cloudflare
+        String secretKey = "0x4AAAAAABgts5yPhd0CjQlG-53ul9Og7Vw";
+        URL url = new URL("https://challenges.cloudflare.com/turnstile/v0/siteverify");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setDoOutput(true);
+
+        String postData = "secret=" + URLEncoder.encode(secretKey, "UTF-8")
+                + "&response=" + URLEncoder.encode(turnstileToken, "UTF-8");
+
+        try ( OutputStream os = conn.getOutputStream()) {
+            os.write(postData.getBytes());
+        }
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String inputLine;
+        StringBuilder responseStr = new StringBuilder();
+        while ((inputLine = in.readLine()) != null) {
+            responseStr.append(inputLine);
+        }
+        in.close();
+
+        JsonObject json = JsonParser.parseString(responseStr.toString()).getAsJsonObject();
+
+        // Kiểm tra kết quả trả về
+        boolean success = json.get("success").getAsBoolean();
+        if (!success) {
+            String errorMsg = "Captcha verification failed.";
+            if (json.has("error-codes")) {
+                errorMsg += " Error codes: " + json.get("error-codes").toString();
+            }
+            request.setAttribute("err", "<p style='color: red; text-align: center'>" + errorMsg + "</p>");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+            return;
+        }
+
         if (request.getMethod().equalsIgnoreCase("POST")) {
             UserDAO dao = new UserDAO();
             HttpSession session = request.getSession();
 
             String username = request.getParameter("username");
             String password = request.getParameter("password");
+            String rememberMe = request.getParameter("rememberMe");
 
             User user = dao.verifyMD5(username, password);
 
             if (user != null) {
-                session.setAttribute("login", user);
-                response.sendRedirect("adminDashboard");
+                session.setAttribute("user", user);
+
+                if ("on".equalsIgnoreCase(rememberMe)) {
+                    try {
+                        String token = UUID.randomUUID().toString();
+                        Timestamp expiryDate = Timestamp.from(Instant.now().plus(30, ChronoUnit.DAYS));
+                        dao.saveToken(user.getUserId(), token, expiryDate);
+
+                        Cookie tokenCookie = new Cookie("REMEMBER_TOKEN", token);
+                        tokenCookie.setMaxAge(30 * 24 * 60 * 60); // 30 ngày
+                        tokenCookie.setPath("/");
+                        tokenCookie.setHttpOnly(true);
+                        tokenCookie.setSecure(true);
+                        response.addCookie(tokenCookie);
+
+                        Cookie usernameCookie = new Cookie("COOKIE_INPUT", username);
+                        usernameCookie.setMaxAge(30 * 24 * 60 * 60);
+                        usernameCookie.setPath("/");
+                        usernameCookie.setHttpOnly(true);
+                        usernameCookie.setSecure(true);
+                        response.addCookie(usernameCookie);
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+
+                RoleRedirect.redirect(user, response);
             } else {
-                request.setAttribute("err", "<h1 style=\"color: red; text-align: center\">The user or password are wrong</h1>");
+                request.setAttribute("err", "<p style=\"color: red; text-align: center\">The user or password are wrong</p>");
                 request.getRequestDispatcher("login.jsp").forward(request, response);
             }
         }
     }
-
+    
     /**
      * Returns a short description of the servlet.
      *

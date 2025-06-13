@@ -28,11 +28,16 @@
 
                 <form method="POST" action="login">
                     <div class="mb-3">
-                        <input type="text" class="form-control" name="username" placeholder="Username or Email" />
+                        <input type="text" class="form-control" name="username" value="${usernameCookieSaved}" placeholder="Username or Email" required/>
                     </div>
                     <div class="mb-3">
-                        <input type="password" class="form-control" name="password" placeholder="Password" />
+                        <input type="password" class="form-control" name="password" placeholder="Password" required/>
                     </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" name="rememberMe" id="rememberMe" />
+                        <label style="margin-right: 70%;" class="form-check-label" for="rememberMe">Remember</label>
+                    </div>
+                    <div class="cf-turnstile" data-sitekey="0x4AAAAAABgts3i36HFv5My1"></div>
                     <button type="submit" class="btn btn-primary">Login</button>
                 </form>
 
@@ -62,5 +67,7 @@
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- reCAPTCHA -->
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     </body>
 </html>
