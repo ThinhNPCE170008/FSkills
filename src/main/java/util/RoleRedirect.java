@@ -21,8 +21,8 @@ public class RoleRedirect {
             case INSTRUCTOR:
                 response.sendRedirect("instructorPage");
                 break;
-            case STUDENT:
-                response.sendRedirect("studentHome");
+            case LEARNER:
+                response.sendRedirect("learnerHome");
                 break;
             default:
                 response.sendRedirect("defaultPage.jsp");

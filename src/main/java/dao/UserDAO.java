@@ -44,7 +44,7 @@ public class UserDAO extends DBContext {
                 int roleInt = rs.getInt("Role");
                 switch (roleInt) {
                     case 0:
-                        u.setRole(Role.STUDENT);
+                        u.setRole(Role.LEARNER);
                         break;
                     case 1:
                         u.setRole(Role.INSTRUCTOR);
@@ -89,7 +89,7 @@ public class UserDAO extends DBContext {
                     int roleInt = rs.getInt("Role");
                     switch (roleInt) {
                         case 0:
-                            u.setRole(Role.STUDENT);
+                            u.setRole(Role.LEARNER);
                             break;
                         case 1:
                             u.setRole(Role.INSTRUCTOR);
@@ -215,7 +215,7 @@ public class UserDAO extends DBContext {
             int roleInt = rs.getInt("Role");
             switch (roleInt) {
                 case 0:
-                    u.setRole(Role.STUDENT);
+                    u.setRole(Role.LEARNER);
                     break;
                 case 1:
                     u.setRole(Role.INSTRUCTOR);
@@ -317,7 +317,7 @@ public class UserDAO extends DBContext {
                 Role Role = null;
                 switch (roleInt) {
                     case 0:
-                        Role = Role.STUDENT;
+                        Role = Role.LEARNER;
                         break;
                     case 1:
                         Role = Role.INSTRUCTOR;
@@ -377,7 +377,7 @@ public class UserDAO extends DBContext {
                 Role Role = null;
                 switch (roleInt) {
                     case 0:
-                        Role = Role.STUDENT;
+                        Role = Role.LEARNER;
                         break;
                     case 1:
                         Role = Role.INSTRUCTOR;
@@ -435,7 +435,7 @@ public class UserDAO extends DBContext {
                 Role Role = null;
                 switch (roleInt) {
                     case 0:
-                        Role = Role.STUDENT;
+                        Role = Role.LEARNER;
                         break;
                     case 1:
                         Role = Role.INSTRUCTOR;
@@ -553,7 +553,7 @@ public class UserDAO extends DBContext {
                 Role Role = null;
                 switch (roleInt) {
                     case 0:
-                        Role = Role.STUDENT;
+                        Role = Role.LEARNER;
                         break;
                     case 1:
                         Role = Role.INSTRUCTOR;
