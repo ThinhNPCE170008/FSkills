@@ -14,7 +14,7 @@ import org.apache.http.client.fluent.Request;
 
 /**
  *
- * @author Ngo Phuoc Thinh - CE170008 - SE1815
+ * @author NgoThinh1902
  */
 public class GoogleLogin {
 

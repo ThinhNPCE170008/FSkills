@@ -6,7 +6,7 @@ package model;
 
 /**
  *
- * @author Ngo Phuoc Thinh - CE170008 - SE1815
+ * @author NgoThinh1902
  */
 public class UserGoogle {
     private String id, email, first_name, given_name, family_name, name, picture;

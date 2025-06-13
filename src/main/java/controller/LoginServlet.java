@@ -101,7 +101,7 @@ public class LoginServlet extends HttpServlet {
                     user = dao.findByGoogleID(userGoogle.getId()); // Lấy lại user đã insert để lưu vào session
                 } else {
                     user.setGoogleID(userGoogle.getId());
-//                    dao.update(user); // Nếu bạn có phương thức update
+                    dao.updateGoogleID(user);
                 }
             }
 

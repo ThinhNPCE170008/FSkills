@@ -19,7 +19,7 @@ import model.User;
 
 /**
  *
- * @author Ngo Phuoc Thinh - CE170008 - SE1815
+ * @author NgoThinh1902
  */
 @WebServlet(name = "LogoutServlet", urlPatterns = {"/logout"})
 public class LogoutServlet extends HttpServlet {
