@@ -26,7 +26,7 @@ import model.UserGoogle;
 
 /**
  *
- * @author DELL
+ * @author Ngo Phuoc Thinh - CE170008 - SE1815
  */
 public class UserDAO extends DBContext {
 
