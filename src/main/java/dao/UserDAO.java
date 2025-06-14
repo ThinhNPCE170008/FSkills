@@ -119,50 +119,15 @@ public class UserDAO extends DBContext {
 
     public boolean deleteAccount(String userName) throws SQLException {
         String sql = "DELETE FROM Users WHERE UserName = ?";
-        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, userName);
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-
             throw e;
-            // Xử lý lỗi: Rollback transaction nếu có bất kỳ lỗi nào xảy ra
-            if (conn != null) { // Kiểm tra conn có null không trước khi rollback
-                try {
-                    conn.rollback();
-                    System.err.println("Transaction rolled back due to error: " + e.getMessage());
-                } catch (SQLException ex) {
-                    System.err.println("Error during rollback: " + ex.getMessage());
-                }
-            }
-            e.printStackTrace(); // In lỗi ra console
-            throw e; // Ném lại ngoại lệ để lớp gọi xử lý
-        } finally {
-            // Đóng tất cả các PreparedStatement
-            try {
-                if (psGetUserId != null) {
-                    psGetUserId.close();
-                }
-                if (psDeleteInstructorApp != null) {
-                    psDeleteInstructorApp.close();
-                }
-                if (psDeleteUser != null) {
-                    psDeleteUser.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-            // Khôi phục auto-commit về true
-            if (conn != null) {
-                try {
-                    conn.setAutoCommit(true);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
+
 
 //    public boolean deleteAccount(String userName) throws SQLException {
 //        PreparedStatement psGetUserId = null;
