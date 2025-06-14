@@ -116,6 +116,7 @@ public class UserDAO extends DBContext {
         return users;
     }
 
+
     public boolean deleteAccount(String userName) throws SQLException {
         String sql = "DELETE FROM Users WHERE UserName = ?";
         try ( PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -123,7 +124,43 @@ public class UserDAO extends DBContext {
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
+
             throw e;
+            // Xử lý lỗi: Rollback transaction nếu có bất kỳ lỗi nào xảy ra
+            if (conn != null) { // Kiểm tra conn có null không trước khi rollback
+                try {
+                    conn.rollback();
+                    System.err.println("Transaction rolled back due to error: " + e.getMessage());
+                } catch (SQLException ex) {
+                    System.err.println("Error during rollback: " + ex.getMessage());
+                }
+            }
+            e.printStackTrace(); // In lỗi ra console
+            throw e; // Ném lại ngoại lệ để lớp gọi xử lý
+        } finally {
+            // Đóng tất cả các PreparedStatement
+            try {
+                if (psGetUserId != null) {
+                    psGetUserId.close();
+                }
+                if (psDeleteInstructorApp != null) {
+                    psDeleteInstructorApp.close();
+                }
+                if (psDeleteUser != null) {
+                    psDeleteUser.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            // Khôi phục auto-commit về true
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -288,6 +325,7 @@ public class UserDAO extends DBContext {
 //            }
 //        }
 //    }
+  
     public List<User> showAllInform(String informUser) throws SQLException {
         List<User> us = new ArrayList<>();
         String sql = "SELECT UserName, DisplayName, Email, Password, Role, DateOfBirth, UserCreateDate, Info, BanStatus, ReportAmount FROM Users WHERE UserName = ?";
@@ -378,6 +416,15 @@ public class UserDAO extends DBContext {
         return "";
     }
 
+    public boolean banAccount(String userName) throws SQLException {
+        String sql = "UPDATE Users SET BanStatus = CASE WHEN BanStatus = 0 THEN 1 WHEN BanStatus = 1 THEN 0 ELSE BanStatus END WHERE UserName = ?";
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, userName);
+            int ii = ps.executeUpdate();
+            return ii > 0;
+        }
+    }
+
     public User verifyMD5(String input, String Password) {
         String sql = "SELECT * FROM Users WHERE (UserName = ? OR Email = ?) AND Password = ?";
         try {
@@ -436,15 +483,6 @@ public class UserDAO extends DBContext {
             System.out.println(e.getMessage());
         }
         return null;
-    }
-
-    public boolean banAccount(String userName) throws SQLException {
-        String sql = "UPDATE Users SET BanStatus = CASE WHEN BanStatus = 0 THEN 1 WHEN BanStatus = 1 THEN 0 ELSE BanStatus END WHERE UserName = ?";
-        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, userName);
-            int ii = ps.executeUpdate();
-            return ii > 0;
-        }
     }
 
     public User findByGoogleID(String googleID) {
@@ -563,6 +601,23 @@ public class UserDAO extends DBContext {
             System.out.println(e.getMessage());
         }
         return null;
+    }
+
+    public int updateGoogleID(User user) {
+        String sql = "UPDATE Users SET GoogleID = ?, IsVerified = ? WHERE UserID = ?";
+        
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, user.getGoogleID());
+            ps.setBoolean(2, true);
+            ps.setInt(3, user.getUserId());
+            
+            int result = ps.executeUpdate();
+            return result > 0 ? 1 : 0; 
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
     }
 
     public int insertGoogle(UserGoogle user) {
@@ -697,23 +752,6 @@ public class UserDAO extends DBContext {
         return 0;
     }
 
-    public int updateGoogleID(User user) {
-        String sql = "UPDATE Users SET GoogleID = ?, IsVerified = ? WHERE UserID = ?";
-
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, user.getGoogleID());
-            ps.setBoolean(2, true);
-            ps.setInt(3, user.getUserId());
-
-            int result = ps.executeUpdate();
-            return result > 0 ? 1 : 0;
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return 0;
-    }
-
     public int deleteAllTokens(int userId) {
         String sql = "DELETE FROM RememberTokens WHERE user_id = ?";
 
@@ -729,13 +767,35 @@ public class UserDAO extends DBContext {
     }
 
     public static void main(String[] args) {
-//        UserDAO dao = new UserDAO();
+//        try {
+//            UserDAO dao = new UserDAO();
+
+//        String googleID = "123123";
+//        String email = "admin01@example.com";
+//        User acc = dao.findByGoogleID(googleID);
+//        User user = dao.findByEmail(email);
 //
-//        String username = "student01";
+//        System.out.println(acc);
+//        System.out.println(user);
+//        String username = "heroic";
 //        String password = "123456";
 //        String email = "admin01@example.com";
 //
-//        User acc = dao.verifyMD5(username, password);
+//        User acc = dao.verifyMD5(email, password);
 //        System.out.println(acc);
+//            Timestamp expiryDate = Timestamp.from(Instant.now().plus(30, ChronoUnit.DAYS));
+//            int result = dao.saveToken(1, "1234567", expiryDate);
+//            
+//        } catch (SQLException ex) {
+//            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+
+//        String email = "student02@example.com";
+//        User acc = dao.findByEmail(email);
+//        if (acc != null) {
+//            acc.setGoogleID("222333444555");
+//            int result = dao.updateGoogleID(acc);
+//            System.out.println(result);
+//        }
     }
 }

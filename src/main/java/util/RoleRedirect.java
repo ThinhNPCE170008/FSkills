@@ -22,10 +22,11 @@ public class RoleRedirect {
                 response.sendRedirect("instructorPage");
                 break;
             case LEARNER:
-                response.sendRedirect("studentHome");
+                response.sendRedirect("learnerHome");
                 break;
             default:
                 response.sendRedirect("defaultPage.jsp");
         }
     }
 }
+

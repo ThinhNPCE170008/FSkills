@@ -11,6 +11,7 @@ package util;
 public class Iconstant {
 
     public static final String GOOGLE_CLIENT_ID = System.getenv("GOOGLE_CLIENT_ID");
+
     public static final String GOOGLE_CLIENT_SECRET = System.getenv("GOOGLE_CLIENT_SECRET");
 
     public static final String GOOGLE_REDIRECT_URI = "http://localhost:8080/FSkills/login";
