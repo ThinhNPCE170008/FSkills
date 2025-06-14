@@ -694,6 +694,23 @@ public class UserDAO extends DBContext {
         return 0;
     }
     
+    public int updateGoogleID(User user) {
+        String sql = "UPDATE Users SET GoogleID = ?, IsVerified = ? WHERE UserID = ?";
+        
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, user.getGoogleID());
+            ps.setBoolean(2, true);
+            ps.setInt(3, user.getUserId());
+            
+            int result = ps.executeUpdate();
+            return result > 0 ? 1 : 0; 
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
+    
     public int deleteAllTokens(int userId) {
         String sql = "DELETE FROM RememberTokens WHERE user_id = ?";
         
