@@ -11,7 +11,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <%
-
     User acc = (User) session.getAttribute("user");
     if (acc == null) {
         response.sendRedirect("login");
