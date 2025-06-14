@@ -105,7 +105,6 @@ public class LoginServlet extends HttpServlet {
                 }
             }
 
-            // Lưu user vào session và chuyển hướng
             session.setAttribute("user", user);
             RoleRedirect.redirect(user, response);
         } else {

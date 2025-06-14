@@ -27,6 +27,7 @@ import model.UserGoogle;
 /**
  *
  * @author DELL
+ * @author Ngo Phuoc Thinh - CE170008 - SE1815
  */
 public class UserDAO extends DBContext {
 
@@ -70,6 +71,7 @@ public class UserDAO extends DBContext {
         }
         return list;
     }
+
     public List<User> searchUsersByName(String searchName) throws SQLException {
         List<User> users = new ArrayList<>();
         // Sử dụng LIKE để tìm kiếm gần đúng, % là ký tự đại diện
@@ -113,10 +115,10 @@ public class UserDAO extends DBContext {
         }
         return users;
     }
-    
+
     public boolean deleteAccount(String userName) throws SQLException {
         String sql = "DELETE FROM Users WHERE UserName = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, userName);
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
@@ -124,7 +126,7 @@ public class UserDAO extends DBContext {
             throw e;
         }
     }
-    
+
 //    public boolean deleteAccount(String userName) throws SQLException {
 //        PreparedStatement psGetUserId = null;
 //        // PreparedStatement cho các bảng con không có ON DELETE CASCADE trên UserID
@@ -286,7 +288,6 @@ public class UserDAO extends DBContext {
 //            }
 //        }
 //    }
-
     public List<User> showAllInform(String informUser) throws SQLException {
         List<User> us = new ArrayList<>();
         String sql = "SELECT UserName, DisplayName, Email, Password, Role, DateOfBirth, UserCreateDate, Info, BanStatus, ReportAmount FROM Users WHERE UserName = ?";
@@ -328,6 +329,7 @@ public class UserDAO extends DBContext {
         }
         return us;
     }
+
     public boolean updateUser(User user) throws SQLException {
         String sql = "UPDATE Users SET DisplayName = ?, Email = ?, Role = ?, BanStatus = ?, ReportAmount = ?, DateOfBirth = ?, Info = ? WHERE UserName = ?";
 
@@ -355,6 +357,7 @@ public class UserDAO extends DBContext {
             return rowsAffected > 0;
         }
     }
+
     public String hashMD5(String pass) {
         try {
             MessageDigest mes = MessageDigest.getInstance("MD5");
@@ -620,7 +623,7 @@ public class UserDAO extends DBContext {
         }
         return 0;
     }
-    
+
     public User findByToken(String token) {
         String sql = "SELECT u.* FROM users u JOIN RememberTokens t ON u.UserID = t.user_id WHERE t.token = ? AND t.expiry_date > CURRENT_TIMESTAMP;";
 
@@ -679,7 +682,7 @@ public class UserDAO extends DBContext {
         }
         return null;
     }
-    
+
     public int deleteToken(String token) {
         String sql = "DELETE FROM RememberTokens WHERE token = ?";
 
@@ -693,27 +696,27 @@ public class UserDAO extends DBContext {
         }
         return 0;
     }
-    
+
     public int updateGoogleID(User user) {
         String sql = "UPDATE Users SET GoogleID = ?, IsVerified = ? WHERE UserID = ?";
-        
+
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, user.getGoogleID());
             ps.setBoolean(2, true);
             ps.setInt(3, user.getUserId());
-            
+
             int result = ps.executeUpdate();
-            return result > 0 ? 1 : 0; 
+            return result > 0 ? 1 : 0;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         return 0;
     }
-    
+
     public int deleteAllTokens(int userId) {
         String sql = "DELETE FROM RememberTokens WHERE user_id = ?";
-        
+
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, userId);
@@ -726,16 +729,13 @@ public class UserDAO extends DBContext {
     }
 
     public static void main(String[] args) {
-        UserDAO dao = new UserDAO();
-
-//        String googleID = "123111";
+//        UserDAO dao = new UserDAO();
+//
+//        String username = "student01";
+//        String password = "123456";
 //        String email = "admin01@example.com";
 //
-//        User acc = dao.findByGoogleID(googleID);
-//        User user = dao.findByEmail(email);
-//
+//        User acc = dao.verifyMD5(username, password);
 //        System.out.println(acc);
-//        System.out.println(user);
-
     }
 }
