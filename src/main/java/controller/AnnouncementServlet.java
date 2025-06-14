@@ -80,15 +80,15 @@ public class AnnouncementServlet extends HttpServlet {
             List<Announcement> listAnnouncement = announcementDAO.getAll();
             request.setAttribute("AccountInfo", acc);
             request.setAttribute("listAnnouncement", listAnnouncement);
-            request.getRequestDispatcher("announcement.jsp").forward(request, response);
-        } else if (action.equalsIgnoreCase("update")) {
+            request.getRequestDispatcher("WEB-INF/views/announcement.jsp").forward(request, response);
+        } else if (action.equalsIgnoreCase("details")) {
             String idRaw = request.getParameter("id");
             int id = 0;
             try {
                 id = Integer.parseInt(idRaw);
                 Announcement ann = announcementDAO.getAnnouncementById(id);
                 request.setAttribute("dataAnn", ann);
-                request.getRequestDispatcher("update-product.jsp").forward(request, response);
+                request.getRequestDispatcher("WEB-INF/views/announcementDetails.jsp").forward(request, response);
             } catch (Exception e) {
                 PrintWriter out = response.getWriter();
                 out.print(e.getMessage());
@@ -119,7 +119,7 @@ public class AnnouncementServlet extends HttpServlet {
             String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
 
             // Lưu file vào thư mục trên server
-            String uploadPath = getServletContext().getRealPath("") + File.separator + "uploads";
+            String uploadPath = getServletContext().getRealPath("") + File.separator + "imageUpload";
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) {
                 uploadDir.mkdir();
@@ -128,7 +128,7 @@ public class AnnouncementServlet extends HttpServlet {
             filePart.write(uploadPath + File.separator + fileName);
 
             // Lưu tên file hoặc đường dẫn vào DB nếu cần
-            String imagePath = "uploads/" + fileName;
+            String imagePath = "imageUpload/" + fileName;
 
             // Sau đó insert dữ liệu vào DB với imagePath
             String UserIDStr = "1";
@@ -144,10 +144,60 @@ public class AnnouncementServlet extends HttpServlet {
                 }
             } catch (Exception e) {
                 request.setAttribute("err", "<p>Create failed</p>");
-                request.getRequestDispatcher("create-product.jsp").forward(request, response);
+                request.getRequestDispatcher("fail.jsp").forward(request, response);
+            }
+        } else if (action.equalsIgnoreCase("edit")) {
+            try {
+                String announcementId = request.getParameter("announcementId");
+                String announcementTitle = request.getParameter("announcementTitle");
+                String announcementText = request.getParameter("announcementText");
+                String rawDate = request.getParameter("takeDownDate");
+                String formattedDate = rawDate != null ? rawDate.replace("T", " ") + ":00" : null;
+
+                Part filePart = request.getPart("announcementImage");
+                String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                String imagePath;
+
+                if (fileName != null && !fileName.isEmpty()) {
+                    // New image uploaded
+                    String uploadPath = getServletContext().getRealPath("") + File.separator + "imageUpload";
+                    File uploadDir = new File(uploadPath);
+                    if (!uploadDir.exists()) {
+                        uploadDir.mkdir();
+                    }
+                    filePart.write(uploadPath + File.separator + fileName);
+                    imagePath = "imageUpload/" + fileName;
+                } else {
+                    // Use old image path
+                    imagePath = request.getParameter("oldImagePath");
+                }
+
+                boolean res = AnnounDAO.update(announcementTitle, announcementText, formattedDate, imagePath, announcementId);
+
+                if (res) {
+                    response.sendRedirect("Announcement");
+                } else {
+                    response.sendRedirect("failqq.jsp");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.sendRedirect("failbb.jsp");
+            }
+        } else if (action.equalsIgnoreCase("delete")) {
+            String idRaw = request.getParameter("id");
+            int id = 0;
+            try {
+                id = Integer.parseInt(idRaw);
+                if (AnnounDAO.delete(id) == 1) {
+                    response.sendRedirect("Announcement");
+                } else {
+                    response.sendRedirect("failss.jsp");
+                }
+            } catch (Exception e) {
+                PrintWriter out = response.getWriter();
+                out.print(e.getMessage());
             }
         }
-
     }
 
     /**
