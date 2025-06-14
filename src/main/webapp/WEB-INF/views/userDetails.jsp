@@ -225,7 +225,7 @@
                                 <span class="detail-label">Role:</span>
                                 <span class="detail-value" id="displayRole">${user.role}</span>
                                 <select id="inputRole" name="role" class="detail-input">
-                                    <option value="STUDENT" <c:if test="${(param.role != null && param.role == 'STUDENT') || (param.role == null && user.role == 'STUDENT')}">selected</c:if>>STUDENT</option>
+                                    <option value="LEARNER" <c:if test="${(param.role != null && param.role == 'LEARNER') || (param.role == null && user.role == 'LEARNER')}">selected</c:if>>LEARNER</option>
                                     <option value="INSTRUCTOR" <c:if test="${(param.role != null && param.role == 'INSTRUCTOR') || (param.role == null && user.role == 'INSTRUCTOR')}">selected</c:if>>INSTRUCTOR</option>
                                     <option value="ADMIN" <c:if test="${(param.role != null && param.role == 'ADMIN') || (param.role == null && user.role == 'ADMIN')}">selected</c:if>>ADMIN</option>
                                     </select>
@@ -279,7 +279,7 @@
                             <div class="button-group" id="editButtonGroup">
                                 <button type="submit" class="save-button">Save</button>
                                 <button type="button" class="cancel-button"
-                                        onclick="window.location.href = 'aboutInform?userInform=${param.userInform}'">Cancel</button>
+                                        onclick="window.location.href = 'aboutInform?userInform=${currentUsername != null ? currentUsername : param.userInform}'">Cancel</button>
                             </div>
                         </form>
                     </c:forEach>
