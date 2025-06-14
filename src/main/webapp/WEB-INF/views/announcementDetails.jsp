@@ -1,20 +1,36 @@
 <%-- 
     Document   : admin
-    Created on : Jun 3, 2025, 2:48:10 PM
-    Author     : NgoThinh1902
+    Created on : May 25, 2025, 12:58:45 PM
+    Author     : DELL
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DdOCTYPE html>
+<%@page import="model.Announcement"%>
+<%@page import="java.util.List"%>
+<%@page import="model.User"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<%
+
+    User acc = (User) session.getAttribute("user");
+    if (acc == null) {
+        response.sendRedirect("login");
+        return;
+    }
+    Announcement details = (Announcement) request.getAttribute("dataAnn");
+%>
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/png" href="img/favicon_io/favicon.ico">
-        <title>Admin F-SKILL</title>
+        <title>Trang Quản Trị F-SKILL</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <!-- Bootstrap Icons -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="css/style.css"/>
         <style>
             body {
                 font-family: 'Inter', sans-serif;
@@ -42,13 +58,15 @@
             }
             ::-webkit-scrollbar-thumb:hover {
                 background: #555;
+                border-radius: 10px;
             }
         </style>
     </head>
     <body class="flex flex-col h-screen">
         <header class="bg-white shadow-md p-4 flex items-center justify-between rounded-b-lg">
             <div class="flex items-center space-x-2">
-                <img src="pic/logo.png" alt="F-SKILL Logo" class=" w-20 h-15" />
+                <%-- Đã sửa đường dẫn ảnh logo.png --%>
+                <img src="${pageContext.request.contextPath}/pic/logo.png" alt="F-SKILL Logo" class=" w-20 h-15" />
                 <span class="text-2xl font-bold text-gray-800"></span>
             </div>
 
@@ -82,17 +100,38 @@
                         </div>
                     </div>
                 </div>
-
+                <%-- Phần user profile/avatar --%>
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-sm font-semibold">
+                        <%-- Bạn có thể hiển thị ảnh đại diện admin ở đây nếu có --%>
+                        AD
+                    </div>
+                    <%-- Hiển thị tên Admin từ session --%>
+                    <span class="font-medium text-gray-700">
+                        <c:choose>
+                            <c:when test="${not empty sessionScope.adminUser.displayName}">
+                                ${sessionScope.adminUser.displayName}
+                            </c:when>
+                            <c:otherwise>
+                                Admin User
+                            </c:otherwise>
+                        </c:choose>
+                    </span>
+                </div>
             </div>
         </header>
 
         <div class="flex flex-grow">
-            <aside class="w-64 bg-white p-4 shadow-lg flex flex-col rounded-tr-lg rounded-br-lg overflow-y-auto">
+            <aside class="absolute w-64 bg-white p-4 shadow-lg flex flex-col rounded-tr-lg rounded-br-lg overflow-y-auto">
                 <div class="flex items-center space-x-3 mb-8 p-2">
                     <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-xl font-semibold">
+                        <%-- Có thể đặt ảnh đại diện admin tại đây --%>
                     </div>
                     <div>
-                        <p class="font-semibold text-gray-800">Gavano</p>
+                        <%-- Hiển thị tên người dùng đã đăng nhập, ví dụ từ session --%>
+                        <p class="font-semibold text-gray-800">
+                            <%=acc.getDisplayName()%>
+                        </p>
                         <p class="text-sm text-gray-500">Hi Admin</p>
                     </div>
                 </div>
@@ -100,37 +139,43 @@
                 <nav class="flex-grow">
                     <ul>
                         <li class="mb-2">
-                            <a href="#" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
+                            <%-- Thêm URL cho Dashboard --%>
+                            <a href="${pageContext.request.contextPath}/adminDashboard" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
                                 <i class="fas fa-tachometer-alt nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
                                 <span class="nav-text text-gray-800 font-medium group-hover:text-white">Dashboard</span>
                             </a>
                         </li>
                         <li class="mb-2">
-                            <a href="#" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
+                            <%-- Liên kết đến trang quản lý Bills --%>
+                            <a href="${pageContext.request.contextPath}/admin/bills" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
                                 <i class="fas fa-file-invoice-dollar nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
                                 <span class="nav-text text-gray-800 font-medium group-hover:text-white">Bills</span>
                             </a>
                         </li>
                         <li class="mb-2">
-                            <a href="Announcement" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
+                            <%-- Liên kết đến trang quản lý Announcement --%>
+                            <a href="${pageContext.request.contextPath}/Announcement" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
                                 <i class="fas fa-bullhorn nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
                                 <span class="nav-text text-gray-800 font-medium group-hover:text-white">Announcement</span>
                             </a>
                         </li>
                         <li class="mb-2">
-                            <a href="#" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
+                            <%-- Liên kết đến trang quản lý Company --%>
+                            <a href="${pageContext.request.contextPath}/voucherList" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
                                 <i class="fas fa-building nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
                                 <span class="nav-text text-gray-800 font-medium group-hover:text-white">Company</span>
                             </a>
                         </li>
                         <li class="mb-2">
-                            <a href="#" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
+                            <%-- Liên kết đến trang Manage Account --%>
+                            <a href="${pageContext.request.contextPath}/alluser" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
                                 <i class="fas fa-users-cog nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
                                 <span class="nav-text text-gray-800 font-medium group-hover:text-white">Manage Account</span>
                             </a>
                         </li>
                         <li class="mb-2">
-                            <a href="#" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
+                            <%-- Liên kết đến trang Report --%>
+                            <a href="${pageContext.request.contextPath}/admin/reports" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
                                 <i class="fas fa-chart-line nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
                                 <span class="nav-text text-gray-800 font-medium group-hover:text-white">Report</span>
                             </a>
@@ -141,45 +186,65 @@
                 <div class="mt-auto">
                     <ul>
                         <li class="mb-2">
-                            <a href="#" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
+                            <%-- Liên kết đến trang Profile --%>
+                            <a href="${pageContext.request.contextPath}/admin/profile" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
                                 <i class="fas fa-user-circle nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
                                 <span class="nav-text text-gray-800 font-medium group-hover:text-white">Profile</span>
                             </a>
                         </li>
                         <li class="mb-2">
-                            <a href="#" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
+                            <%-- Liên kết đến trang Setting --%>
+                            <a href="${pageContext.request.contextPath}/admin/settings" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
                                 <i class="fas fa-cog nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
                                 <span class="nav-text text-gray-800 font-medium group-hover:text-white">Setting</span>
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <%-- Liên kết đăng xuất --%>
+                            <a href="${pageContext.request.contextPath}/logout" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
+                                <i class="fas fa-sign-out-alt nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
+                                <span class="nav-text text-gray-800 font-medium group-hover:text-white">Đăng xuất</span>
                             </a>
                         </li>
                     </ul>
                 </div>
             </aside>
 
-            <main class="flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Tạo Thông Báo Công Khai</h2>
-                    <div class="flex items-center space-x-4 mb-4">
-                        <input type="text" placeholder="Viết một thông báo công khai..." class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <button class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200">
-                            Tạo
-                        </button>
-                        <button id="upload-file-btn" class="bg-gray-200 text-gray-700 px-4 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                        <input type="file" id="file-input" class="hidden">
-                        <button id="upload-image-btn" class="bg-gray-200 text-gray-700 px-4 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200">
-                            <i class="fas fa-image"></i>
-                        </button>
-                        <input type="file" id="image-input" accept="image/*" class="hidden">
+            <main class="ml-64 flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
+                <div class="bg-white p-5 rounded shadow-sm">
+                    <div class="mb-4">
+                        <a href="Announcement" class="btn btn-warning">
+                            <i class="bi bi-arrow-left-circle"></i> Back
+                        </a>
                     </div>
-                    <div class="mt-8 p-4 bg-gray-50 border border-gray-200 rounded-lg text-gray-600">
-                        <p>Chào mừng bạn đến với bảng điều khiển quản trị! Tại đây bạn có thể quản lý các hóa đơn, thông báo, tài khoản người dùng và xem báo cáo.</p>
+
+                    <%
+                        if (details != null) {
+                    %>
+                    <h2 class="fw-bold fs-4 mb-2 text-uppercase"><%=details.getTitle()%></h2>
+                    <div class="text-muted mb-3">
+                        FSkills <%= details.getCreateDate()%>
                     </div>
+
+                    <div class="fs-6" style="line-height: 1.8;">
+                        <%= details.getAnnouncementText().replaceAll("\n", "<br>")%>
+                    </div>
+
+                    <div class="mt-4">
+                        <img src="<%= details.getAnnouncementImage()%>" alt="Image" style="max-width: 100%; max-height: 300px;" class="rounded shadow-sm">
+                    </div>
+
+                    <%
+                    } else {
+                    %>
+                    <div class="alert alert-warning text-center">No announcement details found.</div>
+                    <%
+                        }
+                    %>
                 </div>
             </main>
-        </div>
 
+        </div>
         <script>
             // Lấy các phần tử cần thiết
             const notificationBell = document.getElementById('notification-bell');
@@ -246,8 +311,7 @@
                     messageBox.addEventListener('transitionend', () => messageBox.remove());
                 }, 3000); // Ẩn sau 3 giây
             }
-           
-
         </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     </body>
 </html>
