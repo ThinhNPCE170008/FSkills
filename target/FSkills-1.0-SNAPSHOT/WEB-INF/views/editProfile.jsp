@@ -40,7 +40,7 @@
     </div>
   </c:if>
   <c:if test="${not empty error}">
-    <div class="alert alert-error" role="alert">
+    <div class="alert alert-danger" role="alert"> <%-- Changed to alert-danger for error messages --%>
         ${error}
     </div>
   </c:if>
@@ -50,8 +50,8 @@
       <div class="profile-header">
         <div class="avatar">👤</div>
         <div class="user-info">
-          <h2>${profile.displayName}</h2>
-          <p>${profile.email}</p>
+          <h2><c:out value="${profile.displayName}"/></h2>
+          <p><c:out value="${profile.email}"/></p>
           <button class="change-password">Change Password</button>
           <button class="edit-btn">Edit</button>
         </div>
@@ -59,11 +59,11 @@
       <div class="profile-details">
         <div class="field">
           <label>Full Name</label>
-          <input type="text" value="${profile.displayName}" readonly>
+          <input type="text" value="<c:out value="${profile.displayName}"/>" readonly>
         </div>
         <div class="field">
           <label>Phone Number</label>
-          <input type="text" value="${profile.phoneNumber}" readonly>
+          <input type="text" value="<c:out value="${profile.phoneNumber}"/>" readonly>
         </div>
         <div class="field">
           <label>Gender</label>
@@ -74,11 +74,19 @@
         </div>
         <div class="field">
           <label>Date of Birth</label>
-          <input type="date" value="${profile.dateOfBirth}" readonly>
+          <input type="date" value="${profile.dateOfBirth}" readonly> <%-- dateOfBirth is Timestamp, will be formatted by browser --%>
         </div>
         <div class="field">
           <label>Address</label>
-          <input type="text" value="${profile.info}" readonly>
+          <input type="text" value="<c:out value="${profile.info}"/>" readonly>
+        </div>
+        <div class="field email-field"> <%-- Added email field explicitly here as well, from your original code --%>
+          <label>My email Address</label>
+          <div class="email-info">
+            <span>📧 <c:out value="${profile.email}"/></span>
+            <span>1 month ago</span> <%-- This is static, consider making dynamic if needed --%>
+          </div>
+          <button class="change-email">Change email</button>
         </div>
       </div>
     </div>
@@ -98,18 +106,18 @@
       <div class="form-row">
         <div class="form-group">
           <label for="displayName">Full Name</label>
-          <input type="text" id="displayName" name="displayName" value="${profile.displayName}" required>
+          <input type="text" id="displayName" name="displayName" value="<c:out value="${profile.displayName}"/>" required>
         </div>
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" value="${profile.email}" required>
+          <input type="email" id="email" name="email" value="<c:out value="${profile.email}"/>" required>
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label for="phoneNumber">Phone Number</label>
-          <input type="tel" id="phoneNumber" name="phoneNumber" value="${profile.phoneNumber}">
+          <input type="tel" id="phoneNumber" name="phoneNumber" value="<c:out value="${profile.phoneNumber}"/>">
         </div>
         <div class="form-group">
           <label for="dateOfBirth">Date of Birth</label>
@@ -127,7 +135,7 @@
         </div>
         <div class="form-group">
           <label for="info">Address</label>
-          <input type="text" id="info" name="info" value="${profile.info}">
+          <input type="text" id="info" name="info" value="<c:out value="${profile.info}"/>">
         </div>
       </div>
 

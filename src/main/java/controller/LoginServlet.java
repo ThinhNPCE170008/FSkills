@@ -22,14 +22,11 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import model.User;
 import model.UserGoogle;
 import util.GoogleLogin;
@@ -212,7 +209,7 @@ public class LoginServlet extends HttpServlet {
                     try {
                         String token = UUID.randomUUID().toString();
                         Timestamp expiryDate = Timestamp.from(Instant.now().plus(30, ChronoUnit.DAYS));
-                        dao.saveToken(user.getUserID(), token, expiryDate);
+                        dao.saveToken(user.getUserId(), token, expiryDate);
 
                         Cookie tokenCookie = new Cookie("REMEMBER_TOKEN", token);
                         tokenCookie.setMaxAge(30 * 24 * 60 * 60); // 30 ngày

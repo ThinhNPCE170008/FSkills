@@ -9,7 +9,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.*;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 @WebServlet(name = "EditProfileServlet", urlPatterns = {"/editProfile"})
@@ -26,10 +25,6 @@ public class EditProfileServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
 
-        System.out.println("Session ID: " + session.getId());
-        System.out.println("User in session: " + (user != null ? user.getDisplayName() : "null"));
-
-
         if (user == null) {
             response.sendRedirect("login");
             return;
@@ -37,24 +32,26 @@ public class EditProfileServlet extends HttpServlet {
 
         DBContext dbContext = null;
         try {
-            dbContext = new DBContext();
-            ProfileDAO profileDAO = new ProfileDAO(dbContext.getConnection());
-            Profile profile = profileDAO.getProfile(user.getUserID()); // Dùng getUserId() từ User
+            dbContext = new DBContext(); // Khởi tạo DBContext
+            ProfileDAO profileDAO = new ProfileDAO(dbContext); // Truyền DBContext thay vì conn
+            Profile profile = profileDAO.getProfile(user.getUserId());
 
             if (profile != null) {
-                System.out.println("Profile found: " + profile.getDisplayName());
                 request.setAttribute("profile", profile);
                 request.getRequestDispatcher("/WEB-INF/views/editProfile.jsp").forward(request, response);
             } else {
-                System.out.println("Profile is null");
-                request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
+                throw new SQLException("Profile not found.");
             }
         } catch (Exception e) {
             request.setAttribute("error", "Error loading profile: " + e.getMessage());
             request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         } finally {
-            if (dbContext != null) {
-                dbContext.close();
+            if (dbContext != null && dbContext.conn != null) {
+                try {
+                    dbContext.conn.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
             }
         }
     }
@@ -64,11 +61,6 @@ public class EditProfileServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        if (user != null) {
-            System.out.println("User found: " + user.getDisplayName());
-        } else {
-            System.out.println("User is null");
-        }
 
         if (user == null) {
             response.sendRedirect("login");
@@ -77,29 +69,29 @@ public class EditProfileServlet extends HttpServlet {
 
         DBContext dbContext = null;
         try {
-            dbContext = new DBContext();
-            ProfileDAO profileDAO = new ProfileDAO(dbContext.getConnection());
+            dbContext = new DBContext(); // Khởi tạo DBContext
+            ProfileDAO profileDAO = new ProfileDAO(dbContext); // Truyền DBContext thay vì conn
+
             Profile profile = new Profile();
-            profile.setUserID(user.getUserID()); // Dùng setUserId() từ Profile, getUserId() từ User
-            profile.setDisplayName(request.getParameter("displayName")); // Đổi "DisplayName" -> "displayName"
-            profile.setEmail(request.getParameter("email")); // Đổi "Email" -> "email"
-            profile.setPhoneNumber(request.getParameter("phoneNumber")); // Đổi "PhoneNumber" -> "phoneNumber"
-            profile.setInfo(request.getParameter("info")); // Đổi "Info" -> "info"
+            profile.setUserId(user.getUserId());
+            profile.setDisplayName(request.getParameter("displayName"));
+            profile.setEmail(request.getParameter("email"));
+            profile.setPhoneNumber(request.getParameter("phoneNumber"));
+            profile.setInfo(request.getParameter("info"));
 
             String dateOfBirthStr = request.getParameter("dateOfBirth");
             if (dateOfBirthStr != null && !dateOfBirthStr.isEmpty()) {
                 java.sql.Date date = java.sql.Date.valueOf(dateOfBirthStr);
                 profile.setDateOfBirth(new java.sql.Timestamp(date.getTime()));
             }
-
             profile.setGender(Boolean.parseBoolean(request.getParameter("gender")));
 
             Part filePart = request.getPart("avatar");
             if (filePart != null && filePart.getSize() > 0) {
-                String fileName = processFileUpload(filePart, user.getUserID()); // Dùng getUserId() từ User
+                String fileName = processFileUpload(filePart, user.getUserId());
                 profile.setAvatar(fileName);
             } else {
-                Profile oldProfile = profileDAO.getProfile(user.getUserID()); // Dùng getUserId() từ User
+                Profile oldProfile = profileDAO.getProfile(user.getUserId());
                 if (oldProfile != null) {
                     profile.setAvatar(oldProfile.getAvatar());
                 }
@@ -117,7 +109,6 @@ public class EditProfileServlet extends HttpServlet {
             } else {
                 request.setAttribute("error", "Failed to update profile");
             }
-
             request.setAttribute("profile", profile);
             request.getRequestDispatcher("/WEB-INF/views/editProfile.jsp").forward(request, response);
 
@@ -125,13 +116,17 @@ public class EditProfileServlet extends HttpServlet {
             request.setAttribute("error", "Error updating profile: " + e.getMessage());
             request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         } finally {
-            if (dbContext != null) {
-                dbContext.close();
+            if (dbContext != null && dbContext.conn != null) {
+                try {
+                    dbContext.conn.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
             }
         }
     }
 
-    private String processFileUpload(Part filePart, int userId) throws IOException { // Đổi UserID -> userId
+    private String processFileUpload(Part filePart, int userId) throws IOException {
         String fileName = "avatar_" + userId + "_" + System.currentTimeMillis() + getFileExtension(filePart);
         String uploadPath = getServletContext().getRealPath("/uploads/avatars/");
         java.io.File uploadDir = new java.io.File(uploadPath);

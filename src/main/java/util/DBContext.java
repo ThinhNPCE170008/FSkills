@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 public class DBContext {
 
-    protected Connection conn = null;
+    public Connection conn = null;
 
     public DBContext() {
         try {
@@ -37,20 +37,21 @@ public class DBContext {
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-    // Thêm method này để lấy connection
-    public Connection getConnection() {
-        return conn;
-    }
-
-    // Thêm method này để đóng connection
-    public void close() {
-        if (conn != null) {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, e);
-            }
-        }
-    }
 }
+
+//    // Thêm method này để lấy connection
+//    public Connection getConnection() {
+//        return conn;
+//    }
+//
+//    // Thêm method này để đóng connection
+//    public void close() {
+//        if (conn != null) {
+//            try {
+//                conn.close();
+//            } catch (SQLException e) {
+//                Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, e);
+//            }
+//        }
+//    }
+//}

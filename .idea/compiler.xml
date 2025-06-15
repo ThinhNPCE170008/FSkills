@@ -12,7 +12,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="FSkills" options="-endorseddirs D:\FSkill_Inteliji\target/endorsed" />
+      <module name="FSkills" options="-endorseddirs D:\1_Study_F\Smester_5\SWP_391\Project\FSkills\target/endorsed" />
     </option>
   </component>
 </project>

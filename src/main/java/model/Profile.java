@@ -1,23 +1,24 @@
 package model;
 
 import java.sql.Timestamp;
-import java.util.regex.Pattern;
+import java.util.regex.Pattern; // Cần thiết cho validateEmail và validatePhoneNumber
 
 public class Profile {
-    private int userID; // Sửa tên viết hoa
-    private String displayName; // Sửa từ chữ cái viết hoa ở đầu
+    private int userId;
+    private String displayName;
     private String email;
-    private String phoneNumber; // Sửa tên viết hoa
-    private String info; // Sửa tên viết hoa
+    private String phoneNumber;
+    private String info;
     private Timestamp dateOfBirth;
     private String avatar;
-    private boolean gender;
+    private boolean gender; // Giữ boolean cho gender như trong Profile cũ
 
-    public Profile() {}
+    public Profile() {
+    }
 
-    public Profile(int userID, String displayName, String email, String phoneNumber,
+    public Profile(int userId, String displayName, String email, String phoneNumber,
                    String info, Timestamp dateOfBirth, String avatar, boolean gender) {
-        this.userID = userID;
+        this.userId = userId;
         this.displayName = displayName;
         this.email = email;
         this.phoneNumber = phoneNumber;
@@ -27,12 +28,14 @@ public class Profile {
         this.gender = gender;
     }
 
-    public int getUserID() { // Getter tuân thủ chuẩn JavaBeans
-        return userID;
+    // Getters và Setters
+
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUserID(int userID) {
-        this.userID = userID;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getDisplayName() {
@@ -83,7 +86,7 @@ public class Profile {
         this.avatar = avatar;
     }
 
-    public boolean getGender() {
+    public boolean getGender() { // Getter cho boolean thường là getPropertyName() hoặc isPropertyName()
         return gender;
     }
 
@@ -91,6 +94,7 @@ public class Profile {
         this.gender = gender;
     }
 
+    // Các phương thức validation (giữ nguyên từ Profile cũ vì chúng hữu ích)
     public boolean validateEmail() {
         String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
         return email != null && Pattern.matches(emailRegex, email);
@@ -103,5 +107,19 @@ public class Profile {
 
     public boolean validateDisplayName() {
         return displayName != null && displayName.length() >= 2;
+    }
+
+    @Override
+    public String toString() {
+        return "Profile{" +
+                "userId=" + userId +
+                ", displayName='" + displayName + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", info='" + info + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", avatar='" + avatar + '\'' +
+                ", gender=" + gender +
+                '}';
     }
 }

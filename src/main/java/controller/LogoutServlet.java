@@ -5,6 +5,7 @@
 package controller;
 
 import dao.UserDAO;
+import model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,8 +15,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.sql.SQLException;
-import model.User;
 
 /**
  *
@@ -67,7 +66,7 @@ public class LogoutServlet extends HttpServlet {
         if (session != null) {
             User user = (User) session.getAttribute("user");
             if (user != null) {
-                userId = user.getUserID();
+                userId = user.getUserId();
             }
             session.invalidate();
         }
