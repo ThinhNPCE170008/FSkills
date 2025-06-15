@@ -1,0 +1,63 @@
+body {
+    background-color: #e0f2f7; /* Light blue background */
+}
+
+.login-container {
+    background-color: #ffffff; /* White background for the form */
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+}
+
+.logo-img {
+    max-width: 150px;
+    margin-bottom: 30px;
+}
+
+.form-control {
+    border-radius: 5px;
+    padding: 12px 15px;
+    font-size: 1rem;
+}
+
+.btn-primary {
+     background-color: #17a2b8; 
+    border-color: #007bff;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    width: 100%;
+    border-radius: 5px;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.login-signup-forgot-link {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.login-signup-forgot-link:hover {
+    text-decoration: underline;
+}
+
+.btn-outline-secondary {
+    border-color: #ced4da;
+    color: #6c757d;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    border-radius: 5px;
+}
+
+.btn-outline-secondary img {
+    margin-right: 10px;
+}
+
+.login-back-btn {
+    z-index: 1000; /* Ensure the button stays on top */
+}
