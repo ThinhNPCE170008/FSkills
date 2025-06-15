@@ -54,7 +54,7 @@
                         <h1>WELCOME To F–Skill</h1>
                         <div class="line"></div>
                         <p>Every course is a step closer to your dream. From foreign languages, technology to soft skills – we accompany you on your journey of continuous learning and development.</p>
-                        <</div>
+                        </div>
 
                     <div class="col-lg-6">
                         <img src="img/pic1.png" alt="Illustration of a girl learning" class="img-fluid">
