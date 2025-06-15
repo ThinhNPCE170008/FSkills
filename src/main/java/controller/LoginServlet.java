@@ -212,7 +212,7 @@ public class LoginServlet extends HttpServlet {
                     try {
                         String token = UUID.randomUUID().toString();
                         Timestamp expiryDate = Timestamp.from(Instant.now().plus(30, ChronoUnit.DAYS));
-                        dao.saveToken(user.getUserId(), token, expiryDate);
+                        dao.saveToken(user.getUserID(), token, expiryDate);
 
                         Cookie tokenCookie = new Cookie("REMEMBER_TOKEN", token);
                         tokenCookie.setMaxAge(30 * 24 * 60 * 60); // 30 ngày

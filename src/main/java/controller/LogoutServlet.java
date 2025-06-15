@@ -67,7 +67,7 @@ public class LogoutServlet extends HttpServlet {
         if (session != null) {
             User user = (User) session.getAttribute("user");
             if (user != null) {
-                userId = user.getUserId();
+                userId = user.getUserID();
             }
             session.invalidate();
         }

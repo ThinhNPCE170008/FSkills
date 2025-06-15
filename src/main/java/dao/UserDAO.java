@@ -39,7 +39,7 @@ public class UserDAO extends DBContext {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 User u = new User();
-                u.setUserId(rs.getInt("UserID"));
+                u.setUserID(rs.getInt("UserID"));
                 u.setUserName(rs.getString("UserName"));
                 u.setDisplayName(rs.getString("DisplayName"));
                 int roleInt = rs.getInt("Role");
@@ -84,7 +84,7 @@ public class UserDAO extends DBContext {
             try ( ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     User u = new User();
-                    u.setUserId(rs.getInt("UserID"));
+                    u.setUserID(rs.getInt("UserID"));
                     u.setUserName(rs.getString("UserName"));
                     u.setDisplayName(rs.getString("DisplayName"));
                     int roleInt = rs.getInt("Role");
@@ -575,7 +575,7 @@ public class UserDAO extends DBContext {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, user.getGoogleID());
             ps.setBoolean(2, true);
-            ps.setInt(3, user.getUserId());
+            ps.setInt(3, user.getUserID());
             
             int result = ps.executeUpdate();
             return result > 0 ? 1 : 0; 

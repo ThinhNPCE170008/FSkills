@@ -1,31 +1,23 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
 import java.sql.Timestamp;
 
-/**
- *
- * @author DELL
- */
 public class User {
 
-    private int userId;
+    private int UserID; // Đổi userId -> UserID
     private String userName;
-    private String displayName;
-    private String email;
+    private String DisplayName; // Đổi displayName -> DisplayName (giữ nguyên tên này vì bạn muốn DisplayName)
+    private String Email; // Đổi email -> Email
     private String password;
     private Role role;
     private int gender;
     private Timestamp dateOfBirth;
     private Timestamp userCreateDate;
     private String avatar;
-    private String info;
+    private String Info; // Đổi info -> Info
     private Ban ban;
     private int reports;
-    private String phone;
+    private String PhoneNumber; // Đổi phone -> PhoneNumber
     private boolean isVerified;
     private String googleID;
 
@@ -33,30 +25,29 @@ public class User {
 
     }
 
-    public User(int userId, String userName, String displayName, String email, String password, Role role, int gender, Timestamp dateOfBirth, Timestamp userCreateDate, String avatar, String info, Ban ban, int reports, String phone, boolean isVerified, String googleID) {
-        this.userId = userId;
+    public User(int UserID, String userName, String DisplayName, String Email, String password, Role role, int gender, Timestamp dateOfBirth, Timestamp userCreateDate, String avatar, String Info, Ban ban, int reports, String PhoneNumber, boolean isVerified, String googleID) {
+        this.UserID = UserID;
         this.userName = userName;
-        this.displayName = displayName;
-        this.email = email;
+        this.DisplayName = DisplayName;
+        this.Email = Email;
         this.password = password;
         this.role = role;
         this.gender = gender;
         this.dateOfBirth = dateOfBirth;
         this.userCreateDate = userCreateDate;
         this.avatar = avatar;
-        this.info = info;
+        this.Info = Info;
         this.ban = ban;
         this.reports = reports;
-        this.phone = phone;
+        this.PhoneNumber = PhoneNumber;
         this.isVerified = isVerified;
         this.googleID = googleID;
     }
 
-
-    public User(String userName, String displayName, String email, String password, Role role, String avatar, boolean isVerified, String googleID) {
+    public User(String userName, String DisplayName, String Email, String password, Role role, String avatar, boolean isVerified, String googleID) {
         this.userName = userName;
-        this.displayName = displayName;
-        this.email = email;
+        this.DisplayName = DisplayName;
+        this.Email = Email;
         this.password = password;
         this.role = role;
         this.avatar = avatar;
@@ -64,30 +55,29 @@ public class User {
         this.googleID = googleID;
     }
 
-    public User(int userId, String userName, String displayName) {
-        this.userId = userId;
+    public User(int UserID, String userName, String DisplayName) {
+        this.UserID = UserID;
         this.userName = userName;
-        this.displayName = displayName;
-        // Gán giá trị mặc định cho các thuộc tính còn lại
-        this.email = null;
+        this.DisplayName = DisplayName;
+        this.Email = null;
         this.password = null;
-        this.role = role; // Hoặc một Role mặc định khác, ví dụ: Role.UNKNOWN
-        this.gender = 0; // Hoặc một giá trị mặc định khác
+        this.role = role;
+        this.gender = 0;
         this.dateOfBirth = null;
         this.userCreateDate = null;
         this.avatar = null;
-        this.info = null;
-        this.ban = ban; // Hoặc một Ban mặc định khác
+        this.Info = null;
+        this.ban = ban;
         this.reports = 0;
-        this.phone = "0999111111"; // Hoặc một giá trị mặc định khác
+        this.PhoneNumber = "0999111111";
     }
 
-    public int getUserId() {
-        return userId;
+    public int getUserID() {
+        return UserID;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setUserID(int UserID) {
+        this.UserID = UserID;
     }
 
     public String getUserName() {
@@ -99,19 +89,19 @@ public class User {
     }
 
     public String getDisplayName() {
-        return displayName;
+        return DisplayName;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public void setDisplayName(String DisplayName) {
+        this.DisplayName = DisplayName;
     }
 
     public String getEmail() {
-        return email;
+        return Email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmail(String Email) {
+        this.Email = Email;
     }
 
     public String getPassword() {
@@ -163,11 +153,11 @@ public class User {
     }
 
     public String getInfo() {
-        return info;
+        return Info;
     }
 
-    public void setInfo(String info) {
-        this.info = info;
+    public void setInfo(String Info) {
+        this.Info = Info;
     }
 
     public Ban getBan() {
@@ -186,12 +176,12 @@ public class User {
         this.reports = reports;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getPhoneNumber() {
+        return PhoneNumber;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setPhoneNumber(String PhoneNumber) {
+        this.PhoneNumber = PhoneNumber;
     }
 
     public boolean isIsVerified() {
@@ -212,7 +202,6 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" + "userId=" + userId + ", userName=" + userName + ", displayName=" + displayName + ", email=" + email + ", password=" + password + ", role=" + role + ", gender=" + gender + ", dateOfBirth=" + dateOfBirth + ", userCreateDate=" + userCreateDate + ", avatar=" + avatar + ", info=" + info + ", ban=" + ban + ", reports=" + reports + ", phone=" + phone + ", isVerified=" + isVerified + ", googleID=" + googleID + '}';
+        return "User{" + "UserID=" + UserID + ", userName=" + userName + ", DisplayName=" + DisplayName + ", Email=" + Email + ", password=" + password + ", role=" + role + ", gender=" + gender + ", dateOfBirth=" + dateOfBirth + ", userCreateDate=" + userCreateDate + ", avatar=" + avatar + ", Info=" + Info + ", ban=" + ban + ", reports=" + reports + ", PhoneNumber=" + PhoneNumber + ", isVerified=" + isVerified + ", googleID=" + googleID + '}';
     }
-
 }

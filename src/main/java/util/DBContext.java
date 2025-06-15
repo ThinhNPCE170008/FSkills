@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package util;
 
 import java.sql.Connection;
@@ -11,10 +8,6 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author Ngo Phuoc Thinh - CE170008 - SE1815
- */
 public class DBContext {
 
     protected Connection conn = null;
@@ -43,6 +36,21 @@ public class DBContext {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
 
+    // Thêm method này để lấy connection
+    public Connection getConnection() {
+        return conn;
+    }
+
+    // Thêm method này để đóng connection
+    public void close() {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, e);
+            }
+        }
     }
 }
