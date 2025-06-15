@@ -1,7 +1,15 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package model;
 
 import java.sql.Timestamp;
 
+/**
+ *
+ * @author DELL
+ */
 public class User {
 
     private int userId;
@@ -17,7 +25,7 @@ public class User {
     private String info;
     private Ban ban;
     private int reports;
-    private String phoneNumber;
+    private String phone;
     private boolean isVerified;
     private String googleID;
 
@@ -25,7 +33,7 @@ public class User {
 
     }
 
-    public User(int userId, String userName, String displayName, String email, String password, Role role, int gender, Timestamp dateOfBirth, Timestamp userCreateDate, String avatar, String info, Ban ban, int reports, String phoneNumber, boolean isVerified, String googleID) {
+    public User(int userId, String userName, String displayName, String email, String password, Role role, int gender, Timestamp dateOfBirth, Timestamp userCreateDate, String avatar, String info, Ban ban, int reports, String phone, boolean isVerified, String googleID) {
         this.userId = userId;
         this.userName = userName;
         this.displayName = displayName;
@@ -39,10 +47,11 @@ public class User {
         this.info = info;
         this.ban = ban;
         this.reports = reports;
-        this.phoneNumber = phoneNumber;
+        this.phone = phone;
         this.isVerified = isVerified;
         this.googleID = googleID;
     }
+
 
     public User(String userName, String displayName, String email, String password, Role role, String avatar, boolean isVerified, String googleID) {
         this.userName = userName;
@@ -59,17 +68,18 @@ public class User {
         this.userId = userId;
         this.userName = userName;
         this.displayName = displayName;
+        // Gán giá trị mặc định cho các thuộc tính còn lại
         this.email = null;
         this.password = null;
-        this.role = null;
-        this.gender = 0;
+        this.role = role; // Hoặc một Role mặc định khác, ví dụ: Role.UNKNOWN
+        this.gender = 0; // Hoặc một giá trị mặc định khác
         this.dateOfBirth = null;
         this.userCreateDate = null;
         this.avatar = null;
         this.info = null;
-        this.ban = null;
+        this.ban = ban; // Hoặc một Ban mặc định khác
         this.reports = 0;
-        this.phoneNumber = null;
+        this.phone = "0999111111"; // Hoặc một giá trị mặc định khác
     }
 
     public int getUserId() {
@@ -176,12 +186,12 @@ public class User {
         this.reports = reports;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public boolean isIsVerified() {
@@ -202,6 +212,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" + "userId=" + userId + ", userName=" + userName + ", displayName=" + displayName + ", email=" + email + ", password=" + password + ", role=" + role + ", gender=" + gender + ", dateOfBirth=" + dateOfBirth + ", userCreateDate=" + userCreateDate + ", avatar=" + avatar + ", info=" + info + ", ban=" + ban + ", reports=" + reports + ", phoneNumber=" + phoneNumber + ", isVerified=" + isVerified + ", googleID=" + googleID + '}';
+        return "User{" + "userId=" + userId + ", userName=" + userName + ", displayName=" + displayName + ", email=" + email + ", password=" + password + ", role=" + role + ", gender=" + gender + ", dateOfBirth=" + dateOfBirth + ", userCreateDate=" + userCreateDate + ", avatar=" + avatar + ", info=" + info + ", ban=" + ban + ", reports=" + reports + ", phone=" + phone + ", isVerified=" + isVerified + ", googleID=" + googleID + '}';
     }
+
 }
