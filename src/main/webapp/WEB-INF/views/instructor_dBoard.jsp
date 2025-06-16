@@ -8,6 +8,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Instructor Dashboard | F-Skill</title>
+        
         <link rel="icon" type="image/png" href="img/favicon_io/favicon.ico">
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -62,10 +63,10 @@
                     </div>
 
                     <nav class="hidden lg:flex items-center space-x-8">
-                        <a href="#dashboard" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Dashboard</a>
-                        <a href="#my-courses" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">My Courses</a>
-                        <a href="#analytics" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Analytics</a>
-                        <a href="#feedback" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Feedback</a>
+                        <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Dashboard</a>
+                        <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">My Courses</a>
+                        <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Analytics</a>
+                        <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Feedback</a>
                         <a href="editProfile" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Profile</a>
                     </nav>
 

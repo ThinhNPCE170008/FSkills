@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Course List | F-Skill</title>
+        <title>List Course | F-Skill</title>
         <meta charset="UTF-8">
         <link rel="icon" type="image/png" href="img/favicon_io/favicon.ico">
 

@@ -91,7 +91,6 @@ public class InstructorDashboardServlet extends HttpServlet {
                 request.setAttribute("listCourse", list);
                 request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                 break;
-
             default:
                 int totalCourses = cdao.countCoursesByUserID(acc.getUserId());
                 List<Course> listLittle = cdao.get3CourseByUserID(acc.getUserId());
@@ -139,7 +138,6 @@ public class InstructorDashboardServlet extends HttpServlet {
                 } else {
                     request.setAttribute("err", "Create failed: Unknown error!");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
-
                 }
             } else if (action.equalsIgnoreCase("update")) {
                 int userID = Integer.parseInt(request.getParameter("userID"));
@@ -162,7 +160,6 @@ public class InstructorDashboardServlet extends HttpServlet {
                 } else {
                     request.setAttribute("err", "Update failed: Unknown error!");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
-
                 }
             } else if (action.equalsIgnoreCase("delete")) {
                 int userID = Integer.parseInt(request.getParameter("userID"));

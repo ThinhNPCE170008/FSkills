@@ -17,7 +17,7 @@ import util.DBContext;
 
 /**
  *
- * @author NgoThinh1902
+ * @author Ngo Phuoc Thinh - CE170008 - SE1815
  */
 public class CourseDAO extends DBContext {
 
