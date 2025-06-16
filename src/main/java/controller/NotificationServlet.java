@@ -2,11 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
+
 package controller;
 
-import dao.CourseDAO;
 import dao.NotificationDAO;
-import dao.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -16,48 +15,43 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
-import model.Course;
 import model.Notification;
-import model.Role;
 import model.User;
 
 /**
  *
- * @author NgoThinh1902
+ * @author Hua Khanh Duy - CE180230 - SE1814
  */
-@WebServlet(name = "InstructorDashboardServlet", urlPatterns = {"/instructor"})
-public class InstructorDashboardServlet extends HttpServlet {
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
+@WebServlet(name="Notification", urlPatterns={"/Notification"})
+public class NotificationServlet extends HttpServlet {
+   
+    /** 
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet InstructorDashboardServlet</title>");
+            out.println("<title>Servlet NotificationServlet</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet InstructorDashboardServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet NotificationServlet at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    }
+    } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
+    /** 
      * Handles the HTTP <code>GET</code> method.
-     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -65,47 +59,27 @@ public class InstructorDashboardServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
         HttpSession session = request.getSession();
-        NotificationDAO notiDAO = new NotificationDAO();
-        UserDAO udao = new UserDAO();
-        CourseDAO cdao = new CourseDAO();
-
         User acc = (User) session.getAttribute("user");
+        NotificationDAO notiDAO = new NotificationDAO();
         if (acc == null) {
-            response.sendRedirect("login");
+            response.sendRedirect("Login");
             return;
         }
-
-        if (acc.getRole() != Role.INSTRUCTOR) {
-            response.sendRedirect("login");
-            return;
-        }
-
-        String action = (String) request.getParameter("action");
+        String action = request.getParameter("action");
         if (action == null) {
-            action = "default";
+            action = "listNotification";
         }
-
-        switch (action) {
-            case "list":
-                List<Course> list = cdao.getCourseByUserID(acc.getUserId());
-
-                request.setAttribute("listCourse", list);
-                request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
-                break;
-            default:
-                int totalCourses = cdao.countCoursesByUserID(acc.getUserId());
-                List<Course> listLittle = cdao.get3CourseByUserID(acc.getUserId());
-                request.setAttribute("listLittle", listLittle);
-                request.setAttribute("totalCourses", totalCourses);
-                request.getRequestDispatcher("/Notification").forward(request, response);
+        if (action.equalsIgnoreCase("listNotification")) {
+            List<Notification> dataNotification = notiDAO.getAllNotificationsByUserId(acc.getUserId());
+            request.setAttribute("listNotification", dataNotification);
+            request.getRequestDispatcher("/WEB-INF/views/instructor_dBoard.jsp").forward(request, response);
         }
-    }
+    } 
 
-    /**
+    /** 
      * Handles the HTTP <code>POST</code> method.
-     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -113,13 +87,12 @@ public class InstructorDashboardServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
+    throws ServletException, IOException {
+        
     }
 
-    /**
+    /** 
      * Returns a short description of the servlet.
-     *
      * @return a String containing servlet description
      */
     @Override

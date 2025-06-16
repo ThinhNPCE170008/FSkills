@@ -1,8 +1,20 @@
+<%@page import="java.util.List"%>
+<%@page import="model.Notification"%>
+<%@page import="model.User"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <!DOCTYPE html>
+<%
+    User acc = (User) session.getAttribute("user");
+    if (acc == null) {
+        response.sendRedirect("login");
+        return;
+    }
+
+    List<Notification> listNotification = (List<Notification>) request.getAttribute("listNotification");
+%>
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
@@ -14,7 +26,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
         <style>
             body {
                 font-family: 'Inter', sans-serif;
@@ -70,6 +82,81 @@
                     </nav>
 
                     <div class="flex items-center space-x-4">
+                        <!-- Font Awesome -->
+                        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+                        <div class="relative">
+                            <!-- Chuông -->
+                            <button id="notificationBtn" class="text-gray-600 hover:text-indigo-600 focus:outline-none text-xl relative">
+                                <i class="fas fa-bell"></i>
+                                <% if (listNotification != null && !listNotification.isEmpty()) {%>
+                                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">
+                                    <%= listNotification.size()%>
+                                </span>
+                                <% } %>
+                            </button>
+
+                            <!-- Dropdown -->
+                            <div id="notificationDropdown" class="hidden absolute right-0 mt-3 w-[400px] bg-white border border-gray-300 rounded-xl shadow-xl z-50">
+                                <!-- Header -->
+                                <div class="flex items-center justify-between px-4 py-3 border-b">
+                                    <span class="text-lg font-semibold text-gray-800">Notifications</span>
+                                    <i class="fas fa-cog text-gray-500 hover:text-indigo-500 cursor-pointer"></i>
+                                </div>
+
+                                <!-- Danh sách thông báo -->
+                                <ul class="max-h-96 overflow-y-auto divide-y divide-gray-200">
+                                    <%
+                                        if (listNotification != null) {
+                                            for (Notification n : listNotification) {
+                                    %>
+                                    <a href="<%= n.getLink()%>" class="block">
+                                        <li class="flex items-start px-4 py-3 hover:bg-gray-50 cursor-pointer">
+                                            <img src="<%= n.getLink()%>" class="w-10 h-10 rounded-full mr-3 mt-1" alt="avatar">
+                                            <div class="flex-1">
+                                                <p class="text-sm text-gray-800 font-semibold"><%= n.getNotificationMessage()%></p>
+                                                <span class="text-xs text-gray-500"><%= n.getNotificationDate()%></span>
+                                            </div>
+                                        </li>
+                                    </a>
+                                    <%
+                                        }
+                                    } else {
+                                    %>
+                                    <div class="alert alert-warning text-center">
+                                        No data found.
+                                    </div>
+                                    <%
+                                        }
+                                    %>
+
+                                </ul>
+                                <!-- Footer -->
+                                <div class="px-4 py-2 text-center text-sm text-indigo-600 hover:underline cursor-pointer border-t">
+                                    View all notifications
+                                </div>
+                            </div>
+                        </div>
+                        <script>
+                            const bellBtn = document.getElementById('notificationBtn');
+                            const dropdown = document.getElementById('notificationDropdown');
+
+                            bellBtn.addEventListener('click', function (e) {
+                                e.stopPropagation();
+                                if (dropdown.style.display === 'block') {
+                                    dropdown.style.display = 'none';
+                                } else {
+                                    dropdown.style.display = 'block';
+                                }
+                            });
+
+                            document.addEventListener('click', function () {
+                                dropdown.style.display = 'none';
+                            });
+                        </script>
+
+
+
                         <a href="#create-course" class="hidden sm:inline-block px-5 py-2.5 rounded-lg font-semibold btn-primary-gradient">
                             <i class="fas fa-plus mr-2"></i> Create Course
                         </a>

@@ -227,22 +227,28 @@
                     <div class="overflow-x-auto">
                         <table class="min-w-full bg-white border border-gray-200 text-sm text-gray-800">
                             <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
-                                <tr>
-                                    <th class="py-3 px-4 border-b text-center">#ID</th>
-                                    <th class="py-3 px-4 border-b text-left">Title</th>
-                                    <th class="py-3 px-4 border-b text-left">Created At</th>
-                                    <th class="py-3 px-4 border-b text-left">Image</th>
-                                    <th class="py-3 px-4 border-b text-center">Actions</th>
-                                </tr>
+                            <div class="text-center my-4">
+                                <h2 class="fw-bold text-uppercase text-primary border-bottom pb-2 d-inline-block">All Announcement</h2>
+                            </div>
+                            <tr>
+                                <th class="py-3 px-4 border-b text-center">#ID</th>
+                                <th class="py-3 px-4 border-b text-left">Title</th>
+                                <th class="py-3 px-4 border-b text-left">Created At</th>
+                                <th class="py-3 px-4 border-b text-left">Take Down Date</th>
+                                <th class="py-3 px-4 border-b text-left">Image</th>
+                                <th class="py-3 px-4 border-b text-center">Actions</th>
+                            </tr>
                             </thead>
                             <tbody>
                                 <%
+                                    java.text.SimpleDateFormat timeFormat = new java.text.SimpleDateFormat("HH:mm dd/MM/yyyy");
                                     for (Announcement ann : listAnnouncement) {
                                 %>
                                 <tr class="hover:bg-gray-50">
                                     <td class="py-3 px-4 border-b text-center"><%= ann.getAnnoucementID()%></td>
                                     <td class="py-3 px-4 border-b"><%= ann.getTitle()%></td>
-                                    <td class="py-3 px-4 border-b"><%= ann.getCreateDate()%></td>
+                                    <td class="py-3 px-4 border-b"><%= timeFormat.format(ann.getCreateDate())%></td>
+                                    <td class="py-3 px-4 border-b"><%= timeFormat.format(ann.getTakeDownDate())%></td>
                                     <td class="py-3 px-4 border-b">
                                         <img src="<%= ann.getAnnouncementImage()%>" alt="Announcement Image" style="max-height: 80px;" />
                                     </td>
@@ -314,7 +320,8 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="takeDownDate" class="form-label fw-bold">Take Down Date</label>
-                                    <input type="datetime-local" class="form-control" id="takeDownDate" name="takeDownDate" required>
+                                    <input type="datetime-local" class="form-control" id="takeDownDate" name="takeDownDate"
+                                           value="2099-12-31T12:59" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="announcementImage" class="form-label fw-bold">Image</label>
