@@ -110,13 +110,13 @@ public class DegreeDAO extends DBContext {
         return 0;
     }
     
-    public boolean approve(String status, String applicationId) {
-        String sql = "UPDATE InstructorApplications SET ApprovalDate = GETDATE(),ApplicationStatus=? "
+    public boolean approve(int status, int applicationId) {
+        String sql = "UPDATE InstructorApplications SET ApprovalDate = GETDATE(),ApplicationStatus=?"
                 + "WHERE ApplicationID = ?;";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, status);
-            ps.setString(2, applicationId);
+            ps.setInt(1, status);
+            ps.setInt(2, applicationId);
             int num = ps.executeUpdate();
             if (num > 0) {
                 return true;

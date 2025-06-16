@@ -368,7 +368,13 @@
                     <form method="POST" action="DegreeAdmin" enctype="multipart/form-data">
                         <input type="hidden" name="action" value="approve">
                         <input type="hidden" name="status" id="statusField<%=deg.getDegreeId()%>" value="">
-
+                        <%
+                            if (acc != null) {
+                        %>
+                        <input type="hidden" name="userId" value="<%=deg.getUserId().getUserId() %>">
+                        <%
+                            }
+                        %>
                         <div class="modal-body">
                             <div class="mb-3 row">
                                 <div class="col-md-2">
@@ -399,12 +405,12 @@
 
                         <div class="modal-footer">
                             <!-- Nút từ chối -->
-                            <button type="submit" class="btn btn-outline-danger"
-                                    onclick="setStatus<%=deg.getDegreeId()%>(2)">Reject</button>
+                            <button type="button" class="btn btn-outline-danger"
+                                    onclick="submitFormWithStatus<%=deg.getDegreeId()%>(2)">Reject</button>
 
                             <!-- Nút chấp nhận -->
-                            <button type="submit" class="btn btn-primary"
-                                    onclick="setStatus<%=deg.getDegreeId()%>(1)">Accept</button>
+                            <button type="button" class="btn btn-primary"
+                                    onclick="submitFormWithStatus<%=deg.getDegreeId()%>(1)">Accept</button>
                         </div>
                     </form>
                 </div>
@@ -413,10 +419,52 @@
 
         <!-- Script để set status -->
         <script>
-            function setStatus<%=deg.getDegreeId()%>(value) {
+            function submitFormWithStatus<%=deg.getDegreeId()%>(value) {
                 document.getElementById("statusField<%=deg.getDegreeId()%>").value = value;
+                document.querySelector("#approveModal<%=deg.getDegreeId()%> form").submit();
             }
         </script>
+
+        <!-- View Detail Modal -->
+        <div class="modal fade" id="viewModal<%=deg.getDegreeId()%>" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content shadow-lg rounded-4">
+                    <div class="modal-header bg-info text-white text-center">
+                        <h5 class="modal-title" id="viewModalLabel">View Detail - ID: <%=deg.getDegreeId()%></h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="mb-3 row">
+                            <div class="col-md-2">
+                                <label class="form-label fw-bold">ID</label>
+                                <input type="text" class="form-control" value="<%=deg.getDegreeId()%>" readonly>
+                            </div>
+                            <div class="col-md-10">
+                                <label class="form-label fw-bold">Link of Degree</label>
+                                <input type="text" class="form-control" value="<%=deg.getLink()%>" readonly>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold">Current Image</label><br>
+                            <% if (deg.getImage() != null && !deg.getImage().isEmpty()) {%>
+                            <!-- Image with Zoom Modal Trigger -->
+                            <img src="<%=deg.getImage()%>" alt="Image" class="img-fluid rounded shadow-sm"
+                                 style="max-width: 300px; max-height: 300px; object-fit: cover; cursor: pointer;"
+                                 data-bs-toggle="modal" data-bs-target="#zoomImageModal<%=deg.getDegreeId()%>">
+                            <% } else { %>
+                            <p>No image available</p>
+                            <% }%>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Zoom Image Modal -->
         <div class="modal fade" id="zoomImageModal<%=deg.getDegreeId()%>" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg">
