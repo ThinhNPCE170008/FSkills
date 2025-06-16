@@ -34,7 +34,6 @@ import util.RoleRedirect;
 
 /**
  *
- * @author Hua Khanh Duy - CE180230 - SE1815
  * @author Ngo Phuoc Thinh - CE170008 - SE1815
  */
 @WebServlet(name = "Login", urlPatterns = {"/login"})
