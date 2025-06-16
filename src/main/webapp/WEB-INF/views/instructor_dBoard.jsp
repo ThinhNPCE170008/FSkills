@@ -81,15 +81,7 @@
                         <a href="editProfile" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Profile</a>
                     </nav>
 
-                    <div class="flex items-center space-x-4">
-                        <div class="relative">
-                            <c:set var="user" value="${sessionScope.user}" />
-                            <button class="flex items-center space-x-2 focus:outline-none">
-                                <img src="${user.avatar}" alt="Instructor Avatar" class="w-10 h-10 rounded-full border-2 border-indigo-200">
-                                <span class="hidden md:inline font-medium text-gray-700">${user.displayName}</span>
-                                <i class="fas fa-chevron-down text-gray-500 text-xs"></i>
-                            </button>
-                        </div>
+                    <div class="relative flex items-center space-x-4">
                         <button id="notificationBtn" class="text-gray-600 hover:text-indigo-600 focus:outline-none text-xl relative">
                             <i class="fas fa-bell"></i>
                             <% if (listNotification != null && !listNotification.isEmpty()) {%>
@@ -100,7 +92,8 @@
                         </button>
 
                         <!-- Dropdown -->
-                        <div id="notificationDropdown" class="hidden absolute right-0 mt-3 w-[400px] bg-white border border-gray-300 rounded-xl shadow-xl z-50">
+                        <div id="notificationDropdown"
+                             class="hidden absolute top-full right-0 mt-2 w-[400px] bg-white border rounded-xl shadow-xl z-50">
                             <!-- Header -->
                             <div class="flex items-center justify-between px-4 py-3 border-b">
                                 <span class="text-lg font-semibold text-gray-800">Notifications</span>
@@ -122,6 +115,7 @@
                                         </div>
                                     </li>
                                 </a>
+
                                 <%
                                     }
                                 } else {
@@ -138,6 +132,14 @@
                             <div class="px-4 py-2 text-center text-sm text-indigo-600 hover:underline cursor-pointer border-t">
                                 View all notifications
                             </div>
+                        </div>
+                        <div class="relative">
+                            <c:set var="user" value="${sessionScope.user}" />
+                            <button class="flex items-center space-x-2 focus:outline-none">
+                                <img src="${user.avatar}" alt="Instructor Avatar" class="w-10 h-10 rounded-full border-2 border-indigo-200">
+                                <span class="hidden md:inline font-medium text-gray-700">${user.displayName}</span>
+                                <i class="fas fa-chevron-down text-gray-500 text-xs"></i>
+                            </button>
                         </div>
                     </div>
                     <script>
@@ -157,6 +159,8 @@
                             dropdown.style.display = 'none';
                         });
                     </script>
+
+
                 </div>
             </div>
         </div>
