@@ -173,15 +173,15 @@ public class CourseDAO extends DBContext {
         return null;
     }
 
-    public int insertCourse(String courseName, String courseCategory, User user, int approveStatus, int salePrice, int originalPrice, int isSale, String courseImageLocation) {
+    public int insertCourse(String courseName, String courseCategory, int userID, int salePrice, int originalPrice, int isSale, String courseImageLocation) {
         String sql = "INSERT INTO Courses (CourseName, CourseCategory, UserID, ApproveStatus, CourseLastUpdate, SalePrice, OriginalPrice, IsSale, CourseImageLocation) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setNString(1, courseName);
             ps.setNString(2, courseCategory);
-            ps.setInt(3, user.getUserId());
-            ps.setInt(4, approveStatus);
+            ps.setInt(3, userID);
+            ps.setInt(4, 0);
             ps.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
             ps.setInt(6, salePrice);
             ps.setInt(7, originalPrice);
@@ -234,6 +234,24 @@ public class CourseDAO extends DBContext {
         }
         return 0;
     }
+    
+    public int onGoingLearner(int courseID) {
+        int count = 0;
+        String sql = "SELECT COUNT(*) AS onGoingLearner FROM Enroll WHERE CourseID = ? AND CompleteDate IS NULL";
+        
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, courseID);
+
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()) {
+                count = rs.getInt(1);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return count;
+    }
 
     public int countCoursesByUserID(int userId) {
         String sql = "SELECT COUNT(*) AS CourseCount FROM Courses WHERE UserID = ?";
@@ -261,9 +279,10 @@ public class CourseDAO extends DBContext {
 
 //        Course course = dao.getCourseByCourseID(2);
 //        System.out.println(course);
+
 //        UserDAO udao = new UserDAO();
 //        User user = udao.getByUserID(3);
-//        int result = dao.insertCourse("C Sharf", "Dot Net Programming", user, 0, 9999, 999999, 0, "https://www.youtube.com/watch?v=de6UvFKbuZQ");
+//        int result = dao.insertCourse("C Sharf 123", "Dot Net Programming", 3, 9999, 999999, 0, "https://www.youtube.com/watch?v=de6UvFKbuZQ");
 //        System.out.println(result);
 
 //        int result = dao.updateCourse(8, "Bootstrap 5", "Web Develop", 1234, 123456789, 0, "https://www.youtube.com/watch?v=de6UvFKbuZQ");
@@ -272,7 +291,10 @@ public class CourseDAO extends DBContext {
 //        int result = dao.deleteCourse(9);
 //        System.out.println(result);
 
-        int result = dao.countCoursesByUserID(3);
-        System.out.println(result);
+//        int result = dao.countCoursesByUserID(3);
+//        System.out.println(result);
+
+//        int result = dao.onGoingLearner(16);
+//        System.out.println(result);
     }
 }
