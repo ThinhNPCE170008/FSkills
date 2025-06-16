@@ -327,3 +327,47 @@ nav a {
 .change-email {
     display: none; /* Hidden completely */
 }
+
+body {
+    background: #f5f7fa;
+    font-family: 'Segoe UI', sans-serif;
+    color: #333;
+}
+
+.profile-edit-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.logo {
+    font-size: 28px;
+}
+
+.search-bar input {
+    min-width: 200px;
+    border-radius: 6px;
+    padding: 5px 10px;
+}
+
+.search-bar button {
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: none;
+}
+
+.icons i {
+    cursor: pointer;
+    color: #333;
+}
+
+.icons .badge {
+    font-size: 10px;
+    padding: 4px 6px;
+}
+
+img {
+    border-radius: 6px;
+    max-width: 100%;
+    height: auto;
+}

@@ -66,6 +66,7 @@
                         <a href="#my-courses" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">My Courses</a>
                         <a href="#analytics" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Analytics</a>
                         <a href="#feedback" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Feedback</a>
+                        <a href="editProfile" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Profile</a>
                     </nav>
 
                     <div class="flex items-center space-x-4">
