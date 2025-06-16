@@ -19,7 +19,7 @@ public class RoleRedirect {
                 response.sendRedirect("adminDashboard");
                 break;
             case INSTRUCTOR:
-                response.sendRedirect("instructorPage");
+                response.sendRedirect("instructor");
                 break;
             case LEARNER:
                 response.sendRedirect("learnerHome");
