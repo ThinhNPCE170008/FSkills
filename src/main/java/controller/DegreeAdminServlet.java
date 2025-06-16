@@ -5,6 +5,7 @@
 package controller;
 
 import dao.DegreeDAO;
+import dao.NotificationDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -95,6 +96,7 @@ public class DegreeAdminServlet extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
         DegreeDAO degreeDAO = new DegreeDAO();
+        NotificationDAO notiDAO = new NotificationDAO();
         if (action.equalsIgnoreCase("delete")) {
             String idRaw = request.getParameter("id");
             int id = 0;
@@ -109,22 +111,37 @@ public class DegreeAdminServlet extends HttpServlet {
                 PrintWriter out = response.getWriter();
                 out.print(e.getMessage());
             }
-        }else if (action.equalsIgnoreCase("approve")) {
+        } else if (action.equalsIgnoreCase("approve")) {
             try {
-                String degreeId = request.getParameter("degreeId");
-                String degreeStatus = request.getParameter("status");
-                boolean res = degreeDAO.approve(degreeStatus, degreeId);
-
-                if (res) {
+                String statusParam = request.getParameter("status");
+                String id = request.getParameter("userId");
+                int userId = Integer.parseInt(id);
+                String degree = request.getParameter("degreeId");
+                int degreeId = Integer.parseInt(degree);
+                int status = Integer.parseInt(statusParam);
+                String link = "http://localhost:9999/FSkills/Degree";
+                String accept = "Your degree has been approved.";
+                String reject = "Your degree has been rejected.";
+                String notiMess = "";
+                if (status == 1) {
+                    notiMess = accept;
+                } else if (status == 2) {
+                    notiMess = reject;
+                }
+                int res = notiDAO.sendNofication(userId, link, notiMess);
+                boolean r = degreeDAO.approve(status, degreeId);
+                if (r == true) {
                     response.sendRedirect("DegreeAdmin");
                 } else {
                     response.sendRedirect("failqq.jsp");
                 }
+
             } catch (Exception e) {
                 e.printStackTrace();
-                response.sendRedirect("failbb.jsp");
+                response.sendRedirect("failbc.jsp");
             }
         }
+
     }
 
     /**

@@ -5,6 +5,7 @@
 package controller;
 
 import dao.CourseDAO;
+import dao.NotificationDAO;
 import dao.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import model.Course;
+import model.Notification;
 import model.Role;
 import model.User;
 
@@ -65,6 +67,7 @@ public class InstructorDashboardServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
+        NotificationDAO notiDAO = new NotificationDAO();
         UserDAO udao = new UserDAO();
         CourseDAO cdao = new CourseDAO();
 
@@ -94,10 +97,9 @@ public class InstructorDashboardServlet extends HttpServlet {
             default:
                 int totalCourses = cdao.countCoursesByUserID(acc.getUserId());
                 List<Course> listLittle = cdao.get3CourseByUserID(acc.getUserId());
-
                 request.setAttribute("listLittle", listLittle);
                 request.setAttribute("totalCourses", totalCourses);
-                request.getRequestDispatcher("/WEB-INF/views/instructor_dBoard.jsp").forward(request, response);
+                request.getRequestDispatcher("/Notification").forward(request, response);
         }
     }
 

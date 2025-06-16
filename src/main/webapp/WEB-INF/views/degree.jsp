@@ -42,7 +42,6 @@
                             <i class="bi bi-cart fs-5"></i>
                             <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">2</span>
                         </span>
-                        <i class="bi bi-bell fs-5"></i>
                         <div>Hi, <c:out value="${not empty sessionScope.user.displayName ? sessionScope.user.displayName : 'Guest'}"/></div>
                     </div>
                 </nav>
