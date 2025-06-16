@@ -296,7 +296,14 @@
 
                     <form method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="action" value="create">
-
+                        <!-- Lấy userId từ session -->
+                        <%
+                            if (acc != null) {
+                        %>
+                        <input type="hidden" name="userId" value="<%= acc.getUserId()%>">
+                        <%
+                            }
+                        %>
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label for="announcementTitle" class="form-label fw-bold">Title</label>

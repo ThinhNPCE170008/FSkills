@@ -4,7 +4,7 @@
  */
 package controller;
 
-import dao.AnnouncementDAO;
+import dao.DegreeDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -18,7 +18,7 @@ import jakarta.servlet.http.Part;
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.List;
-import model.Announcement;
+import model.Degree;
 import model.User;
 
 /**
@@ -26,8 +26,8 @@ import model.User;
  * @author Hua Khanh Duy - CE180230 - SE1814
  */
 @MultipartConfig
-@WebServlet(name = "Announcement", urlPatterns = {"/Announcement"})
-public class AnnouncementServlet extends HttpServlet {
+@WebServlet(name = "Degree", urlPatterns = {"/Degree"})
+public class DegreeServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -46,10 +46,10 @@ public class AnnouncementServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet AnnouncementServlet</title>");
+            out.println("<title>Servlet DegreeServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet AnnouncementServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet DegreeServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -69,31 +69,17 @@ public class AnnouncementServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         String action = request.getParameter("action");
-        List<User> acc = (List<User>) request.getAttribute("Acc");
-        AnnouncementDAO announcementDAO = new AnnouncementDAO();
-
+        List<User> acc = (List<User>) request.getAttribute("user");
+        DegreeDAO degreeDAO = new DegreeDAO();
         if (action == null) {
-            action = "listAnnouncement";
+            action = "listDegree";
         }
-        if (action.equalsIgnoreCase("listAnnouncement")) {
-            List<Announcement> listAnnouncement = announcementDAO.getAll();
+        if (action.equalsIgnoreCase("listDegree")) {
+            List<Degree> listDegree = degreeDAO.getAll();
             request.setAttribute("AccountInfo", acc);
-            request.setAttribute("listAnnouncement", listAnnouncement);
-            request.getRequestDispatcher("WEB-INF/views/announcement.jsp").forward(request, response);
-        } else if (action.equalsIgnoreCase("details")) {
-            String idRaw = request.getParameter("id");
-            int id = 0;
-            try {
-                id = Integer.parseInt(idRaw);
-                Announcement ann = announcementDAO.getAnnouncementById(id);
-                request.setAttribute("dataAnn", ann);
-                request.getRequestDispatcher("WEB-INF/views/announcementDetails.jsp").forward(request, response);
-            } catch (Exception e) {
-                PrintWriter out = response.getWriter();
-                out.print(e.getMessage());
-            }
+            request.setAttribute("listDegree", listDegree);
+            request.getRequestDispatcher("WEB-INF/views/degree.jsp").forward(request, response);
         }
-
     }
 
     /**
@@ -108,53 +94,58 @@ public class AnnouncementServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        AnnouncementDAO AnnounDAO = new AnnouncementDAO();
+        DegreeDAO degreeDAO = new DegreeDAO();
         if (action.equalsIgnoreCase("create")) {
-            String UserIDStr = request.getParameter("userId");
-            String announcementTitle = request.getParameter("announcementTitle");
-            String announcementText = request.getParameter("announcementText");
-            String takeDownDate = request.getParameter("takeDownDate");
-            // Nhận file
-            Part filePart = request.getPart("announcementImage");
-            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-
-            // Lưu file vào thư mục trên server
-            String uploadPath = getServletContext().getRealPath("") + File.separator + "imageUpload";
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdir();
-            }
-
-            filePart.write(uploadPath + File.separator + fileName);
-
-            // Lưu tên file hoặc đường dẫn vào DB nếu cần
-            String imagePath = "imageUpload/" + fileName;
-
-            // Sau đó insert dữ liệu vào DB với imagePath
-            
             try {
-                int UserID = Integer.parseInt(UserIDStr);
-                int res = AnnounDAO.insert(announcementTitle, announcementText, takeDownDate, imagePath, UserID);
+                String id = request.getParameter("userId");
+                String degreeLink = request.getParameter("degreeLink");
+                // Nhận file
+                Part filePart = request.getPart("degreeImage");
+                String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                int userId = Integer.parseInt(id);
+                // Lưu file vào thư mục trên server
+                String uploadPath = getServletContext().getRealPath("") + File.separator + "imageUpload";
+                File uploadDir = new File(uploadPath);
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdir();
+                }
+
+                filePart.write(uploadPath + File.separator + fileName);
+
+                // Lưu tên file hoặc đường dẫn vào DB nếu cần
+                String imagePath = "imageUpload/" + fileName;
+                int res = degreeDAO.insert(userId, imagePath, degreeLink);
 
                 if (res == 1) {
-                    response.sendRedirect("Announcement");
+                    response.sendRedirect("Degree");
                 } else {
                     request.setAttribute("err", "<p>Create failed</p>");
-                    request.getRequestDispatcher("fail.jsp").forward(request, response);
+                    request.getRequestDispatcher("fail1.jsp").forward(request, response);
                 }
             } catch (Exception e) {
+                e.printStackTrace(); // In lỗi chi tiết ra console
                 request.setAttribute("err", "<p>Create failed</p>");
-                request.getRequestDispatcher("fail.jsp").forward(request, response);
+                request.getRequestDispatcher("fail2.jsp").forward(request, response);
+            }
+        } else if (action.equalsIgnoreCase("delete")) {
+            String idRaw = request.getParameter("id");
+            int id = 0;
+            try {
+                id = Integer.parseInt(idRaw);
+                if (degreeDAO.delete(id) == 1) {
+                    response.sendRedirect("Degree");
+                } else {
+                    response.sendRedirect("failss.jsp");
+                }
+            } catch (Exception e) {
+                PrintWriter out = response.getWriter();
+                out.print(e.getMessage());
             }
         } else if (action.equalsIgnoreCase("edit")) {
             try {
-                String announcementId = request.getParameter("announcementId");
-                String announcementTitle = request.getParameter("announcementTitle");
-                String announcementText = request.getParameter("announcementText");
-                String rawDate = request.getParameter("takeDownDate");
-                String formattedDate = rawDate != null ? rawDate.replace("T", " ") + ":00" : null;
-
-                Part filePart = request.getPart("announcementImage");
+                String degreeLink = request.getParameter("degreeLink");
+                Part filePart = request.getPart("degreeImage");
+                String degreeId = request.getParameter("degreeId");
                 String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
                 String imagePath;
 
@@ -172,10 +163,10 @@ public class AnnouncementServlet extends HttpServlet {
                     imagePath = request.getParameter("oldImagePath");
                 }
 
-                boolean res = AnnounDAO.update(announcementTitle, announcementText, formattedDate, imagePath, announcementId);
+                boolean res = degreeDAO.update(imagePath, degreeLink, degreeId);
 
                 if (res) {
-                    response.sendRedirect("Announcement");
+                    response.sendRedirect("Degree");
                 } else {
                     response.sendRedirect("failqq.jsp");
                 }
@@ -183,21 +174,8 @@ public class AnnouncementServlet extends HttpServlet {
                 e.printStackTrace();
                 response.sendRedirect("failbb.jsp");
             }
-        } else if (action.equalsIgnoreCase("delete")) {
-            String idRaw = request.getParameter("id");
-            int id = 0;
-            try {
-                id = Integer.parseInt(idRaw);
-                if (AnnounDAO.delete(id) == 1) {
-                    response.sendRedirect("Announcement");
-                } else {
-                    response.sendRedirect("failss.jsp");
-                }
-            } catch (Exception e) {
-                PrintWriter out = response.getWriter();
-                out.print(e.getMessage());
-            }
         }
+
     }
 
     /**
