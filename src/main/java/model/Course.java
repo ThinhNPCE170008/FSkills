@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 
 /**
  *
- * @author NgoThinh1902
+ * @author Ngo Phuoc Thinh - CE170008 - SE1815
  */
 public class Course {
     private int courseID;

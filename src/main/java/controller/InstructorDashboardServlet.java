@@ -112,7 +112,82 @@ public class InstructorDashboardServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        CourseDAO cdao = new CourseDAO();
+        UserDAO udao = new UserDAO();
 
+        if (request.getMethod().equalsIgnoreCase("POST")) {
+            String action = request.getParameter("action");
+
+            if (action.equalsIgnoreCase("create")) {
+                int userID = Integer.parseInt(request.getParameter("userID"));
+
+                String courseName = request.getParameter("courseName");
+                String courseCategory = request.getParameter("courseCategory");
+                int originalPrice = Integer.parseInt(request.getParameter("originalPrice"));
+                int salePrice = Integer.parseInt(request.getParameter("salePrice"));
+                String courseImageLocation = request.getParameter("courseImageLocation");
+                int isSale = request.getParameter("isSale") != null ? 1 : 0;
+
+                int insert = cdao.insertCourse(courseName, courseCategory, userID, salePrice, originalPrice, isSale, courseImageLocation);
+                if (insert > 0) {
+                    User acc = udao.getByUserID(userID);
+                    List<Course> list = cdao.getCourseByUserID(acc.getUserId());
+
+                    request.setAttribute("listCourse", list);
+                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                } else {
+                    request.setAttribute("err", "Create failed: Unknown error!");
+                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                }
+            } else if (action.equalsIgnoreCase("update")) {
+                int userID = Integer.parseInt(request.getParameter("userID"));
+
+                int courseID = Integer.parseInt(request.getParameter("courseID"));
+                String courseName = request.getParameter("courseName");
+                String courseCategory = request.getParameter("courseCategory");
+                int originalPrice = Integer.parseInt(request.getParameter("originalPrice"));
+                int salePrice = Integer.parseInt(request.getParameter("salePrice"));
+                String courseImageLocation = request.getParameter("courseImageLocation");
+                int isSale = request.getParameter("isSale") != null ? 1 : 0;
+
+                int update = cdao.updateCourse(courseID, courseName, courseCategory, salePrice, originalPrice, isSale, courseImageLocation);
+                if (update > 0) {
+                    User acc = udao.getByUserID(userID);
+                    List<Course> list = cdao.getCourseByUserID(acc.getUserId());
+
+                    request.setAttribute("listCourse", list);
+                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                } else {
+                    request.setAttribute("err", "Update failed: Unknown error!");
+                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                }
+            } else if (action.equalsIgnoreCase("delete")) {
+                int userID = Integer.parseInt(request.getParameter("userID"));
+                int courseID = Integer.parseInt(request.getParameter("courseID"));
+
+                int onGoingLearner = cdao.onGoingLearner(courseID);
+
+                if (onGoingLearner > 0) {
+                    List<Course> list = cdao.getCourseByUserID(userID);
+
+                    request.setAttribute("listCourse", list);
+                    request.setAttribute("err", "Cannot delete course: Students are still enrolled.");
+                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                } else {
+                    int delete = cdao.deleteCourse(courseID);
+
+                    if (delete > 0) {
+                        List<Course> list = cdao.getCourseByUserID(userID);
+
+                        request.setAttribute("listCourse", list);
+                        request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                    } else {
+                        request.setAttribute("err", "Delete failed: Unknown error!");
+                        request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                    }
+                }
+            }
+        }
     }
 
     /**

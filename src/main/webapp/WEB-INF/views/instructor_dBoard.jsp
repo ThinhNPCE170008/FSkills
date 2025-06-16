@@ -8,6 +8,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Instructor Dashboard | F-Skill</title>
+        
         <link rel="icon" type="image/png" href="img/favicon_io/favicon.ico">
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -56,24 +57,20 @@
         <!-- ======================= Header ======================= -->
         <header class="bg-white sticky top-0 z-50 header-shadow">
             <div class="container mx-auto px-4">
-                <div class="flex items-center justify-between h-20">
+                <div class="flex items-center justify-between h-20 px-6">
                     <div class="flex items-center space-x-2">
                         <img src="img/logo.png" alt="F-SKILL Logo" class=" w-20 h-15" />
                     </div>
 
                     <nav class="hidden lg:flex items-center space-x-8">
-                        <a href="#dashboard" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Dashboard</a>
-                        <a href="#my-courses" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">My Courses</a>
-                        <a href="#analytics" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Analytics</a>
-                        <a href="#feedback" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Feedback</a>
+                        <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Dashboard</a>
+                        <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">My Courses</a>
+                        <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Analytics</a>
+                        <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Feedback</a>
                         <a href="editProfile" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Profile</a>
                     </nav>
 
                     <div class="flex items-center space-x-4">
-                        <a href="#create-course" class="hidden sm:inline-block px-5 py-2.5 rounded-lg font-semibold btn-primary-gradient">
-                            <i class="fas fa-plus mr-2"></i> Create Course
-                        </a>
-
                         <div class="relative">
                             <c:set var="user" value="${sessionScope.user}" />
                             <button class="flex items-center space-x-2 focus:outline-none">
