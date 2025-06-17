@@ -255,7 +255,8 @@ public class CourseDAO extends DBContext {
 
     public int countCoursesByUserID(int userId) {
         String sql = "SELECT COUNT(*) AS CourseCount FROM Courses WHERE UserID = ?";
-        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, userId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -263,6 +264,24 @@ public class CourseDAO extends DBContext {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int countLearnersByUserID(int userId) {
+        String sql = "SELECT COUNT(DISTINCT Enroll.UserID) AS LearnerCount FROM Enroll\n" +
+                "JOIN Courses ON Enroll.CourseID = Courses.CourseID\n" +
+                "WHERE Courses.UserID = ?";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("LearnerCount");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         return 0;
     }
@@ -291,10 +310,13 @@ public class CourseDAO extends DBContext {
 //        int result = dao.deleteCourse(9);
 //        System.out.println(result);
 
-//        int result = dao.countCoursesByUserID(3);
+//        int result = dao.countCoursesByUserID(2);
 //        System.out.println(result);
 
 //        int result = dao.onGoingLearner(16);
+//        System.out.println(result);
+
+//        int result = dao.countLearnersByUserID(2);
 //        System.out.println(result);
     }
 }
