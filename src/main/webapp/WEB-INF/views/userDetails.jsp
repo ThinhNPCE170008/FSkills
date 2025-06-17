@@ -266,6 +266,15 @@
                                 <span class="detail-label">User Create Date:</span>
                                 <span class="detail-value" id="displayUserCreateDate">${user.userCreateDate}</span>
                             </div>
+                            
+                            <div class="detail-item">
+                                <span class="detail-label">Phone Number</span>
+                                <span class="detail-value" id="displayPhone">${user.phone}</span>
+                                <input type="text" id="inputPhone" name="phone" class="detail-input" value="${param.phone != null ? param.phone : user.phone}">
+                                <c:if test="${not empty errorMessages['phone']}">
+                                    <span class="error-message">${errorMessages['phone']}</span>
+                                </c:if>
+                            </div>
 
                             <div class="detail-item">
                                 <span class="detail-label">Info:</span>
