@@ -78,7 +78,7 @@ public class InstructorDashboardServlet extends HttpServlet {
         }
 
         if (acc.getRole() != Role.INSTRUCTOR) {
-            response.sendRedirect("login");
+            response.sendRedirect("homePage_Guest.jsp");
             return;
         }
 
