@@ -11,7 +11,7 @@ import java.sql.Timestamp;
  * @author huakh
  */
 public class Notification {
-    private String notificationId;
+    private int notificationId;
     private User userId;
     private String link;
     private String notificationMessage;
@@ -21,7 +21,7 @@ public class Notification {
     public Notification() {
     }
 
-    public Notification(String notificationId, User userId, String link, String notificationMessage, Boolean status, Timestamp notificationDate) {
+    public Notification(int notificationId, User userId, String link, String notificationMessage, Boolean status, Timestamp notificationDate) {
         this.notificationId = notificationId;
         this.userId = userId;
         this.link = link;
@@ -30,11 +30,11 @@ public class Notification {
         this.notificationDate = notificationDate;
     }
 
-    public String getNotificationId() {
+    public int getNotificationId() {
         return notificationId;
     }
 
-    public void setNotificationId(String notificationId) {
+    public void setNotificationId(int notificationId) {
         this.notificationId = notificationId;
     }
 

@@ -4,6 +4,8 @@
     Author     : DELL
 --%>
 
+<%@page import="model.Degree"%>
+<%@page import="java.util.List"%>
 <%@page import="model.User"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -14,6 +16,8 @@
         response.sendRedirect("login");
         return;
     }
+
+    List<Degree> listDegree = (List<Degree>) request.getAttribute("listDegree");
 %>
 <html lang="vi">
     <head>
@@ -214,28 +218,267 @@
             </aside>
 
             <main class="flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Tạo Thông Báo Công Khai</h2>
-                    <div class="flex items-center space-x-4 mb-4">
-                        <input type="text" placeholder="Viết một thông báo công khai..." class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <button class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200">
-                            Tạo
-                        </button>
-                        <button id="upload-file-btn" class="bg-gray-200 text-gray-700 px-4 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                        <input type="file" id="file-input" class="hidden">
-                        <button id="upload-image-btn" class="bg-gray-200 text-gray-700 px-4 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200">
-                            <i class="fas fa-image"></i>
-                        </button>
-                        <input type="file" id="image-input" accept="image/*" class="hidden">
+                <!-- Degree Table Section -->
+                <div class="bg-white p-4 rounded shadow-sm">
+                    <%
+                        if (listDegree != null && !listDegree.isEmpty()) {
+                    %>
+                    <div class="text-center my-4">
+                        <h2 class="fw-bold text-uppercase text-primary border-bottom pb-2 d-inline-block">All Degree</h2>
                     </div>
-                    <div class="mt-8 p-4 bg-gray-50 border border-gray-200 rounded-lg text-gray-600">
-                        <p>Chào mừng bạn đến với bảng điều khiển quản trị! Tại đây bạn có thể quản lý các hóa đơn, thông báo, tài khoản người dùng và xem báo cáo.</p>
+
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover align-middle text-center">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Link</th>
+                                    <th>Submit Date</th>
+                                    <th>Image</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <%
+                                    java.text.SimpleDateFormat timeFormat = new java.text.SimpleDateFormat("HH:mm dd/MM/yyyy");
+                                    for (Degree deg : listDegree) {
+                                %>
+                                <tr>
+                                    <td><%=deg.getDegreeId()%></td>
+                                    <td><%=deg.getUserId().getDisplayName()%></td>
+                                    <td><%=deg.getLink()%></td>
+                                    <td><%= timeFormat.format(deg.getSubmitDate())%></td>
+                                    <td>
+                                        <img src="<%= deg.getImage()%>" class="rounded shadow-sm" style="max-height: 80px; object-fit: cover;" />
+                                    </td>
+                                    <td class="py-3 px-4 border-b">
+                                        <%
+                                            int status = deg.getStatus();
+                                            String statusText = "";
+                                            String badgeClass = "";
+
+                                            if (status == 0) {
+                                                statusText = "Processing";
+                                                badgeClass = "bg-warning text-dark";
+                                            } else if (status == 1) {
+                                                statusText = "Accepted";
+                                                badgeClass = "bg-success";
+                                            } else if (status == 2) {
+                                                statusText = "Rejected";
+                                                badgeClass = "bg-danger";
+                                            }
+                                        %>
+                                        <span class="badge <%=badgeClass%> px-3 py-2 rounded-pill"><%=statusText%></span>
+                                    </td>
+
+                                    <td class="py-3 px-4 border-b text-center">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="d-flex gap-2">
+                                                <button class="btn btn-outline-info btn-sm" type="button"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#viewModal<%=deg.getDegreeId()%>">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <%
+                                                    if (status == 1 || status == 2) {
+                                                %>
+                                                <button class="btn btn-danger btn-sm trash" type="button"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#deleteModal<%=deg.getDegreeId()%>">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                                <%
+                                                    }
+                                                %>
+                                            </div>
+                                            <%
+                                                if (status == 0) {
+                                            %>
+                                            <button class="btn btn-success btn-sm fw-bold px-3 shadow" type="button"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#approveModal<%=deg.getDegreeId()%>">
+                                                <i class="fas fa-check-circle me-1"></i> Approve
+                                            </button>
+                                            <%
+                                                }
+                                            %>
+                                        </div>
+                                    </td>
+
+
+                                </tr>
+                                <%
+                                    }
+                                %>
+                            </tbody>
+                        </table>
                     </div>
+                    <%
+                    } else {
+                    %>
+                    <div class="alert alert-warning text-center">
+                        No data found.
+                    </div>
+                    <%
+                        }
+                    %>
                 </div>
             </main>
         </div>
+        <%
+            for (Degree deg : listDegree) {
+        %>
+        <!-- Delete Modal -->
+        <div class="modal fade" id="deleteModal<%=deg.getDegreeId()%>" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Confirm Delete Degree</h5>
+
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="POST" action="DegreeAdmin">
+                        <input type="hidden" name="action" value="delete">
+
+                        <div class="modal-body">
+                            <input type="hidden" name="id" value="<%=deg.getDegreeId()%>">
+                            <p>Are you sure you want to delete this degree?</p>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Approve Modal -->
+        <div class="modal fade" id="approveModal<%=deg.getDegreeId()%>" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content shadow-lg rounded-4">
+                    <div class="modal-header bg-primary text-white text-center">
+                        <h5 class="modal-title" id="approveModalLabel">Approve Degree - ID: <%=deg.getDegreeId()%> </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <form method="POST" action="DegreeAdmin" enctype="multipart/form-data">
+                        <input type="hidden" name="action" value="approve">
+                        <input type="hidden" name="status" id="statusField<%=deg.getDegreeId()%>" value="">
+                        <%
+                            if (acc != null) {
+                        %>
+                        <input type="hidden" name="userId" value="<%=deg.getUserId().getUserId() %>">
+                        <%
+                            }
+                        %>
+                        <div class="modal-body">
+                            <div class="mb-3 row">
+                                <div class="col-md-2">
+                                    <label for="degreeId" class="form-label fw-bold">ID</label>
+                                    <input type="text" class="form-control" id="degreeId" name="degreeId"
+                                           required value="<%=deg.getDegreeId()%>" readonly>
+                                </div>
+                                <div class="col-md-10">
+                                    <label for="degreeLink" class="form-label fw-bold">Link of Degree</label>
+                                    <input type="text" class="form-control" id="degreeLink" name="degreeLink"
+                                           required value="<%=deg.getLink()%>">
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label fw-bold">Image</label>
+                                <div class="mt-2">
+                                    <% if (deg.getImage() != null && !deg.getImage().isEmpty()) {%>
+                                    <img src="<%=deg.getImage()%>" alt="Image" class="img-fluid rounded shadow-sm"
+                                         style="max-width: 300px; max-height: 300px; object-fit: cover; cursor: pointer;"
+                                         data-bs-toggle="modal" data-bs-target="#zoomImageModal<%=deg.getDegreeId()%>">
+                                    <% } else { %>
+                                    <p>No image available</p>
+                                    <% }%>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <!-- Nút từ chối -->
+                            <button type="button" class="btn btn-outline-danger"
+                                    onclick="submitFormWithStatus<%=deg.getDegreeId()%>(2)">Reject</button>
+
+                            <!-- Nút chấp nhận -->
+                            <button type="button" class="btn btn-primary"
+                                    onclick="submitFormWithStatus<%=deg.getDegreeId()%>(1)">Accept</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Script để set status -->
+        <script>
+            function submitFormWithStatus<%=deg.getDegreeId()%>(value) {
+                document.getElementById("statusField<%=deg.getDegreeId()%>").value = value;
+                document.querySelector("#approveModal<%=deg.getDegreeId()%> form").submit();
+            }
+        </script>
+
+        <!-- View Detail Modal -->
+        <div class="modal fade" id="viewModal<%=deg.getDegreeId()%>" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content shadow-lg rounded-4">
+                    <div class="modal-header bg-info text-white text-center">
+                        <h5 class="modal-title" id="viewModalLabel">View Detail - ID: <%=deg.getDegreeId()%></h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="mb-3 row">
+                            <div class="col-md-2">
+                                <label class="form-label fw-bold">ID</label>
+                                <input type="text" class="form-control" value="<%=deg.getDegreeId()%>" readonly>
+                            </div>
+                            <div class="col-md-10">
+                                <label class="form-label fw-bold">Link of Degree</label>
+                                <input type="text" class="form-control" value="<%=deg.getLink()%>" readonly>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold">Current Image</label><br>
+                            <% if (deg.getImage() != null && !deg.getImage().isEmpty()) {%>
+                            <!-- Image with Zoom Modal Trigger -->
+                            <img src="<%=deg.getImage()%>" alt="Image" class="img-fluid rounded shadow-sm"
+                                 style="max-width: 300px; max-height: 300px; object-fit: cover; cursor: pointer;"
+                                 data-bs-toggle="modal" data-bs-target="#zoomImageModal<%=deg.getDegreeId()%>">
+                            <% } else { %>
+                            <p>No image available</p>
+                            <% }%>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Zoom Image Modal -->
+        <div class="modal fade" id="zoomImageModal<%=deg.getDegreeId()%>" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content bg-transparent border-0">
+                    <div class="modal-body text-center">
+                        <img src="<%=deg.getImage()%>" alt="Zoomed Image" class="img-fluid rounded shadow"
+                             style="max-height: 90vh;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%
+            }
+        %>
 
         <script>
             // Lấy các phần tử cần thiết

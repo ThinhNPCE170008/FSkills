@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 public class Announcement {
     private int annoucementID;
     private String title;
-    private String annoucementText;
+    private String announcementText;
     private Timestamp createDate;
     private Timestamp TakeDownDate;
     private String announcementImage;
@@ -25,7 +25,7 @@ public class Announcement {
     public Announcement(int annoucementID, String title, String annoucementText, Timestamp createDate, Timestamp TakeDownDate, String announcementImage, User userId) {
         this.annoucementID = annoucementID;
         this.title = title;
-        this.annoucementText = annoucementText;
+        this.announcementText = annoucementText;
         this.createDate = createDate;
         this.TakeDownDate = TakeDownDate;
         this.announcementImage = announcementImage;
@@ -48,12 +48,12 @@ public class Announcement {
         this.title = title;
     }
 
-    public String getAnnoucementText() {
-        return annoucementText;
+    public String getAnnouncementText() {
+        return announcementText;
     }
 
-    public void setAnnoucementText(String annoucementText) {
-        this.annoucementText = annoucementText;
+    public void setAnnouncementText(String announcementText) {
+        this.announcementText = announcementText;
     }
 
     public Timestamp getCreateDate() {
@@ -90,7 +90,7 @@ public class Announcement {
 
     @Override
     public String toString() {
-        return "Announcement{" + "annoucementID=" + annoucementID + ", title=" + title + ", annoucementText=" + annoucementText + ", createDate=" + createDate + ", TakeDownDate=" + TakeDownDate + ", announcementImage=" + announcementImage + ", userId=" + userId + '}';
+        return "Announcement{" + "annoucementID=" + annoucementID + ", title=" + title + ", annoucementText=" + announcementText + ", createDate=" + createDate + ", TakeDownDate=" + TakeDownDate + ", announcementImage=" + announcementImage + ", userId=" + userId + '}';
     }
     
     

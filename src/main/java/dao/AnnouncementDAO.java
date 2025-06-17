@@ -58,7 +58,7 @@ public class AnnouncementDAO extends DBContext {
             Timestamp takeDownTimestamp = Timestamp.valueOf(TakeDownDate.replace("T", " ") + ":00");
             ps.setTimestamp(3, takeDownTimestamp);
             ps.setString(4, AnnouncementImage);
-            ps.setInt(5, 1);
+            ps.setInt(5, UserID);
             int row = ps.executeUpdate();
             if (row > 0) {
                 return 1;
@@ -73,7 +73,8 @@ public class AnnouncementDAO extends DBContext {
 
     public Announcement getAnnouncementById(int id) {
         Announcement ann = null;
-        String sql = "";
+        String sql = "SELECT * FROM [dbo].[Announcement] a JOIN [dbo].[Users] u ON a.UserID = u.UserID\n"
+                + "WHERE a.AnnoucementID = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, id);
@@ -97,18 +98,17 @@ public class AnnouncementDAO extends DBContext {
         return ann;
     }
 
-    public boolean update(String title, String announcementText, String createAt, String takeDownDate,
-            String announcementImage, int annoucementID) {
-        String sql = "UPDATE Announcement SET Title =?, AnnouncementText=?, CreateAt=?, TakeDownDate=?, \n"
-                + "AnnouncementImage = ? WHERE AnnoucementID = ?";
+    public boolean update(String title, String announcementText, String takeDownDate,
+            String announcementImage, String annoucementID) {
+        String sql = "UPDATE Announcement SET Title = ?, AnnouncementText = ?, CreateAt = GETDATE(), TakeDownDate = ?, AnnouncementImage = ?\n"
+                + "WHERE AnnoucementID = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, title);
             ps.setString(2, announcementText);
-            ps.setString(3, createAt);
-            ps.setString(4, takeDownDate);
-            ps.setString(5, announcementImage);
-            ps.setInt(6, annoucementID);
+            ps.setString(3, takeDownDate);
+            ps.setString(4, announcementImage);
+            ps.setString(5, annoucementID);
             int num = ps.executeUpdate();
             if (num > 0) {
                 return true;

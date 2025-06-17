@@ -4,16 +4,22 @@
     Author     : DELL
 --%>
 
+<%@page import="dao.AnnouncementDAO"%>
+<%@page import="model.Announcement"%>
+<%@page import="java.util.List"%>
 <%@page import="model.User"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <%
+
     User acc = (User) session.getAttribute("user");
     if (acc == null) {
         response.sendRedirect("login");
         return;
     }
+
+    List<Announcement> listAnnouncement = (List<Announcement>) request.getAttribute("listAnnouncement");
 %>
 <html lang="vi">
     <head>
@@ -37,6 +43,7 @@
             .nav-item:hover .nav-text {
                 color: white; /* Đảo ngược màu chữ và icon thành trắng khi hover */
             }
+
             .nav-item:hover {
                 background-color: #000; /* Đổi màu nền thành đen khi hover */
             }
@@ -156,13 +163,6 @@
                             </a>
                         </li>
                         <li class="mb-2">
-                            <%-- Liên kết đến trang quản lý Course --%>
-                            <a href="${pageContext.request.contextPath}/DegreeAdmin" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
-                                <i class="fas fa-file-invoice-dollar nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
-                                <span class="nav-text text-gray-800 font-medium group-hover:text-white">Manage Degrees</span>
-                            </a>
-                        </li>
-                        <li class="mb-2">
                             <%-- Liên kết đến trang quản lý Company --%>
                             <a href="${pageContext.request.contextPath}/voucherList" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
                                 <i class="fas fa-building nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
@@ -214,28 +214,259 @@
             </aside>
 
             <main class="flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold mb-4 text-gray-800">Tạo Thông Báo Công Khai</h2>
-                    <div class="flex items-center space-x-4 mb-4">
-                        <input type="text" placeholder="Viết một thông báo công khai..." class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <button class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200">
-                            Tạo
+                <div class="bg-white p-6 rounded shadow-sm">
+                    <div class="col-sm-2">
+                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#createModal">
+                            <i class="bi bi-pencil-square"></i> Create new
                         </button>
-                        <button id="upload-file-btn" class="bg-gray-200 text-gray-700 px-4 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                        <input type="file" id="file-input" class="hidden">
-                        <button id="upload-image-btn" class="bg-gray-200 text-gray-700 px-4 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors duration-200">
-                            <i class="fas fa-image"></i>
-                        </button>
-                        <input type="file" id="image-input" accept="image/*" class="hidden">
                     </div>
-                    <div class="mt-8 p-4 bg-gray-50 border border-gray-200 rounded-lg text-gray-600">
-                        <p>Chào mừng bạn đến với bảng điều khiển quản trị! Tại đây bạn có thể quản lý các hóa đơn, thông báo, tài khoản người dùng và xem báo cáo.</p>
+
+                    <%
+                        if (listAnnouncement != null && !listAnnouncement.isEmpty()) {
+                    %>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200 text-sm text-gray-800">
+                            <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
+                            <div class="text-center my-4">
+                                <h2 class="fw-bold text-uppercase text-primary border-bottom pb-2 d-inline-block">All Announcement</h2>
+                            </div>
+                            <tr>
+                                <th class="py-3 px-4 border-b text-center">#ID</th>
+                                <th class="py-3 px-4 border-b text-left">Title</th>
+                                <th class="py-3 px-4 border-b text-left">Created At</th>
+                                <th class="py-3 px-4 border-b text-left">Take Down Date</th>
+                                <th class="py-3 px-4 border-b text-left">Image</th>
+                                <th class="py-3 px-4 border-b text-center">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <%
+                                    java.text.SimpleDateFormat timeFormat = new java.text.SimpleDateFormat("HH:mm dd/MM/yyyy");
+                                    for (Announcement ann : listAnnouncement) {
+                                %>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="py-3 px-4 border-b text-center"><%= ann.getAnnoucementID()%></td>
+                                    <td class="py-3 px-4 border-b"><%= ann.getTitle()%></td>
+                                    <td class="py-3 px-4 border-b"><%= timeFormat.format(ann.getCreateDate())%></td>
+                                    <td class="py-3 px-4 border-b"><%= timeFormat.format(ann.getTakeDownDate())%></td>
+                                    <td class="py-3 px-4 border-b">
+                                        <img src="<%= ann.getAnnouncementImage()%>" alt="Announcement Image" style="max-height: 80px;" />
+                                    </td>
+
+                                    <td class="py-3 px-4 border-b text-center">
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <button class="btn btn-primary btn-sm edit" type="button"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#editModal<%=ann.getAnnoucementID()%>"><i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-danger btn-sm trash" type="button"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#deleteModal<%=ann.getAnnoucementID()%>"><i class="fas fa-trash"></i>
+                                            </button>
+                                            <a href="Announcement?action=details&id=<%=ann.getAnnoucementID()%>" 
+                                               class="btn btn-outline-info btn-sm" title="View Details">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+
+                                </tr>
+                                <%
+                                    }
+                                %>
+                            </tbody>
+                        </table>
                     </div>
+                    <%
+                    } else {
+                    %>
+                    <div class="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded text-center">
+                        No data found.
+                    </div>
+                    <%
+                        }
+                    %>
                 </div>
+
             </main>
         </div>
+        <!-- Create Modal -->
+        <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg"> <!-- rộng hơn -->
+                <div class="modal-content shadow-lg rounded-4">
+
+                    <div class="modal-header bg-primary text-white text-center">
+                        <h5 class="modal-title" id="createModalLabel">Create New Announcement</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <form method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="action" value="create">
+                        <!-- Lấy userId từ session -->
+                        <%
+                            if (acc != null) {
+                        %>
+                        <input type="hidden" name="userId" value="<%= acc.getUserId()%>">
+                        <%
+                            }
+                        %>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="announcementTitle" class="form-label fw-bold">Title</label>
+                                <input type="text" class="form-control" id="announcementTitle" name="announcementTitle"
+                                       placeholder="Enter title..." required>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="takeDownDate" class="form-label fw-bold">Take Down Date</label>
+                                    <input type="datetime-local" class="form-control" id="takeDownDate" name="takeDownDate"
+                                           value="2099-12-31T12:59" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="announcementImage" class="form-label fw-bold">Image</label>
+                                    <input type="file" class="form-control" id="announcementImage" name="announcementImage" accept="image/*">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="announcementText" class="form-label fw-bold">Content</label>
+                                <textarea class="form-control" id="announcementText" name="announcementText"
+                                          placeholder="Enter content of announcement..." rows="8" style="resize: vertical;" required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Create</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        <%
+            for (Announcement ann : listAnnouncement) {
+        %>
+        <!-- Edit Modal -->
+        <div class="modal fade" id="editModal<%=ann.getAnnoucementID()%>" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content shadow-lg rounded-4">
+                    <div class="modal-header bg-primary text-white text-center">
+                        <h5 class="modal-title" id="editModalLabel">Edit Announcement</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <form method="POST" action="Announcement" enctype="multipart/form-data">
+                        <input type="hidden" name="action" value="edit">
+
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="announcementId" class="form-label fw-bold">ID</label>
+                                <input type="text" class="form-control" id="announcementId" name="announcementId"
+                                       required value="<%=ann.getAnnoucementID()%>" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="announcementTitle" class="form-label fw-bold">Title</label>
+                                <input type="text" class="form-control" id="announcementTitle" name="announcementTitle"
+                                       required value="<%=ann.getTitle()%>">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="takeDownDate" class="form-label fw-bold">Take Down Date</label>
+                                    <input type="datetime-local" class="form-control" id="takeDownDate" name="takeDownDate" 
+                                           required value="<%=ann.getTakeDownDate()%>">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="announcementImage" class="form-label fw-bold">Image</label>
+                                <input type="file" class="form-control" id="announcementImage<%=ann.getAnnoucementID()%>" 
+                                       name="announcementImage" accept="image/*">
+                                <!-- Hidden input to store the old image path -->
+                                <input type="hidden" name="oldImagePath" value="<%=ann.getAnnouncementImage() != null ? ann.getAnnouncementImage() : ""%>">
+                                <!-- Display existing image -->
+                                <div class="mt-2" id="currentImageDiv<%=ann.getAnnoucementID()%>">
+                                    <label class="form-label fw-bold">Current Image</label><br>
+                                    <% if (ann.getAnnouncementImage() != null && !ann.getAnnouncementImage().isEmpty()) {%>
+                                    <img src="<%=ann.getAnnouncementImage()%>" alt="Current Image" class="img-fluid rounded" 
+                                         style="max-width: 200px; max-height: 200px; object-fit: cover;">
+                                    <% } else { %>
+                                    <p>No image available</p>
+                                    <% }%>
+                                </div>
+                                <div class="mt-2">
+                                    <label class="form-label fw-bold">Image Preview</label><br>
+                                    <img id="imagePreview<%=ann.getAnnoucementID()%>" class="img-fluid rounded" 
+                                         style="max-width: 200px; max-height: 200px; object-fit: cover; display: none;">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="announcementText" class="form-label fw-bold">Content</label>
+                                <textarea class="form-control" id="announcementText" name="announcementText"
+                                          rows="8" style="resize: vertical;" required><%=ann.getAnnouncementText()%></textarea>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Edit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- JavaScript for image preview -->
+        <script>
+            document.getElementById("announcementImage<%=ann.getAnnoucementID()%>").addEventListener("change", function (event) {
+                const preview = document.getElementById("imagePreview<%=ann.getAnnoucementID()%>");
+                const currentImageDiv = document.getElementById("currentImageDiv<%=ann.getAnnoucementID()%>"); // Sử dụng ID cụ thể
+                const file = event.target.files[0];
+
+                if (file) {
+                    preview.src = URL.createObjectURL(file);
+                    preview.style.display = "block";
+                    if (currentImageDiv) {
+                        currentImageDiv.style.display = "none"; // Ẩn ảnh hiện tại
+                    }
+                } else {
+                    preview.style.display = "none";
+                    if (currentImageDiv) {
+                        currentImageDiv.style.display = "block"; // Hiển thị ảnh hiện tại nếu không có ảnh mới
+                    }
+                }
+            });
+        </script>
+
+        <!-- Delete Modal -->
+        <div class="modal fade" id="deleteModal<%=ann.getAnnoucementID()%>" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Confirm Delete Announcement</h5>
+
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="POST" action="Announcement">
+                        <input type="hidden" name="action" value="delete">
+
+                        <div class="modal-body">
+                            <input type="hidden" name="id" value="<%=ann.getAnnoucementID()%>">
+                            <p>Are you sure you want to delete this announcement?</p>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <%
+            }
+        %>
 
         <script>
             // Lấy các phần tử cần thiết
@@ -303,7 +534,11 @@
                     messageBox.addEventListener('transitionend', () => messageBox.remove());
                 }, 3000); // Ẩn sau 3 giây
             }
+
+
         </script>
+
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     </body>
 </html>

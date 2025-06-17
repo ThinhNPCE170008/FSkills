@@ -82,6 +82,16 @@ public class User {
         this.phone = "0999111111"; // Hoặc một giá trị mặc định khác
     }
 
+    public User(int userId, String displayName, String email, int gender, Timestamp dateOfBirth, String avatar, String info) {
+        this.userId = userId;
+        this.displayName = displayName;
+        this.email = email;
+        this.gender = gender;
+        this.dateOfBirth = dateOfBirth;
+        this.avatar = avatar;
+        this.info = info;
+    }
+    
     public int getUserId() {
         return userId;
     }

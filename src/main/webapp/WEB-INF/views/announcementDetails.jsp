@@ -1,24 +1,28 @@
 <%-- 
-    Document   : announcement
-    Created on : Jun 3, 2025, 2:48:10 PM
-    Author     : Duykh
+    Document   : admin
+    Created on : May 25, 2025, 12:58:45 PM
+    Author     : DELL
 --%>
 
-<%@page import="model.User"%>
 <%@page import="model.Announcement"%>
 <%@page import="java.util.List"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DdOCTYPE html>
+<%@page import="model.User"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
 <%
-    List<User> AccountInfo = (List<User>) request.getAttribute("AccountInfo");
-    List<Announcement> listAnnouncement = (List<Announcement>) request.getAttribute("listAnnouncement");
+    User acc = (User) session.getAttribute("user");
+    if (acc == null) {
+        response.sendRedirect("login");
+        return;
+    }
+    Announcement details = (Announcement) request.getAttribute("dataAnn");
 %>
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/png" href="img/favicon_io/favicon.ico">
-        <title>Admin F-SKILL</title>
+        <title>Trang Quản Trị F-SKILL</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <!-- Bootstrap Icons -->
@@ -53,13 +57,15 @@
             }
             ::-webkit-scrollbar-thumb:hover {
                 background: #555;
+                border-radius: 10px;
             }
         </style>
     </head>
     <body class="flex flex-col h-screen">
         <header class="bg-white shadow-md p-4 flex items-center justify-between rounded-b-lg">
             <div class="flex items-center space-x-2">
-                <img src="pic/logo.png" alt="F-SKILL Logo" class=" w-20 h-15" />
+                <%-- Đã sửa đường dẫn ảnh logo.png --%>
+                <img src="${pageContext.request.contextPath}/pic/logo.png" alt="F-SKILL Logo" class=" w-20 h-15" />
                 <span class="text-2xl font-bold text-gray-800"></span>
             </div>
 
@@ -93,24 +99,37 @@
                         </div>
                     </div>
                 </div>
-
+                <%-- Phần user profile/avatar --%>
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-sm font-semibold">
+                        <%-- Bạn có thể hiển thị ảnh đại diện admin ở đây nếu có --%>
+                        AD
+                    </div>
+                    <%-- Hiển thị tên Admin từ session --%>
+                    <span class="font-medium text-gray-700">
+                        <c:choose>
+                            <c:when test="${not empty sessionScope.adminUser.displayName}">
+                                ${sessionScope.adminUser.displayName}
+                            </c:when>
+                            <c:otherwise>
+                                Admin User
+                            </c:otherwise>
+                        </c:choose>
+                    </span>
+                </div>
             </div>
         </header>
 
         <div class="flex flex-grow">
-            <aside class="w-64 bg-white p-4 shadow-lg flex flex-col rounded-tr-lg rounded-br-lg overflow-y-auto">
+            <aside class="absolute w-64 bg-white p-4 shadow-lg flex flex-col rounded-tr-lg rounded-br-lg overflow-y-auto">
                 <div class="flex items-center space-x-3 mb-8 p-2">
                     <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-xl font-semibold">
+                        <%-- Có thể đặt ảnh đại diện admin tại đây --%>
                     </div>
                     <div>
+                        <%-- Hiển thị tên người dùng đã đăng nhập, ví dụ từ session --%>
                         <p class="font-semibold text-gray-800">
-                            <%
-                                if (AccountInfo != null && !AccountInfo.isEmpty()) {
-                                    for (User a : AccountInfo) {
-                                        a.getDisplayName();
-                                    }
-                                }
-                            %>
+                            <%=acc.getDisplayName()%>
                         </p>
                         <p class="text-sm text-gray-500">Hi Admin</p>
                     </div>
@@ -119,37 +138,43 @@
                 <nav class="flex-grow">
                     <ul>
                         <li class="mb-2">
-                            <a href="#" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
+                            <%-- Thêm URL cho Dashboard --%>
+                            <a href="${pageContext.request.contextPath}/adminDashboard" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
                                 <i class="fas fa-tachometer-alt nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
                                 <span class="nav-text text-gray-800 font-medium group-hover:text-white">Dashboard</span>
                             </a>
                         </li>
                         <li class="mb-2">
-                            <a href="#" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
+                            <%-- Liên kết đến trang quản lý Bills --%>
+                            <a href="${pageContext.request.contextPath}/admin/bills" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
                                 <i class="fas fa-file-invoice-dollar nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
                                 <span class="nav-text text-gray-800 font-medium group-hover:text-white">Bills</span>
                             </a>
                         </li>
                         <li class="mb-2">
-                            <a href="#" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
+                            <%-- Liên kết đến trang quản lý Announcement --%>
+                            <a href="${pageContext.request.contextPath}/Announcement" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
                                 <i class="fas fa-bullhorn nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
                                 <span class="nav-text text-gray-800 font-medium group-hover:text-white">Announcement</span>
                             </a>
                         </li>
                         <li class="mb-2">
-                            <a href="#" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
+                            <%-- Liên kết đến trang quản lý Company --%>
+                            <a href="${pageContext.request.contextPath}/voucherList" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
                                 <i class="fas fa-building nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
                                 <span class="nav-text text-gray-800 font-medium group-hover:text-white">Company</span>
                             </a>
                         </li>
                         <li class="mb-2">
-                            <a href="#" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
+                            <%-- Liên kết đến trang Manage Account --%>
+                            <a href="${pageContext.request.contextPath}/alluser" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
                                 <i class="fas fa-users-cog nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
                                 <span class="nav-text text-gray-800 font-medium group-hover:text-white">Manage Account</span>
                             </a>
                         </li>
                         <li class="mb-2">
-                            <a href="#" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
+                            <%-- Liên kết đến trang Report --%>
+                            <a href="${pageContext.request.contextPath}/admin/reports" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
                                 <i class="fas fa-chart-line nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
                                 <span class="nav-text text-gray-800 font-medium group-hover:text-white">Report</span>
                             </a>
@@ -160,134 +185,65 @@
                 <div class="mt-auto">
                     <ul>
                         <li class="mb-2">
-                            <a href="#" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
+                            <%-- Liên kết đến trang Profile --%>
+                            <a href="${pageContext.request.contextPath}/admin/profile" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
                                 <i class="fas fa-user-circle nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
                                 <span class="nav-text text-gray-800 font-medium group-hover:text-white">Profile</span>
                             </a>
                         </li>
                         <li class="mb-2">
-                            <a href="#" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
+                            <%-- Liên kết đến trang Setting --%>
+                            <a href="${pageContext.request.contextPath}/admin/settings" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
                                 <i class="fas fa-cog nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
                                 <span class="nav-text text-gray-800 font-medium group-hover:text-white">Setting</span>
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <%-- Liên kết đăng xuất --%>
+                            <a href="${pageContext.request.contextPath}/logout" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
+                                <i class="fas fa-sign-out-alt nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
+                                <span class="nav-text text-gray-800 font-medium group-hover:text-white">Đăng xuất</span>
                             </a>
                         </li>
                     </ul>
                 </div>
             </aside>
 
-            <main class="flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
-                <div class="bg-white p-6 rounded shadow-sm">
-                    <div class="col-sm-2">
-                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#createModal">
-                            <i class="bi bi-pencil-square"></i> Create new
-                        </button>
+            <main class="ml-64 flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
+                <div class="bg-white p-5 rounded shadow-sm">
+                    <div class="mb-4">
+                        <a href="Announcement" class="btn btn-warning">
+                            <i class="bi bi-arrow-left-circle"></i> Back
+                        </a>
                     </div>
 
                     <%
-                        if (listAnnouncement != null && !listAnnouncement.isEmpty()) {
+                        if (details != null) {
                     %>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full bg-white border border-gray-200 text-sm text-gray-800">
-                            <thead class="bg-gray-100 text-gray-600 uppercase text-xs">
-                                <tr>
-                                    <th class="py-3 px-4 border-b text-center">#ID</th>
-                                    <th class="py-3 px-4 border-b text-left">Title</th>
-                                    <th class="py-3 px-4 border-b text-left">Created At</th>
-                                    <th class="py-3 px-4 border-b text-left">Image</th>
-                                    <th class="py-3 px-4 border-b text-center">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <%
-                                    for (Announcement ann : listAnnouncement) {
-                                %>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="py-3 px-4 border-b text-center"><%= ann.getAnnoucementID()%></td>
-                                    <td class="py-3 px-4 border-b"><%= ann.getTitle()%></td>
-                                    <td class="py-3 px-4 border-b"><%= ann.getCreateDate()%></td>
-                                    <td class="py-3 px-4 border-b">
-                                        <img src="<%= ann.getAnnouncementImage()%>" alt="Announcement Image" style="max-height: 80px;" />
-                                    </td>
-
-                                    <td class="py-3 px-4 border-b text-center">
-                                        <button href="Announcement?action=update&id=<%=ann.getAnnoucementID()%>" class="btn btn-sm btn-primary me-1" title="Edit">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </button>
-                                        <button href="Announcement?action=delete&id=<%=ann.getAnnoucementID()%>" class="btn btn-sm btn-danger me-1 trash" title="Delete">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                        <button href="#" class="btn btn-sm btn-info" title="Detail">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <%
-                                    }
-                                %>
-                            </tbody>
-                        </table>
+                    <h2 class="fw-bold fs-4 mb-2 text-uppercase"><%=details.getTitle()%></h2>
+                    <div class="text-muted mb-3">
+                        FSkills <%= details.getCreateDate()%>
                     </div>
+
+                    <div class="fs-6" style="line-height: 1.8;">
+                        <%= details.getAnnouncementText().replaceAll("\n", "<br>")%>
+                    </div>
+
+                    <div class="mt-4">
+                        <img src="<%= details.getAnnouncementImage()%>" alt="Image" style="max-width: 100%; max-height: 300px;" class="rounded shadow-sm">
+                    </div>
+
                     <%
                     } else {
                     %>
-                    <div class="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded text-center">
-                        No data found.
-                    </div>
+                    <div class="alert alert-warning text-center">No announcement details found.</div>
                     <%
                         }
                     %>
                 </div>
-
             </main>
 
         </div>
-        <!-- Create Modal -->
-        <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="createModalLabel">Create New Announcement</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-
-                    <form method="POST" enctype="multipart/form-data">
-                        <input type="hidden" name="action" value="create">
-
-                        <div class="modal-body">
-                            <div class="row mb-3">
-                                <div class="col">
-                                    <label for="title" class="form-label">Title</label>
-                                    <input type="text" class="form-control" id="announcementTitle" name="announcementTitle"
-                                           placeholder="Enter title..." required>
-                                </div>
-
-                                <div class="col">
-                                    <label for="text" class="form-label">Content</label>
-                                    <input type="text" class="form-control" id="announcementText" name="announcementText"
-                                           placeholder="Enter content of announcement..." required>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">TakeDownDate</label>
-                                <input type="datetime-local" class="form-control" id="takeDownDate" name="takeDownDate" required>
-
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Image</label>
-                                <input type="file" class="form-control" id="announcementImage" name="announcementImage" accept="image/*">
-                            </div>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Create</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
         <script>
             // Lấy các phần tử cần thiết
             const notificationBell = document.getElementById('notification-bell');

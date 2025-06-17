@@ -22,7 +22,7 @@ import model.UserGoogle;
 
 /**
  *
- * @author DELL
+ * @author Duy
  * @author Ngo Phuoc Thinh - CE170008 - SE1815
  */
 public class UserDAO extends DBContext {
@@ -73,9 +73,9 @@ public class UserDAO extends DBContext {
         // Sử dụng LIKE để tìm kiếm gần đúng, % là ký tự đại diện
         // CONCAT('%', ?, '%') cho phép tìm kiếm bất kỳ đâu trong tên
         String sql = "SELECT UserID, UserName, DisplayName, Role, BanStatus, ReportAmount FROM Users WHERE LOWER(UserName) LIKE LOWER(?)";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, "%" + searchName + "%");
-            try (ResultSet rs = ps.executeQuery()) {
+            try ( ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     User u = new User();
                     u.setUserId(rs.getInt("UserID"));
@@ -112,7 +112,7 @@ public class UserDAO extends DBContext {
 
     public boolean deleteAccount(String userName) throws SQLException {
         String sql = "DELETE FROM Users WHERE UserName = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, userName);
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
@@ -282,7 +282,6 @@ public class UserDAO extends DBContext {
 //            }
 //        }
 //    }
-
     public List<User> showAllInform(String informUser) throws SQLException {
         List<User> us = new ArrayList<>();
         String sql = "SELECT UserName, DisplayName, Email, Password, Role, DateOfBirth, UserCreateDate, info, BanStatus, ReportAmount FROM Users WHERE UserName = ?";
@@ -326,10 +325,10 @@ public class UserDAO extends DBContext {
     }
 
     public boolean updateUser(User user) throws SQLException {
-        String sql = "UPDATE Users SET DisplayName = ?, Email = ?, Role = ?, BanStatus = ?, ReportAmount = ?, DateOfBirth = ?, info = ? WHERE UserName = ?";
+        String sql = "UPDATE Users SET DisplayName = ?, Email = ?, Role = ?, BanStatus = ?, ReportAmount = ?, DateOfBirth = ?, info = ?, PhoneNumber = ? WHERE UserName = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            int i = 1;
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
+            int i = 1; //dùng i thì ít gây ra lôi null hon 
             ps.setString(i++, user.getDisplayName());
             ps.setString(i++, user.getEmail());
             if (user.getRole() != null) {
@@ -341,6 +340,7 @@ public class UserDAO extends DBContext {
             ps.setInt(i++, user.getReports());
             ps.setTimestamp(i++, user.getDateOfBirth());
             ps.setString(i++, user.getInfo());
+            ps.setString(i++, user.getPhone());
             ps.setString(i++, user.getUserName());
 
             int rowsAffected = ps.executeUpdate();
@@ -366,7 +366,7 @@ public class UserDAO extends DBContext {
 
     public boolean banAccount(String userName) throws SQLException {
         String sql = "UPDATE Users SET BanStatus = CASE WHEN BanStatus = 0 THEN 1 WHEN BanStatus = 1 THEN 0 ELSE BanStatus END WHERE UserName = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, userName);
             int ii = ps.executeUpdate();
             return ii > 0;
@@ -433,6 +433,65 @@ public class UserDAO extends DBContext {
         return null;
     }
 
+    public User getByUserID(int userID) {
+        String sql = "SELECT * FROM Users WHERE UserID = ?";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, userID);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String userName = rs.getString("UserName");
+                String displayName = rs.getString("DisplayName");
+                String email = rs.getString("Email");
+                String password = rs.getString("Password");
+                int roleInt = rs.getInt("Role");
+                Role role = null;
+                switch (roleInt) {
+                    case 0:
+                        role = Role.LEARNER;
+                        break;
+                    case 1:
+                        role = Role.INSTRUCTOR;
+                        break;
+                    case 2:
+                        role = Role.ADMIN;
+                        break;
+                    default:
+                        System.err.println("Invalid role value from DB: " + roleInt);
+                }
+                int gender = rs.getInt("Gender");
+                Timestamp birthOfDay = rs.getTimestamp("DateOfBirth");
+                Timestamp timeCreate = rs.getTimestamp("UserCreateDate");
+                String avatar = rs.getString("Avatar");
+                String info = rs.getString("info");
+                int banInt = rs.getInt("BanStatus");
+                Ban Ban = null;
+                switch (banInt) {
+                    case 0:
+                        Ban = Ban.NORMAL;
+                        break;
+                    case 1:
+                        Ban = Ban.BANNED;
+                        break;
+                    default:
+                        System.err.println("Invalid ban value from DB: " + banInt);
+                }
+                int reportAmount = rs.getInt("ReportAmount");
+                String phoneNumber = rs.getString("PhoneNumber");
+                boolean isVerified = rs.getBoolean("IsVerified");
+                String GoogleID = rs.getString("GoogleID");
+
+                User acc = new User(userID, userName, displayName, email, password, role, gender, timeCreate, timeCreate, avatar, info, Ban, reportAmount, info, isVerified, GoogleID);
+                return acc;
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
     public User findByGoogleID(String googleID) {
         String sql = "SELECT * FROM Users WHERE GoogleID = ?";
 
@@ -482,7 +541,7 @@ public class UserDAO extends DBContext {
                 int ReportAmount = rs.getInt("ReportAmount");
                 String PhoneNumber = rs.getString("PhoneNumber");
                 boolean isVerified = rs.getBoolean("IsVerified");
-
+                
                 User acc = new User(UserID, UserName, DisplayName, Email, Password, role, gender, TimeCreate, TimeCreate, Avatar, info, Ban, ReportAmount, info, isVerified, googleID);
                 return acc;
             }
@@ -737,7 +796,6 @@ public class UserDAO extends DBContext {
 //        } catch (SQLException ex) {
 //            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-
 //        String email = "student02@example.com";
 //        User acc = dao.findByEmail(email);
 //        if (acc != null) {
@@ -745,5 +803,9 @@ public class UserDAO extends DBContext {
 //            int result = dao.updateGoogleID(acc);
 //            System.out.println(result);
 //        }
+        
+//        UserDAO dao = new UserDAO();
+//        User user = dao.getByUserID(2);
+//        System.out.println(user);
     }
 }
