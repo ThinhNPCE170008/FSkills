@@ -188,8 +188,8 @@
                     <i class="fas fa-users text-2xl text-green-600"></i>
                 </div>
                 <div>
-                    <p class="text-gray-500">Total Students</p>
-                    <p class="text-3xl font-bold text-gray-800">Coming Soon</p>
+                    <p class="text-gray-500">Total Learners</p>
+                    <p class="text-3xl font-bold text-gray-800">${totalLearners}</p>
                 </div>
             </div>
             <div class="stat-card card p-6 flex items-center space-x-4">
@@ -231,7 +231,7 @@
                                         <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Published</span>
                                     </c:when>
                                     <c:otherwise>
-                                        <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Draft</span>
+                                        <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Pending</span>
                                     </c:otherwise>
                                 </c:choose>
                             </div>
