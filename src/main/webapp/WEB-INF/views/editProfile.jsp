@@ -7,31 +7,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Profile - F-Skills</title>
   <link rel="icon" type="image/png" href="img/favicon_io/favicon.ico">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/editProfile.css">
 </head>
 <body>
 <div class="profile-edit-container">
   <header>
-    <div class="logo">F<span class="highlight">•</span>SKILL</div>
-    <nav class="highlighted-nav">
+    <img src="img/logo.png" alt="Logo" class="logo-img"/>
+    <nav>
       <a href="#">My Course</a>
       <a href="#">Home</a>
       <a href="#">All Courses</a>
+      <%-- 2. Update Degree Icon --%>
+      <a href="${pageContext.request.contextPath}/Degree"><i class="bi bi-journal-text"></i> Degree</a>
       <div class="search-bar">
-        <input type="text" placeholder="Search">
-        <button>🔍</button>
+        <input type="text" placeholder="Search for courses...">
+        <%-- 3. Update Search Icon --%>
+        <button><i class="bi bi-search"></i></button>
       </div>
       <div class="icons">
-        <span class="cart">🛒<span class="badge">2</span></span>
-        <span class="bell">🔔</span>
+        <%-- 4. Update Cart Icon --%>
+        <span class="cart">
+                            <i class="bi bi-cart3"></i><span class="badge">2</span>
+                        </span>
+        <%-- 5. Update Bell Icon --%>
+        <span class="bell"><i class="bi bi-bell"></i></span>
         <div class="user">Hi, <c:out value="${not empty sessionScope.user.displayName ? sessionScope.user.displayName : 'Guest'}"/></div>
       </div>
     </nav>
   </header>
 
   <div class="welcome-section">
-    <h1>Welcome, <c:out value="${not empty sessionScope.user.displayName ? sessionScope.user.displayName : 'Guest'}"/></h1>
+    <h1>Welcome back, <c:out value="${not empty sessionScope.user.displayName ? sessionScope.user.displayName : 'Guest'}"/>!</h1>
   </div>
 
   <c:if test="${not empty success}">
@@ -40,20 +47,23 @@
     </div>
   </c:if>
   <c:if test="${not empty error}">
-    <div class="alert alert-danger" role="alert"> <%-- Changed to alert-danger for error messages --%>
+    <div class="alert alert-danger" role="alert">
         ${error}
     </div>
   </c:if>
 
   <c:if test="${not empty profile}">
+    <%-- Profile Display Card --%>
     <div class="profile-card">
       <div class="profile-header">
         <div class="avatar">👤</div>
         <div class="user-info">
           <h2><c:out value="${profile.displayName}"/></h2>
           <p><c:out value="${profile.email}"/></p>
-          <button class="change-password">Change Password</button>
-          <button class="edit-btn">Edit</button>
+          <div class="btn-group">
+            <button class="change-password">Change Password</button>
+            <button class="edit-btn">Edit Profile</button>
+          </div>
         </div>
       </div>
       <div class="profile-details">
@@ -74,24 +84,24 @@
         </div>
         <div class="field">
           <label>Date of Birth</label>
-          <input type="date" value="${profile.dateOfBirth}" readonly> <%-- dateOfBirth is Timestamp, will be formatted by browser --%>
+          <input type="date" value="${profile.dateOfBirth}" readonly>
         </div>
         <div class="field">
           <label>Address</label>
           <input type="text" value="<c:out value="${profile.info}"/>" readonly>
         </div>
-        <div class="field email-field"> <%-- Added email field explicitly here as well, from your original code --%>
+        <div class="field email-field">
           <label>My email Address</label>
           <div class="email-info">
             <span>📧 <c:out value="${profile.email}"/></span>
-            <span>1 month ago</span> <%-- This is static, consider making dynamic if needed --%>
+            <span>1 month ago</span> <%-- This is static --%>
           </div>
-          <button class="change-email">Change email</button>
         </div>
       </div>
     </div>
 
-    <form class="profile-form" action="editProfile" method="POST" enctype="multipart/form-data" style="display: none;">
+    <%-- Profile Edit Form (Initially Hidden) --%>
+    <form class="profile-form" action="editProfile" method="POST" enctype="multipart/form-data">
       <div class="avatar-section">
         <div class="avatar-container">
           <img src="${profile.avatar != null ? profile.avatar : 'img/default-avatar.png'}"
@@ -140,37 +150,40 @@
       </div>
 
       <div class="button-group">
+        <button type="button" class="cancel-btn">Cancel</button>
         <button type="submit" class="save-btn">Save Changes</button>
-        <button type="button" class="cancel-btn" onclick="window.history.back()">Cancel</button>
       </div>
     </form>
   </c:if>
-
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-  document.getElementById('avatar-upload').addEventListener('change', function(e) {
+  // JavaScript for toggling view and image preview
+  const profileCard = document.querySelector('.profile-card');
+  const form = document.querySelector('.profile-form');
+  const editBtn = document.querySelector('.edit-btn');
+  const cancelBtn = document.querySelector('.cancel-btn');
+
+  editBtn.addEventListener('click', () => {
+    profileCard.style.display = 'none';
+    form.style.display = 'block';
+  });
+
+  cancelBtn.addEventListener('click', () => {
+    profileCard.style.display = 'block';
+    form.style.display = 'none';
+  });
+
+  // Preview avatar
+  document.getElementById('avatar-upload').addEventListener('change', function (e) {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onload = function(e) {
-        document.getElementById('avatar-preview').src = e.target.result;
+      reader.onload = function (event) {
+        document.getElementById('avatar-preview').src = event.target.result;
       }
       reader.readAsDataURL(file);
-    }
-  });
-
-  document.querySelector('.edit-btn').addEventListener('click', function() {
-    const profileCard = document.querySelector('.profile-card');
-    const form = document.querySelector('.profile-form');
-    if (profileCard.style.display !== 'none') {
-      profileCard.style.display = 'none';
-      form.style.display = 'block';
-    } else {
-      profileCard.style.display = 'block';
-      form.style.display = 'none';
     }
   });
 </script>
