@@ -111,7 +111,7 @@ public class InstructorModuleServlet extends HttpServlet {
             // Course course = courseDAO.getCourseById(courseId);
             // request.setAttribute("course", course);
         } catch (NumberFormatException e) {
-            request.setAttribute("error", "Invalid course ID.");
+
         }
     } 
 
@@ -125,7 +125,34 @@ public class InstructorModuleServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        CourseDAO cdao = new CourseDAO();
+        ModuleDAO mdao = new ModuleDAO();
+        Course course = null;
+        Module module = null;
+
+        if(request.getMethod().equalsIgnoreCase("POST")) {
+            String action = request.getParameter("action");
+
+            if(action.equalsIgnoreCase("create")) {
+                int courseID = Integer.parseInt(request.getParameter("courseID"));
+                course = cdao.getCourseByCourseID(courseID);
+
+                String moduleName = request.getParameter("moduleName");
+                module = new Module(moduleName, course);
+
+                int insert = mdao.insertModule(module);
+
+                if (insert > 0) {
+                    List<Module> list = mdao.getAllModuleByCourseID(courseID);
+
+                    request.setAttribute("listModule", list);
+                    request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
+                } else {
+                    request.setAttribute("err", "Create failed: Unknown error!");
+                    request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
+                }
+            }
+        }
     }
 
     /** 

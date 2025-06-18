@@ -164,7 +164,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="userID" value="${courseDetails.courseID}"/>
+                    <input type="hidden" name="courseID" value="${courseDetails.courseID}"/>
 
                     <div class="mb-3">
                         <label for="moduleName" class="form-label">Module Name</label>

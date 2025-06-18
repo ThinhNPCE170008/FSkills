@@ -18,6 +18,7 @@ public class Module {
         this.moduleLastUpdate = moduleLastUpdate;
     }
 
+    // Insert Module
     public Module(String moduleName, Course course) {
         this.moduleName = moduleName;
         this.course = course;
