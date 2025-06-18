@@ -26,7 +26,7 @@ import model.User;
  * @author Hua Khanh Duy - CE180230 - SE1814
  */
 @MultipartConfig
-@WebServlet(name = "Announcement", urlPatterns = {"/Announcement"})
+@WebServlet(name = "AnnouncementDetails", urlPatterns = {"/Announcement"})
 public class AnnouncementServlet extends HttpServlet {
 
     /**
@@ -69,7 +69,7 @@ public class AnnouncementServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         String action = request.getParameter("action");
-        List<User> acc = (List<User>) request.getAttribute("Acc");
+        User user= (User) session.getAttribute("user");
         AnnouncementDAO announcementDAO = new AnnouncementDAO();
 
         if (action == null) {
@@ -77,7 +77,7 @@ public class AnnouncementServlet extends HttpServlet {
         }
         if (action.equalsIgnoreCase("listAnnouncement")) {
             List<Announcement> listAnnouncement = announcementDAO.getAll();
-            request.setAttribute("AccountInfo", acc);
+            request.setAttribute("AccountInfo", user);
             request.setAttribute("listAnnouncement", listAnnouncement);
             request.getRequestDispatcher("WEB-INF/views/announcement.jsp").forward(request, response);
         } else if (action.equalsIgnoreCase("details")) {
@@ -117,21 +117,25 @@ public class AnnouncementServlet extends HttpServlet {
             // Nhận file
             Part filePart = request.getPart("announcementImage");
             String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+            String imagePath;
+            if (fileName == null || fileName.isEmpty()) {
+                // Gán chuỗi mặc định
+                imagePath = "No Image";
+                // Lưu vào DB hoặc dùng xử lý tiếp theo
+            } else {
+                // Lưu file vào thư mục trên server
+                String uploadPath = getServletContext().getRealPath("") + File.separator + "imageUpload";
+                File uploadDir = new File(uploadPath);
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdir();
+                }
 
-            // Lưu file vào thư mục trên server
-            String uploadPath = getServletContext().getRealPath("") + File.separator + "imageUpload";
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdir();
+                filePart.write(uploadPath + File.separator + fileName);
+
+                // Lưu tên file hoặc đường dẫn vào DB nếu cần
+                imagePath = "imageUpload/" + fileName;
             }
 
-            filePart.write(uploadPath + File.separator + fileName);
-
-            // Lưu tên file hoặc đường dẫn vào DB nếu cần
-            String imagePath = "imageUpload/" + fileName;
-
-            // Sau đó insert dữ liệu vào DB với imagePath
-            
             try {
                 int UserID = Integer.parseInt(UserIDStr);
                 int res = AnnounDAO.insert(announcementTitle, announcementText, takeDownDate, imagePath, UserID);
@@ -140,11 +144,11 @@ public class AnnouncementServlet extends HttpServlet {
                     response.sendRedirect("Announcement");
                 } else {
                     request.setAttribute("err", "<p>Create failed</p>");
-                    request.getRequestDispatcher("fail.jsp").forward(request, response);
+                    request.getRequestDispatcher("fail12.jsp").forward(request, response);
                 }
             } catch (Exception e) {
                 request.setAttribute("err", "<p>Create failed</p>");
-                request.getRequestDispatcher("fail.jsp").forward(request, response);
+                request.getRequestDispatcher("fail23.jsp").forward(request, response);
             }
         } else if (action.equalsIgnoreCase("edit")) {
             try {
