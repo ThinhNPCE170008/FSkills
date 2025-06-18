@@ -85,6 +85,20 @@ public class ModuleDAO extends DBContext {
             ps.setInt(2, module.getCourse().getCourseID());
             ps.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
 
+//            String getCourseSql = "SELECT CourseID FROM Modules WHERE ModuleID = ?";
+//            PreparedStatement ps2 = conn.prepareStatement(getCourseSql);
+//            ps2.setInt(1, module.getModuleID());
+//            ResultSet rs = ps2.executeQuery();
+//            int courseID = 0;
+//            if (rs.next()) {
+//                courseID = rs.getInt("CourseID");
+//            }
+
+            String updateCourseSql = "UPDATE Courses SET CourseLastUpdate = GETDATE() WHERE CourseID = ?";
+            PreparedStatement ps3 = conn.prepareStatement(updateCourseSql);
+            ps3.setInt(1, module.getCourse().getCourseID());
+            ps3.executeUpdate();
+
             int insert =  ps.executeUpdate();
             return insert > 0 ? 1 : 0;
         } catch (SQLException e) {
@@ -104,6 +118,20 @@ public class ModuleDAO extends DBContext {
             ps.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
             ps.setInt(3, moduleID);
 
+            String getCourseSql = "SELECT CourseID FROM Modules WHERE ModuleID = ?";
+            PreparedStatement ps2 = conn.prepareStatement(getCourseSql);
+            ps2.setInt(1, moduleID);
+            ResultSet rs = ps2.executeQuery();
+            int courseID = 0;
+            if (rs.next()) {
+                courseID = rs.getInt("CourseID");
+            }
+
+            String updateCourseSql = "UPDATE Courses SET CourseLastUpdate = GETDATE() WHERE CourseID = ?";
+            PreparedStatement ps3 = conn.prepareStatement(updateCourseSql);
+            ps3.setInt(1, courseID);
+            ps3.executeUpdate();
+
             int update = ps.executeUpdate();
             return update > 0 ? 1 : 0;
         } catch (SQLException e) {
@@ -119,6 +147,20 @@ public class ModuleDAO extends DBContext {
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, moduleID);
+
+            String getCourseSql = "SELECT CourseID FROM Modules WHERE ModuleID = ?";
+            PreparedStatement ps2 = conn.prepareStatement(getCourseSql);
+            ps2.setInt(1, moduleID);
+            ResultSet rs = ps2.executeQuery();
+            int courseID = 0;
+            if (rs.next()) {
+                courseID = rs.getInt("CourseID");
+            }
+
+            String updateCourseSql = "UPDATE Courses SET CourseLastUpdate = GETDATE() WHERE CourseID = ?";
+            PreparedStatement ps3 = conn.prepareStatement(updateCourseSql);
+            ps3.setInt(1, courseID);
+            ps3.executeUpdate();
 
             int update = ps.executeUpdate();
             return update > 0 ? 1 : 0;

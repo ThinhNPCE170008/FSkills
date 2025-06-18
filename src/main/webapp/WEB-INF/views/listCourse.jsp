@@ -59,7 +59,7 @@
     </style>
 </head>
 <body>
-<jsp:include page="/header.jsp" />
+<jsp:include page="/layout/headerInstructor.jsp" />
 
 <div class="container py-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -110,7 +110,7 @@
                         <td>
                             <c:choose>
                                 <c:when test="${not empty c.publicDate}">
-                                    <fmt:formatDate value="${c.publicDate}" pattern="yyyy-MM-dd" />
+                                    <fmt:formatDate value="${c.publicDate}" pattern="yyyy-MM-dd HH:mm:ss" />
                                 </c:when>
                                 <c:otherwise>N/A</c:otherwise>
                             </c:choose>
@@ -118,7 +118,7 @@
                         <td>
                             <c:choose>
                                 <c:when test="${not empty c.courseLastUpdate}">
-                                    <fmt:formatDate value="${c.courseLastUpdate}" pattern="yyyy-MM-dd" />
+                                    <fmt:formatDate value="${c.courseLastUpdate}" pattern="yyyy-MM-dd HH:mm:ss" />
                                 </c:when>
                                 <c:otherwise>N/A</c:otherwise>
                             </c:choose>
@@ -156,7 +156,7 @@
         </c:otherwise>
     </c:choose>
 </div>
-<jsp:include page="/footer.jsp" />
+<jsp:include page="/layout/footerInstructor.jsp" />
 
 <!-- Create Course Modal -->
 <div class="modal fade" id="createCourseModal" tabindex="-1" aria-labelledby="createCourseModalLabel" aria-hidden="true">

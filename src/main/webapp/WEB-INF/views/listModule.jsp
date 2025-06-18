@@ -59,12 +59,12 @@
     </style>
 </head>
 <body>
-<jsp:include page="/header.jsp"/>
+<jsp:include page="/layout/headerInstructor.jsp"/>
 
 <div class="container py-5">
     <div class="container py-5">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="instructor" class="btn btn-secondary">
+            <a href="instructor?action=list" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Back
             </a>
 
@@ -74,32 +74,23 @@
         </div>
 
         <div class="info-box d-flex align-items-center gap-4 mb-4">
-            <c:if test="${not empty courseDetails}">
-                <img src="${courseDetails.courseImageLocation}" class="rounded me-3"
+            <c:if test="${not empty course}">
+                <img src="${course.courseImageLocation}" class="rounded me-3"
                      style="width: 160px; height: 100px; object-fit: cover;" alt="Avatar">
                 <div>
-                    <h5 class="mb-1"><strong>Course Name:</strong> ${courseDetails.courseName}</h5>
-                    <p class="mb-0"><strong>Category:</strong> ${courseDetails.courseCategory}</p>
+                    <h5 class="mb-1"><strong>Course Name:</strong> ${course.courseName}</h5>
+                    <p class="mb-0"><strong>Category:</strong> ${course.courseCategory}</p>
                     <p class="mb-0">
                         <strong>Status:</strong>
-                        <span class="badge ${courseDetails.approveStatus == 1 ? 'badge-approved' : 'badge-pending'}">
-                                ${courseDetails.approveStatus == 1 ? 'Approved' : 'Pending'}
+                        <span class="badge ${course.approveStatus == 1 ? 'badge-approved' : 'badge-pending'}">
+                                ${course.approveStatus == 1 ? 'Approved' : 'Pending'}
                         </span>
                     </p>
                     <p class="mb-0">
                         <strong>Public Date:</strong>
                         <c:choose>
-                            <c:when test="${not empty courseDetails.publicDate}">
-                                <fmt:formatDate value="${courseDetails.publicDate}" pattern="yyyy-MM-dd"/>
-                            </c:when>
-                            <c:otherwise>N/A</c:otherwise>
-                        </c:choose>
-                    </p>
-                    <p class="mb-0">
-                        <strong>Last Update:</strong>
-                        <c:choose>
-                            <c:when test="${not empty courseDetails.courseLastUpdate}">
-                                <fmt:formatDate value="${courseDetails.courseLastUpdate}" pattern="yyyy-MM-dd"/>
+                            <c:when test="${not empty course.publicDate}">
+                                <fmt:formatDate value="${course.publicDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
                             </c:when>
                             <c:otherwise>N/A</c:otherwise>
                         </c:choose>
@@ -129,7 +120,7 @@
                             <td>
                                 <c:choose>
                                     <c:when test="${not empty module.moduleLastUpdate}">
-                                        <fmt:formatDate value="${module.moduleLastUpdate}" pattern="yyyy-MM-dd"/>
+                                        <fmt:formatDate value="${module.moduleLastUpdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
                                     </c:when>
                                     <c:otherwise>N/A</c:otherwise>
                                 </c:choose>
@@ -151,9 +142,9 @@
         </c:choose>
     </div>
 </div>
-<jsp:include page="/footer.jsp"/>
+<jsp:include page="/layout/footerInstructor.jsp" />
 
-<!-- Create Course Modal -->
+<!-- Create Module Modal -->
 <div class="modal fade" id="createModuleModal" tabindex="-1" aria-labelledby="createModuleModalLabel"
      aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -164,7 +155,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="courseID" value="${courseDetails.courseID}"/>
+                    <input type="hidden" name="courseID" value="${course.courseID}"/>
 
                     <div class="mb-3">
                         <label for="moduleName" class="form-label">Module Name</label>
@@ -183,7 +174,6 @@
 </div>
 
 <c:forEach var="module" items="${listModule}">
-
     <!-- Update Modal -->
     <div class="modal fade" id="updateModal${module.moduleID}" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
@@ -194,19 +184,20 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="courseID" value="${courseDetails.courseID}"/>
-                    <input type="hidden" name="userID" value="${module.moduleID}"/>
+                    <input type="hidden" name="moduleID" value="${module.moduleID}"/>
+                    <input type="hidden" name="courseID" value="${course.courseID}"/>
 
                     <div class="mb-3">
                         <label class="form-label">Module Name</label>
-                        <input type="text" name="moduleName" id="updateCourseName${module.moduleID}"
+                        <input type="text" name="moduleName" id="updateModuleName${module.moduleID}"
                                value="${module.moduleName}" class="form-control"
                                pattern="^[\p{L}\s]+$" title="Only letters and spaces are allowed" maxlength="30"
                                required>
                     </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -222,7 +213,7 @@
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="moduleID" value="${module.moduleID}"/>
-                    <input type="hidden" name="courseID" value="${courseDetails.courseID}"/>
+                    <input type="hidden" name="courseID" value="${course.courseID}"/>
                     <p>Are you sure you want to delete <strong>${module.moduleName}</strong>?</p>
                 </div>
                 <div class="modal-footer">
@@ -234,56 +225,23 @@
     </div>
 </c:forEach>
 
-<c:if test="${not empty err}">
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div class="toast align-items-center text-bg-danger border-0 show" role="alert" aria-live="assertive"
-             aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                        ${err}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                        aria-label="Close"></button>
-            </div>
-        </div>
-    </div>
-</c:if>
-
 <!-- Check Create Input-->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const form = document.getElementById("createCourseForm");
+        const form = document.getElementById("createModuleForm");
 
         form.addEventListener("submit", function (e) {
-            const nameInput = document.getElementById("courseName");
-            const categoryInput = document.getElementById("courseCategory");
-
+            const nameInput = document.getElementById("moduleName");
             const name = nameInput.value.trim();
-            const category = categoryInput.value.trim();
-
             const regexValid = /^[\p{L}]+(?: [\p{L}]+)*$/u;
-            // Giải thích:
-            // - bắt đầu bằng chữ
-            // - mỗi từ cách nhau đúng 1 space
-            // - không ký tự đặc biệt, không số
 
             if (name.length === 0 || name.length > 30 || !regexValid.test(name)) {
-                alert("Invalid Course Name.\n- Only letters allowed.\n- No extra spaces.\n- Max 30 characters.");
+                alert("Invalid Module Name.\n- Only letters allowed.\n- No extra spaces.\n- Max 30 characters.");
                 nameInput.focus();
                 e.preventDefault();
                 return;
             }
-
-            if (category.length === 0 || category.length > 30 || !regexValid.test(category)) {
-                alert("Invalid Category.\n- Only letters allowed.\n- No extra spaces.\n- Max 30 characters.");
-                categoryInput.focus();
-                e.preventDefault();
-                return;
-            }
-
-            // Replace original input value with trimmed version (optional but helpful)
             nameInput.value = name;
-            categoryInput.value = category;
         });
     });
 </script>
@@ -291,33 +249,20 @@
 <!-- Check Update Input-->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // Lặp qua tất cả form có id bắt đầu bằng "updateCourseForm"
-        document.querySelectorAll("form[id^='updateCourseForm']").forEach(function (form) {
+        document.querySelectorAll("form[id^='updateModuleForm']").forEach(function (form) {
             form.addEventListener("submit", function (e) {
-                const courseID = form.id.replace("updateCourseForm", "");
-                const nameInput = document.getElementById("updateCourseName" + courseID);
-                const categoryInput = document.getElementById("updateCourseCategory" + courseID);
-
+                const moduleID = form.id.replace("updateModuleForm", "");
+                const nameInput = document.getElementById("updateModuleName" + moduleID);
                 const name = nameInput.value.trim();
-                const category = categoryInput.value.trim();
                 const regexValid = /^[\p{L}]+(?: [\p{L}]+)*$/u;
 
                 if (name.length === 0 || name.length > 30 || !regexValid.test(name)) {
-                    alert("Invalid Course Name.\n- Only letters allowed.\n- No extra spaces.\n- Max 30 characters.");
+                    alert("Invalid Module Name.\n- Only letters allowed.\n- No extra spaces.\n- Max 30 characters.");
                     nameInput.focus();
                     e.preventDefault();
                     return;
                 }
-
-                if (category.length === 0 || category.length > 30 || !regexValid.test(category)) {
-                    alert("Invalid Category.\n- Only letters allowed.\n- No extra spaces.\n- Max 30 characters.");
-                    categoryInput.focus();
-                    e.preventDefault();
-                    return;
-                }
-
                 nameInput.value = name;
-                categoryInput.value = category;
             });
         });
     });
@@ -333,6 +278,21 @@
         }
     });
 </script>
+
+<c:if test="${not empty err}">
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div class="toast align-items-center text-bg-danger border-0 show" role="alert" aria-live="assertive"
+             aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                        ${err}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+</c:if>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
