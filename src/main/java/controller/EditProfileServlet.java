@@ -30,6 +30,14 @@ public class EditProfileServlet extends HttpServlet {
             return;
         }
 
+        // Kiểm tra quyền chỉ cho INSTRUCTOR truy cập
+        if (!"INSTRUCTOR".equalsIgnoreCase(user.getRole().toString())
+                && !"LEARNER".equalsIgnoreCase(user.getRole().toString())) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: You do not have permission to edit profiles.");
+            return;
+        }
+
+
         DBContext dbContext = null;
         try {
             dbContext = new DBContext(); // Khởi tạo DBContext
@@ -64,6 +72,12 @@ public class EditProfileServlet extends HttpServlet {
 
         if (user == null) {
             response.sendRedirect("login");
+            return;
+        }
+
+        if (!"INSTRUCTOR".equalsIgnoreCase(user.getRole().toString())
+                && !"LEARNER".equalsIgnoreCase(user.getRole().toString())) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: You do not have permission to edit profiles.");
             return;
         }
 
@@ -105,13 +119,12 @@ public class EditProfileServlet extends HttpServlet {
             }
 
             if (profileDAO.updateProfile(profile)) {
-                request.setAttribute("success", "Profile updated successfully");
+                System.out.println("Profile updated successfully.");
+                response.sendRedirect("editProfile?success=true");
             } else {
-                request.setAttribute("error", "Failed to update profile");
+                System.out.println("Failed to update profile.");
+                response.sendRedirect("editProfile?error=true");
             }
-            request.setAttribute("profile", profile);
-            request.getRequestDispatcher("/WEB-INF/views/editProfile.jsp").forward(request, response);
-
         } catch (Exception e) {
             request.setAttribute("error", "Error updating profile: " + e.getMessage());
             request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
@@ -130,9 +143,15 @@ public class EditProfileServlet extends HttpServlet {
         String fileName = "avatar_" + userId + "_" + System.currentTimeMillis() + getFileExtension(filePart);
         String uploadPath = getServletContext().getRealPath("/uploads/avatars/");
         java.io.File uploadDir = new java.io.File(uploadPath);
-        if (!uploadDir.exists()) {
-            uploadDir.mkdirs();
-        }
+
+            if (!uploadDir.exists()) {
+                if (uploadDir.mkdirs()) {
+                    System.out.println("Upload directory created at: " + uploadPath);
+                } else {
+                    System.out.println("Failed to create upload directory at: " + uploadPath);
+                }
+            }
+
 
         filePart.write(uploadPath + java.io.File.separator + fileName);
         return "uploads/avatars/" + fileName;
