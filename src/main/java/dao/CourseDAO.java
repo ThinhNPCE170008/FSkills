@@ -286,10 +286,259 @@ public class CourseDAO extends DBContext {
         return 0;
     }
 
+     public List<Course> getAllCourses() {
+        List<Course> list = new ArrayList<>();
+        String sql = "SELECT Courses.*, Users.DisplayName, Users.Email, Users.Gender, Users.DateOfBirth, Users.Avatar, Users.Info, Users.Role " +
+                "FROM Courses JOIN Users ON Courses.UserID = Users.UserID " +
+                "WHERE Courses.ApproveStatus = 1 " +
+                "ORDER BY Courses.PublicDate DESC";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Course course = createCourseFromResultSet(rs);
+                if (course != null) {
+                    list.add(course);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error in getAllCourses: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<Course> searchCourses(String searchTerm, String category) {
+        List<Course> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT Courses.*, Users.DisplayName, Users.Email, Users.Gender, Users.DateOfBirth, Users.Avatar, Users.Info, Users.Role " +
+                "FROM Courses JOIN Users ON Courses.UserID = Users.UserID " +
+                "WHERE Courses.ApproveStatus = 1");
+
+        if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+            sql.append(" AND (Courses.CourseName LIKE ? OR Users.DisplayName LIKE ?)");
+        }
+
+        if (category != null && !category.trim().isEmpty() && !category.equals("all")) {
+            sql.append(" AND Courses.CourseCategory = ?");
+        }
+
+        sql.append(" ORDER BY Courses.PublicDate DESC");
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql.toString());
+            int paramIndex = 1;
+
+            if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+                String searchPattern = "%" + searchTerm.trim() + "%";
+                ps.setString(paramIndex++, searchPattern);
+                ps.setString(paramIndex++, searchPattern);
+            }
+
+            if (category != null && !category.trim().isEmpty() && !category.equals("all")) {
+                ps.setString(paramIndex++, category);
+            }
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Course course = createCourseFromResultSet(rs);
+                if (course != null) {
+                    list.add(course);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error in searchCourses: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<String> getAllCategories() {
+        List<String> categories = new ArrayList<>();
+        String sql = "SELECT DISTINCT CourseCategory FROM Courses WHERE ApproveStatus = 1 AND CourseCategory IS NOT NULL ORDER BY CourseCategory";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                String category = rs.getString("CourseCategory");
+                if (category != null && !category.trim().isEmpty()) {
+                    categories.add(category.trim());
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error in getAllCategories: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return categories;
+    }
+
+    // Helper method để tạo Course object từ ResultSet
+    private Course createCourseFromResultSet(ResultSet rs) {
+        try {
+            User user = new User();
+            int courseID = rs.getInt("CourseID");
+            String courseName = rs.getNString("CourseName");
+            String courseCategory = rs.getNString("CourseCategory");
+
+            int userID = rs.getInt("UserID");
+            user.setUserId(userID);
+            user.setDisplayName(rs.getString("DisplayName"));
+            user.setEmail(rs.getString("Email"));
+            
+            // Handle role safely
+            try {
+                int roleInt = rs.getInt("Role");
+                switch (roleInt) {
+                    case 0:
+                        user.setRole(Role.LEARNER);
+                        break;
+                    case 1:
+                        user.setRole(Role.INSTRUCTOR);
+                        break;
+                    case 2:
+                        user.setRole(Role.ADMIN);
+                        break;
+                    default:
+                        user.setRole(Role.LEARNER);
+                }
+            } catch (Exception e) {
+                user.setRole(Role.LEARNER); // Default role
+            }
+            
+            user.setGender(rs.getInt("Gender"));
+            user.setDateOfBirth(rs.getTimestamp("DateOfBirth"));
+            user.setAvatar(rs.getString("Avatar"));
+            user.setInfo(rs.getNString("Info"));
+
+            int approveStatus = rs.getInt("ApproveStatus");
+            Timestamp publicDate = rs.getTimestamp("PublicDate");
+            Timestamp courseLastUpdate = rs.getTimestamp("CourseLastUpdate");
+            int salePrice = rs.getInt("SalePrice");
+            int originalPrice = rs.getInt("OriginalPrice");
+            int isSale = rs.getInt("IsSale");
+            String courseImageLocation = rs.getString("CourseImageLocation");
+
+            return new Course(courseID, courseName, courseCategory, user, approveStatus, publicDate, courseLastUpdate, salePrice, originalPrice, isSale, courseImageLocation);
+        } catch (Exception e) {
+            System.err.println("Error creating Course from ResultSet: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public List<Course> getRelatedCourses(int courseID, String category, int limit) {
+        List<Course> relatedCourses = new ArrayList<>();
+        String sql = "SELECT TOP " + limit + " Courses.*, Users.DisplayName, Users.Email, Users.Gender, Users.DateOfBirth, Users.Avatar, Users.Info, Users.Role " +
+                     "FROM Courses JOIN Users ON Courses.UserID = Users.UserID " +
+                     "WHERE Courses.ApproveStatus = 1 AND Courses.CourseID != ? AND Courses.CourseCategory = ? " +
+                     "ORDER BY Courses.PublicDate DESC";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, courseID);
+            ps.setNString(2, category);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Course course = createCourseFromResultSet(rs);
+                if (course != null) {
+                    relatedCourses.add(course);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error in getRelatedCourses: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return relatedCourses;
+    }
+    public double getAverageCourseRating(int courseID) {
+        String sql = "SELECT AVG(RatingValue) AS AverageRating FROM CourseRatings WHERE CourseID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, courseID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble("AverageRating");
+            }
+        } catch (Exception e) {
+            System.err.println("Error in getAverageCourseRating: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return 0.0; // Default to 0 if no ratings or error
+    }
+
+    public int getCourseRatingCount(int courseID) {
+        String sql = "SELECT COUNT(*) AS RatingCount FROM CourseRatings WHERE CourseID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, courseID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("RatingCount");
+            }
+        } catch (Exception e) {
+            System.err.println("Error in getCourseRatingCount: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return 0;
+    }public List<CourseSection> getCourseCurriculum(int courseID) {
+        List<CourseSection> curriculum = new ArrayList<>();
+        String sql = "SELECT SectionTitle, SectionDescription FROM CourseSections WHERE CourseID = ? ORDER BY SectionOrder";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, courseID);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                CourseSection section = new CourseSection(rs.getString("SectionTitle"), rs.getString("SectionDescription"));
+                curriculum.add(section);
+            }
+        } catch (Exception e) {
+            System.err.println("Error in getCourseCurriculum: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return curriculum;
+    }
+
+    // Assuming you have a model class for CourseSection
+    public static class CourseSection {
+        private String title;
+        private String description;
+
+        public CourseSection(String title, String description) {
+            this.title = title;
+            this.description = description;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+    }public List<String> getCourseHighlights(int courseID) {
+        List<String> highlights = new ArrayList<>();
+        String sql = "SELECT Highlight FROM CourseHighlights WHERE CourseID = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, courseID);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                highlights.add(rs.getString("Highlight"));
+            }
+        } catch (Exception e) {
+            System.err.println("Error in getCourseHighlights: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return highlights;
+    }
     public static void main(String[] args) {
         List<Course> list = new ArrayList<>();
 
         CourseDAO dao = new CourseDAO();
+ // Test getAllCourses
+        List<Course> courses = dao.getAllCourses();
+        System.out.println("Total courses: " + courses.size());
+        
+        // Test getAllCategories
+        List<String> categories = dao.getAllCategories();
+        System.out.println("Categories: " + categories);
 
 //        list = dao.getCourseByUserID(3);
 //        for (Course course : list) {

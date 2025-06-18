@@ -64,6 +64,24 @@ public class User {
         this.googleID = googleID;
     }
 
+    public User(int userId, String userName, String displayName, String avatar) {
+        this.userId = userId;
+        this.userName = userName;
+        this.displayName = displayName;
+        // Gán giá trị mặc định cho các thuộc tính còn lại
+        this.email = null;
+        this.password = null;
+        this.role = role; // Hoặc một Role mặc định khác, ví dụ: Role.UNKNOWN
+        this.gender = 0; // Hoặc một giá trị mặc định khác
+        this.dateOfBirth = null;
+        this.userCreateDate = null;
+        this.avatar = avatar;
+        this.info = null;
+        this.ban = ban; // Hoặc một Ban mặc định khác
+        this.reports = 0;
+        this.phone = "0999111111"; // Hoặc một giá trị mặc định khác
+    }
+
     public User(int userId, String userName, String displayName) {
         this.userId = userId;
         this.userName = userName;

@@ -269,5 +269,6 @@
     </section>
 </main>
 <jsp:include page="/footer.jsp"/>
+<jsp:include page="/footerInstructor.jsp"/>
 </body>
 </html>

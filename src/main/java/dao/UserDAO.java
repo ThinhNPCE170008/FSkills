@@ -11,6 +11,7 @@ import model.Ban;
 import util.DBContext;
 import model.User;
 import model.UserGoogle;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,6 +27,29 @@ import model.UserGoogle;
  * @author Ngo Phuoc Thinh - CE170008 - SE1815
  */
 public class UserDAO extends DBContext {
+
+    public boolean checkPassword(int userId, String oldPassword) throws Exception {
+        String sql = "SELECT COUNT(*) FROM Users WHERE userId = ? AND password = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setString(2, hashMD5(oldPassword));
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void updatePassword(int userId, String newPassword) throws Exception {
+        String sql = "UPDATE Users SET password = ? WHERE userId = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, hashMD5(newPassword));
+            ps.setInt(2, userId);
+            ps.executeUpdate();
+        }
+    }
 
     public List<User> getAllStudents() {
         List<User> list = new ArrayList<>();
@@ -541,7 +565,7 @@ public class UserDAO extends DBContext {
                 int ReportAmount = rs.getInt("ReportAmount");
                 String PhoneNumber = rs.getString("PhoneNumber");
                 boolean isVerified = rs.getBoolean("IsVerified");
-                
+
                 User acc = new User(UserID, UserName, DisplayName, Email, Password, role, gender, TimeCreate, TimeCreate, Avatar, info, Ban, ReportAmount, info, isVerified, googleID);
                 return acc;
             }
@@ -803,7 +827,7 @@ public class UserDAO extends DBContext {
 //            int result = dao.updateGoogleID(acc);
 //            System.out.println(result);
 //        }
-        
+
 //        UserDAO dao = new UserDAO();
 //        User user = dao.getByUserID(2);
 //        System.out.println(user);
