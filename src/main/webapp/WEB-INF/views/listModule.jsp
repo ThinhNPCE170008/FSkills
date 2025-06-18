@@ -62,94 +62,92 @@
 <jsp:include page="/header.jsp"/>
 
 <div class="container py-5">
-    <div class="container py-5">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="instructor" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Back
-            </a>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="instructor" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
 
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModuleModal">
-                <i class="fas fa-plus"></i> Create New Course
-            </button>
-        </div>
-
-        <div class="info-box d-flex align-items-center gap-4 mb-4">
-            <c:if test="${not empty courseDetails}">
-                <img src="${courseDetails.courseImageLocation}" class="rounded me-3"
-                     style="width: 160px; height: 100px; object-fit: cover;" alt="Avatar">
-                <div>
-                    <h5 class="mb-1"><strong>Course Name:</strong> ${courseDetails.courseName}</h5>
-                    <p class="mb-0"><strong>Category:</strong> ${courseDetails.courseCategory}</p>
-                    <p class="mb-0">
-                        <strong>Status:</strong>
-                        <span class="badge ${courseDetails.approveStatus == 1 ? 'badge-approved' : 'badge-pending'}">
-                                ${courseDetails.approveStatus == 1 ? 'Approved' : 'Pending'}
-                        </span>
-                    </p>
-                    <p class="mb-0">
-                        <strong>Public Date:</strong>
-                        <c:choose>
-                            <c:when test="${not empty courseDetails.publicDate}">
-                                <fmt:formatDate value="${courseDetails.publicDate}" pattern="yyyy-MM-dd"/>
-                            </c:when>
-                            <c:otherwise>N/A</c:otherwise>
-                        </c:choose>
-                    </p>
-                    <p class="mb-0">
-                        <strong>Last Update:</strong>
-                        <c:choose>
-                            <c:when test="${not empty courseDetails.courseLastUpdate}">
-                                <fmt:formatDate value="${courseDetails.courseLastUpdate}" pattern="yyyy-MM-dd"/>
-                            </c:when>
-                            <c:otherwise>N/A</c:otherwise>
-                        </c:choose>
-                    </p>
-                </div>
-            </c:if>
-        </div>
-
-        <c:choose>
-            <c:when test="${empty listModule}">
-                <div class="alert alert-warning text-center">No courses available.</div>
-            </c:when>
-            <c:otherwise>
-                <table class="table table-bordered table-hover shadow-sm bg-white rounded">
-                    <thead>
-                    <tr>
-                        <th>Module Name</th>
-                        <th>Module Last Update</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    <c:forEach var="module" items="${listModule}">
-                        <tr>
-                            <td>${module.moduleName}</td>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${not empty module.moduleLastUpdate}">
-                                        <fmt:formatDate value="${module.moduleLastUpdate}" pattern="yyyy-MM-dd"/>
-                                    </c:when>
-                                    <c:otherwise>N/A</c:otherwise>
-                                </c:choose>
-                            </td>
-                            <td class="d-flex flex-column gap-1">
-                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                                        data-bs-target="#updateModal${module.moduleID}">Update
-                                </button>
-
-                                <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                        data-bs-target="#deleteModal${module.moduleID}">Delete
-                                </button>
-                            </td>
-                        </tr>
-                    </c:forEach>
-                    </tbody>
-                </table>
-            </c:otherwise>
-        </c:choose>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModuleModal">
+            <i class="fas fa-plus"></i> Create New Course
+        </button>
     </div>
+
+    <div class="info-box d-flex align-items-center gap-4 mb-4">
+        <c:if test="${not empty courseDetails}">
+            <img src="${courseDetails.courseImageLocation}" class="rounded me-3"
+                 style="width: 160px; height: 100px; object-fit: cover;" alt="Avatar">
+            <div>
+                <h5 class="mb-1"><strong>Course Name:</strong> ${courseDetails.courseName}</h5>
+                <p class="mb-0"><strong>Category:</strong> ${courseDetails.courseCategory}</p>
+                <p class="mb-0">
+                    <strong>Status:</strong>
+                    <span class="badge ${courseDetails.approveStatus == 1 ? 'badge-approved' : 'badge-pending'}">
+                            ${courseDetails.approveStatus == 1 ? 'Approved' : 'Pending'}
+                    </span>
+                </p>
+                <p class="mb-0">
+                    <strong>Public Date:</strong>
+                    <c:choose>
+                        <c:when test="${not empty courseDetails.publicDate}">
+                            <fmt:formatDate value="${courseDetails.publicDate}" pattern="yyyy-MM-dd"/>
+                        </c:when>
+                        <c:otherwise>N/A</c:otherwise>
+                    </c:choose>
+                </p>
+                <p class="mb-0">
+                    <strong>Last Update:</strong>
+                    <c:choose>
+                        <c:when test="${not empty courseDetails.courseLastUpdate}">
+                            <fmt:formatDate value="${courseDetails.courseLastUpdate}" pattern="yyyy-MM-dd"/>
+                        </c:when>
+                        <c:otherwise>N/A</c:otherwise>
+                    </c:choose>
+                </p>
+            </div>
+        </c:if>
+    </div>
+
+    <c:choose>
+        <c:when test="${empty listModule}">
+            <div class="alert alert-warning text-center">No courses available.</div>
+        </c:when>
+        <c:otherwise>
+            <table class="table table-bordered table-hover shadow-sm bg-white rounded">
+                <thead>
+                <tr>
+                    <th>Module Name</th>
+                    <th>Module Last Update</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <c:forEach var="module" items="${listModule}">
+                    <tr>
+                        <td>${module.moduleName}</td>
+                        <td>
+                            <c:choose>
+                                <c:when test="${not empty module.moduleLastUpdate}">
+                                    <fmt:formatDate value="${module.moduleLastUpdate}" pattern="yyyy-MM-dd"/>
+                                </c:when>
+                                <c:otherwise>N/A</c:otherwise>
+                            </c:choose>
+                        </td>
+                        <td class="d-flex flex-column gap-1">
+                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                    data-bs-target="#updateModal${module.moduleID}">Update
+                            </button>
+
+                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal${module.moduleID}">Delete
+                            </button>
+                        </td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+        </c:otherwise>
+    </c:choose>
 </div>
 <jsp:include page="/footer.jsp"/>
 
@@ -164,7 +162,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="userID" value="${courseDetails.courseID}"/>
+                    <input type="hidden" name="courseID" value="${courseDetails.courseID}"/>
 
                     <div class="mb-3">
                         <label for="moduleName" class="form-label">Module Name</label>
@@ -183,7 +181,6 @@
 </div>
 
 <c:forEach var="module" items="${listModule}">
-
     <!-- Update Modal -->
     <div class="modal fade" id="updateModal${module.moduleID}" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
@@ -195,19 +192,19 @@
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="courseID" value="${courseDetails.courseID}"/>
-                    <input type="hidden" name="userID" value="${module.moduleID}"/>
+                    <input type="hidden" name="moduleID" value="${module.moduleID}"/>
 
                     <div class="mb-3">
                         <label class="form-label">Module Name</label>
-                        <input type="text" name="moduleName" id="updateCourseName${module.moduleID}"
+                        <input type="text" name="moduleName" id="updateModuleName${module.moduleID}"
                                value="${module.moduleName}" class="form-control"
                                pattern="^[\p{L}\s]+$" title="Only letters and spaces are allowed" maxlength="30"
                                required>
                     </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
             </form>
         </div>
     </div>
@@ -252,20 +249,14 @@
 <!-- Check Create Input-->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const form = document.getElementById("createCourseForm");
+        const form = document.getElementById("createModuleForm");
 
         form.addEventListener("submit", function (e) {
-            const nameInput = document.getElementById("courseName");
-            const categoryInput = document.getElementById("courseCategory");
+            const nameInput = document.getElementById("moduleName");
 
             const name = nameInput.value.trim();
-            const category = categoryInput.value.trim();
 
             const regexValid = /^[\p{L}]+(?: [\p{L}]+)*$/u;
-            // Giải thích:
-            // - bắt đầu bằng chữ
-            // - mỗi từ cách nhau đúng 1 space
-            // - không ký tự đặc biệt, không số
 
             if (name.length === 0 || name.length > 30 || !regexValid.test(name)) {
                 alert("Invalid Course Name.\n- Only letters allowed.\n- No extra spaces.\n- Max 30 characters.");
@@ -274,16 +265,8 @@
                 return;
             }
 
-            if (category.length === 0 || category.length > 30 || !regexValid.test(category)) {
-                alert("Invalid Category.\n- Only letters allowed.\n- No extra spaces.\n- Max 30 characters.");
-                categoryInput.focus();
-                e.preventDefault();
-                return;
-            }
-
             // Replace original input value with trimmed version (optional but helpful)
             nameInput.value = name;
-            categoryInput.value = category;
         });
     });
 </script>
@@ -291,15 +274,12 @@
 <!-- Check Update Input-->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // Lặp qua tất cả form có id bắt đầu bằng "updateCourseForm"
-        document.querySelectorAll("form[id^='updateCourseForm']").forEach(function (form) {
+        document.querySelectorAll("form[id^='updateModuleForm']").forEach(function (form) {
             form.addEventListener("submit", function (e) {
-                const courseID = form.id.replace("updateCourseForm", "");
-                const nameInput = document.getElementById("updateCourseName" + courseID);
-                const categoryInput = document.getElementById("updateCourseCategory" + courseID);
+                const courseID = form.id.replace("updateModuleForm", "");
+                const nameInput = document.getElementById("updateModuleName" + moduleID);
 
                 const name = nameInput.value.trim();
-                const category = categoryInput.value.trim();
                 const regexValid = /^[\p{L}]+(?: [\p{L}]+)*$/u;
 
                 if (name.length === 0 || name.length > 30 || !regexValid.test(name)) {
@@ -308,16 +288,7 @@
                     e.preventDefault();
                     return;
                 }
-
-                if (category.length === 0 || category.length > 30 || !regexValid.test(category)) {
-                    alert("Invalid Category.\n- Only letters allowed.\n- No extra spaces.\n- Max 30 characters.");
-                    categoryInput.focus();
-                    e.preventDefault();
-                    return;
-                }
-
                 nameInput.value = name;
-                categoryInput.value = category;
             });
         });
     });
