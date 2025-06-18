@@ -85,9 +85,9 @@ public class LogoutServlet extends HttpServlet {
         try {
             UserDAO dao = new UserDAO();
             if (userId > 0) {
-                dao.deleteAllTokens(userId); // Xóa tất cả token của người dùng
+                dao.deleteAllTokens(userId);
             } else if (token != null) {
-                dao.deleteToken(token); // Chỉ xóa token hiện tại nếu không có userId
+                dao.deleteToken(token);
             }
         } catch (Exception e) {
             System.err.println(e.getMessage());

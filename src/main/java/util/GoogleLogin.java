@@ -37,7 +37,6 @@ public class GoogleLogin {
         String accessToken = jobj.get("access_token").toString().replaceAll("\"", "");
 
         return accessToken;
-
     }
 
     public UserGoogle getUserInfo(final String accessToken) throws ClientProtocolException, IOException {
@@ -49,6 +48,5 @@ public class GoogleLogin {
         UserGoogle googlePojo = new Gson().fromJson(response, UserGoogle.class);
 
         return googlePojo;
-
     }
 }

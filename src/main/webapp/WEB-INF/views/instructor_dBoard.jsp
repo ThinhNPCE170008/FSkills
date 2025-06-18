@@ -68,6 +68,21 @@
         .stat-card:hover i {
             transform: scale(1.1);
         }
+
+        .animate-dropdown {
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .dropdown-open {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            visibility: visible !important;
+            pointer-events: auto !important;
+        }
     </style>
 </head>
 
@@ -138,19 +153,31 @@
                         %>
 
                     </ul>
-                    <!-- Footer -->
                     <div class="px-4 py-2 text-center text-sm text-indigo-600 hover:underline cursor-pointer border-t">
                         View all notifications
                     </div>
                 </div>
                 <div class="relative">
                     <c:set var="user" value="${sessionScope.user}"/>
-                    <button class="flex items-center space-x-2 focus:outline-none">
+                    <!-- Button trigger -->
+                    <button id="userMenuBtn" class="flex items-center space-x-2 focus:outline-none">
                         <img src="${user.avatar}" alt="Instructor Avatar"
                              class="w-10 h-10 rounded-full border-2 border-indigo-200">
                         <span class="hidden md:inline font-medium text-gray-700">${user.displayName}</span>
                         <i class="fas fa-chevron-down text-gray-500 text-xs"></i>
                     </button>
+
+                    <!-- Dropdown -->
+                    <div id="userDropdownMenu"
+                         class="animate-dropdown absolute right-0 mt-2 w-48 bg-white border rounded-xl shadow-lg z-50 transition-all duration-200 ease-in-out">
+                        <ul class="py-2 text-sm text-gray-700">
+                            <li><a href="editProfile" class="block px-4 py-2 hover:bg-gray-100">Manage Profile</a></li>
+                            <li>
+                                <hr class="my-1 border-gray-200">
+                            </li>
+                            <li><a href="logout" class="block px-4 py-2 text-red-600 hover:bg-gray-100">Logout</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
             <script>
@@ -223,7 +250,6 @@
         </div>
     </section>
 
-    <!-- My Courses Section -->
     <section id="my-courses">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl md:text-3xl font-bold text-gray-800">My Courses</h2>
@@ -268,7 +294,26 @@
         </div>
     </section>
 </main>
-<jsp:include page="/footer.jsp"/>
-<jsp:include page="/footerInstructor.jsp"/>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const userBtn = document.getElementById("userMenuBtn");
+        const dropdown = document.getElementById("userDropdownMenu");
+
+        userBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            dropdown.classList.toggle("dropdown-open");
+        });
+
+        window.addEventListener("click", function () {
+            dropdown.classList.remove("dropdown-open");
+        });
+
+        dropdown.addEventListener("click", function (e) {
+            e.stopPropagation();
+        });
+    });
+</script>
+
+<jsp:include page="/layout/footerInstructor.jsp"/>
 </body>
 </html>

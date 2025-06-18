@@ -1,66 +1,7 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: NgoThinh1902
-  Date: 6/18/2025
-  Time: 1:33 AM
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="img/favicon_io/favicon.ico">
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <script>
-        // Custom configuration for Tailwind CSS
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        inter: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        primary: {
-                            DEFAULT: '#0284c7', // sky-600
-                            light: '#03a9f4',   // sky-500
-                            dark: '#075985',   // sky-800
-                        },
-                        secondary: '#475569', // slate-600
-                    }
-                }
-            }
-        }
-    </script>
-
-    <style>
-        /* Additional custom styles */
-        .hero-gradient {
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-        }
-
-        .card-hover {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card-hover:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-        }
-    </style>
+    <title>Title</title>
 </head>
 <body>
 <footer class="bg-slate-800 text-slate-300">
@@ -98,7 +39,6 @@
                     </li>
                 </ul>
             </div>
-            <!-- Social Media -->
             <div>
                 <h4 class="font-bold text-white text-lg mb-4">Follow Us</h4>
                 <div class="flex space-x-4">

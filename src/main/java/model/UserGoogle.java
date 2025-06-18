@@ -95,5 +95,4 @@ public class UserGoogle {
     public String toString() {
         return "UserGoogle{" + "id=" + id + ", email=" + email + ", first_name=" + first_name + ", given_name=" + given_name + ", family_name=" + family_name + ", name=" + name + ", picture=" + picture + ", verified_email=" + verified_email + '}';
     }
-    
 }

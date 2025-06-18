@@ -94,8 +94,6 @@ public class UserDAO extends DBContext {
 
     public List<User> searchUsersByName(String searchName) throws SQLException {
         List<User> users = new ArrayList<>();
-        // Sử dụng LIKE để tìm kiếm gần đúng, % là ký tự đại diện
-        // CONCAT('%', ?, '%') cho phép tìm kiếm bất kỳ đâu trong tên
         String sql = "SELECT UserID, UserName, DisplayName, Role, BanStatus, ReportAmount FROM Users WHERE LOWER(UserName) LIKE LOWER(?)";
         try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, "%" + searchName + "%");

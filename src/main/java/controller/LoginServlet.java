@@ -155,7 +155,6 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        // Xác minh với Cloudflare
         String secretKey = "0x4AAAAAABgts5yPhd0CjQlG-53ul9Og7Vw";
         URL url = new URL("https://challenges.cloudflare.com/turnstile/v0/siteverify");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();

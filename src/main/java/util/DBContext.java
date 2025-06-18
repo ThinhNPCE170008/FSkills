@@ -29,7 +29,6 @@ public class DBContext {
                     + "encrypt=true;trustServerCertificate=true;";
             conn = DriverManager.getConnection(dbURL);
 
-            // Kiem tra viec ket noi co thanh cong hay khong
             if (conn != null) {
                 DatabaseMetaData dm = (DatabaseMetaData) conn.getMetaData();
                 System.out.println("Driver name: " + dm.getDriverName());
