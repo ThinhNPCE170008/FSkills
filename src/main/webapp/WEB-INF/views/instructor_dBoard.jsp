@@ -4,8 +4,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%
     User acc = (User) session.getAttribute("user");
     if (acc == null) {
@@ -87,7 +85,7 @@
                 <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">My Courses</a>
                 <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Analytics</a>
                 <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Feedback</a>
-                <a href="${pageContext.request.contextPath}/editProfile"
+                <a href="editProfile"
                    class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Profile</a>
             </nav>
 
@@ -95,11 +93,11 @@
                 <button id="notificationBtn"
                         class="text-gray-600 hover:text-indigo-600 focus:outline-none text-xl relative">
                     <i class="fas fa-bell"></i>
-                    <c:if test="${not empty listNotification}">
-    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">
-            ${fn:length(listNotification)}
-    </span>
-                    </c:if>
+                    <% if (listNotification != null && !listNotification.isEmpty()) {%>
+                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">
+                                <%= listNotification.size()%>
+                            </span>
+                    <% } %>
                 </button>
 
                 <!-- Dropdown -->
@@ -113,25 +111,32 @@
 
                     <!-- Danh sách thông báo -->
                     <ul class="max-h-96 overflow-y-auto divide-y divide-gray-200">
-                        <c:if test="${not empty listNotification}">
-                            <c:forEach var="n" items="${listNotification}">
-                                <a href="#" class="block">
-                                    <li class="flex items-start px-4 py-3 hover:bg-gray-50 cursor-pointer">
-                                        <img src="imageUpload/avatarAdmin.png" class="w-10 h-10 rounded-full mr-3 mt-1" alt="avatar">
-                                        <div class="flex-1">
-                                            <p class="text-sm text-gray-800 font-semibold">${n.notificationMessage}</p>
-                                            <span class="text-xs text-gray-500">${n.notificationDate}</span>
-                                        </div>
-                                    </li>
-                                </a>
-                            </c:forEach>
-                        </c:if>
+                        <%
+                            if (listNotification != null) {
+                                for (Notification n : listNotification) {
+                        %>
+                        <a href="<%= n.getLink()%>" class="block">
+                            <li class="flex items-start px-4 py-3 hover:bg-gray-50 cursor-pointer">
+                                <img src="<%= n.getLink()%>" class="w-10 h-10 rounded-full mr-3 mt-1" alt="avatar">
+                                <div class="flex-1">
+                                    <p class="text-sm text-gray-800 font-semibold"><%= n.getNotificationMessage()%>
+                                    </p>
+                                    <span class="text-xs text-gray-500"><%= n.getNotificationDate()%></span>
+                                </div>
+                            </li>
+                        </a>
 
-                        <c:if test="${empty listNotification}">
-                            <div class="alert alert-warning text-center">
-                                No data found.
-                            </div>
-                        </c:if>
+                        <%
+                            }
+                        } else {
+                        %>
+                        <div class="alert alert-warning text-center">
+                            No data found.
+                        </div>
+                        <%
+                            }
+                        %>
+
                     </ul>
                     <!-- Footer -->
                     <div class="px-4 py-2 text-center text-sm text-indigo-600 hover:underline cursor-pointer border-t">
@@ -194,8 +199,8 @@
                 <i class="fas fa-users text-2xl text-green-600"></i>
             </div>
             <div>
-                <p class="text-gray-500">Total Students</p>
-                <p class="text-3xl font-bold text-gray-800">Coming Soon</p>
+                <p class="text-gray-500">Total Learners</p>
+                <p class="text-3xl font-bold text-gray-800">${totalLearners}</p>
             </div>
         </div>
         <div class="stat-card card p-6 flex items-center space-x-4">
@@ -237,7 +242,7 @@
                                     <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Published</span>
                                 </c:when>
                                 <c:otherwise>
-                                    <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Draft</span>
+                                    <span class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Pending</span>
                                 </c:otherwise>
                             </c:choose>
                         </div>
@@ -263,56 +268,6 @@
         </div>
     </section>
 </main>
-
-<!-- ======================= Footer ======================= -->
-<footer class="bg-slate-800 text-white mt-16">
-    <div class="container mx-auto px-4 py-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div class="col-span-1 md:col-span-1">
-                <a href="#" class="flex items-center space-x-2 mb-4">
-                    <img src="img/logo.png" alt="Logo" class="rounded-lg">
-                </a>
-                <p class="text-gray-400 text-sm">Empowering instructors to share knowledge and build careers.</p>
-            </div>
-            <div>
-                <h6 class="font-bold mb-4 uppercase tracking-wider">Quick Links</h6>
-                <ul class="space-y-2">
-                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Dashboard</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors">My Courses</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Create New Course</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Help Center</a></li>
-                </ul>
-            </div>
-            <div>
-                <h6 class="font-bold mb-4 uppercase tracking-wider">Get in Touch</h6>
-                <ul class="space-y-2">
-                    <li class="flex items-center space-x-2"><i class="fas fa-phone text-indigo-400"></i> <a href="#"
-                                                                                                            class="text-gray-400 hover:text-white transition-colors">+62?8XXX?XXX?XX</a>
-                    </li>
-                    <li class="flex items-center space-x-2"><i class="fas fa-envelope text-indigo-400"></i> <a href="#"
-                                                                                                               class="text-gray-400 hover:text-white transition-colors">instructor.support@fskill.com</a>
-                    </li>
-                </ul>
-            </div>
-            <div>
-                <h6 class="font-bold mb-4 uppercase tracking-wider">Follow Us</h6>
-                <div class="flex space-x-4">
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors"><i
-                            class="fab fa-facebook-f fa-lg"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors"><i
-                            class="fab fa-twitter fa-lg"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors"><i
-                            class="fab fa-instagram fa-lg"></i></a>
-                    <a href="#" class="text-gray-400 hover:text-white transition-colors"><i
-                            class="fab fa-linkedin-in fa-lg"></i></a>
-                </div>
-            </div>
-        </div>
-        <hr class="border-gray-700 my-8">
-        <div class="text-center text-gray-500 text-sm">
-            <p>© 2025 F-Skill. All rights reserved. | From Group 3 With 💡</p>
-        </div>
-    </div>
-</footer>
+<jsp:include page="/footerInstructor.jsp"/>
 </body>
 </html>
