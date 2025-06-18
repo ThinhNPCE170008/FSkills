@@ -23,7 +23,7 @@ import model.Role;
 import model.User;
 
 /**
- * @author NgoThinh1902
+ * @author Ngo Phuoc Thinh - CE170008 - SE1815
  */
 @WebServlet(name = "InstructorModuleServlet", urlPatterns = {"/managemodule"})
 public class InstructorModuleServlet extends HttpServlet {

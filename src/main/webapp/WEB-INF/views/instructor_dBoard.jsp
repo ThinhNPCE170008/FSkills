@@ -153,7 +153,6 @@
                         %>
 
                     </ul>
-                    <!-- Footer -->
                     <div class="px-4 py-2 text-center text-sm text-indigo-600 hover:underline cursor-pointer border-t">
                         View all notifications
                     </div>
@@ -173,7 +172,9 @@
                          class="animate-dropdown absolute right-0 mt-2 w-48 bg-white border rounded-xl shadow-lg z-50 transition-all duration-200 ease-in-out">
                         <ul class="py-2 text-sm text-gray-700">
                             <li><a href="editProfile" class="block px-4 py-2 hover:bg-gray-100">Manage Profile</a></li>
-                            <li><hr class="my-1 border-gray-200"></li>
+                            <li>
+                                <hr class="my-1 border-gray-200">
+                            </li>
                             <li><a href="logout" class="block px-4 py-2 text-red-600 hover:bg-gray-100">Logout</a></li>
                         </ul>
                     </div>
@@ -249,7 +250,6 @@
         </div>
     </section>
 
-    <!-- My Courses Section -->
     <section id="my-courses">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl md:text-3xl font-bold text-gray-800">My Courses</h2>

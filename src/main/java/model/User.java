@@ -68,7 +68,6 @@ public class User {
         this.userId = userId;
         this.userName = userName;
         this.displayName = displayName;
-        // Gán giá trị mặc định cho các thuộc tính còn lại
         this.email = null;
         this.password = null;
         this.role = role; // Hoặc một Role mặc định khác, ví dụ: Role.UNKNOWN

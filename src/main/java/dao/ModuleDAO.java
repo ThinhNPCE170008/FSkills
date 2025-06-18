@@ -85,15 +85,6 @@ public class ModuleDAO extends DBContext {
             ps.setInt(2, module.getCourse().getCourseID());
             ps.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
 
-//            String getCourseSql = "SELECT CourseID FROM Modules WHERE ModuleID = ?";
-//            PreparedStatement ps2 = conn.prepareStatement(getCourseSql);
-//            ps2.setInt(1, module.getModuleID());
-//            ResultSet rs = ps2.executeQuery();
-//            int courseID = 0;
-//            if (rs.next()) {
-//                courseID = rs.getInt("CourseID");
-//            }
-
             String updateCourseSql = "UPDATE Courses SET CourseLastUpdate = GETDATE() WHERE CourseID = ?";
             PreparedStatement ps3 = conn.prepareStatement(updateCourseSql);
             ps3.setInt(1, module.getCourse().getCourseID());

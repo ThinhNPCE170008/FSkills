@@ -376,7 +376,6 @@ public class CourseDAO extends DBContext {
         return categories;
     }
 
-    // Helper method để tạo Course object từ ResultSet
     private Course createCourseFromResultSet(ResultSet rs) {
         try {
             User user = new User();

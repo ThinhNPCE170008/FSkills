@@ -39,7 +39,6 @@
                     </li>
                 </ul>
             </div>
-            <!-- Social Media -->
             <div>
                 <h4 class="font-bold text-white text-lg mb-4">Follow Us</h4>
                 <div class="flex space-x-4">

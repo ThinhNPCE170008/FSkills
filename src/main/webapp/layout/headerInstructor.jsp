@@ -15,43 +15,35 @@
             font-family: 'Inter', sans-serif;
             background-color: #f8f9fa;
         }
-
         .header-shadow {
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
-
         .card {
             background-color: white;
             border-radius: 0.75rem;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
         .card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
         }
-
         .btn-primary-gradient {
             background-image: linear-gradient(to right, #4f46e5, #6366f1);
             color: white;
             transition: all 0.3s ease;
             box-shadow: 0 4px 6px rgba(99, 102, 241, 0.2);
         }
-
         .btn-primary-gradient:hover {
             transform: translateY(-2px);
             box-shadow: 0 7px 10px rgba(99, 102, 241, 0.3);
         }
-
         .stat-card i {
             transition: transform 0.3s ease;
         }
-
         .stat-card:hover i {
             transform: scale(1.1);
         }
-
         @keyframes fadeInDropdown {
             0% {
                 opacity: 0;
@@ -62,7 +54,6 @@
                 transform: translateY(0);
             }
         }
-
         .dropdown-enter {
             animation: fadeInDropdown 0.2s ease-out forwards;
         }

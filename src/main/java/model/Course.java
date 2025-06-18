@@ -51,7 +51,6 @@ public class Course {
         this.courseImageLocation = courseImageLocation;
     }
 
-    // Using Module
     public Course(String courseName, String courseCategory) {
         this.courseName = courseName;
         this.courseCategory = courseCategory;
