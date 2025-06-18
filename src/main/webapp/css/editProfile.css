@@ -5,6 +5,11 @@ body {
     padding: 0;
     background-color: #f8f9fa; /* A light, clean grey background */
     color: #333;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    margin-top: 70px;
 }
 
 /* Main Container */
@@ -25,7 +30,6 @@ header {
     background-color: #ffffff;
     padding: 15px 30px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    border-radius: 8px;
     margin-bottom: 25px;
     position: fixed;
     left: 0;
@@ -33,6 +37,7 @@ header {
     height: 100%;
     width: 200px;
     overflow-y: auto;
+
 }
 
 .logo-img {
@@ -56,7 +61,7 @@ header nav a {
     color: #495057;
     font-weight: 500;
     font-size: 16px;
-    padding: 8px;
+    padding: 8px 12px;
     border-radius: 6px;
     transition: color 0.3s, background-color 0.3s;
     width: 100%;
@@ -390,6 +395,10 @@ header nav a:hover {
     header {
         flex-direction: column;
         gap: 15px;
+        width: 100%;
+        max-width: 100vw;
+        padding-left: 15px;
+        padding-right: 15px;
     }
     .profile-details, .form-row {
         grid-template-columns: 1fr; /* Stack columns on smaller screens */

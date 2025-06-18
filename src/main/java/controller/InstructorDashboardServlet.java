@@ -78,7 +78,7 @@ public class InstructorDashboardServlet extends HttpServlet {
         }
 
         if (acc.getRole() != Role.INSTRUCTOR) {
-            response.sendRedirect("login");
+            response.sendRedirect("homePage_Guest.jsp");
             return;
         }
 
@@ -96,9 +96,12 @@ public class InstructorDashboardServlet extends HttpServlet {
                 break;
             default:
                 int totalCourses = cdao.countCoursesByUserID(acc.getUserId());
+                int totalLearners = cdao.countLearnersByUserID(acc.getUserId());
                 List<Course> listLittle = cdao.get3CourseByUserID(acc.getUserId());
+
                 request.setAttribute("listLittle", listLittle);
                 request.setAttribute("totalCourses", totalCourses);
+                request.setAttribute("totalLearners", totalLearners);
                 request.getRequestDispatcher("/Notification").forward(request, response);
         }
     }

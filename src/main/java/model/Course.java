@@ -50,7 +50,13 @@ public class Course {
         this.courseLastUpdate = courseLastUpdate;
         this.courseImageLocation = courseImageLocation;
     }
-    
+
+    // Using Module
+    public Course(String courseName, String courseCategory) {
+        this.courseName = courseName;
+        this.courseCategory = courseCategory;
+    }
+
     public int getCourseID() {
         return courseID;
     }
