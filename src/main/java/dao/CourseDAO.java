@@ -6,6 +6,7 @@ package dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class CourseDAO extends DBContext {
     public List<Course> getCourseByUserID(int userID) {
         List<Course> list = new ArrayList<>();
 
-        String sql = "SELECT Users.*, Courses.* FROM Courses JOIN Users ON Courses.UserID = Users.UserID WHERE Users.UserID = ?";
+        String sql = "SELECT Users.*, Courses.* FROM Courses JOIN Users ON Courses.UserID = Users.UserID WHERE Users.UserID = ? AND [Status] = 0";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -81,7 +82,7 @@ public class CourseDAO extends DBContext {
     public List<Course> get3CourseByUserID(int userID) {
         List<Course> list = new ArrayList<>();
 
-        String sql = "SELECT TOP 3 Users.*, Courses.* FROM Courses JOIN Users ON Courses.UserID = Users.UserID WHERE Users.UserID = ? ORDER BY PublicDate DESC";
+        String sql = "SELECT TOP 3 Users.*, Courses.* FROM Courses JOIN Users ON Courses.UserID = Users.UserID WHERE Users.UserID = ? AND [Status] = 0 ORDER BY PublicDate DESC";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -174,7 +175,7 @@ public class CourseDAO extends DBContext {
     }
 
     public int insertCourse(String courseName, String courseCategory, int userID, int salePrice, int originalPrice, int isSale, String courseImageLocation) {
-        String sql = "INSERT INTO Courses (CourseName, CourseCategory, UserID, ApproveStatus, CourseLastUpdate, SalePrice, OriginalPrice, IsSale, CourseImageLocation) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Courses (CourseName, CourseCategory, UserID, ApproveStatus, CourseLastUpdate, SalePrice, OriginalPrice, IsSale, CourseImageLocation, Status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -234,6 +235,21 @@ public class CourseDAO extends DBContext {
         }
         return 0;
     }
+
+    public int checkStatus(int courseID) {
+        String sql = "UPDATE Courses SET [Status] = 1 WHERE CourseID = ?";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, courseID);
+
+            int result = ps.executeUpdate();
+            return result > 0 ? 1 : 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
     
     public int onGoingLearner(int courseID) {
         int count = 0;
@@ -254,7 +270,7 @@ public class CourseDAO extends DBContext {
     }
 
     public int countCoursesByUserID(int userId) {
-        String sql = "SELECT COUNT(*) AS CourseCount FROM Courses WHERE UserID = ?";
+        String sql = "SELECT COUNT(*) AS CourseCount FROM Courses WHERE UserID = ? AND Status = 0";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, userId);
