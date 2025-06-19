@@ -53,7 +53,7 @@
     <div class="profile-card">
       <div class="profile-header">
         <div class="avatar">
-          <img src="${pageContext.request.contextPath}/${profile.avatar}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+          <img src="${profile.avatar}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
         </div>
         <div class="user-info">
           <h2><c:out value="${profile.displayName}"/></h2>

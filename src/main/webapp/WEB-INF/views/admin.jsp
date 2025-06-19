@@ -62,7 +62,7 @@
         <header class="bg-white shadow-md p-4 flex items-center justify-between rounded-b-lg">
             <div class="flex items-center space-x-2">
                 <%-- Đã sửa đường dẫn ảnh logo.png --%>
-                <img src="${pageContext.request.contextPath}/pic/logo.png" alt="F-SKILL Logo" class=" w-20 h-15" />
+                <img src="${pageContext.request.contextPath}/img/logo.png" alt="F-SKILL Logo" class=" w-20 h-15" />
                 <span class="text-2xl font-bold text-gray-800"></span>
             </div>
 

@@ -27,8 +27,8 @@ public class NotificationDAO extends DBContext {
 
     public List<Notification> getAllNotificationsByUserId(int id) {
         List<Notification> list = new ArrayList<>();
-        String sql = "SELECT N.*, U.UserName, U.DisplayName,U.Avatar FROM [FLearn].[dbo].[Notification] N " +
-                "JOIN [FLearn].[dbo].[Users] U ON N.UserID = U.UserID WHERE N.UserID = ?";
+        String sql = "SELECT N.*, U.UserName, U.DisplayName,U.Avatar FROM [FSkills].[dbo].[Notification] N " +
+                "JOIN [FSkills].[dbo].[Users] U ON N.UserID = U.UserID WHERE N.UserID = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, id); // Đừng quên set tham số
@@ -55,7 +55,7 @@ public class NotificationDAO extends DBContext {
     }
 
     public int sendNofication(int userId, String link, String notiMess) {
-        String sql = "  INSERT INTO [FLearn].[dbo].[Notification]([UserID], [Link], [NotificationMessage], "
+        String sql = "  INSERT INTO [FSkills].[dbo].[Notification]([UserID], [Link], [NotificationMessage], "
                 + "[Status], [NotificationDate])\n"
                 + "VALUES (?, ?, ?, 0, GETDATE());";
         try {
