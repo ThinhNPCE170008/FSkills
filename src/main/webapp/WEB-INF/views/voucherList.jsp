@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : voucherList
     Created on : Jun 1, 2025, 5:32:27 PM
     Author     : DELL
@@ -15,35 +15,69 @@
                 font-family: Arial, sans-serif;
                 background-color: #f4f7f6;
                 margin: 0;
+                padding: 0;
+                display: flex;
+                min-height: 100vh;
+            }
+
+            .main-content {
+                flex-grow: 1;
                 padding: 20px;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                min-height: 100vh;
             }
-            .container {
+
+            .voucher-list-container {
                 background-color: #ffffff;
                 border-radius: 10px;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
                 padding: 30px;
                 width: 100%;
-                max-width: 900px;
+                /* Tăng kích thước bảng - Thay đổi max-width ở đây */
+                max-width: 1100px; /* Tăng từ 900px lên 1100px */
                 box-sizing: border-box;
                 margin-top: 20px;
             }
+
             h2 {
                 color: #333;
-                text-align: center;
+                text-align: left;
                 margin-bottom: 25px;
                 border-bottom: 2px solid #007bff;
                 padding-bottom: 10px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
             }
+            h2 span {
+                flex-grow: 1;
+                text-align: left;
+            }
+
+            .return-to-dashboard {
+                padding: 8px 15px;
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 0.9em;
+                text-decoration: none;
+                transition: background-color 0.3s ease;
+            }
+            .return-to-dashboard:hover {
+                background-color: #0056b3;
+            }
+
             .search-add-section {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
                 margin-bottom: 20px;
                 flex-wrap: wrap;
+                /* Thêm padding-top để tạo khoảng cách cho cả phần tìm kiếm và nút add */
+                padding-top: 15px; /* Thêm padding-top */
             }
             .search-bar {
                 display: flex;
@@ -69,11 +103,10 @@
             .search-bar button:hover {
                 background-color: #0056b3;
             }
-            /* Style cho nút "Tất cả Vouchers" */
             .search-bar .reset-button {
-                background-color: #6c757d; /* Màu xám */
+                background-color: #6c757d;
                 color: white;
-                margin-left: 10px; /* Khoảng cách với nút tìm kiếm */
+                margin-left: 10px;
             }
             .search-bar .reset-button:hover {
                 background-color: #5a6268;
@@ -101,12 +134,20 @@
             }
             th, td {
                 border: 1px solid #ddd;
-                padding: 10px;
+                /* Tăng padding cho ô bảng để có nhiều không gian hơn */
+                padding: 12px; /* Tăng từ 10px lên 12px */
                 text-align: left;
             }
             th {
                 background-color: #f2f2f2;
                 color: #333;
+                text-transform: uppercase;
+                /* Tăng font size cho tiêu đề cột */
+                font-size: 1em; /* Tăng từ 0.9em lên 1em */
+            }
+            td {
+                /* Tăng font size cho nội dung bảng */
+                font-size: 1em; /* Tăng từ 0.9em lên 1em */
             }
             tr:nth-child(even) {
                 background-color: #f9f9f9;
@@ -147,7 +188,6 @@
                 color: #666;
                 margin-top: 30px;
             }
-            /* Giữ lại style cơ bản cho global-message nếu bạn muốn, nhưng không còn success/error colors */
             .global-message {
                 margin-bottom: 20px;
                 padding: 10px;
@@ -161,70 +201,75 @@
         </style>
     </head>
     <body>
-        <div class="container">
-            <a class="nav-link active" href="adminDashboard">Return</a>
-            <h2>List of Vouchers</h2>
+        <jsp:include page="/layout/sidebar.jsp"/>
 
-            <c:if test="${not empty globalMessage}">
-                <p class="global-message">
-                    ${globalMessage}
-                </p>
-            </c:if>
+        <div class="main-content">
+            <div class="voucher-list-container">
+                <h2>
+                    <span>List of Vouchers</span>
+                    <a href="adminDashboard" class="return-to-dashboard">Return to Dashboard</a>
+                </h2>
 
-            <div class="search-add-section">
-                <div class="search-bar">
-                    <form action="voucherList" method="get">
-                        <input type="text" name="searchTerm" placeholder="Search Voucher" value="${param.searchTerm}">
-                        <button type="submit">Search</button>
-                        <button type="button" class="reset-button" onclick="window.location.href = 'voucherList'">All voucher</button>
-                    </form>
+                <c:if test="${not empty globalMessage}">
+                    <p class="global-message">
+                        ${globalMessage}
+                    </p>
+                </c:if>
+
+                <div class="search-add-section">
+                    <div class="search-bar">
+                        <form action="voucherList" method="get">
+                            <input type="text" name="searchTerm" placeholder="Search Voucher" value="${param.searchTerm}">
+                            <button type="submit">Search</button>
+                            <button type="button" class="reset-button" onclick="window.location.href = 'voucherList'">All voucher</button>
+                        </form>
+                    </div>
+                    <div>
+                        <a href="addVoucher" class="add-button">Add new voucher</a>
+                    </div>
                 </div>
-                <div>
-                    <a href="addVoucher" class="add-button">Add new voucher</a>
-                </div>
-            </div>
 
-            <c:choose>
-                <c:when test="${not empty voucherList}">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Expiration Date</th>
-                                <th>Sale Type</th>
-                                <th>Sale Amount</th>
-                                <th>Minimum Price</th>
-                                <th>Course ID</th>
-                                <th>Amount</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach var="voucher" items="${voucherList}">
+                <c:choose>
+                    <c:when test="${not empty voucherList}">
+                        <table>
+                            <thead>
                                 <tr>
-                                    <td>${voucher.voucherID}</td>
-                                    <td>${voucher.expiredDate}</td>
-                                    <td>${voucher.saleType}</td>
-                                    <td>${voucher.saleAmount}</td>
-                                    <td>${voucher.minPrice}</td>
-                                    <td>${voucher.courseID}</td>
-                                    <td>${voucher.amount}</td>
-                                    <td class="actions">
-                                        <a href="editVoucher?voucherID=${voucher.voucherID}" class="edit">Edit</a>
-                                        <form action="deleteVoucher" method="post" style="display:inline-block;">
-                                            <input type="hidden" name="voucherID" value="${voucher.voucherID}">
-                                            <button type="submit" onclick="return confirm('Do you sure to delete ${voucher.voucherID} ?');">Delete</button>
-                                        </form>
-                                    </td>
+                                    <th>ID</th>
+                                    <th>Expiration Date</th>
+                                    <th>Sale Type</th>
+                                    <th>Sale Amount</th>
+                                    <th>Minimum Price</th>
+                                    <th>Course ID</th>
+                                    <th>Amount</th>
+                                    <th>Action</th>
                                 </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>
-                </c:when>
-                <c:otherwise>
-                    <p class="no-vouchers">Do not found any vouchers.</p>
-                </c:otherwise>
-            </c:choose>
+                            </thead>
+                            <tbody>
+                                <c:forEach var="voucher" items="${voucherList}">
+                                    <tr>
+                                        <td>${voucher.voucherID}</td>
+                                        <td>${voucher.expiredDate}</td>
+                                        <td>${voucher.saleType}</td>
+                                        <td>${voucher.saleAmount}</td>
+                                        <td>${voucher.minPrice}</td>
+                                        <td>${voucher.courseID}</td>
+                                        <td>${voucher.amount}</td>
+                                        <td class="actions">
+                                            <a href="editVoucher?voucherID=${voucher.voucherID}" class="edit">Edit</a>
+                                            <form action="deleteVoucher" method="post" style="display:inline-block;">
+                                                <input type="hidden" name="voucherID" value="${voucher.voucherID}">
+                                                <button type="submit" onclick="return confirm('Do you sure to delete ${voucher.voucherID} ?');">Delete</button>
+                                            </form>
+                                        </td>
+                                    </c:forEach>
+                            </tbody>
+                        </table>
+                    </c:when>
+                    <c:otherwise>
+                        <p class="no-vouchers">Do not found any vouchers.</p>
+                    </c:otherwise>
+                </c:choose>
+            </div>
         </div>
     </body>
 </html>
