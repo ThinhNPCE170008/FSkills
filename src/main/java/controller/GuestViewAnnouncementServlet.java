@@ -25,22 +25,20 @@ public class GuestViewAnnouncementServlet extends HttpServlet {
         String path = request.getServletPath();
 
         try {
-            AnnouncementDAO annDAO = new AnnouncementDAO(); // Tạo instance của DAO
+            AnnouncementDAO annDAO = new AnnouncementDAO();
 
             if ("/guest/announcements".equals(path)) {
                 List<Announcement> announcements;
-                String searchQuery = request.getParameter("search"); // Lấy tham số search từ request
+                String searchQuery = request.getParameter("search");
 
                 if (searchQuery != null && !searchQuery.trim().isEmpty()) {
-                    // Nếu có từ khóa tìm kiếm, gọi phương thức searchAnnouncements
                     announcements = annDAO.searchAnnouncements(searchQuery.trim());
                 } else {
-                    // Nếu không có từ khóa tìm kiếm hoặc từ khóa rỗng, hiển thị tất cả
                     announcements = annDAO.getAll();
                 }
 
                 request.setAttribute("announcements", announcements);
-                request.getRequestDispatcher("/globalAnn.jsp").forward(request, response); // Chuyển đến trang danh sách
+                request.getRequestDispatcher("/globalAnn.jsp").forward(request, response);
             } else if ("/guest/announcement-detail".equals(path)) {
                 // Xử lý hiển thị chi tiết thông báo
                 String idParam = request.getParameter("id");
@@ -50,7 +48,6 @@ public class GuestViewAnnouncementServlet extends HttpServlet {
                         Announcement announcement = annDAO.getAnnouncementById(announcementId);
                         if (announcement != null) {
                             request.setAttribute("announcement", announcement);
-                            // Sửa đường dẫn JSP tại đây
                             request.getRequestDispatcher("/globalAnnDetail.jsp").forward(request, response);
                         } else {
                             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Announcement not found.");
