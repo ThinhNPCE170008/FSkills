@@ -65,18 +65,18 @@ public class DegreeServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(@org.jetbrains.annotations.NotNull HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         String action = request.getParameter("action");
-        User user= (User) session.getAttribute("user");
+        List<User> acc = (List<User>) request.getAttribute("user");
         DegreeDAO degreeDAO = new DegreeDAO();
         if (action == null) {
             action = "listDegree";
         }
         if (action.equalsIgnoreCase("listDegree")) {
-            List<Degree> listDegree = (List<Degree>) degreeDAO.getDegreeById(user.getUserId());
-            request.setAttribute("user", user);
+            List<Degree> listDegree = degreeDAO.getAll();
+            request.setAttribute("AccountInfo", acc);
             request.setAttribute("listDegree", listDegree);
             request.getRequestDispatcher("WEB-INF/views/degree.jsp").forward(request, response);
         }
@@ -98,23 +98,22 @@ public class DegreeServlet extends HttpServlet {
         if (action.equalsIgnoreCase("create")) {
             try {
                 String id = request.getParameter("userId");
-                int userId = Integer.parseInt(id);
                 String degreeLink = request.getParameter("degreeLink");
                 // Nhận file
                 Part filePart = request.getPart("degreeImage");
                 String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-                String imagePath;
-                if (fileName == null || fileName.isEmpty()) {
-                    imagePath = "No Image";
-                } else {
-                    String uploadPath = getServletContext().getRealPath("") + File.separator + "imageUpload";
-                    File uploadDir = new File(uploadPath);
-                    if (!uploadDir.exists()) {
-                        uploadDir.mkdir();
-                    }
-                    filePart.write(uploadPath + File.separator + fileName);
-                    imagePath = "imageUpload/" + fileName;
+                int userId = Integer.parseInt(id);
+                // Lưu file vào thư mục trên server
+                String uploadPath = getServletContext().getRealPath("") + File.separator + "imageUpload";
+                File uploadDir = new File(uploadPath);
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdir();
                 }
+
+                filePart.write(uploadPath + File.separator + fileName);
+
+                // Lưu tên file hoặc đường dẫn vào DB nếu cần
+                String imagePath = "imageUpload/" + fileName;
                 int res = degreeDAO.insert(userId, imagePath, degreeLink);
 
                 if (res == 1) {

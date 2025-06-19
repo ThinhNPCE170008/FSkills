@@ -19,14 +19,14 @@
       <a href="#">My Course</a>
       <a href="#">Home</a>
       <a href="#">All Courses</a>
-      <%-- 2. Update Degree Icon --%>
+
       <a href="${pageContext.request.contextPath}/Degree"><i class="bi bi-journal-text"></i> Degree</a>
       <div class="icons">
-        <%-- 4. Update Cart Icon --%>
+
         <span class="cart">
                             <i class="bi bi-cart3"></i><span class="badge">2</span>
                         </span>
-        <%-- 5. Update Bell Icon --%>
+
         <span class="bell"><i class="bi bi-bell"></i></span>
         <div class="user">Hi, <c:out value="${not empty sessionScope.user.displayName ? sessionScope.user.displayName : 'Guest'}"/></div>
       </div>
@@ -98,7 +98,7 @@
       </div>
     </div>
 
-    <%-- Profile Edit Form (Initially Hidden) --%>
+
     <form class="profile-form" action="editProfile" method="POST" enctype="multipart/form-data">
       <div class="avatar-section">
         <div class="avatar-container">
@@ -154,14 +154,14 @@
   </c:if>
 </div>
 
-<!-- Modal for Avatar Popup -->
+
 <div id="avatarModal" class="avatar-modal">
   <span class="avatar-modal-close">&times;</span>
   <img class="avatar-modal-content" id="modalImage">
 </div>
 
 <script>
-  // JavaScript for toggling view and image preview
+
   const profileCard = document.querySelector('.profile-card');
   const form = document.querySelector('.profile-form');
   const editBtn = document.querySelector('.edit-btn');
@@ -182,7 +182,7 @@
     window.location.href = '${pageContext.request.contextPath}/changePassword';
   });
 
-  // Preview avatar
+
   document.getElementById('avatar-upload').addEventListener('change', function (e) {
     const file = e.target.files[0];
     if (file) {
@@ -194,15 +194,15 @@
     }
   });
 
-  // Avatar Modal Popup
+
   const modal = document.getElementById("avatarModal");
   const modalImg = document.getElementById("modalImage");
   const closeBtn = document.getElementsByClassName("avatar-modal-close")[0];
 
-  // Get all avatar images
+
   const avatarImages = document.querySelectorAll('.avatar img, .avatar-container img');
 
-  // Add click event to all avatar images
+
   avatarImages.forEach(img => {
     img.style.cursor = 'pointer';
     img.addEventListener('click', function() {
@@ -211,19 +211,19 @@
     });
   });
 
-  // Close the modal when clicking on the close button
+
   closeBtn.addEventListener('click', function() {
     modal.style.display = "none";
   });
 
-  // Close the modal when clicking outside the image
+
   window.addEventListener('click', function(event) {
     if (event.target == modal) {
       modal.style.display = "none";
     }
   });
 
-  // Auto-hide alerts after 3 seconds
+
   window.addEventListener('load', function() {
     const alerts = document.querySelectorAll('.alert');
     if (alerts.length > 0) {

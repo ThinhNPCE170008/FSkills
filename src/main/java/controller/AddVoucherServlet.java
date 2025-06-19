@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@WebServlet(name = "AddVoucherServlet", urlPatterns = {"/addVoucher"})
+@WebServlet(name = "AddVoucherServlet", urlPatterns = {"/addVoucher", "/addVoucherForm"})
 public class AddVoucherServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(AddVoucherServlet.class.getName());

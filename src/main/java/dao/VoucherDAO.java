@@ -11,6 +11,7 @@ package dao;
 import model.Voucher;
 import util.DBContext;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -77,6 +78,7 @@ public class VoucherDAO extends DBContext {
         return vouchers;
     }
 
+    // Đã sửa: Loại bỏ VoucherID khỏi câu lệnh INSERT và các tham số
     public boolean addVoucher(Voucher voucher) throws SQLException {
         String sql = "INSERT INTO Vouchers (ExpiredDate, SaleType, SaleAmount, MinPrice, CourseID, Amount) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {

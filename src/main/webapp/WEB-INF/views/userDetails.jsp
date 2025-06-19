@@ -195,12 +195,12 @@
             <c:choose>
                 <c:when test="${not empty allInform}">
                     <c:forEach var="user" items="${allInform}" begin="0" end="0">
-                        <form action="updateUserServlet" method="post">                            
+                        <form action="updateUserServlet" method="post">
+                            <input type="hidden" name="userName" value="${user.userName}">
 
                             <div class="detail-item">
                                 <span class="detail-label">Username:</span>
                                 <span class="detail-value" id="displayUsername">${user.userName}</span>
-                                <input type="hidden" name="userName" value="${user.userName}">
                             </div>
 
                             <div class="detail-item">

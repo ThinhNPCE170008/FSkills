@@ -9,7 +9,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Vouchers List</title>
+        <title>Danh sách Vouchers</title>
         <style>
             body {
                 font-family: Arial, sans-serif;
@@ -180,7 +180,7 @@
                     </form>
                 </div>
                 <div>
-                    <a href="addVoucher" class="add-button">Add new voucher</a>
+                    <a href="addVoucherForm" class="add-button">Add new voucher</a>
                 </div>
             </div>
 

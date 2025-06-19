@@ -70,14 +70,14 @@ public class DegreeAdminServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         String action = request.getParameter("action");
-        User user= (User) session.getAttribute("user");
+        List<User> acc = (List<User>) request.getAttribute("user");
         DegreeDAO degreeDAO = new DegreeDAO();
         if (action == null) {
             action = "listDegree";
         }
         if (action.equalsIgnoreCase("listDegree")) {
             List<Degree> listDegree = degreeDAO.getAll();
-            request.setAttribute("AccountInfo", user);
+            request.setAttribute("AccountInfo", acc);
             request.setAttribute("listDegree", listDegree);
             request.getRequestDispatcher("WEB-INF/views/degreeAdmin.jsp").forward(request, response);
         }
@@ -115,7 +115,6 @@ public class DegreeAdminServlet extends HttpServlet {
             try {
                 String statusParam = request.getParameter("status");
                 String id = request.getParameter("userId");
-                String avatar = request.getParameter("userAvatar");
                 int userId = Integer.parseInt(id);
                 String degree = request.getParameter("degreeId");
                 int degreeId = Integer.parseInt(degree);

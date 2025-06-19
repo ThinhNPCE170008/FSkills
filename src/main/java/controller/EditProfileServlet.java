@@ -30,7 +30,6 @@ public class EditProfileServlet extends HttpServlet {
             return;
         }
 
-        // Kiểm tra quyền chỉ cho INSTRUCTOR truy cập
         if (!"INSTRUCTOR".equalsIgnoreCase(user.getRole().toString())
                 && !"LEARNER".equalsIgnoreCase(user.getRole().toString())) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: You do not have permission to edit profiles.");
@@ -40,8 +39,8 @@ public class EditProfileServlet extends HttpServlet {
 
         DBContext dbContext = null;
         try {
-            dbContext = new DBContext(); // Khởi tạo DBContext
-            ProfileDAO profileDAO = new ProfileDAO(dbContext); // Truyền DBContext thay vì conn
+            dbContext = new DBContext();
+            ProfileDAO profileDAO = new ProfileDAO(dbContext);
             Profile profile = profileDAO.getProfile(user.getUserId());
 
             if (profile != null) {
@@ -83,8 +82,8 @@ public class EditProfileServlet extends HttpServlet {
 
         DBContext dbContext = null;
         try {
-            dbContext = new DBContext(); // Khởi tạo DBContext
-            ProfileDAO profileDAO = new ProfileDAO(dbContext); // Truyền DBContext thay vì conn
+            dbContext = new DBContext();
+            ProfileDAO profileDAO = new ProfileDAO(dbContext);
 
             Profile profile = new Profile();
             profile.setUserId(user.getUserId());

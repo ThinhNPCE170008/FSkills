@@ -36,7 +36,6 @@ public class UpdateVoucherServlet extends HttpServlet {
         Map<String, String> errorMessages = new HashMap<>();
         String globalMessage = "";
 
-        // Lấy tất cả các tham số từ request
         String voucherIDStr = request.getParameter("voucherID");
         String expiredDateStr = request.getParameter("expiredDate");
         String saleType = request.getParameter("saleType");
@@ -45,16 +44,7 @@ public class UpdateVoucherServlet extends HttpServlet {
         String courseIDStr = request.getParameter("courseID");
         String amountStr = request.getParameter("amount");
 
-        // Khởi tạo các biến để lưu giá trị đã parse/chuyển đổi
         int voucherID = 0;
-        Date expiredDate = null;
-        int saleAmount = 0;
-        int minPrice = 0;
-        int courseID = 0;
-        int amount = 0;
-
-        // Bắt đầu quá trình validation và parse dữ liệu
-        // Voucher ID (chỉ đọc, nên giá trị từ request.getParameter là đủ, không cần truy vấn lại nếu chỉ để hiển thị)
         if (voucherIDStr == null || voucherIDStr.trim().isEmpty()) {
             errorMessages.put("voucherID", "Voucher ID can not be null.");
         } else {
@@ -65,7 +55,7 @@ public class UpdateVoucherServlet extends HttpServlet {
             }
         }
 
-        // Expired Date
+        Date expiredDate = null;
         if (expiredDateStr == null || expiredDateStr.trim().isEmpty()) {
             errorMessages.put("expiredDate", "Please enter this value.");
         } else {
@@ -80,14 +70,13 @@ public class UpdateVoucherServlet extends HttpServlet {
             }
         }
 
-        // Sale Type
         if (saleType == null || saleType.trim().isEmpty()) {
             errorMessages.put("saleType", "Please enter for this value.");
         } else if (!saleType.equals("PERCENT") && !saleType.equals("FIXED")) {
             errorMessages.put("saleType", "Not valid sale.");
         }
 
-        // Sale Amount
+        int saleAmount = 0;
         if (saleAmountStr == null || saleAmountStr.trim().isEmpty()) {
             errorMessages.put("saleAmount", "Not null here.");
         } else {
@@ -104,7 +93,7 @@ public class UpdateVoucherServlet extends HttpServlet {
             }
         }
 
-        // Min Price
+        int minPrice = 0;
         if (minPriceStr == null || minPriceStr.trim().isEmpty()) {
             errorMessages.put("minPrice", "Minimum price cannot be empty.");
         } else {
@@ -118,7 +107,7 @@ public class UpdateVoucherServlet extends HttpServlet {
             }
         }
 
-        // Course ID
+        int courseID = 0;
         if (courseIDStr == null || courseIDStr.trim().isEmpty()) {
             errorMessages.put("courseID", "Course ID cannot be empty.");
         } else {
@@ -132,7 +121,7 @@ public class UpdateVoucherServlet extends HttpServlet {
             }
         }
 
-        // Amount
+        int amount = 0;
         if (amountStr == null || amountStr.trim().isEmpty()) {
             errorMessages.put("amount", "Amount cannot be empty.");
         } else {
@@ -146,33 +135,22 @@ public class UpdateVoucherServlet extends HttpServlet {
             }
         }
 
-        // --- ĐÂY LÀ PHẦN THAY ĐỔI QUAN TRỌNG NHẤT ---
-        // Nếu có lỗi, truyền lại các giá trị mà người dùng đã nhập
         if (!errorMessages.isEmpty()) {
             globalMessage = "Voucher update failed. Please check for errors.";
             request.setAttribute("globalMessage", globalMessage);
             request.setAttribute("errorMessages", errorMessages);
+            request.setAttribute("param", request.getParameterMap());
 
-            // Tạo một đối tượng Voucher tạm thời từ các giá trị đã nhập
-            Voucher voucherForDisplay = new Voucher();
-            voucherForDisplay.setVoucherID(voucherID); // Dù lỗi, giữ lại ID để form vẫn là "Edit"
-            voucherForDisplay.setExpiredDate(expiredDate);
-            voucherForDisplay.setSaleType(saleType); // SỬ DỤNG saleType TỪ request.getParameter()
-            voucherForDisplay.setSaleAmount(saleAmount);
-            voucherForDisplay.setMinPrice(minPrice);
-            voucherForDisplay.setCourseID(courseID);
-            voucherForDisplay.setAmount(amount);
-
-            request.setAttribute("voucher", voucherForDisplay); // Đặt đối tượng voucher này vào request
-
-            // Không cần request.setAttribute("param", request.getParameterMap()); nữa
-            // vì bạn đã chủ động tạo đối tượng voucherForDisplay từ các param.
-            // Điều này làm cho EL `${voucher.saleType}` hoạt động chính xác hơn.
-            
+            VoucherDAO voucherDAO = new VoucherDAO();
+            try {
+                request.setAttribute("voucher", voucherDAO.getVoucherByID(voucherID));
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, "Database error retrieving voucher for error display", ex);
+                errorMessages.put("global", "Database error reloading voucher information.");
+            }
             request.getRequestDispatcher("/WEB-INF/views/voucherDetails.jsp").forward(request, response);
             return;
         }
-        // --- KẾT THÚC PHẦN THAY ĐỔI QUAN TRỌNG NHẤT ---
 
         Voucher updatedVoucher = new Voucher();
         updatedVoucher.setVoucherID(voucherID);
@@ -187,25 +165,25 @@ public class UpdateVoucherServlet extends HttpServlet {
         try {
             boolean success = voucherDAO.updateVoucher(updatedVoucher);
             if (success) {
-                request.setAttribute("globalMessage", "Voucher updated successfully!"); // Thông báo thành công
-                request.setAttribute("successMessage", true); // Thêm cờ này để JSP hiện màu xanh
+                request.setAttribute("globalMessage", "Voucher updated successfully!");
                 response.sendRedirect(request.getContextPath() + "/voucherList");
             } else {
                 globalMessage = "Voucher update failed. Voucher not found or no changes made.";
                 request.setAttribute("globalMessage", globalMessage);
-                request.setAttribute("errorGlobalMessage", true); // Thêm cờ này để JSP hiện màu đỏ
-                // Khi không thành công, chúng ta cũng cần hiển thị lại dữ liệu đã nhập
-                request.setAttribute("voucher", updatedVoucher); // Dùng chính đối tượng vừa cố gắng update
+                request.setAttribute("errorMessages", errorMessages);
+                request.setAttribute("param", request.getParameterMap());
+                request.setAttribute("voucher", voucherDAO.getVoucherByID(voucherID));
                 request.getRequestDispatcher("/WEB-INF/views/voucherDetails.jsp").forward(request, response);
             }
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Database error updating voucher", ex);
             globalMessage = "Database error: " + ex.getMessage();
             request.setAttribute("globalMessage", globalMessage);
-            request.setAttribute("errorGlobalMessage", true); // Thêm cờ này để JSP hiện màu đỏ
-            
-            // Khi có lỗi DB, cũng hiển thị lại dữ liệu đã nhập
-            request.setAttribute("voucher", updatedVoucher); // Dùng chính đối tượng vừa cố gắng update
+            request.setAttribute("errorMessages", errorMessages);
+            request.setAttribute("param", request.getParameterMap());
+            try {
+                request.setAttribute("voucher", voucherDAO.getVoucherByID(voucherID));
+            } catch (SQLException e) { LOGGER.log(Level.SEVERE, "Error re-fetching voucher", e); }
             request.getRequestDispatcher("/WEB-INF/views/voucherDetails.jsp").forward(request, response);
         }
     }

@@ -52,40 +52,6 @@ public class DegreeDAO extends DBContext {
         return list;
     }
 
-    public List<Degree> getDegreeById(int id) {
-        List<Degree> list = new ArrayList<>();
-        String sql = "SELECT ia.*, u.username, u.DisplayName FROM [FLearn].[dbo].[InstructorApplications] AS ia "
-                + "JOIN [FLearn].[dbo].[Users] AS u ON ia.UserID = u.UserID WHERE u.UserID = ?";
-
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                int ApplicationID = rs.getInt("ApplicationID");
-                int ApplicationStatus = rs.getInt("ApplicationStatus");
-                Timestamp ApplicationSubmitDate = rs.getTimestamp("ApplicationSubmitDate");
-                Timestamp ApprovalDate = rs.getTimestamp("ApprovalDate");
-                String CertificateImage = rs.getString("CertificateImage");
-                String CertificateLink = rs.getString("CertificateLink");
-                int userId = rs.getInt("UserID");
-                String userName = rs.getString("UserName");
-                String displayName = rs.getString("DisplayName");
-
-                Degree degree = new Degree(ApplicationID, ApplicationStatus, ApplicationSubmitDate, ApprovalDate,
-                        CertificateImage, CertificateLink, new User(userId, userName, displayName));
-                list.add(degree);
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-
-        return list;
-    }
-
-
-
     public int insert(int userId, String Image, String link) {
         String sql = "INSERT INTO InstructorApplications(UserID,ApplicationStatus,ApplicationSubmitDate,"
                 + "CertificateImage,CertificateLink) VALUES (?, 0, GETDATE(), ?, ?);";
