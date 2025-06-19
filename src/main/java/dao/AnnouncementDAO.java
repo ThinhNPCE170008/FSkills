@@ -120,7 +120,79 @@ public class AnnouncementDAO extends DBContext {
         }
         return false;
     }
-
+//------------------------------------------------------------------------------------------------------------------------------------------------------
+    public List<Announcement> userAnnDetail(int Id) throws SQLException {
+        List<Announcement> list = new ArrayList<>();
+        String sql = "Select title, AnnouncementText, CreateAt, TakeDownDate, AnnouncementImage from announcement";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        try {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Announcement a = new Announcement();
+                a.setTitle(rs.getString("title"));
+                a.setAnnouncementText(rs.getString("AnnouncementText"));
+                a.setCreateDate(rs.getTimestamp("CreateAt"));
+                a.setTakeDownDate(rs.getTimestamp("TakeDownDate"));
+                a.setAnnouncementImage(rs.getString("AnnouncementImage"));
+                list.add(a);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    
+    public List<Announcement> userAnn(int Id) throws SQLException {
+        List<Announcement> list = new ArrayList<>();
+        String sql = "Select title, CreateAt from announcement";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        try {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Announcement ad = new Announcement();
+                ad.setTitle(rs.getString("title"));
+                ad.setCreateDate(rs.getTimestamp("CreateAt"));
+                list.add(ad);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+    
+    public List<Announcement> searchAnnouncements(String keyword) {
+        List<Announcement> list = new ArrayList<>();
+        String sql = "SELECT A.AnnoucementID, A.Title, A.AnnouncementText, A.CreateAt, "
+                   + "A.TakeDownDate, A.AnnouncementImage, U.UserID, U.UserName, U.DisplayName "
+                   + "FROM Announcement A JOIN Users U ON A.UserID = U.UserID "
+                   + "WHERE A.Title LIKE ? OR A.AnnouncementText LIKE ? "
+                   + "ORDER BY A.CreateAt DESC;";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            // Thêm '%' vào đầu và cuối keyword để tìm kiếm chuỗi con
+            ps.setString(1, "%" + keyword + "%");
+            ps.setString(2, "%" + keyword + "%");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int annoucementID = rs.getInt("AnnoucementID");
+                String title = rs.getString("Title");
+                String announcementText = rs.getString("AnnouncementText");
+                Timestamp createAt = rs.getTimestamp("CreateAt");
+                Timestamp takeDownDate = rs.getTimestamp("TakeDownDate");
+                String announcementImage = rs.getString("AnnouncementImage");
+                int userId = rs.getInt("UserID");
+                String userName = rs.getString("UserName");
+                String displayName = rs.getString("DisplayName");
+                list.add(new Announcement(annoucementID, title, announcementText, createAt,
+                        takeDownDate, announcementImage, new User(userId, userName, displayName)));
+            }
+            return list;
+        } catch (SQLException e) {
+            System.out.println("Error in AnnouncementDAO.searchAnnouncements(): " + e.getMessage());
+        }
+        return list;
+    }
+//-----------------------------------------------------------------------------------------------------------------------------------------------------
     public int delete(int id) {
         String sql = "DELETE FROM Announcement WHERE AnnoucementID = ?";
         try {

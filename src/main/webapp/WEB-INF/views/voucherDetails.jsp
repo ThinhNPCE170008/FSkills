@@ -128,7 +128,7 @@
                     <div class="form-group">
                         <label for="voucherID">Voucher ID:</label>
                         <input type="number" id="voucherID" name="voucherID"
-                               value="${not empty param.voucherID ? param.voucherID : voucher.voucherID}"
+                               value="${voucher.voucherID}"
                                readonly>
                         <c:if test="${not empty errorMessages['voucherID']}">
                             <span class="error-message">${errorMessages['voucherID']}</span>

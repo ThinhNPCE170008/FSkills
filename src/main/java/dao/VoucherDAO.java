@@ -30,7 +30,7 @@ public class VoucherDAO extends DBContext {
         try (PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                vouchers.add(mapResultSetToVoucher(rs));
+                vouchers.add(setVoucher(rs));
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error in getAllVouchers: " + e.getMessage(), e);
@@ -45,7 +45,7 @@ public class VoucherDAO extends DBContext {
             ps.setInt(1, voucherID);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return mapResultSetToVoucher(rs);
+                    return setVoucher(rs);
                 }
             }
         } catch (SQLException e) {
@@ -64,7 +64,7 @@ public class VoucherDAO extends DBContext {
                 ps.setInt(1, id);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        vouchers.add(mapResultSetToVoucher(rs));
+                        vouchers.add(setVoucher(rs));
                     }
                 }
             } catch (NumberFormatException e) {
@@ -124,7 +124,7 @@ public class VoucherDAO extends DBContext {
         }
     }
 
-    private Voucher mapResultSetToVoucher(ResultSet rs) throws SQLException {
+    private Voucher setVoucher(ResultSet rs) throws SQLException {
         Voucher voucher = new Voucher();
         voucher.setVoucherID(rs.getInt("VoucherID"));
         voucher.setExpiredDate(rs.getDate("ExpiredDate"));
