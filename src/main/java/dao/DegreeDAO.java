@@ -27,8 +27,8 @@ public class DegreeDAO extends DBContext {
 
     public List<Degree> getAll() {
         List<Degree> list = new ArrayList<>();
-        String sql = "SELECT ia.*,  u.username, u.DisplayName FROM [FLearn].[dbo].[InstructorApplications] AS ia "
-                + "JOIN [FLearn].[dbo].[Users] AS u ON ia.UserID = u.UserID;";
+        String sql = "SELECT ia.*,  u.username, u.DisplayName FROM [FSkills].[dbo].[InstructorApplications] AS ia "
+                + "JOIN [FSkills].[dbo].[Users] AS u ON ia.UserID = u.UserID;";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
@@ -54,8 +54,8 @@ public class DegreeDAO extends DBContext {
 
     public List<Degree> getDegreeById(int id) {
         List<Degree> list = new ArrayList<>();
-        String sql = "SELECT ia.*, u.username, u.DisplayName FROM [FLearn].[dbo].[InstructorApplications] AS ia "
-                + "JOIN [FLearn].[dbo].[Users] AS u ON ia.UserID = u.UserID WHERE u.UserID = ?";
+        String sql = "SELECT ia.*, u.username, u.DisplayName FROM [FSkills].[dbo].[InstructorApplications] AS ia "
+                + "JOIN [FSkills].[dbo].[Users] AS u ON ia.UserID = u.UserID WHERE u.UserID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -83,8 +83,6 @@ public class DegreeDAO extends DBContext {
 
         return list;
     }
-
-
 
     public int insert(int userId, String Image, String link) {
         String sql = "INSERT INTO InstructorApplications(UserID,ApplicationStatus,ApplicationSubmitDate,"
@@ -143,7 +141,7 @@ public class DegreeDAO extends DBContext {
 
         return 0;
     }
-    
+
     public boolean approve(int status, int applicationId) {
         String sql = "UPDATE InstructorApplications SET ApprovalDate = GETDATE(),ApplicationStatus=?"
                 + "WHERE ApplicationID = ?;";
