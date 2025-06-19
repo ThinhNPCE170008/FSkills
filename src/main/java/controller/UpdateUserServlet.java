@@ -33,7 +33,7 @@ public class UpdateUserServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(UpdateUserServlet.class.getName());
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^(?=.{1,254}$)(?=.{1,64}@)[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$");
-    private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("^[0-9]{10,15}$");
+    private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("^(?:\\+84|84|0)(3|5|7|8|9)([0-9]{8})$");
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -116,6 +116,7 @@ public class UpdateUserServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/views/userDetails.jsp").forward(request, response);
             return;
         }
+        
 
         User updatedUser = new User();
         updatedUser.setUserName(userName);

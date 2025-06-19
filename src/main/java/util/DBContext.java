@@ -23,7 +23,7 @@ public class DBContext {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             String dbURL = "jdbc:sqlserver://localhost:1433;"
-                    + "databaseName=FSkills;"
+                    + "databaseName=FLearn;"
                     + "user=sa;"
                     + "password=123456;"
                     + "encrypt=true;trustServerCertificate=true;";
