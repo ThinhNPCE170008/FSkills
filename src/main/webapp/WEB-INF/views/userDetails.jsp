@@ -223,9 +223,7 @@
 
                             <div class="detail-item">
                                 <span class="detail-label">Role:</span>
-                                <%-- Dòng này sẽ luôn hiển thị giá trị Role, kể cả trong chế độ Edit --%>
                                 <span class="detail-value" id="displayRole">${user.role}</span> 
-                                <%-- Dùng hidden input để truyền giá trị Role khi submit form, vì nó không thể chỉnh sửa --%>
                                 <input type="hidden" name="role" value="${user.role}">
                             </div>
 
