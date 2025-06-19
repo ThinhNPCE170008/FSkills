@@ -132,7 +132,7 @@
                         %>
                         <a href="<%= n.getLink()%>" class="block">
                             <li class="flex items-start px-4 py-3 hover:bg-gray-50 cursor-pointer">
-                                <img src="<%= n.getLink()%>" class="w-10 h-10 rounded-full mr-3 mt-1" alt="avatar">
+                                <img src="#" class="w-10 h-10 rounded-full mr-3 mt-1" alt="avatar">
                                 <div class="flex-1">
                                     <p class="text-sm text-gray-800 font-semibold"><%= n.getNotificationMessage()%>
                                     </p>
