@@ -126,6 +126,10 @@
                                 </c:choose>
                             </td>
                             <td class="d-flex flex-column gap-1">
+                                <a href="InstructorMaterial?moduleId=${module.moduleID}&courseId=${course.courseID}" 
+                                   class="btn btn-sm btn-info text-white">
+                                    <i class="fas fa-eye"></i> Detail
+                                </a>
                                 <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
                                         data-bs-target="#updateModal${module.moduleID}">Update
                                 </button>
