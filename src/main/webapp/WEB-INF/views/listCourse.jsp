@@ -58,7 +58,7 @@
     </style>
 </head>
 <body>
-<jsp:include page="/layout/headerInstructor.jsp" />
+<jsp:include page="/layout/headerInstructor.jsp"/>
 
 <div class="container py-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -102,14 +102,14 @@
                         <td>${c.user.displayName}</td>
                         <td>
                                         <span class="badge
-                                              ${c.approveStatus == 1 ? 'badge-approved' : 'badge-pending'}">
+                                            ${c.approveStatus == 1 ? 'badge-approved' : 'badge-pending'}">
                                                 ${c.approveStatus == 1 ? 'Approved' : 'Pending'}
                                         </span>
                         </td>
                         <td>
                             <c:choose>
                                 <c:when test="${not empty c.publicDate}">
-                                    <fmt:formatDate value="${c.publicDate}" pattern="yyyy-MM-dd HH:mm:ss" />
+                                    <fmt:formatDate value="${c.publicDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
                                 </c:when>
                                 <c:otherwise>N/A</c:otherwise>
                             </c:choose>
@@ -117,7 +117,7 @@
                         <td>
                             <c:choose>
                                 <c:when test="${not empty c.courseLastUpdate}">
-                                    <fmt:formatDate value="${c.courseLastUpdate}" pattern="yyyy-MM-dd HH:mm:ss" />
+                                    <fmt:formatDate value="${c.courseLastUpdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
                                 </c:when>
                                 <c:otherwise>N/A</c:otherwise>
                             </c:choose>
@@ -125,15 +125,31 @@
                         <td>
                             <c:choose>
                                 <c:when test="${c.isSale == 1}">
-                                                <span class="price-sale">
-                                                    <fmt:formatNumber value="${c.salePrice}" type="currency" currencyCode="VND"/>
-                                                </span><br>
-                                    <span class="price-original">
-                                                    <fmt:formatNumber value="${c.originalPrice}" type="currency" currencyCode="VND"/>
+                                    <c:choose>
+                                        <c:when test="${c.salePrice == 0}">
+                                            <span class="price-sale text-success fw-bold">Free</span><br>
+                                        </c:when>
+                                        <c:otherwise>
+                                                        <span class="price-sale">
+                                                            <fmt:formatNumber value="${c.salePrice}" pattern="#,##0"/> VND
+                                                        </span><br>
+                                        </c:otherwise>
+                                    </c:choose>
+
+                                    <span class="price-original text-decoration-line-through text-muted">
+                                                    <fmt:formatNumber value="${c.originalPrice}" pattern="#,##0"/> VND
                                                 </span>
                                 </c:when>
+
                                 <c:otherwise>
-                                    <fmt:formatNumber value="${c.originalPrice}" type="currency" currencyCode="VND"/>
+                                    <c:choose>
+                                        <c:when test="${c.originalPrice == 0}">
+                                            <span class="text-success fw-bold">Free</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <fmt:formatNumber value="${c.originalPrice}" pattern="#,##0"/> VND
+                                        </c:otherwise>
+                                    </c:choose>
                                 </c:otherwise>
                             </c:choose>
                         </td>
@@ -143,10 +159,12 @@
                             </a>
 
                             <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                                    data-bs-target="#updateModal${c.courseID}">Update</button>
+                                    data-bs-target="#updateModal${c.courseID}">Update
+                            </button>
 
                             <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#deleteModal${c.courseID}">Delete</button>
+                                    data-bs-target="#deleteModal${c.courseID}">Delete
+                            </button>
                         </td>
                     </tr>
                 </c:forEach>
@@ -155,10 +173,11 @@
         </c:otherwise>
     </c:choose>
 </div>
-<jsp:include page="/layout/footerInstructor.jsp" />
+<jsp:include page="/layout/footerInstructor.jsp"/>
 
 <!-- Create Course Modal -->
-<div class="modal fade" id="createCourseModal" tabindex="-1" aria-labelledby="createCourseModalLabel" aria-hidden="true">
+<div class="modal fade" id="createCourseModal" tabindex="-1" aria-labelledby="createCourseModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <form id="createCourseForm" action="instructor?action=create" method="POST">
@@ -167,36 +186,35 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="userID" value="${user.userId}" />
+                    <input type="hidden" name="userID" value="${user.userId}"/>
 
                     <div class="mb-3">
                         <label for="courseName" class="form-label">Course Name</label>
-                        <input type="text" class="form-control" id="courseName" name="courseName"
-                               pattern="^[\p{L}\s]+$" title="Only letters and spaces are allowed" maxlength="30" required>
+                        <input type="text" class="form-control" id="courseName" name="courseName" maxlength="30"
+                               required>
                     </div>
 
                     <div class="mb-3">
                         <label for="courseCategory" class="form-label">Category</label>
-                        <input type="text" class="form-control" id="courseCategory" name="courseCategory"
-                               pattern="^[\p{L}\s]+$" title="Only letters and spaces are allowed" required>
+                        <input type="text" class="form-control" id="courseCategory" name="courseCategory" required>
                     </div>
 
                     <div class="mb-3">
                         <label for="originalPrice" class="form-label">Original Price (VND)</label>
-                        <input type="number" class="form-control" id="originalPrice" name="originalPrice"
-                               min="0" max="10000000" required>
+                        <input type="number" class="form-control" id="originalPrice" name="originalPrice" min="0"
+                               max="10000000" required>
                     </div>
 
                     <div class="mb-3">
                         <label for="salePrice" class="form-label">Sale Price (VND)</label>
-                        <input type="number" class="form-control" id="salePrice" name="salePrice"
-                               min="0" max="10000000" required>
+                        <input type="number" class="form-control" id="salePrice" name="salePrice" min="0" max="10000000"
+                               required>
                     </div>
 
                     <div class="mb-3">
                         <label for="courseImageLocation" class="form-label">Course Image URL</label>
-                        <input type="url" class="form-control" id="courseImageLocation"
-                               name="courseImageLocation" placeholder="https://example.com/image.jpg" required>
+                        <input type="url" class="form-control" id="courseImageLocation" name="courseImageLocation"
+                               placeholder="https://example.com/image.jpg" required>
                     </div>
 
                     <div class="form-check mb-3">
@@ -221,46 +239,49 @@
     <!-- Update Modal -->
     <div class="modal fade" id="updateModal${course.courseID}" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
-            <form id="updateCourseForm${course.courseID}" action="instructor?action=update" method="POST" class="modal-content bg-white">
+            <form id="updateCourseForm${course.courseID}" action="instructor?action=update" method="POST"
+                  class="modal-content bg-white">
                 <div class="modal-header">
                     <h5 class="modal-title">Update Course</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="courseID" value="${course.courseID}" />
-                    <input type="hidden" name="userID" value="${user.userId}" />
+                    <input type="hidden" name="courseID" value="${course.courseID}"/>
+                    <input type="hidden" name="userID" value="${user.userId}"/>
 
                     <div class="mb-3">
                         <label class="form-label">Course Name</label>
-                        <input type="text" name="courseName" id="updateCourseName${course.courseID}" value="${course.courseName}" class="form-control"
-                               pattern="^[\p{L}\s]+$" title="Only letters and spaces are allowed" maxlength="30" required>
+                        <input type="text" name="courseName" id="updateCourseName${course.courseID}"
+                               value="${course.courseName}" class="form-control" maxlength="30" required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Category</label>
-                        <input type="text" name="courseCategory" id="updateCourseCategory${course.courseID}" value="${course.courseCategory}" class="form-control"
-                               pattern="^[\p{L}\s]+$" title="Only letters and spaces are allowed" maxlength="30" required>
+                        <input type="text" name="courseCategory" id="updateCourseCategory${course.courseID}"
+                               value="${course.courseCategory}" class="form-control" maxlength="30" required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Original Price</label>
                         <input type="number" name="originalPrice" value="${course.originalPrice}" class="form-control"
-                               min="0" max="10000000" required>
+                               id="updateOriginalPrice${course.courseID}" min="0" max="10000000" required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Sale Price</label>
                         <input type="number" name="salePrice" value="${course.salePrice}" class="form-control"
-                               min="0" max="10000000" required>
+                               id="updateSalePrice${course.courseID}" min="0" max="10000000" required>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Image URL</label>
-                        <input type="url" name="courseImageLocation" value="${course.courseImageLocation}" class="form-control" required>
+                        <input type="url" name="courseImageLocation" value="${course.courseImageLocation}"
+                               class="form-control" required>
                     </div>
 
                     <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="isSale${course.courseID}" name="isSale" value="1"
+                        <input class="form-check-input" type="checkbox" id="isSale${course.courseID}" name="isSale"
+                               value="1"
                             ${course.isSale == 1 ? 'checked' : ''}>
                         <label class="form-check-label" for="isSale${course.courseID}">
                             On Sale
@@ -284,8 +305,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" name="userID" value="${user.userId}" />
-                    <input type="hidden" name="courseID" value="${course.courseID}" />
+                    <input type="hidden" name="userID" value="${user.userId}"/>
+                    <input type="hidden" name="courseID" value="${course.courseID}"/>
                     <p>Are you sure you want to delete <strong>${course.courseName}</strong>?</p>
                 </div>
                 <div class="modal-footer">
@@ -297,82 +318,177 @@
     </div>
 </c:forEach>
 
-<c:if test="${not empty err}">
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div class="toast align-items-center text-bg-danger border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                        ${err}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
+
+<div id="jsToast"
+     class="toast align-items-center text-white bg-danger border-0 position-fixed bottom-0 end-0 m-3 d-none"
+     role="alert">
+    <div class="d-flex">
+        <div class="toast-body" id="jsToastMessage">
+            <!-- Error content will be inserted using JS -->
         </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
     </div>
-</c:if>
+</div>
 
-<!-- Check Create Input-->
+<%--        Check Create Input--%>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const form = document.getElementById("createCourseForm");
-
-        form.addEventListener("submit", function (e) {
-            const nameInput = document.getElementById("courseName");
-            const categoryInput = document.getElementById("courseCategory");
-
-            const name = nameInput.value.trim();
-            const category = categoryInput.value.trim();
-
-            const regexValid = /^[\p{L}]+(?: [\p{L}]+)*$/u;
-            // Giải thích:
-            // - bắt đầu bằng chữ
-            // - mỗi từ cách nhau đúng 1 space
-            // - không ký tự đặc biệt, không số
-
-            if (name.length === 0 || name.length > 30 || !regexValid.test(name)) {
-                alert("Invalid Course Name.\n- Only letters allowed.\n- No extra spaces.\n- Max 30 characters.");
-                nameInput.focus();
-                e.preventDefault();
-                return;
-            }
-
-            if (category.length === 0 || category.length > 30 || !regexValid.test(category)) {
-                alert("Invalid Category.\n- Only letters allowed.\n- No extra spaces.\n- Max 30 characters.");
-                categoryInput.focus();
-                e.preventDefault();
-                return;
-            }
-
-            // Replace original input value with trimmed version (optional but helpful)
-            nameInput.value = name;
-            categoryInput.value = category;
-        });
-    });
-</script>
-
-<!-- Check Update Input-->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Lặp qua tất cả form có id bắt đầu bằng "updateCourseForm"
-        document.querySelectorAll("form[id^='updateCourseForm']").forEach(function (form) {
-            form.addEventListener("submit", function (e) {
-                const courseID = form.id.replace("updateCourseForm", "");
-                const nameInput = document.getElementById("updateCourseName" + courseID);
-                const categoryInput = document.getElementById("updateCourseCategory" + courseID);
+        // ======= Form Validation cho CREATE =======
+        const createForm = document.getElementById("createCourseForm");
+        if (createForm) {
+            createForm.addEventListener("submit", function (e) {
+                const nameInput = document.getElementById("courseName");
+                const categoryInput = document.getElementById("courseCategory");
+                const originalPriceInput = document.getElementById("originalPrice");
+                const salePriceInput = document.getElementById("salePrice");
 
                 const name = nameInput.value.trim();
                 const category = categoryInput.value.trim();
-                const regexValid = /^[\p{L}]+(?: [\p{L}]+)*$/u;
+                const regexValid = /^(?!.*\d)(?!.* {2,}).+$/u;
 
-                if (name.length === 0 || name.length > 30 || !regexValid.test(name)) {
-                    alert("Invalid Course Name.\n- Only letters allowed.\n- No extra spaces.\n- Max 30 characters.");
+                // Check Course Name
+                if (name.length === 0) {
+                    showJsToast("Course Name is required.");
+                    nameInput.focus();
+                    e.preventDefault();
+                    return;
+                }
+                if (name.length > 30) {
+                    showJsToast("Course Name must not exceed 30 characters.");
+                    nameInput.focus();
+                    e.preventDefault();
+                    return;
+                }
+                if (!regexValid.test(name)) {
+                    showJsToast("Course Name is invalid.<br>- Only letters allowed.<br>- No extra spaces.");
                     nameInput.focus();
                     e.preventDefault();
                     return;
                 }
 
-                if (category.length === 0 || category.length > 30 || !regexValid.test(category)) {
-                    alert("Invalid Category.\n- Only letters allowed.\n- No extra spaces.\n- Max 30 characters.");
+                // Check Category
+                if (category.length === 0) {
+                    showJsToast("Category is required.");
                     categoryInput.focus();
+                    e.preventDefault();
+                    return;
+                }
+                if (category.length > 30) {
+                    showJsToast("Category must not exceed 30 characters.");
+                    categoryInput.focus();
+                    e.preventDefault();
+                    return;
+                }
+                if (!regexValid.test(category)) {
+                    showJsToast("Category is invalid.<br>- Only letters allowed.<br>- No extra spaces.");
+                    categoryInput.focus();
+                    e.preventDefault();
+                    return;
+                }
+
+                // Check Price
+                const originalPrice = parseFloat(originalPriceInput.value);
+                const salePrice = parseFloat(salePriceInput.value);
+
+                if (isNaN(originalPrice) || originalPrice < 0 || originalPrice > 10000000) {
+                    showJsToast("Original Price must be between 0 and 10,000,000.");
+                    originalPriceInput.focus();
+                    e.preventDefault();
+                    return;
+                }
+
+                if (isNaN(salePrice) || salePrice < 0 || salePrice > 10000000) {
+                    showJsToast("Sale Price must be between 0 and 10,000,000.");
+                    salePriceInput.focus();
+                    e.preventDefault();
+                    return;
+                }
+
+                if (salePrice >= originalPrice) {
+                    showJsToast("Sale Price cannot be greater than Original Price.");
+                    salePriceInput.focus();
+                    e.preventDefault();
+                    return;
+                }
+
+                nameInput.value = name;
+                categoryInput.value = category;
+            });
+        }
+
+        // ======= Form Validation cho tất cả UPDATE FORMs =======
+        document.querySelectorAll("form[id^='updateCourseForm']").forEach(function (form) {
+            form.addEventListener("submit", function (e) {
+                const courseID = form.id.replace("updateCourseForm", "");
+                const nameInput = document.getElementById("updateCourseName" + courseID);
+                const categoryInput = document.getElementById("updateCourseCategory" + courseID);
+                const originalPriceInput = document.getElementById("updateOriginalPrice" + courseID);
+                const salePriceInput = document.getElementById("updateSalePrice" + courseID);
+
+                const name = nameInput.value.trim();
+                const category = categoryInput.value.trim();
+                const originalPrice = parseInt(originalPriceInput.value);
+                const salePrice = parseInt(salePriceInput.value);
+                const regexValid = /^(?!.*\d)(?!.* {2,}).+$/u;
+
+                // Check Course Name
+                if (name.length === 0) {
+                    showJsToast("Course Name is required.");
+                    nameInput.focus();
+                    e.preventDefault();
+                    return;
+                }
+                if (name.length > 30) {
+                    showJsToast("Course Name must not exceed 30 characters.");
+                    nameInput.focus();
+                    e.preventDefault();
+                    return;
+                }
+                if (!regexValid.test(name)) {
+                    showJsToast("Course Name is invalid.<br>- Only letters allowed.<br>- No extra spaces.");
+                    nameInput.focus();
+                    e.preventDefault();
+                    return;
+                }
+
+                // Check Category
+                if (category.length === 0) {
+                    showJsToast("Category is required.");
+                    categoryInput.focus();
+                    e.preventDefault();
+                    return;
+                }
+                if (category.length > 30) {
+                    showJsToast("Category must not exceed 30 characters.");
+                    categoryInput.focus();
+                    e.preventDefault();
+                    return;
+                }
+                if (!regexValid.test(category)) {
+                    showJsToast("Category is invalid.<br>- Only letters allowed.<br>- No extra spaces.");
+                    categoryInput.focus();
+                    e.preventDefault();
+                    return;
+                }
+
+                // Check Price
+                if (isNaN(originalPrice) || originalPrice < 0 || originalPrice > 10000000) {
+                    showJsToast("Original Price must be between 0 and 10,000,000.");
+                    originalPriceInput.focus();
+                    e.preventDefault();
+                    return;
+                }
+
+                if (isNaN(salePrice) || salePrice < 0 || salePrice > 10000000) {
+                    showJsToast("Sale Price must be between 0 and 10,000,000.");
+                    salePriceInput.focus();
+                    e.preventDefault();
+                    return;
+                }
+
+                if (salePrice >= originalPrice) {
+                    showJsToast("Sale Price cannot be greater than Original Price.");
+                    salePriceInput.focus();
                     e.preventDefault();
                     return;
                 }
@@ -381,13 +497,61 @@
                 categoryInput.value = category;
             });
         });
+
+        // ======= Show Toast if available =======
+        const toastEl = document.querySelector('.toast');
+        if (toastEl) {
+            const bsToast = new bootstrap.Toast(toastEl, {delay: 3000});
+            bsToast.show();
+        }
     });
 </script>
 
-<!-- Error Message -->
+<script>
+    function showJsToast(message, type = 'danger') {
+        const toastEl = document.getElementById('jsToast');
+        const toastMsg = document.getElementById('jsToastMessage');
+
+        toastMsg.innerHTML = message; // dùng innerHTML để hỗ trợ <br>
+
+        toastEl.classList.remove('d-none', 'bg-danger', 'bg-success', 'bg-warning', 'bg-info');
+        toastEl.classList.add('bg-' + type);
+
+        const bsToast = new bootstrap.Toast(toastEl, {delay: 4000});
+        bsToast.show();
+    }
+</script>
+
+<!-- Message -->
+<c:if test="${not empty success || not empty err}">
+    <c:choose>
+        <c:when test="${not empty success}">
+            <c:set var="toastMessage" value="${success}"/>
+            <c:set var="toastClass" value="text-bg-success"/>
+        </c:when>
+        <c:when test="${not empty err}">
+            <c:set var="toastMessage" value="${err}"/>
+            <c:set var="toastClass" value="text-bg-danger"/>
+        </c:when>
+    </c:choose>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="serverToast" class="toast align-items-center ${toastClass} border-0" role="alert" aria-live="assertive"
+             aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                        ${toastMessage}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+</c:if>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const toastEl = document.querySelector('.toast');
+        const toastEl = document.getElementById('serverToast');
         if (toastEl) {
             const bsToast = new bootstrap.Toast(toastEl, {delay: 3000});
             bsToast.show();
