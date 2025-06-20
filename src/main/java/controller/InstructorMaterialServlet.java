@@ -4,6 +4,7 @@
  */
 package controller;
 
+import com.sun.org.apache.bcel.internal.generic.AALOAD;
 import dao.CourseDAO;
 import dao.MaterialDAO;
 import dao.ModuleDAO;
@@ -14,6 +15,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
+import java.io.File;
 import model.Course;
 import model.Module;
 import model.Role;
@@ -21,6 +24,7 @@ import model.User;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.util.List;
 import model.Material;
 
@@ -85,8 +89,10 @@ public class InstructorMaterialServlet extends HttpServlet {
         }
         String course = request.getParameter("courseId");
         String module = request.getParameter("moduleId");
+        String material = request.getParameter("materialId");
         int courseId = -1;
         int moduleId = -1;
+        int materialId = -1;
         try {
             String action = (String) request.getParameter("action");
             if (action == null) {
@@ -106,6 +112,14 @@ public class InstructorMaterialServlet extends HttpServlet {
                 Module mo = mdao.getModuleByID(moduleId);
                 request.setAttribute("module", mo);
                 request.getRequestDispatcher("/WEB-INF/views/createMaterials.jsp").forward(request, response);
+            } else if (action.equalsIgnoreCase("update")) {
+                moduleId = Integer.parseInt(module);
+                materialId = Integer.parseInt(material);
+                Material ma = madao.getMaterialById(materialId);
+                Module mo = mdao.getModuleByID(moduleId);
+                request.setAttribute("material", ma);
+                request.setAttribute("module", mo);
+                request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
             }
         } catch (Exception e) {
             PrintWriter out = response.getWriter();
@@ -126,60 +140,163 @@ public class InstructorMaterialServlet extends HttpServlet {
             throws ServletException, IOException {
         CourseDAO cdao = new CourseDAO();
         ModuleDAO mdao = new ModuleDAO();
-        Course course = null;
-        Module module = null;
-
-        int courseID = Integer.parseInt(request.getParameter("courseID"));
-        course = cdao.getCourseByCourseID(courseID);
-
+        MaterialDAO madao = new MaterialDAO();
         if (request.getMethod().equalsIgnoreCase("POST")) {
             String action = request.getParameter("action");
 
             if (action.equalsIgnoreCase("create")) {
-                course = cdao.getCourseByCourseID(courseID);
+                String courseIdStr = request.getParameter("courseId");
+                String moduleIdStr = request.getParameter("moduleId");
+                String materialName = request.getParameter("materialName");
+                String type = request.getParameter("type");
+                String materialOrderStr = request.getParameter("materialOrder");
+                String videoTimeStr = request.getParameter("videoTime"); // "hh:mm:ss"
+                String materialDescription = request.getParameter("materialDescription");
+                String materialLocation = "";
+                if ("video".equals(type)) {
+                    // Nhận file
+                    Part filePart = request.getPart("videoFile");
+                    String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                    if (fileName == null || fileName.isEmpty()) {
+                        materialLocation = ""; // hoặc "No File" nếu bạn muốn
+                    } else {
+                        // Đường dẫn upload
+                        String uploadPath = getServletContext().getRealPath("") + File.separator + "materialUpload";
+                        File uploadDir = new File(uploadPath);
+                        if (!uploadDir.exists()) {
+                            uploadDir.mkdir();
+                        }
 
-                String moduleName = request.getParameter("moduleName");
-                module = new Module(moduleName, course);
+                        filePart.write(uploadPath + File.separator + fileName);
+                        materialLocation = "materialUpload/" + fileName; // Đường dẫn để lưu trong DB
+                    }
+                } else if ("pdf".equals(type)) {
+                    // Nhận file
+                    Part filePart = request.getPart("docFile");
+                    String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                    if (fileName == null || fileName.isEmpty()) {
+                        materialLocation = "No"; // hoặc "No File" nếu bạn muốn
+                    } else {
+                        // Đường dẫn upload
+                        String uploadPath = getServletContext().getRealPath("") + File.separator + "materialUpload";
+                        File uploadDir = new File(uploadPath);
+                        if (!uploadDir.exists()) {
+                            uploadDir.mkdir();
+                        }
 
-                int insert = mdao.insertModule(module);
-
-                if (insert > 0) {
-                    List<Module> list = mdao.getAllModuleByCourseID(courseID);
-
-                    request.setAttribute("listModule", list);
-                    request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
-                } else {
-                    request.setAttribute("err", "Create failed: Unknown error!");
-                    request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
+                        filePart.write(uploadPath + File.separator + fileName);
+                        materialLocation = "materialUpload/" + fileName; // Đường dẫn để lưu trong DB
+                    }
+                } else if ("link".equals(type)) {
+                    materialLocation = request.getParameter("materialLink");
                 }
-            } else if (action.equalsIgnoreCase("update")) {
-                int moduleID = Integer.parseInt(request.getParameter("moduleID"));
-                String moduleName = request.getParameter("moduleName");
 
-                int update = mdao.updateModule(moduleID, moduleName);
+                try {
+                    int moduleId = Integer.parseInt(moduleIdStr);
+                    int courseId = Integer.parseInt(courseIdStr);
+                    int materialOrder = Integer.parseInt(materialOrderStr);
 
-                if (update > 0) {
-                    List<Module> list = mdao.getAllModuleByCourseID(courseID);
+                    MaterialDAO dao = new MaterialDAO();
+                    int res = dao.insertMaterial(moduleId, materialName, type, materialOrder,
+                            materialLocation, videoTimeStr, materialDescription);
 
-                    request.setAttribute("listModule", list);
-                    request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
-                } else {
-                    request.setAttribute("err", "Update failed: Unknown error!");
-                    request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
+                    if (res == 1) {
+                        response.sendRedirect("InstructorMaterial?moduleId=" + moduleId + "&courseId=" + courseId);
+                    } else {
+                        request.setAttribute("err", "<p>Create failed</p>");
+                        request.getRequestDispatcher("error234.jsp").forward(request, response);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    request.setAttribute("err", "<p>Create failed</p>");
+                    request.getRequestDispatcher("error123.jsp").forward(request, response);
                 }
             } else if (action.equalsIgnoreCase("delete")) {
-                int moduleID = Integer.parseInt(request.getParameter("moduleID"));
+                String idRaw = request.getParameter("id");
+                String courseIdStr = request.getParameter("courseId");
+                String moduleIdStr = request.getParameter("moduleId");
+                int id = 0;
+                try {
+                    int moduleId = Integer.parseInt(moduleIdStr);
+                    int courseId = Integer.parseInt(courseIdStr);
+                    id = Integer.parseInt(idRaw);
+                    if (madao.delete(id) == 1) {
+                        response.sendRedirect("InstructorMaterial?moduleId=" + moduleId + "&courseId=" + courseId);
+                    } else {
+                        response.sendRedirect("failDelete.jsp");
+                    }
+                } catch (Exception e) {
+                    PrintWriter out = response.getWriter();
+                    out.print(e.getMessage());
+                }
+            }
+            if (action.equalsIgnoreCase("update")) {
+                String courseIdStr = request.getParameter("courseId");
+                String moduleIdStr = request.getParameter("moduleId");
+                String materialIdStr = request.getParameter("materialId");
+                String materialName = request.getParameter("materialName");
+                String type = request.getParameter("type");
+                String materialOrderStr = request.getParameter("materialOrder");
+                String videoTime = request.getParameter("videoTime");
+                String materialDescription = request.getParameter("materialDescription");
+                String materialLocation = ""; // sẽ quyết định tùy type
 
-                int delete = mdao.deleteModule(moduleID);
+                if ("video".equals(type)) {
+                    Part filePart = request.getPart("videoFile");
+                    String fileName = "";
+                    if (filePart != null && filePart.getSubmittedFileName() != null && !filePart.getSubmittedFileName().isEmpty()) {
+                        fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                        String uploadPath = getServletContext().getRealPath("") + File.separator + "materialUpload";
+                        File uploadDir = new File(uploadPath);
+                        if (!uploadDir.exists()) {
+                            uploadDir.mkdir();
+                        }
 
-                if (delete > 0) {
-                    List<Module> list = mdao.getAllModuleByCourseID(courseID);
+                        filePart.write(uploadPath + File.separator + fileName);
+                        materialLocation = "materialUpload/" + fileName;
+                    } else {
+                        // Không chọn file → giữ lại đường dẫn cũ
+                        materialLocation = request.getParameter("materialLocation");
+                    }
 
-                    request.setAttribute("listModule", list);
-                    request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
-                } else {
-                    request.setAttribute("err", "Delete failed: Unknown error!");
-                    request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
+                } else if ("pdf".equals(type)) {
+                    Part filePart = request.getPart("docFile");
+                    String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+
+                    if (fileName == null || fileName.isEmpty()) {
+                        materialLocation = request.getParameter("materialLocation");
+                    } else {
+                        String uploadPath = getServletContext().getRealPath("") + File.separator + "materialUpload";
+                        File uploadDir = new File(uploadPath);
+                        if (!uploadDir.exists()) {
+                            uploadDir.mkdir();
+                        }
+
+                        filePart.write(uploadPath + File.separator + fileName);
+                        materialLocation = "materialUpload/" + fileName;
+                    }
+                } else if ("link".equals(type)) {
+                    materialLocation = request.getParameter("materialLink");
+                }
+                try {
+                    int moduleId = Integer.parseInt(moduleIdStr);
+                    int courseId = Integer.parseInt(courseIdStr);
+                    int materialId = Integer.parseInt(materialIdStr);
+                    int materialOrder = Integer.parseInt(materialOrderStr);
+                    MaterialDAO dao = new MaterialDAO();
+                    boolean res = dao.update(materialName, type, materialOrder, materialLocation,
+                            videoTime, materialDescription, materialId, moduleId, courseId);
+
+                    if (res == true) {
+                        response.sendRedirect("InstructorMaterial?moduleId=" + moduleId + "&courseId=" + courseId);
+                    } else {
+                        request.setAttribute("err", "<p>Create failed</p>");
+                        request.getRequestDispatcher("error234.jsp").forward(request, response);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    request.setAttribute("err", "<p>Create failed</p>");
+                    request.getRequestDispatcher("error123.jsp").forward(request, response);
                 }
             }
         }

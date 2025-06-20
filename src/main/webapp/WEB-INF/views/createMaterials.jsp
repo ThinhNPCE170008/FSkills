@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -47,6 +48,9 @@
                             ${module.moduleName}
                         </a>
                     </li>
+                    <li class="breadcrumb-item">
+                        Create New
+                    </li>
                 </ol>
             </nav>
             <div class="bg-white p-5 rounded-4 shadow-lg mx-auto" style="max-width: 900px;">
@@ -56,7 +60,7 @@
                 <form method="POST" action="InstructorMaterial" enctype="multipart/form-data">
                     <input type="hidden" name="action" value="create">
                     <input type="hidden" name="moduleId" value="${module.moduleID}">
-
+                    <input type="hidden" name="courseId" value="${course.courseID}">
                     <div class="row g-4">
                         <!-- Material Name -->
                         <div class="col-md-6">
@@ -71,21 +75,31 @@
                             <select class="form-select form-select-lg" id="type" name="type" onchange="toggleInputFields()" required>
                                 <option value="">-- Choose Type --</option>
                                 <option value="video">Video</option>
-                                <option value="pdf">PDF</option>
-                                <option value="doc">DOC</option>
+                                <option value="pdf">PDF/Doc</option>
                                 <option value="link">Link</option>
                             </select>
                         </div>
 
-                        <!-- Dynamic Upload Areas -->
+                        <!-- Upload Video -->
                         <div class="col-md-6 d-none" id="videoUploadDiv">
                             <label class="form-label fw-semibold">Upload Video</label>
-                            <input type="file" name="materialVideo" class="form-control" accept="video/*">
+                            <input type="file" name="videoFile" id="videoFile" class="form-control" accept="video/*"
+                                   onchange="previewSelectedVideo(); updateMaterialLocation('video')">
+
+                            <!-- Video preview -->
+                            <div id="videoPreviewContainer" class="mt-3 d-none">
+                                <label class="form-label">Video Preview</label>
+                                <video id="videoPreview" width="100%" controls>
+                                    <source id="videoPreviewSource" src="" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
                         </div>
+
 
                         <div class="col-md-6 d-none" id="fileUploadDiv">
                             <label class="form-label fw-semibold">Upload File (PDF/DOC)</label>
-                            <input type="file" name="materialFile" class="form-control" accept=".pdf,.doc,.docx">
+                            <input type="file" name="docFile" class="form-control" accept=".pdf,.doc,.docx">
                         </div>
 
                         <div class="col-md-6 d-none" id="linkInputDiv">
@@ -93,14 +107,20 @@
                             <input type="url" name="materialLink" class="form-control"
                                    placeholder="https://..." pattern="https?://.+" title="Must start with http:// or https://">
                         </div>
-                        
+
                         <div class="col-md-6 d-none" id="videoDurationDiv">
                             <label class="form-label fw-semibold">Video Duration</label>
-                            <input type="text" name="videoTime" class="form-control"
-                                   pattern="^([0-9]{1,2}:)?[0-5]?[0-9]:[0-5][0-9]$"
-                                   title="Format: mm:ss or hh:mm:ss" placeholder="e.g. 10:45 or 01:02:33">
-
+                            <div class="d-flex gap-2">
+                                <input type="number" min="0" name="videoHour" class="form-control" placeholder="HH" value="00" style="max-width: 80px;">
+                                <span class="mt-2">:</span>
+                                <input type="number" min="0" max="59" name="videoMinute" class="form-control" placeholder="MM" value="00" style="max-width: 80px;">
+                                <span class="mt-2">:</span>
+                                <input type="number" min="0" max="59" name="videoSecond" class="form-control" placeholder="SS" value="00" style="max-width: 80px;">
+                            </div>
+                            <input type="hidden" name="videoTime" id="videoTime" value="00:00:00">
                         </div>
+
+
                         <!-- Order -->
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Display Order</label>
@@ -132,18 +152,18 @@
             function toggleInputFields() {
                 const type = document.getElementById("type").value;
 
-                const videoUpload = document.getElementsByName("materialVideo")[0];
-                const fileUpload = document.getElementsByName("materialFile")[0];
-                const linkInput = document.getElementsByName("materialLink")[0];
-                const videoTime = document.getElementsByName("videoTime")[0];
+                const videoUpload = document.querySelector('input[name="videoFile"]');
+                const fileUpload = document.querySelector('input[name="docFile"]');
+                const linkInput = document.querySelector('input[name="materialLink"]');
+                const videoTime = document.getElementById("videoTime");
 
-                // Ẩn tất cả các trường
+                // Hide all
                 document.getElementById("videoUploadDiv").classList.add("d-none");
                 document.getElementById("fileUploadDiv").classList.add("d-none");
                 document.getElementById("linkInputDiv").classList.add("d-none");
                 document.getElementById("videoDurationDiv").classList.add("d-none");
 
-                // Bỏ required tất cả
+                // Remove required
                 if (videoUpload)
                     videoUpload.removeAttribute("required");
                 if (fileUpload)
@@ -153,7 +173,7 @@
                 if (videoTime)
                     videoTime.removeAttribute("required");
 
-                // Hiển thị + yêu cầu tương ứng theo type
+                // Show required inputs by type
                 if (type === "video") {
                     document.getElementById("videoUploadDiv").classList.remove("d-none");
                     document.getElementById("videoDurationDiv").classList.remove("d-none");
@@ -161,7 +181,7 @@
                         videoUpload.setAttribute("required", "required");
                     if (videoTime)
                         videoTime.setAttribute("required", "required");
-                } else if (type === "pdf" || type === "doc") {
+                } else if (type === "pdf") {
                     document.getElementById("fileUploadDiv").classList.remove("d-none");
                     if (fileUpload)
                         fileUpload.setAttribute("required", "required");
@@ -171,11 +191,36 @@
                         linkInput.setAttribute("required", "required");
                 }
             }
+
+            function updateVideoDuration() {
+                const hour = document.querySelector("[name='videoHour']").value.padStart(2, '0') || "00";
+                const minute = document.querySelector("[name='videoMinute']").value.padStart(2, '0') || "00";
+                const second = document.querySelector("[name='videoSecond']").value.padStart(2, '0') || "00";
+                document.getElementById("videoTime").value = `${hour}:${minute}:${second}`;
+                    }
+                    function previewSelectedVideo() {
+                        const fileInput = document.getElementById("videoFile");
+                        const file = fileInput?.files[0];
+
+                        const previewContainer = document.getElementById("videoPreviewContainer");
+                        const previewSource = document.getElementById("videoPreviewSource");
+                        const previewVideo = document.getElementById("videoPreview");
+
+                        if (file) {
+                            const url = URL.createObjectURL(file);
+                            previewSource.src = url;
+                            previewVideo.load();
+                            previewContainer.classList.remove("d-none");
+                        } else {
+                            previewSource.src = "";
+                            previewVideo.load();
+                            previewContainer.classList.add("d-none");
+                        }
+                    }
+
+
+
         </script>
-
-
-
-
         <jsp:include page="/layout/footerInstructor.jsp"/>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
