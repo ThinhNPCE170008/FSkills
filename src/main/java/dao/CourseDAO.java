@@ -29,7 +29,7 @@ public class CourseDAO extends DBContext {
     public List<Course> getCourseByUserID(int userID) {
         List<Course> list = new ArrayList<>();
 
-        String sql = "SELECT Users.*, Courses.* FROM Courses JOIN Users ON Courses.UserID = Users.UserID WHERE Users.UserID = ? AND [Status] = 0";
+        String sql = "SELECT Users.*, Courses.* FROM Courses JOIN Users ON Courses.UserID = Users.UserID WHERE Users.UserID = ? AND BanStatus = 0";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -82,7 +82,7 @@ public class CourseDAO extends DBContext {
     public List<Course> get3CourseByUserID(int userID) {
         List<Course> list = new ArrayList<>();
 
-        String sql = "SELECT TOP 3 Users.*, Courses.* FROM Courses JOIN Users ON Courses.UserID = Users.UserID WHERE Users.UserID = ? AND [Status] = 0 ORDER BY PublicDate DESC";
+        String sql = "SELECT TOP 3 Users.*, Courses.* FROM Courses JOIN Users ON Courses.UserID = Users.UserID WHERE Users.UserID = ? AND BanStatus = 0 ORDER BY PublicDate DESC";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -249,6 +249,7 @@ public class CourseDAO extends DBContext {
             System.out.println(e.getMessage());
         }
         return 0;
+
     }
     
     public int onGoingLearner(int courseID) {
