@@ -253,7 +253,7 @@
     <section id="my-courses">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl md:text-3xl font-bold text-gray-800">My Courses</h2>
-            <a href="instructor?action=list" class="text-indigo-600 font-semibold hover:underline">View All</a>
+            <a href="instructor/courses" class="text-indigo-600 font-semibold hover:underline">View All</a>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
