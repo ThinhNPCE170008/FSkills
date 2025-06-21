@@ -104,7 +104,7 @@ public class MaterialDAO extends DBContext {
                 String courseName = rs.getString("CourseName");
                 Course course = new Course(courseID, courseName);
                 Module module = new Module(moduleID, moduleName, course);
-                material = new Material(materialID, materialName, module, type, MaterialLastUpdate, materialOrder, type, materialDescription, materialLocation);
+                material = new Material(materialID, materialName, module, type, MaterialLastUpdate, materialOrder, videoTime , materialDescription, materialLocation);
             }
             return material;
         } catch (Exception e) {

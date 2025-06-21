@@ -67,7 +67,7 @@
                     <input type="hidden" name="action" value="update">
                     <input type="hidden" name="moduleId" value="${module.moduleID}">
                     <input type="hidden" name="courseId" value="${course.courseID}">
-
+                    <input type="hidden" name="materialId" value="${material.materialId}">
                     <div class="row g-4">
                         <!-- Material Name -->
                         <div class="col-md-6">
@@ -92,7 +92,7 @@
                         <!-- Upload Video -->
                         <div class="col-md-6 ${material.type == 'video' ? '' : 'd-none'}" id="videoUploadDiv">
                             <label class="form-label fw-semibold">Upload Video</label>
-                            <input type="file" id="videoFile" class="form-control" accept="video/*" onchange="previewSelectedVideo(); updateMaterialLocation('video')">
+                            <input type="file" id="videoFile" name="videoFile"class="form-control" accept="video/*" onchange="previewSelectedVideo(); updateMaterialLocation('video')">
 
                             <!-- Hiển thị preview nếu có video hiện tại -->
                             <c:if test="${material.type == 'video' && not empty material.materialLocation}">
@@ -115,38 +115,40 @@
 
                         <div class="col-md-6 ${material.type == 'pdf' ? '' : 'd-none'}" id="fileUploadDiv">
                             <label class="form-label fw-semibold">Upload File (PDF/DOC)</label>
-                            <input type="file" id="docFile" class="form-control" accept=".pdf,.doc,.docx" onchange="updateMaterialLocation('pdf')">
+                            <input type="file" id="docFile" name="docFile" class="form-control" accept=".pdf,.doc,.docx" onchange="updateMaterialLocation('pdf')">
                             <c:if test="${material.type == 'pdf'}">
                                 <small class="text-muted">Current file: ${material.materialLocation}</small>
                             </c:if>
                         </div>
 
-                        <div class="col-md-6 ${material.type == 'link' ? '' : 'd-none'}" id="linkInputDiv">
+                        <div class="col-md-6 ${material.type eq 'link' ? '' : 'd-none'}" id="linkInputDiv">
                             <label class="form-label fw-semibold">Material Link</label>
-                            <input type="url" id="materialLink" class="form-control"
-                                   placeholder="https://..." pattern="https?://.+" title="Must start with http:// or https://"
-                                   value="${material.type == 'link' ? material.materialLocation : ''}"
+                            <input type="url" id="materialLink" name="materialLink"
+                                   class="form-control"
+                                   placeholder="https://..." pattern="https?://.+"
+                                   title="Must start with http:// or https://"
+                                   value="${material.materialLocation}"
                                    oninput="updateMaterialLocation('link')">
                         </div>
 
-                        <!-- Video Duration -->
-                        <c:if test="${not empty material.time}">
-                            <c:set var="timeParts" value="${fn:split(material.time, ':')}" />
-                        </c:if>
-                        <div class="col-md-6 d-none" id="videoDurationDiv">
-                            <label class="form-label fw-semibold">Video Duration</label>
-                            <div class="d-flex gap-2">
-                                <input type="number" min="0" name="videoHour" class="form-control" placeholder="HH"
-                                       value="${not empty timeParts ? timeParts[0] : '00'}" style="max-width: 80px;" oninput="updateVideoDuration()">
-                                <span class="mt-2">:</span>
-                                <input type="number" min="0" max="59" name="videoMinute" class="form-control" placeholder="MM"
-                                       value="${not empty timeParts ? timeParts[1] : '00'}" style="max-width: 80px;" oninput="updateVideoDuration()">
-                                <span class="mt-2">:</span>
-                                <input type="number" min="0" max="59" name="videoSecond" class="form-control" placeholder="SS"
-                                       value="${not empty timeParts ? timeParts[2] : '00'}" style="max-width: 80px;" oninput="updateVideoDuration()">
+                        <div class="col-md-6 " id="videoDurationDiv">
+                            <label class="form-label fw-semibold">Video Duration (hh:mm:ss)</label>
+
+                            <!-- Input nhập thời lượng -->
+                            <input type="text" class="form-control" id="durationInput"
+                                   placeholder="e.g. 5:03, 00:02:59"
+                                   value="${material.time}"
+                                   onchange="updateVideoDuration()">
+
+                            <!-- Thông báo lỗi -->
+                            <div id="durationError" class="text-danger small mt-1 d-none">
+                                ⚠ Please enter correct format hh:mm:ss (time can be shortened)
                             </div>
+
+                            <!-- Input ẩn để submit -->
                             <input type="hidden" name="videoTime" id="videoTime" value="${material.time}">
                         </div>
+
 
                         <!-- Display Order -->
                         <div class="col-md-6">
@@ -178,111 +180,147 @@
 
         <script>
             function toggleInputFields() {
-            const type = document.getElementById("type").value;
-            const videoDiv = document.getElementById("videoUploadDiv");
-            const fileDiv = document.getElementById("fileUploadDiv");
-            const linkDiv = document.getElementById("linkInputDiv");
-            const durationDiv = document.getElementById("videoDurationDiv");
-            const videoFile = document.getElementById("videoFile");
-            const docFile = document.getElementById("docFile");
-            const materialLink = document.getElementById("materialLink");
-            const videoTime = document.getElementById("videoTime");
-            [videoDiv, fileDiv, linkDiv, durationDiv].forEach(div => div.classList.add("d-none"));
-            [videoFile, docFile, materialLink, videoTime].forEach(input => input?.removeAttribute("required"));
-            if (type === "video") {
-            videoDiv.classList.remove("d-none");
-            durationDiv.classList.remove("d-none");
-            videoFile?.setAttribute("required", "required");
-            videoTime?.setAttribute("required", "required");
-            } else if (type === "pdf") {
-            fileDiv.classList.remove("d-none");
-            docFile?.setAttribute("required", "required");
-            } else if (type === "link") {
-            linkDiv.classList.remove("d-none");
-            materialLink?.setAttribute("required", "required");
+                const type = document.getElementById("type").value;
+                const videoDiv = document.getElementById("videoUploadDiv");
+                const fileDiv = document.getElementById("fileUploadDiv");
+                const linkDiv = document.getElementById("linkInputDiv");
+                const durationDiv = document.getElementById("videoDurationDiv");
+
+                const videoFile = document.getElementById("videoFile");
+                const docFile = document.getElementById("docFile");
+                const materialLink = document.getElementById("materialLink");
+
+                // Ẩn tất cả các khu vực
+                [videoDiv, fileDiv, linkDiv, durationDiv].forEach(div => div.classList.add("d-none"));
+
+                // Xóa thuộc tính required khỏi tất cả input liên quan
+                videoFile?.removeAttribute("required");
+                        docFile?.removeAttribute("required");
+                        materialLink?.removeAttribute("required");
+
+                // Hiển thị đúng vùng theo loại
+                if (type === "video") {
+                    videoDiv.classList.remove("d-none");
+                    durationDiv.classList.remove("d-none");
+                    // KHÔNG thêm required cho videoTime vì nó là hidden
+                } else if (type === "pdf") {
+                    fileDiv.classList.remove("d-none");
+                            
+                } else if (type === "link") {
+                    linkDiv.classList.remove("d-none");
+                            materialLink?.setAttribute("required", "required");
+                }
+                if (type !== "link") {
+                    materialLink.value = "";
+                }
+
+                updateMaterialLocation(type);
             }
 
-            updateMaterialLocation(type);
-            }
 
             function updateMaterialLocation(type) {
-            const materialLocation = document.getElementById("materialLocation");
-            if (type === "video") {
-            const file = document.getElementById("videoFile").files[0];
-            materialLocation.value = file ? file.name : "${material.materialLocation}";
-            } else if (type === "pdf") {
-            const file = document.getElementById("docFile").files[0];
-            materialLocation.value = file ? file.name : "${material.materialLocation}";
-            } else if (type === "link") {
-            const link = document.getElementById("materialLink").value;
-            materialLocation.value = link;
-            }
+                const materialLocation = document.getElementById("materialLocation");
+                if (type === "video") {
+                    const file = document.getElementById("videoFile").files[0];
+                    if (file) {
+                        materialLocation.value = "materialUpload/" + file.name;
+                    } else {
+                        materialLocation.value = "${material.materialLocation}";
+                    }
+                } else if (type === "pdf") {
+                    const file = document.getElementById("docFile").files[0];
+                    if (file) {
+                        materialLocation.value = "materialUpload/" + file.name;
+                    } else {
+                        materialLocation.value = "${material.materialLocation}";
+                    }
+                } else if (type === "link") {
+                    const link = document.getElementById("materialLink").value;
+                    materialLocation.value = link;
+                }
             }
 
             function updateVideoDuration() {
-            const hour = (document.querySelector("[name='videoHour']").value || "0").padStart(2, '0');
-            const minute = (document.querySelector("[name='videoMinute']").value || "0").padStart(2, '0');
-            const second = (document.querySelector("[name='videoSecond']").value || "0").padStart(2, '0');
-            document.getElementById("videoTime").value = `${hour}:${minute}:${second}`;
+                const inputEl = document.getElementById("durationInput");
+                const errorEl = document.getElementById("durationError");
+                const hiddenInput = document.getElementById("videoTime");
+                let input = inputEl.value.trim();
+                if (input === "") {
+                    hiddenInput.value = "00:00:00";
+                    errorEl.classList.remove("d-none");
+                    errorEl.textContent = "⚠ Please enter a non-zero duration.";
+                    return;
                 }
 
-                window.onload = function () {
-                toggleInputFields(); // Kích hoạt đúng div theo type
-                updateVideoDuration(); // Đảm bảo duration hợp lệ
-
-                // Gán lại materialLocation nếu là video/pdf
-                const type = "${material.type}";
-                if (type === "video" || type === "pdf") {
-                document.getElementById("materialLocation").value = "${material.materialLocation}";
+                const parts = input.split(":");
+                if (parts.length === 2) {
+                    parts.unshift("0"); // Thêm giờ nếu chỉ có phút:giây
                 }
-                };
-                function previewSelectedVideo() {
+
+                if (parts.length !== 3) {
+                    showError("⚠ Invalid format. Use hh:mm:ss or mm:ss.");
+                    return;
+                }
+
+                let [hh, mm, ss] = parts.map(p => p.trim());
+                if (!/^\d+$/.test(hh) || !/^\d+$/.test(mm) || !/^\d+$/.test(ss)) {
+                    showError("⚠ Hours, minutes, and seconds must be numbers.");
+                    return;
+                }
+
+                hh = parseInt(hh, 10);
+                mm = parseInt(mm, 10);
+                ss = parseInt(ss, 10);
+                if (mm > 59 || ss > 59) {
+                    showError("⚠ Minutes and seconds must be between 00 and 59.");
+                    return;
+                }
+
+                if (hh === 0 && mm === 0 && ss === 0) {
+                    showError("⚠ Duration cannot be 00:00:00.");
+                    return;
+                }
+
+                const formatted = [
+                    hh.toString().padStart(2, "0"),
+                    mm.toString().padStart(2, "0"),
+                    ss.toString().padStart(2, "0")
+                ].join(":");
+                hiddenInput.value = formatted;
+                errorEl.classList.add("d-none");
+                function showError(message) {
+                    hiddenInput.value = "00:00:00";
+                    errorEl.classList.remove("d-none");
+                    errorEl.textContent = message;
+                }
+            }
+
+            function previewSelectedVideo() {
                 const fileInput = document.getElementById("videoFile");
                 const file = fileInput.files[0];
                 const previewContainer = document.getElementById("videoPreviewContainer");
                 const previewVideo = document.getElementById("videoPreviewNew");
                 if (file) {
-                const url = URL.createObjectURL(file);
-                previewVideo.src = url;
-                previewVideo.load();
-                previewContainer.classList.remove("d-none");
-                // Ẩn preview cũ nếu đang hiển thị
-                const oldPreview = document.getElementById("videoPreviewOld");
-                if (oldPreview) {
-                oldPreview.parentElement.classList.add("d-none");
+                    const url = URL.createObjectURL(file);
+                    previewVideo.src = url;
+                    previewVideo.load();
+                    previewContainer.classList.remove("d-none");
+                    // Ẩn video cũ nếu có
+                    const oldPreview = document.getElementById("videoPreviewOld");
+                    if (oldPreview) {
+                        oldPreview.parentElement.classList.add("d-none");
+                    }
                 }
-                }
-                }
+            }
 
-                function updateMaterialLocation(type) {
-                const materialLocation = document.getElementById("materialLocation");
-                if (type === "video") {
-                const file = document.getElementById("videoFile").files[0];
-                if (file) {
-                materialLocation.value = file.name; // hoặc full path nếu cần
-                } else {
-                materialLocation.value = "${material.materialLocation}"; // giữ giá trị cũ nếu không đổi
-                }
-                } else if (type === "pdf") {
-                const file = document.getElementById("docFile").files[0];
-                if (file) {
-                materialLocation.value = file.name;
-                } else {
-                materialLocation.value = "${material.materialLocation}";
-                }
-                } else if (type === "link") {
-                const link = document.getElementById("materialLink").value;
-                materialLocation.value = link;
-                }
-                }
-                window.onload = function () {
+            window.onload = function () {
                 toggleInputFields();
                 updateVideoDuration();
-                // Gán lại materialLocation ban đầu dựa theo type
                 const currentType = document.getElementById("type").value;
                 updateMaterialLocation(currentType);
-                };
+            };
         </script>
+
         <jsp:include page="/layout/footerInstructor.jsp"/>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
