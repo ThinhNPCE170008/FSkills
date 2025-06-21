@@ -57,7 +57,7 @@
                 <h3 class="mb-4 text-primary fw-semibold text-center">
                     <i class="bi bi-journal-plus"></i> Create New Material
                 </h3>
-                <form method="POST" action="InstructorMaterial" enctype="multipart/form-data">
+                <form method="POST" action="InstructorMaterial" enctype="multipart/form-data" onsubmit="return prepareCreateMaterial()">
                     <input type="hidden" name="action" value="create">
                     <input type="hidden" name="moduleId" value="${module.moduleID}">
                     <input type="hidden" name="courseId" value="${course.courseID}">
@@ -109,17 +109,14 @@
                         </div>
 
                         <div class="col-md-6 d-none" id="videoDurationDiv">
-                            <label class="form-label fw-semibold">Video Duration</label>
-                            <div class="d-flex gap-2">
-                                <input type="number" min="0" name="videoHour" class="form-control" placeholder="HH" value="00" style="max-width: 80px;">
-                                <span class="mt-2">:</span>
-                                <input type="number" min="0" max="59" name="videoMinute" class="form-control" placeholder="MM" value="00" style="max-width: 80px;">
-                                <span class="mt-2">:</span>
-                                <input type="number" min="0" max="59" name="videoSecond" class="form-control" placeholder="SS" value="00" style="max-width: 80px;">
+                            <label class="form-label fw-semibold">Video Duration (hh:mm:ss)</label>
+                            <input type="text" class="form-control" id="durationInput"
+                                   placeholder="e.g. 5:03, 00:02:59" onchange="updateVideoDuration()">
+                            <div id="durationError" class="text-danger small mt-1 d-none">
+                                ⚠ Please enter correct format hh:mm:ss (time can be shortened)
                             </div>
-                            <input type="hidden" name="videoTime" id="videoTime" value="00:00:00">
+                            <input type="hidden" name="videoTime" id="videoTime" value="00:00:00" required>
                         </div>
-
 
                         <!-- Order -->
                         <div class="col-md-6">
@@ -155,7 +152,7 @@
                 const videoUpload = document.querySelector('input[name="videoFile"]');
                 const fileUpload = document.querySelector('input[name="docFile"]');
                 const linkInput = document.querySelector('input[name="materialLink"]');
-                const videoTime = document.getElementById("videoTime");
+                const videoTime = document.getElementById("durationInput");
 
                 // Hide all
                 document.getElementById("videoUploadDiv").classList.add("d-none");
@@ -191,34 +188,97 @@
                         linkInput.setAttribute("required", "required");
                 }
             }
+            function prepareCreateMaterial() {
+                // Nếu loại là video thì cập nhật lại videoTime
+                const type = document.getElementById("type").value;
+                if (type === "video") {
+                    updateVideoDuration();
+                }
+                return true; // cho phép form submit
+            }
 
             function updateVideoDuration() {
-                const hour = document.querySelector("[name='videoHour']").value.padStart(2, '0') || "00";
-                const minute = document.querySelector("[name='videoMinute']").value.padStart(2, '0') || "00";
-                const second = document.querySelector("[name='videoSecond']").value.padStart(2, '0') || "00";
-                document.getElementById("videoTime").value = `${hour}:${minute}:${second}`;
-                    }
-                    function previewSelectedVideo() {
-                        const fileInput = document.getElementById("videoFile");
-                        const file = fileInput?.files[0];
+                const inputEl = document.getElementById("durationInput");
+                const errorEl = document.getElementById("durationError");
+                const hiddenInput = document.getElementById("videoTime");
 
-                        const previewContainer = document.getElementById("videoPreviewContainer");
-                        const previewSource = document.getElementById("videoPreviewSource");
-                        const previewVideo = document.getElementById("videoPreview");
+                let input = inputEl.value.trim();
 
-                        if (file) {
-                            const url = URL.createObjectURL(file);
-                            previewSource.src = url;
-                            previewVideo.load();
-                            previewContainer.classList.remove("d-none");
-                        } else {
-                            previewSource.src = "";
-                            previewVideo.load();
-                            previewContainer.classList.add("d-none");
-                        }
-                    }
+                if (input === "") {
+                    hiddenInput.value = "00:00:00";
+                    errorEl.classList.remove("d-none");
+                    errorEl.textContent = "⚠ Please enter a non-zero duration.";
+                    return;
+                }
 
+                const parts = input.split(":");
 
+                if (parts.length === 2) {
+                    parts.unshift("0");
+                }
+
+                if (parts.length !== 3) {
+                    showError("⚠ Invalid format. Use hh:mm:ss or mm:ss.");
+                    return;
+                }
+
+                let [hh, mm, ss] = parts.map(p => p.trim());
+
+                if (!/^\d+$/.test(hh) || !/^\d+$/.test(mm) || !/^\d+$/.test(ss)) {
+                    showError("⚠ Hours, minutes, and seconds must be numbers.");
+                    return;
+                }
+
+                hh = parseInt(hh, 10);
+                mm = parseInt(mm, 10);
+                ss = parseInt(ss, 10);
+
+                if (mm > 59 || ss > 59) {
+                    showError("⚠ Minutes and seconds must be between 00 and 59.");
+                    return;
+                }
+
+                // Không được bằng 00:00:00
+                if (hh === 0 && mm === 0 && ss === 0) {
+                    showError("⚠ Duration cannot be 00:00:00.");
+                    return;
+                }
+
+                const formatted = [
+                    hh.toString().padStart(2, "0"),
+                    mm.toString().padStart(2, "0"),
+                    ss.toString().padStart(2, "0")
+                ].join(":");
+
+                hiddenInput.value = formatted;
+                errorEl.classList.add("d-none");
+
+                function showError(message) {
+                    hiddenInput.value = "00:00:00";
+                    errorEl.classList.remove("d-none");
+                    errorEl.textContent = message;
+                }
+            }
+
+            function previewSelectedVideo() {
+                const fileInput = document.getElementById("videoFile");
+                const file = fileInput?.files[0];
+
+                const previewContainer = document.getElementById("videoPreviewContainer");
+                const previewSource = document.getElementById("videoPreviewSource");
+                const previewVideo = document.getElementById("videoPreview");
+
+                if (file) {
+                    const url = URL.createObjectURL(file);
+                    previewSource.src = url;
+                    previewVideo.load();
+                    previewContainer.classList.remove("d-none");
+                } else {
+                    previewSource.src = "";
+                    previewVideo.load();
+                    previewContainer.classList.add("d-none");
+                }
+            }
 
         </script>
         <jsp:include page="/layout/footerInstructor.jsp"/>

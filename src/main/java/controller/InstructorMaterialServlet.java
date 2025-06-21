@@ -120,6 +120,14 @@ public class InstructorMaterialServlet extends HttpServlet {
                 request.setAttribute("material", ma);
                 request.setAttribute("module", mo);
                 request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
+            } else if (action.equalsIgnoreCase("details")) {
+                moduleId = Integer.parseInt(module);
+                materialId = Integer.parseInt(material);
+                Material ma = madao.getMaterialById(materialId);
+                Module mo = mdao.getModuleByID(moduleId);
+                request.setAttribute("material", ma);
+                request.setAttribute("module", mo);
+                request.getRequestDispatcher("/WEB-INF/views/materialDetails.jsp").forward(request, response);
             }
         } catch (Exception e) {
             PrintWriter out = response.getWriter();
@@ -197,9 +205,13 @@ public class InstructorMaterialServlet extends HttpServlet {
                     int materialOrder = Integer.parseInt(materialOrderStr);
 
                     MaterialDAO dao = new MaterialDAO();
+                    ModuleDAO moddao = new ModuleDAO();
+                    CourseDAO coudao = new CourseDAO();
                     int res = dao.insertMaterial(moduleId, materialName, type, materialOrder,
                             materialLocation, videoTimeStr, materialDescription);
-
+                    
+                    int rowmod = moddao.moduleUpdateTime(moduleId);
+                    int rowcou = coudao.courseUpdateTime(courseId);
                     if (res == 1) {
                         response.sendRedirect("InstructorMaterial?moduleId=" + moduleId + "&courseId=" + courseId);
                     } else {
@@ -229,8 +241,7 @@ public class InstructorMaterialServlet extends HttpServlet {
                     PrintWriter out = response.getWriter();
                     out.print(e.getMessage());
                 }
-            }
-            if (action.equalsIgnoreCase("update")) {
+            } else if (action.equalsIgnoreCase("update")) {
                 String courseIdStr = request.getParameter("courseId");
                 String moduleIdStr = request.getParameter("moduleId");
                 String materialIdStr = request.getParameter("materialId");
@@ -243,50 +254,48 @@ public class InstructorMaterialServlet extends HttpServlet {
 
                 if ("video".equals(type)) {
                     Part filePart = request.getPart("videoFile");
-                    String fileName = "";
-                    if (filePart != null && filePart.getSubmittedFileName() != null && !filePart.getSubmittedFileName().isEmpty()) {
-                        fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                    if (filePart != null && filePart.getSize() > 0) {
+                        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
                         String uploadPath = getServletContext().getRealPath("") + File.separator + "materialUpload";
                         File uploadDir = new File(uploadPath);
                         if (!uploadDir.exists()) {
                             uploadDir.mkdir();
                         }
-
                         filePart.write(uploadPath + File.separator + fileName);
                         materialLocation = "materialUpload/" + fileName;
                     } else {
-                        // Không chọn file → giữ lại đường dẫn cũ
                         materialLocation = request.getParameter("materialLocation");
                     }
-
                 } else if ("pdf".equals(type)) {
                     Part filePart = request.getPart("docFile");
-                    String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-
-                    if (fileName == null || fileName.isEmpty()) {
-                        materialLocation = request.getParameter("materialLocation");
-                    } else {
+                    if (filePart != null && filePart.getSize() > 0) {
+                        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
                         String uploadPath = getServletContext().getRealPath("") + File.separator + "materialUpload";
                         File uploadDir = new File(uploadPath);
                         if (!uploadDir.exists()) {
                             uploadDir.mkdir();
                         }
-
                         filePart.write(uploadPath + File.separator + fileName);
                         materialLocation = "materialUpload/" + fileName;
+                    } else {
+                        materialLocation = request.getParameter("materialLocation");
                     }
                 } else if ("link".equals(type)) {
                     materialLocation = request.getParameter("materialLink");
                 }
+
                 try {
                     int moduleId = Integer.parseInt(moduleIdStr);
                     int courseId = Integer.parseInt(courseIdStr);
                     int materialId = Integer.parseInt(materialIdStr);
                     int materialOrder = Integer.parseInt(materialOrderStr);
                     MaterialDAO dao = new MaterialDAO();
+                    ModuleDAO moddao = new ModuleDAO();
+                    CourseDAO coudao = new CourseDAO();
                     boolean res = dao.update(materialName, type, materialOrder, materialLocation,
                             videoTime, materialDescription, materialId, moduleId, courseId);
-
+                    int rowmod = moddao.moduleUpdateTime(moduleId);
+                    int rowcou = coudao.courseUpdateTime(courseId);
                     if (res == true) {
                         response.sendRedirect("InstructorMaterial?moduleId=" + moduleId + "&courseId=" + courseId);
                     } else {

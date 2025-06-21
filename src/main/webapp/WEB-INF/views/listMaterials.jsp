@@ -78,20 +78,26 @@
                             ${module.moduleName}
                         </li>
                     </ol>
-                    <div class="mb-2 text-end">
-                        <a class="btn btn-success"
-                           href="InstructorMaterial?action=create&moduleId=${module.moduleID}&courseId=${course.courseID}">
-                            <i class="bi bi-file-earmark-plus"></i> +NEW
-                        </a>
-                    </div>
+
+
                 </nav>
+                <div class="text-end">
+                    <a href="InstructorMaterial?action=create&moduleId=${module.moduleID}&courseId=${course.courseID}"
+                       class="btn btn-lg d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill shadow-sm fw-semibold text-white"
+                       style="background: linear-gradient(135deg, #0d6efd, #0a58ca); transition: all 0.3s ease;"
+                       onmouseover="this.style.background = 'linear-gradient(135deg, #0a58ca, #0d6efd)'"
+                       onmouseout="this.style.background = 'linear-gradient(135deg, #0d6efd, #0a58ca)'">
+                        <span>New Material</span>
+                        <i class="bi bi-plus-circle fs-5"></i>
+                    </a>
+                </div>
 
                 <c:choose>
                     <c:when test="${empty listMaterial}">
                         <div class="alert alert-warning text-center">No material available.</div>
                     </c:when>
                     <c:otherwise>
-                        <table class="table table-bordered table-hover shadow-sm bg-white rounded">
+                        <table class="table table-bordered table-hover shadow-sm bg-white rounded mt-4">
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -115,10 +121,11 @@
 
                                                 <c:when test="${material.type == 'video' && not empty material.materialLocation}">
                                                     <a href="#" data-bs-toggle="modal" data-bs-target="#videoModal${material.materialId}">
-                                                        <video style="width: 100%; max-width: 320px; height: auto;" muted>
+                                                        <video class="img-fluid rounded shadow-sm d-block mx-auto" style="max-height: 160px;" muted>
                                                             <source src="${material.materialLocation}" type="video/mp4">
                                                             Your browser does not support the video tag.
                                                         </video>
+
                                                     </a>
                                                 </c:when>
 
@@ -155,17 +162,23 @@
                                         </td>
 
                                         <!-- Actions -->
-                                        <td class="d-flex flex-column gap-1">
-                                            <div class="mb-2 text-end">
-                                                <a class="btn btn-warning"
-                                                   href="InstructorMaterial?action=update&moduleId=${module.moduleID}&courseId=${course.courseID}&materialId=${material.materialId}">
-                                                    <i class="bi bi-file-earmark-plus"></i> Update
+                                        <td class="align-middle text-center">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <a class="btn btn-outline-info btn-sm" type="button"
+                                                   href="InstructorMaterial?action=details&moduleId=${module.moduleID}&courseId=${course.courseID}&materialId=${material.materialId}" >
+                                                    <i class="fas fa-eye"></i>
                                                 </a>
-                                            </div>
+                                                <a class="btn btn-primary btn-sm"
+                                                   href="InstructorMaterial?action=update&moduleId=${module.moduleID}&courseId=${course.courseID}&materialId=${material.materialId}">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
 
-                                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                                    data-bs-target="#deleteModal${material.materialId}">Delete
-                                            </button>
+
+                                                <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                                        data-bs-target="#deleteModal${material.materialId}">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 </c:forEach>
