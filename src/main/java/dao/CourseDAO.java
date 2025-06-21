@@ -29,7 +29,7 @@ public class CourseDAO extends DBContext {
     public List<Course> getCourseByUserID(int userID) {
         List<Course> list = new ArrayList<>();
 
-        String sql = "SELECT Users.*, Courses.* FROM Courses JOIN Users ON Courses.UserID = Users.UserID WHERE Users.UserID = ? AND BanStatus = 0";
+        String sql = "SELECT Users.*, Courses.* FROM Courses JOIN Users ON Courses.UserID = Users.UserID WHERE Users.UserID = ? AND Courses.Status = 0";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -82,7 +82,7 @@ public class CourseDAO extends DBContext {
     public List<Course> get3CourseByUserID(int userID) {
         List<Course> list = new ArrayList<>();
 
-        String sql = "SELECT TOP 3 Users.*, Courses.* FROM Courses JOIN Users ON Courses.UserID = Users.UserID WHERE Users.UserID = ? AND BanStatus = 0 ORDER BY PublicDate DESC";
+        String sql = "SELECT TOP 3 Users.*, Courses.* FROM Courses JOIN Users ON Courses.UserID = Users.UserID WHERE Users.UserID = ? AND Status = 0 ORDER BY PublicDate DESC";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -134,9 +134,9 @@ public class CourseDAO extends DBContext {
 
     public Course getCourseByCourseID(int courseID) {
 
-        String sql = "SELECT Courses.*, Users.DisplayName, Users.Email, Users.Gender, Users.DateOfBirth, Users.Avatar, Users.Info\n"
-                + "FROM Courses JOIN Users ON Courses.UserID = Users.UserID\n"
-                + "WHERE Courses.CourseID = ?";
+        String sql = "SELECT Courses.*, Users.DisplayName, Users.Email, Users.Gender, Users.DateOfBirth, Users.Avatar, Users.Info\n" +
+                "FROM Courses JOIN Users ON Courses.UserID = Users.UserID\n" +
+                "WHERE Courses.CourseID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -574,20 +574,22 @@ public class CourseDAO extends DBContext {
         List<Course> list = new ArrayList<>();
 
         CourseDAO dao = new CourseDAO();
-        // Test getAllCourses
-        List<Course> courses = dao.getAllCourses();
-        System.out.println("Total courses: " + courses.size());
+//        // Test getAllCourses
+//        List<Course> courses = dao.getAllCourses();
+//        System.out.println("Total courses: " + courses.size());
+//
+//        // Test getAllCategories
+//        List<String> categories = dao.getAllCategories();
+//        System.out.println("Categories: " + categories);
 
-        // Test getAllCategories
-        List<String> categories = dao.getAllCategories();
-        System.out.println("Categories: " + categories);
-
-//        list = dao.getCourseByUserID(3);
+//        list = dao.getCourseByUserID(2);
 //        for (Course course : list) {
 //            System.out.println(course);
 //        }
-//        Course course = dao.getCourseByCourseID(2);
+
+//        Course course = dao.getCourseByCourseID(2, 2);
 //        System.out.println(course);
+
 //        UserDAO udao = new UserDAO();
 //        User user = udao.getByUserID(3);
 //        int result = dao.insertCourse("C Sharf 123", "Dot Net Programming", 3, 9999, 999999, 0, "https://www.youtube.com/watch?v=de6UvFKbuZQ");
