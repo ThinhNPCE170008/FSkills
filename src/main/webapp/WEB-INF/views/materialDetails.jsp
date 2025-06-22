@@ -66,9 +66,9 @@
         <div class="container py-5">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="instructor">Home</a></li>
-                    <li class="breadcrumb-item"><a href="managemodule?id=${course.courseID}">${course.courseName}</a></li>
-                    <li class="breadcrumb-item"><a href="InstructorMaterial?moduleId=${module.moduleID}&courseId=${course.courseID}">${module.moduleName}</a></li>
+                    <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/instructor">Home</a></li>
+                    <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${course.courseID}">${course.courseName}</a></li>
+                    <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/instructor/courses/modules/material?moduleId=${module.moduleID}&courseId=${course.courseID}">${module.moduleName}</a></li>
                     <li class="breadcrumb-item active">Material Details</li>
                 </ol>
             </nav>
@@ -147,7 +147,7 @@
                 </div>
 
                 <div class="text-center mt-4">
-                    <a href="InstructorMaterial?courseId=${course.courseID}&moduleId=${module.moduleID}" class="btn btn-secondary btn-back">
+                    <a href="${pageContext.request.contextPath}/instructor/courses/modules/material?courseId=${course.courseID}&moduleId=${module.moduleID}" class="btn btn-secondary btn-back">
                         <i class="bi bi-arrow-left-circle"></i> Back
                     </a>
                 </div>

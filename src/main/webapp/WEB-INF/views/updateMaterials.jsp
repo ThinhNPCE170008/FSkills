@@ -17,25 +17,51 @@
 
         <style>
             body {
-                background-color: #f8f9fa;
+                background: linear-gradient(135deg, #f0f4ff, #f9f9f9);
                 font-family: 'Segoe UI', sans-serif;
             }
-
-            .container {
-                max-width: 800px;
-            }
-
-            h2 {
-                color: #343a40;
-                margin-bottom: 25px;
-            }
-            input[type="file"]::file-selector-button {
-                background-color: #4f46e5;
-                color: white;
+            .card-custom {
                 border: none;
-                padding: 0.4rem 1rem;
-                border-radius: 0.3rem;
-                cursor: pointer;
+                border-radius: 20px;
+                box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+                background-color: #ffffff;
+                overflow: hidden;
+            }
+            .section-title {
+                font-size: 1.3rem;
+                font-weight: 600;
+                color: #495057;
+                margin-top: 1.5rem;
+            }
+            .info-block {
+                padding: 1rem;
+                border-radius: 12px;
+                background-color: #f8f9fa;
+                margin-bottom: 1rem;
+            }
+            .info-label {
+                color: #6c757d;
+                font-weight: 500;
+                margin-bottom: 0.25rem;
+            }
+            .info-value {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #212529;
+            }
+            .material-type-icon {
+                font-size: 1.2rem;
+                color: #0d6efd;
+            }
+            .btn-back {
+                font-size: 1rem;
+                padding: 0.6rem 1.2rem;
+            }
+            .description-box {
+                background-color: #f1f3f5;
+                padding: 1rem;
+                border-radius: 12px;
+                white-space: pre-line;
             }
         </style>
     </head>
@@ -45,12 +71,12 @@
         <div class="container py-5">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="instructor">Home</a></li>
+                    <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/instructor">Home</a></li>
                     <li class="breadcrumb-item">
-                        <a href="managemodule?id=${course.courseID}">${course.courseName}</a>
+                        <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${course.courseID}">${course.courseName}</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="InstructorMaterial?moduleId=${module.moduleID}&courseId=${course.courseID}">
+                        <a href="${pageContext.request.contextPath}/instructor/courses/modules/material?moduleId=${module.moduleID}&courseId=${course.courseID}">
                             ${module.moduleName}
                         </a>
                     </li>
@@ -63,7 +89,7 @@
                 <h3 class="mb-4 text-primary fw-semibold text-center">
                     <i class="bi bi-journal-plus"></i> Update Material
                 </h3>
-                <form method="POST" action="InstructorMaterial" enctype="multipart/form-data">
+                <form method="POST" action="${pageContext.request.contextPath}/instructor/courses/modules/material?action=update" enctype="multipart/form-data">
                     <input type="hidden" name="action" value="update">
                     <input type="hidden" name="moduleId" value="${module.moduleID}">
                     <input type="hidden" name="courseId" value="${course.courseID}">
@@ -168,7 +194,7 @@
                             <button type="submit" class="btn btn-success btn-lg px-4 shadow-sm">
                                 <i class="bi bi-check-circle-fill"></i> Update
                             </button>
-                            <a href="InstructorMaterial?courseId=${course.courseID}&moduleId=${module.moduleID}"
+                            <a href="${pageContext.request.contextPath}/instructor/courses/modules/material?moduleId=${module.moduleID}&courseId=${course.courseID}"
                                class="btn btn-outline-secondary btn-lg px-4 ms-2">
                                 <i class="bi bi-x-circle"></i> Cancel
                             </a>
@@ -180,144 +206,139 @@
 
         <script>
             function toggleInputFields() {
-                const type = document.getElementById("type").value;
-                const videoDiv = document.getElementById("videoUploadDiv");
-                const fileDiv = document.getElementById("fileUploadDiv");
-                const linkDiv = document.getElementById("linkInputDiv");
-                const durationDiv = document.getElementById("videoDurationDiv");
+            const type = document.getElementById("type").value;
+            const videoDiv = document.getElementById("videoUploadDiv");
+            const fileDiv = document.getElementById("fileUploadDiv");
+            const linkDiv = document.getElementById("linkInputDiv");
+            const durationDiv = document.getElementById("videoDurationDiv");
+            const videoFile = document.getElementById("videoFile");
+            const docFile = document.getElementById("docFile");
+            const materialLink = document.getElementById("materialLink");
+            // Ẩn tất cả các khu vực
+            [videoDiv, fileDiv, linkDiv, durationDiv].forEach(div => div.classList.add("d-none"));
+            // Xóa thuộc tính required khỏi tất cả input liên quan
+            videoFile?.removeAttribute("required");
+            docFile?.removeAttribute("required");
+            materialLink?.removeAttribute("required");
+            // Hiển thị đúng vùng theo loại
+            if (type === "video") {
+            videoDiv.classList.remove("d-none");
+            durationDiv.classList.remove("d-none");
+            // KHÔNG thêm required cho videoTime vì nó là hidden
+            } else if (type === "pdf") {
+            fileDiv.classList.remove("d-none");
+            } else if (type === "link") {
+            linkDiv.classList.remove("d-none");
+            materialLink?.setAttribute("required", "required");
+            }
+            if (type !== "link") {
+            materialLink.value = "";
+            }
 
-                const videoFile = document.getElementById("videoFile");
-                const docFile = document.getElementById("docFile");
-                const materialLink = document.getElementById("materialLink");
-
-                // Ẩn tất cả các khu vực
-                [videoDiv, fileDiv, linkDiv, durationDiv].forEach(div => div.classList.add("d-none"));
-
-                // Xóa thuộc tính required khỏi tất cả input liên quan
-                videoFile?.removeAttribute("required");
-                        docFile?.removeAttribute("required");
-                        materialLink?.removeAttribute("required");
-
-                // Hiển thị đúng vùng theo loại
-                if (type === "video") {
-                    videoDiv.classList.remove("d-none");
-                    durationDiv.classList.remove("d-none");
-                    // KHÔNG thêm required cho videoTime vì nó là hidden
-                } else if (type === "pdf") {
-                    fileDiv.classList.remove("d-none");
-                            
-                } else if (type === "link") {
-                    linkDiv.classList.remove("d-none");
-                            materialLink?.setAttribute("required", "required");
-                }
-                if (type !== "link") {
-                    materialLink.value = "";
-                }
-
-                updateMaterialLocation(type);
+            updateMaterialLocation(type);
             }
 
 
             function updateMaterialLocation(type) {
-                const materialLocation = document.getElementById("materialLocation");
-                if (type === "video") {
-                    const file = document.getElementById("videoFile").files[0];
-                    if (file) {
-                        materialLocation.value = "materialUpload/" + file.name;
-                    } else {
-                        materialLocation.value = "${material.materialLocation}";
-                    }
-                } else if (type === "pdf") {
-                    const file = document.getElementById("docFile").files[0];
-                    if (file) {
-                        materialLocation.value = "materialUpload/" + file.name;
-                    } else {
-                        materialLocation.value = "${material.materialLocation}";
-                    }
-                } else if (type === "link") {
-                    const link = document.getElementById("materialLink").value;
-                    materialLocation.value = link;
-                }
+            const materialLocation = document.getElementById("materialLocation");
+            if (type === "video") {
+            const file = document.getElementById("videoFile").files[0];
+            if (file) {
+            materialLocation.value = "materialUpload/" + file.name;
+            } else {
+            materialLocation.value = "${material.materialLocation}";
+            }
+            } else if (type === "pdf") {
+            const file = document.getElementById("docFile").files[0];
+            if (file) {
+            materialLocation.value = "materialUpload/" + file.name;
+            } else {
+            materialLocation.value = "${material.materialLocation}";
+            }
+            } else if (type === "link") {
+            const link = document.getElementById("materialLink").value;
+            materialLocation.value = link;
+            }
             }
 
             function updateVideoDuration() {
-                const inputEl = document.getElementById("durationInput");
-                const errorEl = document.getElementById("durationError");
-                const hiddenInput = document.getElementById("videoTime");
-                let input = inputEl.value.trim();
-                if (input === "") {
-                    hiddenInput.value = "00:00:00";
-                    errorEl.classList.remove("d-none");
-                    errorEl.textContent = "⚠ Please enter a non-zero duration.";
-                    return;
-                }
+            const inputEl = document.getElementById("durationInput");
+            const errorEl = document.getElementById("durationError");
+            const hiddenInput = document.getElementById("videoTime");
+            let input = inputEl.value.trim();
+            if (input === "") {
+            hiddenInput.value = "00:00:00";
+            errorEl.classList.remove("d-none");
+            errorEl.textContent = "⚠ Please enter a non-zero duration.";
+            return;
+            }
 
-                const parts = input.split(":");
-                if (parts.length === 2) {
-                    parts.unshift("0"); // Thêm giờ nếu chỉ có phút:giây
-                }
+            const parts = input.split(":");
+            if (parts.length === 2) {
+            parts.unshift("0"); // Thêm giờ nếu chỉ có phút:giây
+            }
 
-                if (parts.length !== 3) {
-                    showError("⚠ Invalid format. Use hh:mm:ss or mm:ss.");
-                    return;
-                }
+            if (parts.length !== 3) {
+            showError("⚠ Invalid format. Use hh:mm:ss or mm:ss.");
+            return;
+            }
 
-                let [hh, mm, ss] = parts.map(p => p.trim());
-                if (!/^\d+$/.test(hh) || !/^\d+$/.test(mm) || !/^\d+$/.test(ss)) {
-                    showError("⚠ Hours, minutes, and seconds must be numbers.");
-                    return;
-                }
+            let [hh, mm, ss] = parts.map(p => p.trim());
+            if (!/^\d+$/.test(hh) || !/^\d+$/.test(mm) || !/^\d+$/.test(ss)) {
+            showError("⚠ Hours, minutes, and seconds must be numbers.");
+            return;
+            }
 
-                hh = parseInt(hh, 10);
-                mm = parseInt(mm, 10);
-                ss = parseInt(ss, 10);
-                if (mm > 59 || ss > 59) {
-                    showError("⚠ Minutes and seconds must be between 00 and 59.");
-                    return;
-                }
+            hh = parseInt(hh, 10);
+            mm = parseInt(mm, 10);
+            ss = parseInt(ss, 10);
+            if (mm > 59 || ss > 59) {
+            showError("⚠ Minutes and seconds must be between 00 and 59.");
+            return;
+            }
 
-                if (hh === 0 && mm === 0 && ss === 0) {
-                    showError("⚠ Duration cannot be 00:00:00.");
-                    return;
-                }
+            if (hh === 0 && mm === 0 && ss === 0) {
+            showError("⚠ Duration cannot be 00:00:00.");
+            return;
+            }
 
-                const formatted = [
+            const formatted = [
                     hh.toString().padStart(2, "0"),
                     mm.toString().padStart(2, "0"),
                     ss.toString().padStart(2, "0")
-                ].join(":");
-                hiddenInput.value = formatted;
-                errorEl.classList.add("d-none");
-                function showError(message) {
-                    hiddenInput.value = "00:00:00";
-                    errorEl.classList.remove("d-none");
-                    errorEl.textContent = message;
-                }
+            ].join(":");
+            hiddenInput.value = formatted;
+            errorEl.classList.add("d-none");
+            function showError(message) {
+            hiddenInput.value = "00:00:00";
+            errorEl.classList.remove("d-none");
+            errorEl.textContent = message;
+            }
             }
 
             function previewSelectedVideo() {
-                const fileInput = document.getElementById("videoFile");
-                const file = fileInput.files[0];
-                const previewContainer = document.getElementById("videoPreviewContainer");
-                const previewVideo = document.getElementById("videoPreviewNew");
-                if (file) {
-                    const url = URL.createObjectURL(file);
-                    previewVideo.src = url;
-                    previewVideo.load();
-                    previewContainer.classList.remove("d-none");
-                    // Ẩn video cũ nếu có
-                    const oldPreview = document.getElementById("videoPreviewOld");
-                    if (oldPreview) {
-                        oldPreview.parentElement.classList.add("d-none");
-                    }
-                }
+            const fileInput = document.getElementById("videoFile");
+            const file = fileInput.files[0];
+            const previewContainer = document.getElementById("videoPreviewContainer");
+            const previewVideo = document.getElementById("videoPreviewNew");
+            if (file) {
+            const url = URL.createObjectURL(file);
+            previewVideo.src = url;
+            previewVideo.load();
+            previewContainer.classList.remove("d-none");
+            // Ẩn video cũ nếu có
+            const oldPreview = document.getElementById("videoPreviewOld");
+            if (oldPreview) {
+            oldPreview.parentElement.classList.add("d-none");
+            }
+            }
             }
 
             window.onload = function () {
-                toggleInputFields();
-                updateVideoDuration();
-                const currentType = document.getElementById("type").value;
-                updateMaterialLocation(currentType);
+            toggleInputFields();
+            updateVideoDuration();
+            const currentType = document.getElementById("type").value;
+            updateMaterialLocation(currentType);
             };
         </script>
 

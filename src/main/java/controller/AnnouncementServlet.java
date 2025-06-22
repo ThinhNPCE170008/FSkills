@@ -26,7 +26,7 @@ import model.User;
  * @author Hua Khanh Duy - CE180230 - SE1814
  */
 @MultipartConfig
-@WebServlet(name = "AnnouncementDetails", urlPatterns = {"/Announcement"})
+@WebServlet(name = "Announcement", urlPatterns = {"/admin/announcement"})
 public class AnnouncementServlet extends HttpServlet {
 
     /**
@@ -79,7 +79,7 @@ public class AnnouncementServlet extends HttpServlet {
             List<Announcement> listAnnouncement = announcementDAO.getAll();
             request.setAttribute("AccountInfo", user);
             request.setAttribute("listAnnouncement", listAnnouncement);
-            request.getRequestDispatcher("WEB-INF/views/announcement.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/announcement.jsp").forward(request, response);
         } else if (action.equalsIgnoreCase("details")) {
             String idRaw = request.getParameter("id");
             int id = 0;
@@ -87,7 +87,7 @@ public class AnnouncementServlet extends HttpServlet {
                 id = Integer.parseInt(idRaw);
                 Announcement ann = announcementDAO.getAnnouncementById(id);
                 request.setAttribute("dataAnn", ann);
-                request.getRequestDispatcher("WEB-INF/views/announcementDetails.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/announcementDetails.jsp").forward(request, response);
             } catch (Exception e) {
                 PrintWriter out = response.getWriter();
                 out.print(e.getMessage());
@@ -141,7 +141,7 @@ public class AnnouncementServlet extends HttpServlet {
                 int res = AnnounDAO.insert(announcementTitle, announcementText, takeDownDate, imagePath, UserID);
 
                 if (res == 1) {
-                    response.sendRedirect("Announcement");
+                    response.sendRedirect("announcement");
                 } else {
                     request.setAttribute("err", "<p>Create failed</p>");
                     request.getRequestDispatcher("fail12.jsp").forward(request, response);
@@ -179,7 +179,7 @@ public class AnnouncementServlet extends HttpServlet {
                 boolean res = AnnounDAO.update(announcementTitle, announcementText, formattedDate, imagePath, announcementId);
 
                 if (res) {
-                    response.sendRedirect("Announcement");
+                    response.sendRedirect("announcement");
                 } else {
                     response.sendRedirect("failqq.jsp");
                 }
@@ -193,7 +193,7 @@ public class AnnouncementServlet extends HttpServlet {
             try {
                 id = Integer.parseInt(idRaw);
                 if (AnnounDAO.delete(id) == 1) {
-                    response.sendRedirect("Announcement");
+                    response.sendRedirect("announcement");
                 } else {
                     response.sendRedirect("failss.jsp");
                 }

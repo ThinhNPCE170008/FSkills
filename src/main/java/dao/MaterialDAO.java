@@ -20,7 +20,12 @@ public class MaterialDAO extends DBContext {
 
     public List<Material> getAllMaterial(int courseId, int moduleId) {
         List<Material> list = new ArrayList<>();
-        String sql = "SELECT m.*, mo.ModuleName, c.CourseID,c.CourseName FROM Materials m JOIN Modules mo ON m.ModuleID = mo.ModuleID JOIN Courses c ON mo.CourseID = c.CourseID WHERE c.CourseID = ? AND mo.ModuleID =  ?;";
+        String sql = "SELECT m.*, mo.ModuleName, c.CourseID, c.CourseName \n"
+                + "FROM Materials m \n"
+                + "JOIN Modules mo ON m.ModuleID = mo.ModuleID \n"
+                + "JOIN Courses c ON mo.CourseID = c.CourseID \n"
+                + "WHERE c.CourseID = ? AND mo.ModuleID = ? \n"
+                + "ORDER BY m.MaterialOrder;";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -104,7 +109,7 @@ public class MaterialDAO extends DBContext {
                 String courseName = rs.getString("CourseName");
                 Course course = new Course(courseID, courseName);
                 Module module = new Module(moduleID, moduleName, course);
-                material = new Material(materialID, materialName, module, type, MaterialLastUpdate, materialOrder, videoTime , materialDescription, materialLocation);
+                material = new Material(materialID, materialName, module, type, MaterialLastUpdate, materialOrder, videoTime, materialDescription, materialLocation);
             }
             return material;
         } catch (Exception e) {

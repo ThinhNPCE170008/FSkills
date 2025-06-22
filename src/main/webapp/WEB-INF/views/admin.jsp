@@ -150,14 +150,14 @@
                         </li>
                         <li class="mb-2">
                             <%-- Liên kết đến trang quản lý Announcement --%>
-                            <a href="${pageContext.request.contextPath}/Announcement" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
+                            <a href="${pageContext.request.contextPath}/admin/announcement" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
                                 <i class="fas fa-bullhorn nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
                                 <span class="nav-text text-gray-800 font-medium group-hover:text-white">Announcement</span>
                             </a>
                         </li>
                         <li class="mb-2">
                             <%-- Liên kết đến trang quản lý Course --%>
-                            <a href="${pageContext.request.contextPath}/DegreeAdmin" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
+                            <a href="${pageContext.request.contextPath}/admin/degree" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
                                 <i class="fas fa-file-invoice-dollar nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
                                 <span class="nav-text text-gray-800 font-medium group-hover:text-white">Manage Degrees</span>
                             </a>

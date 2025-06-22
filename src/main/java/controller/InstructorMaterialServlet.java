@@ -32,7 +32,7 @@ import model.Material;
  * @author Hua Khanh Duy - CE180230 - SE1815
  */
 @MultipartConfig
-@WebServlet(name = "InstructorMaterial", urlPatterns = {"/InstructorMaterial"})
+@WebServlet(name = "InstructorMaterial", urlPatterns = {"/instructor/courses/modules/material"})
 public class InstructorMaterialServlet extends HttpServlet {
 
     /**
@@ -213,7 +213,7 @@ public class InstructorMaterialServlet extends HttpServlet {
                     int rowmod = moddao.moduleUpdateTime(moduleId);
                     int rowcou = coudao.courseUpdateTime(courseId);
                     if (res == 1) {
-                        response.sendRedirect("InstructorMaterial?moduleId=" + moduleId + "&courseId=" + courseId);
+                        response.sendRedirect("material?moduleId=" + moduleId + "&courseId=" + courseId);
                     } else {
                         request.setAttribute("err", "<p>Create failed</p>");
                         request.getRequestDispatcher("error234.jsp").forward(request, response);
@@ -233,7 +233,7 @@ public class InstructorMaterialServlet extends HttpServlet {
                     int courseId = Integer.parseInt(courseIdStr);
                     id = Integer.parseInt(idRaw);
                     if (madao.delete(id) == 1) {
-                        response.sendRedirect("InstructorMaterial?moduleId=" + moduleId + "&courseId=" + courseId);
+                        response.sendRedirect("material?moduleId=" + moduleId + "&courseId=" + courseId);
                     } else {
                         response.sendRedirect("failDelete.jsp");
                     }
@@ -297,7 +297,7 @@ public class InstructorMaterialServlet extends HttpServlet {
                     int rowmod = moddao.moduleUpdateTime(moduleId);
                     int rowcou = coudao.courseUpdateTime(courseId);
                     if (res == true) {
-                        response.sendRedirect("InstructorMaterial?moduleId=" + moduleId + "&courseId=" + courseId);
+                        response.sendRedirect("material?moduleId=" + moduleId + "&courseId=" + courseId);
                     } else {
                         request.setAttribute("err", "<p>Create failed</p>");
                         request.getRequestDispatcher("error234.jsp").forward(request, response);

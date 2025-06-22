@@ -11,17 +11,51 @@
 
         <style>
             body {
-                background-color: #f8f9fa;
+                background: linear-gradient(135deg, #f0f4ff, #f9f9f9);
                 font-family: 'Segoe UI', sans-serif;
             }
-
-            .container {
-                max-width: 800px;
+            .card-custom {
+                border: none;
+                border-radius: 20px;
+                box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+                background-color: #ffffff;
+                overflow: hidden;
             }
-
-            h2 {
-                color: #343a40;
-                margin-bottom: 25px;
+            .section-title {
+                font-size: 1.3rem;
+                font-weight: 600;
+                color: #495057;
+                margin-top: 1.5rem;
+            }
+            .info-block {
+                padding: 1rem;
+                border-radius: 12px;
+                background-color: #f8f9fa;
+                margin-bottom: 1rem;
+            }
+            .info-label {
+                color: #6c757d;
+                font-weight: 500;
+                margin-bottom: 0.25rem;
+            }
+            .info-value {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #212529;
+            }
+            .material-type-icon {
+                font-size: 1.2rem;
+                color: #0d6efd;
+            }
+            .btn-back {
+                font-size: 1rem;
+                padding: 0.6rem 1.2rem;
+            }
+            .description-box {
+                background-color: #f1f3f5;
+                padding: 1rem;
+                border-radius: 12px;
+                white-space: pre-line;
             }
             input[type="file"]::file-selector-button {
                 background-color: #4f46e5;
@@ -35,16 +69,16 @@
     </head>
     <body>
         <jsp:include page="/layout/headerInstructor.jsp"/>
-
-        <div class="container py-5">
+<div class="container py-2 ps-3">
+        <div class="container py-2 ps-3">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="instructor">Home</a></li>
+                    <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/instructor">Home</a></li>
                     <li class="breadcrumb-item">
-                        <a href="managemodule?id=${course.courseID}">${course.courseName}</a>
+                        <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${course.courseID}">${course.courseName}</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="InstructorMaterial?moduleId=${module.moduleID}&courseId=${course.courseID}">
+                        <a href="${pageContext.request.contextPath}/instructor/courses/modules/material?moduleId=${module.moduleID}&courseId=${course.courseID}">
                             ${module.moduleName}
                         </a>
                     </li>
@@ -57,7 +91,7 @@
                 <h3 class="mb-4 text-primary fw-semibold text-center">
                     <i class="bi bi-journal-plus"></i> Create New Material
                 </h3>
-                <form method="POST" action="InstructorMaterial" enctype="multipart/form-data" onsubmit="return prepareCreateMaterial()">
+                <form method="POST" action="${pageContext.request.contextPath}/instructor/courses/modules/material?action=create" enctype="multipart/form-data" onsubmit="return prepareCreateMaterial()">
                     <input type="hidden" name="action" value="create">
                     <input type="hidden" name="moduleId" value="${module.moduleID}">
                     <input type="hidden" name="courseId" value="${course.courseID}">
@@ -89,7 +123,7 @@
                             <!-- Video preview -->
                             <div id="videoPreviewContainer" class="mt-3 d-none">
                                 <label class="form-label">Video Preview</label>
-                                <video id="videoPreview" width="100%" controls>
+                                <video id="videoPreview" width="200%" controls>
                                     <source id="videoPreviewSource" src="" type="video/mp4">
                                     Your browser does not support the video tag.
                                 </video>
@@ -135,7 +169,7 @@
                             <button type="submit" class="btn btn-success btn-lg px-4 shadow-sm">
                                 <i class="bi bi-check-circle-fill"></i> Create
                             </button>
-                            <a href="InstructorMaterial?courseId=${course.courseID}&moduleId=${module.moduleID}"
+                            <a href="${pageContext.request.contextPath}/instructor/courses/modules/material?moduleId=${module.moduleID}&courseId=${course.courseID}""
                                class="btn btn-outline-secondary btn-lg px-4 ms-2">
                                 <i class="bi bi-x-circle"></i> Cancel
                             </a>
@@ -144,7 +178,7 @@
                 </form>
             </div>
         </div>
-
+</div>
         <script>
             function toggleInputFields() {
                 const type = document.getElementById("type").value;

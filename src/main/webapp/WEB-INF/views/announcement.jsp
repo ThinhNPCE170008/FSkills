@@ -152,7 +152,7 @@
                             <tr class="hover:bg-gray-50">
                                 <td class="py-3 px-4 border-b text-center">${ann.annoucementID}</td>
                                 <td class="py-3 px-4 border-b">
-                                    <a href="Announcement?action=details&id=${ann.annoucementID}" class="text-decoration-none fw-semibold text-primary">
+                                    <a href="${pageContext.request.contextPath}/admin/announcement?action=details&id=${ann.annoucementID}" class="text-decoration-none fw-semibold text-primary">
                                             ${ann.title}
                                     </a>
                                 </td>
@@ -170,7 +170,7 @@
                                         <c:otherwise>
                                             <div class="d-flex justify-content-center align-items-center" style="height: 100%;">
                                                 <a href="#" data-bs-toggle="modal" data-bs-target="#zoomImageModal${ann.annoucementID}">
-                                                    <img src="${ann.announcementImage}" class="rounded-3 shadow"
+                                                    <img src="${pageContext.request.contextPath}/${ann.announcementImage}" class="rounded-3 shadow"
                                                          style="max-height: 80px; object-fit: cover; cursor: zoom-in;" />
                                                 </a>
                                             </div>
@@ -189,7 +189,7 @@
                                                 data-bs-target="#deleteModal${ann.annoucementID}">
                                             <i class="fas fa-trash"></i>
                                         </button>
-                                        <a href="Announcement?action=details&id=${ann.annoucementID}"
+                                        <a href="${pageContext.request.contextPath}/admin/announcement?action=details&id=${ann.annoucementID}"
                                            class="btn btn-outline-info btn-sm" title="View Details">
                                             <i class="bi bi-eye"></i>
                                         </a>
@@ -221,7 +221,7 @@
                         aria-label="Close"></button>
             </div>
 
-            <form method="POST" enctype="multipart/form-data">
+            <form method="POST" action="${pageContext.request.contextPath}/admin/announcement?action=create" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="create">
                 <!-- Lấy userId từ session -->
                 <c:if test="${not empty sessionScope.user}">
@@ -300,7 +300,7 @@
                         aria-label="Close"></button>
             </div>
 
-            <form method="POST" action="Announcement" enctype="multipart/form-data">
+            <form method="POST" action="${pageContext.request.contextPath}/admin/announcement?action=edit" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="edit">
 
                 <div class="modal-body">
@@ -335,7 +335,7 @@
                         <c:if test="${not empty ann.announcementImage and ann.announcementImage ne 'No Image'}">
                             <div class="mt-2" id="currentImageDiv${ann.annoucementID}">
                                 <label class="form-label fw-bold">Current Image</label><br>
-                                <img src="${ann.announcementImage}" alt="Current Image" class="img-fluid rounded"
+                                <img src="${pageContext.request.contextPath}/${ann.announcementImage}" alt="Current Image" class="img-fluid rounded"
                                      style="max-width: 200px; max-height: 200px; object-fit: cover;" />
                             </div>
                         </c:if>
@@ -395,7 +395,7 @@
 
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form method="POST" action="Announcement">
+            <form method="POST" action="${pageContext.request.contextPath}/admin/announcement?action=delete">
                 <input type="hidden" name="action" value="delete">
 
                 <div class="modal-body">
@@ -490,7 +490,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body d-flex justify-content-center">
-                        <img src="${ann.announcementImage}" alt="Zoomed Image" class="img-fluid rounded shadow" style="max-height: 600px; object-fit: contain;">
+                        <img src="${pageContext.request.contextPath}/${ann.announcementImage}" alt="Zoomed Image" class="img-fluid rounded shadow" style="max-height: 600px; object-fit: contain;">
                     </div>
                 </div>
             </div>

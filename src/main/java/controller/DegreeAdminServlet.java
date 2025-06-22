@@ -27,7 +27,7 @@ import model.User;
  * @author Hua Khanh Duy - CE180230 - SE1814
  */
 @MultipartConfig
-@WebServlet(name = "DegreeAdmin", urlPatterns = {"/DegreeAdmin"})
+@WebServlet(name = "DegreeAdmin", urlPatterns = {"/admin/degree"})
 public class DegreeAdminServlet extends HttpServlet {
 
     /**
@@ -79,7 +79,7 @@ public class DegreeAdminServlet extends HttpServlet {
             List<Degree> listDegree = degreeDAO.getAll();
             request.setAttribute("AccountInfo", user);
             request.setAttribute("listDegree", listDegree);
-            request.getRequestDispatcher("WEB-INF/views/degreeAdmin.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/degreeAdmin.jsp").forward(request, response);
         }
     }
 
@@ -103,7 +103,7 @@ public class DegreeAdminServlet extends HttpServlet {
             try {
                 id = Integer.parseInt(idRaw);
                 if (degreeDAO.delete(id) == 1) {
-                    response.sendRedirect("DegreeAdmin");
+                    response.sendRedirect("degree");
                 } else {
                     response.sendRedirect("failss.jsp");
                 }
@@ -132,7 +132,7 @@ public class DegreeAdminServlet extends HttpServlet {
                 int res = notiDAO.sendNofication(userId, link, notiMess);
                 boolean r = degreeDAO.approve(status, degreeId);
                 if (r == true) {
-                    response.sendRedirect("DegreeAdmin");
+                    response.sendRedirect("degree");
                 } else {
                     response.sendRedirect("failqq.jsp");
                 }
