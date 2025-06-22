@@ -64,7 +64,7 @@
 <div class="container py-5">
     <div class="container py-5">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <a href="instructor?action=list" class="btn btn-secondary">
+            <a href="${pageContext.request.contextPath}/instructor/courses?action=list" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Back
             </a>
 
@@ -153,7 +153,7 @@
      aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
-            <form id="createModuleForm" action="managemodule?action=create" method="POST">
+            <form id="createModuleForm" action="${pageContext.request.contextPath}/instructor/courses/modules?action=create" method="POST">
                 <div class="modal-header">
                     <h5 class="modal-title" id="createModuleModalLabel">Create New Module</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -181,7 +181,7 @@
     <!-- Update Modal -->
     <div class="modal fade" id="updateModal${module.moduleID}" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
-            <form id="updateModuleForm${module.moduleID}" action="managemodule?action=update" method="POST"
+            <form id="updateModuleForm${module.moduleID}" action="${pageContext.request.contextPath}/instructor/courses/modules?action=update" method="POST"
                   class="modal-content bg-white">
                 <div class="modal-header">
                     <h5 class="modal-title">Update Module</h5>
@@ -210,7 +210,7 @@
     <!-- Delete Modal -->
     <div class="modal fade" id="deleteModal${module.moduleID}" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <form action="managemodule?action=delete" method="POST" class="modal-content bg-white">
+            <form action="${pageContext.request.contextPath}/instructor/courses/modules?action=delete" method="POST" class="modal-content bg-white">
                 <div class="modal-header">
                     <h5 class="modal-title text-danger">Delete Module</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

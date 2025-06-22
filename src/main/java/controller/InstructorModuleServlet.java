@@ -25,7 +25,7 @@ import model.User;
 /**
  * @author Ngo Phuoc Thinh - CE170008 - SE1815
  */
-@WebServlet(name = "InstructorModuleServlet", urlPatterns = {"/managemodule"})
+@WebServlet(name = "InstructorModuleServlet", urlPatterns = {"/instructor/courses/modules"})
 public class InstructorModuleServlet extends HttpServlet {
 
     /**
@@ -66,32 +66,34 @@ public class InstructorModuleServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String contextPath = request.getContextPath();
         HttpSession session = request.getSession();
+
         ModuleDAO mdao = new ModuleDAO();
         CourseDAO cdao = new CourseDAO();
         Course course = null;
 
         User acc = (User) session.getAttribute("user");
         if (acc == null) {
-            response.sendRedirect("login");
+            response.sendRedirect(contextPath + "/login");
             return;
         }
 
         if (acc.getRole() != Role.INSTRUCTOR) {
-            response.sendRedirect("homePage_Guest.jsp");
+            response.sendRedirect(contextPath + "/homePage_Guest.jsp");
             return;
         }
 
-        String idParam = request.getParameter("id");
+        String courseIdParam = request.getParameter("courseId");
         int courseId = -1;
 
         try {
-            courseId = Integer.parseInt(idParam);
+            courseId = Integer.parseInt(courseIdParam);
             course = cdao.getCourseByCourseID(courseId);
             session.setAttribute("course", course);
 
             if (course == null) {
-                response.sendRedirect("instructor");
+                response.sendRedirect(contextPath + "/instructor/courses");
                 return;
             }
 

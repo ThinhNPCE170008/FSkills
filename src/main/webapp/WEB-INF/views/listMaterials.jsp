@@ -78,20 +78,26 @@
                             ${module.moduleName}
                         </li>
                     </ol>
-                    <div class="mb-2 text-end">
-                        <a class="btn btn-success"
-                           href="InstructorMaterial?action=create&moduleId=${module.moduleID}&courseId=${course.courseID}">
-                            <i class="bi bi-file-earmark-plus"></i> +NEW
-                        </a>
-                    </div>
+
+
                 </nav>
+                <div class="text-end">
+                    <a href="InstructorMaterial?action=create&moduleId=${module.moduleID}&courseId=${course.courseID}"
+                       class="btn btn-lg d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill shadow-sm fw-semibold text-white"
+                       style="background: linear-gradient(135deg, #0d6efd, #0a58ca); transition: all 0.3s ease;"
+                       onmouseover="this.style.background = 'linear-gradient(135deg, #0a58ca, #0d6efd)'"
+                       onmouseout="this.style.background = 'linear-gradient(135deg, #0d6efd, #0a58ca)'">
+                        <span>New Material</span>
+                        <i class="bi bi-plus-circle fs-5"></i>
+                    </a>
+                </div>
 
                 <c:choose>
                     <c:when test="${empty listMaterial}">
                         <div class="alert alert-warning text-center">No material available.</div>
                     </c:when>
                     <c:otherwise>
-                        <table class="table table-bordered table-hover shadow-sm bg-white rounded">
+                        <table class="table table-bordered table-hover shadow-sm bg-white rounded mt-4">
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -110,52 +116,128 @@
                                         <!-- Type -->
                                         <td>${material.type}</td>
 
-                                        <!-- Video -->
                                         <td>
                                             <c:choose>
-                                                <c:when test="${not empty material.materialLocation}">
-                                                    <video width="160" height="90" controls>
-                                                        <source src="${material.materialLocation}" type="video/mp4">
-                                                        Your browser does not support the video tag.
-                                                    </video>
+
+                                                <c:when test="${material.type == 'video' && not empty material.materialLocation}">
+                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#videoModal${material.materialId}">
+                                                        <video class="img-fluid rounded shadow-sm d-block mx-auto" style="max-height: 160px;" muted>
+                                                            <source src="${material.materialLocation}" type="video/mp4">
+                                                            Your browser does not support the video tag.
+                                                        </video>
+
+                                                    </a>
                                                 </c:when>
+
+
+                                                <c:when test="${material.type == 'pdf' && not empty material.materialLocation}">
+                                                    <a href="${material.materialLocation}" target="_blank">
+                                                        ${material.materialLocation}
+                                                    </a>
+                                                </c:when>
+
+
+                                                <c:when test="${material.type == 'link' && not empty material.materialLocation}">
+                                                    <a href="${material.materialLocation}" target="_blank">
+                                                        ${material.materialLocation}
+                                                    </a>
+                                                </c:when>
+
+
                                                 <c:otherwise>
-                                                    <span class="text-muted fst-italic">No video</span>
+                                                    <span class="text-muted fst-italic">Material not available</span>
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
+
 
                                         <!-- Last Update -->
                                         <td>
                                             <c:choose>
                                                 <c:when test="${not empty material.materialLastUpdate}">
-                                                    <fmt:formatDate value="${material.materialLastUpdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                                    <fmt:formatDate value="${material.materialLastUpdate}" pattern=" HH:mm dd/MM/yyyy"/>
                                                 </c:when>
                                                 <c:otherwise>N/A</c:otherwise>
                                             </c:choose>
                                         </td>
 
                                         <!-- Actions -->
-                                        <td class="d-flex flex-column gap-1">
-                                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                                                    data-bs-target="#updateModal${material.materialId}">Update
-                                            </button>
+                                        <td class="align-middle text-center">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <a class="btn btn-outline-info btn-sm" type="button"
+                                                   href="InstructorMaterial?action=details&moduleId=${module.moduleID}&courseId=${course.courseID}&materialId=${material.materialId}" >
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a class="btn btn-primary btn-sm"
+                                                   href="InstructorMaterial?action=update&moduleId=${module.moduleID}&courseId=${course.courseID}&materialId=${material.materialId}">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
 
-                                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                                    data-bs-target="#deleteModal${material.materialId}">Delete
-                                            </button>
+
+                                                <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                                        data-bs-target="#deleteModal${material.materialId}">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 </c:forEach>
                             </tbody>
                         </table>
-
                     </c:otherwise>
                 </c:choose>
             </div>
         </div>
-        <jsp:include page="/layout/footerInstructor.jsp" />
+        <jsp:include page="/layout/footerInstructor.jsp"/>
+        <!-- Delete Modal -->
+        <c:forEach var="material" items="${listMaterial}">
+            <div class="modal fade" id="deleteModal${material.materialId}" tabindex="-1" aria-labelledby="deleteModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel">Confirm Delete Material</h5>
 
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form method="POST" action="InstructorMaterial">
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="moduleId" value="${module.moduleID}">
+                            <input type="hidden" name="courseId" value="${course.courseID}">
+                            <div class="modal-body">
+                                <input type="hidden" name="id" value="${material.materialId}">
+                                <p>Are you sure you want to delete this material?</p>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- Video Modal -->                 
+            <c:if test="${not empty material.materialLocation}">
+                <div class="modal fade" id="videoModal${material.materialId}" tabindex="-1" aria-labelledby="videoModalLabel${material.materialId}" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="videoModalLabel${material.materialId}">${material.materialName}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <video controls style="width: 100%; height: auto;">
+                                    <source src="${material.materialLocation}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </c:if>             
+
+        </c:forEach>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

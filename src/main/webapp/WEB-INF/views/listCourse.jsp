@@ -55,6 +55,11 @@
             color: #343a40;
             margin-bottom: 25px;
         }
+
+        .link-hover:hover {
+            color: #0d6efd;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -62,7 +67,7 @@
 
 <div class="container py-5">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <a href="instructor" class="btn btn-secondary">
+        <a href="${pageContext.request.contextPath}/instructor" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Back
         </a>
 
@@ -97,7 +102,12 @@
                         <td>
                             <img src="${c.courseImageLocation}" class="course-image" alt="Course Image">
                         </td>
-                        <td>${c.courseName}</td>
+                        <td>
+                            <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${c.courseID}"
+                               class="text-decoration-none link-hover">
+                                    ${c.courseName}
+                            </a>
+                        </td>
                         <td>${c.courseCategory}</td>
                         <td>${c.user.displayName}</td>
                         <td>
@@ -109,7 +119,7 @@
                         <td>
                             <c:choose>
                                 <c:when test="${not empty c.publicDate}">
-                                    <fmt:formatDate value="${c.publicDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                    <fmt:formatDate value="${c.publicDate}" pattern="ss:mm:HH dd-MM-yyyy"/>
                                 </c:when>
                                 <c:otherwise>N/A</c:otherwise>
                             </c:choose>
@@ -117,7 +127,7 @@
                         <td>
                             <c:choose>
                                 <c:when test="${not empty c.courseLastUpdate}">
-                                    <fmt:formatDate value="${c.courseLastUpdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                    <fmt:formatDate value="${c.courseLastUpdate}" pattern="ss:mm:HH dd-MM-yyyy"/>
                                 </c:when>
                                 <c:otherwise>N/A</c:otherwise>
                             </c:choose>
@@ -154,16 +164,14 @@
                             </c:choose>
                         </td>
                         <td class="d-flex flex-column gap-1">
-                            <a href="managemodule?id=${c.courseID}" class="btn btn-sm btn-info text-white">
-                                <i class="fas fa-eye"></i> Detail
-                            </a>
-
                             <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                                    data-bs-target="#updateModal${c.courseID}">Update
+                                    data-bs-target="#updateModal${c.courseID}">
+                                <i class="fas fa-edit"></i>
                             </button>
 
                             <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#deleteModal${c.courseID}">Delete
+                                    data-bs-target="#deleteModal${c.courseID}">
+                                <i class="fas fa-trash-alt"></i>
                             </button>
                         </td>
                     </tr>
@@ -180,7 +188,7 @@
      aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
-            <form id="createCourseForm" action="instructor?action=create" method="POST">
+            <form id="createCourseForm" action="${pageContext.request.contextPath}/instructor/courses?action=create" method="POST">
                 <div class="modal-header">
                     <h5 class="modal-title" id="createCourseModalLabel">Create New Course</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -239,7 +247,7 @@
     <!-- Update Modal -->
     <div class="modal fade" id="updateModal${course.courseID}" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
-            <form id="updateCourseForm${course.courseID}" action="instructor?action=update" method="POST"
+            <form id="updateCourseForm${course.courseID}" action="${pageContext.request.contextPath}/instructor/courses?action=update" method="POST"
                   class="modal-content bg-white">
                 <div class="modal-header">
                     <h5 class="modal-title">Update Course</h5>
@@ -299,7 +307,7 @@
     <!-- Delete Modal -->
     <div class="modal fade" id="deleteModal${course.courseID}" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <form action="instructor?action=delete" method="POST" class="modal-content bg-white">
+            <form action="${pageContext.request.contextPath}/instructor/courses?action=delete" method="POST" class="modal-content bg-white">
                 <div class="modal-header">
                     <h5 class="modal-title text-danger">Delete Course</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

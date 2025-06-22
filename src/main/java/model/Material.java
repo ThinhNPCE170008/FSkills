@@ -17,14 +17,14 @@ public class Material {
     private String type;
     private Timestamp materialLastUpdate;
     private int materialOrder;
-    private int time;
+    private String time;
     private String materialDescription;
     private String materialLocation;
 
     public Material() {
     }
 
-    public Material(int materialId, String materialName, Module module, String type, Timestamp materialLastUpdate, int materialOrder, int time, String materialDescription, String materialLocation) {
+    public Material(int materialId, String materialName, Module module, String type, Timestamp materialLastUpdate, int materialOrder, String time, String materialDescription, String materialLocation) {
         this.materialId = materialId;
         this.materialName = materialName;
         this.module = module;
@@ -84,11 +84,11 @@ public class Material {
         this.materialOrder = materialOrder;
     }
 
-    public int getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(int time) {
+    public void setTime(String time) {
         this.time = time;
     }
 

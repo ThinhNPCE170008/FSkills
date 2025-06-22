@@ -29,7 +29,7 @@ public class CourseDAO extends DBContext {
     public List<Course> getCourseByUserID(int userID) {
         List<Course> list = new ArrayList<>();
 
-        String sql = "SELECT Users.*, Courses.* FROM Courses JOIN Users ON Courses.UserID = Users.UserID WHERE Users.UserID = ? AND BanStatus = 0";
+        String sql = "SELECT Users.*, Courses.* FROM Courses JOIN Users ON Courses.UserID = Users.UserID WHERE Users.UserID = ? AND Courses.Status = 0";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -78,11 +78,11 @@ public class CourseDAO extends DBContext {
         }
         return list;
     }
-    
+
     public List<Course> get3CourseByUserID(int userID) {
         List<Course> list = new ArrayList<>();
 
-        String sql = "SELECT TOP 3 Users.*, Courses.* FROM Courses JOIN Users ON Courses.UserID = Users.UserID WHERE Users.UserID = ? AND BanStatus = 0 ORDER BY PublicDate DESC";
+        String sql = "SELECT TOP 3 Users.*, Courses.* FROM Courses JOIN Users ON Courses.UserID = Users.UserID WHERE Users.UserID = ? AND Status = 0 ORDER BY PublicDate DESC";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -134,9 +134,9 @@ public class CourseDAO extends DBContext {
 
     public Course getCourseByCourseID(int courseID) {
 
-        String sql = "SELECT Courses.*, Users.DisplayName, Users.Email, Users.Gender, Users.DateOfBirth, Users.Avatar, Users.Info\n"
-                + "FROM Courses JOIN Users ON Courses.UserID = Users.UserID\n"
-                + "WHERE Courses.CourseID = ?";
+        String sql = "SELECT Courses.*, Users.DisplayName, Users.Email, Users.Gender, Users.DateOfBirth, Users.Avatar, Users.Info\n" +
+                "FROM Courses JOIN Users ON Courses.UserID = Users.UserID\n" +
+                "WHERE Courses.CourseID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -251,17 +251,17 @@ public class CourseDAO extends DBContext {
         return 0;
 
     }
-    
+
     public int onGoingLearner(int courseID) {
         int count = 0;
         String sql = "SELECT COUNT(*) AS onGoingLearner FROM Enroll WHERE CourseID = ? AND CompleteDate IS NULL";
-        
+
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, courseID);
 
             ResultSet rs = ps.executeQuery();
-            while(rs.next()) {
+            while (rs.next()) {
                 count = rs.getInt(1);
             }
         } catch (Exception e) {
@@ -286,9 +286,9 @@ public class CourseDAO extends DBContext {
     }
 
     public int countLearnersByUserID(int userId) {
-        String sql = "SELECT COUNT(DISTINCT Enroll.UserID) AS LearnerCount FROM Enroll\n" +
-                "JOIN Courses ON Enroll.CourseID = Courses.CourseID\n" +
-                "WHERE Courses.UserID = ?";
+        String sql = "SELECT COUNT(DISTINCT Enroll.UserID) AS LearnerCount FROM Enroll\n"
+                + "JOIN Courses ON Enroll.CourseID = Courses.CourseID\n"
+                + "WHERE Courses.UserID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -303,12 +303,12 @@ public class CourseDAO extends DBContext {
         return 0;
     }
 
-     public List<Course> getAllCourses() {
+    public List<Course> getAllCourses() {
         List<Course> list = new ArrayList<>();
-        String sql = "SELECT Courses.*, Users.DisplayName, Users.Email, Users.Gender, Users.DateOfBirth, Users.Avatar, Users.Info, Users.Role " +
-                "FROM Courses JOIN Users ON Courses.UserID = Users.UserID " +
-                "WHERE Courses.ApproveStatus = 1 " +
-                "ORDER BY Courses.PublicDate DESC";
+        String sql = "SELECT Courses.*, Users.DisplayName, Users.Email, Users.Gender, Users.DateOfBirth, Users.Avatar, Users.Info, Users.Role "
+                + "FROM Courses JOIN Users ON Courses.UserID = Users.UserID "
+                + "WHERE Courses.ApproveStatus = 1 "
+                + "ORDER BY Courses.PublicDate DESC";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -329,9 +329,9 @@ public class CourseDAO extends DBContext {
 
     public List<Course> searchCourses(String searchTerm, String category) {
         List<Course> list = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT Courses.*, Users.DisplayName, Users.Email, Users.Gender, Users.DateOfBirth, Users.Avatar, Users.Info, Users.Role " +
-                "FROM Courses JOIN Users ON Courses.UserID = Users.UserID " +
-                "WHERE Courses.ApproveStatus = 1");
+        StringBuilder sql = new StringBuilder("SELECT Courses.*, Users.DisplayName, Users.Email, Users.Gender, Users.DateOfBirth, Users.Avatar, Users.Info, Users.Role "
+                + "FROM Courses JOIN Users ON Courses.UserID = Users.UserID "
+                + "WHERE Courses.ApproveStatus = 1");
 
         if (searchTerm != null && !searchTerm.trim().isEmpty()) {
             sql.append(" AND (Courses.CourseName LIKE ? OR Users.DisplayName LIKE ?)");
@@ -404,7 +404,7 @@ public class CourseDAO extends DBContext {
             user.setUserId(userID);
             user.setDisplayName(rs.getString("DisplayName"));
             user.setEmail(rs.getString("Email"));
-            
+
             // Handle role safely
             try {
                 int roleInt = rs.getInt("Role");
@@ -424,7 +424,7 @@ public class CourseDAO extends DBContext {
             } catch (Exception e) {
                 user.setRole(Role.LEARNER); // Default role
             }
-            
+
             user.setGender(rs.getInt("Gender"));
             user.setDateOfBirth(rs.getTimestamp("DateOfBirth"));
             user.setAvatar(rs.getString("Avatar"));
@@ -445,13 +445,14 @@ public class CourseDAO extends DBContext {
             return null;
         }
     }
+
     public List<Course> getRelatedCourses(int courseID, String category, int limit) {
         List<Course> relatedCourses = new ArrayList<>();
-        String sql = "SELECT TOP " + limit + " Courses.*, Users.DisplayName, Users.Email, Users.Gender, Users.DateOfBirth, Users.Avatar, Users.Info, Users.Role " +
-                     "FROM Courses JOIN Users ON Courses.UserID = Users.UserID " +
-                     "WHERE Courses.ApproveStatus = 1 AND Courses.CourseID != ? AND Courses.CourseCategory = ? " +
-                     "ORDER BY Courses.PublicDate DESC";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        String sql = "SELECT TOP " + limit + " Courses.*, Users.DisplayName, Users.Email, Users.Gender, Users.DateOfBirth, Users.Avatar, Users.Info, Users.Role "
+                + "FROM Courses JOIN Users ON Courses.UserID = Users.UserID "
+                + "WHERE Courses.ApproveStatus = 1 AND Courses.CourseID != ? AND Courses.CourseCategory = ? "
+                + "ORDER BY Courses.PublicDate DESC";
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, courseID);
             ps.setNString(2, category);
             ResultSet rs = ps.executeQuery();
@@ -467,9 +468,10 @@ public class CourseDAO extends DBContext {
         }
         return relatedCourses;
     }
+
     public double getAverageCourseRating(int courseID) {
         String sql = "SELECT AVG(RatingValue) AS AverageRating FROM CourseRatings WHERE CourseID = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, courseID);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -484,7 +486,7 @@ public class CourseDAO extends DBContext {
 
     public int getCourseRatingCount(int courseID) {
         String sql = "SELECT COUNT(*) AS RatingCount FROM CourseRatings WHERE CourseID = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, courseID);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -495,10 +497,12 @@ public class CourseDAO extends DBContext {
             e.printStackTrace();
         }
         return 0;
-    }public List<CourseSection> getCourseCurriculum(int courseID) {
+    }
+
+    public List<CourseSection> getCourseCurriculum(int courseID) {
         List<CourseSection> curriculum = new ArrayList<>();
         String sql = "SELECT SectionTitle, SectionDescription FROM CourseSections WHERE CourseID = ? ORDER BY SectionOrder";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, courseID);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -514,6 +518,7 @@ public class CourseDAO extends DBContext {
 
     // Assuming you have a model class for CourseSection
     public static class CourseSection {
+
         private String title;
         private String description;
 
@@ -529,10 +534,12 @@ public class CourseDAO extends DBContext {
         public String getDescription() {
             return description;
         }
-    }public List<String> getCourseHighlights(int courseID) {
+    }
+
+    public List<String> getCourseHighlights(int courseID) {
         List<String> highlights = new ArrayList<>();
         String sql = "SELECT Highlight FROM CourseHighlights WHERE CourseID = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, courseID);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -544,43 +551,57 @@ public class CourseDAO extends DBContext {
         }
         return highlights;
     }
+//==========================================
+    public int courseUpdateTime(int id) {
+        String updateSql = "  UPDATE [dbo].[Courses] SET [CourseLastUpdate] = GETDATE() WHERE [CourseID] = ?;";
+        try {
+            PreparedStatement ps = conn.prepareStatement(updateSql);
+            ps.setInt(1, id);
+            int rowsAffected = ps.executeUpdate();
+
+            if (rowsAffected > 0) {
+                return 1; // Cập nhật thành công
+            } else {
+                return 0; // Không có dòng nào bị ảnh hưởng
+            }
+        } catch (SQLException e) {
+            System.out.println("Error updating course time: " + e.getMessage());
+            return 0; // Trả về 0 nếu có lỗi
+        }
+    }
+//==============================================
     public static void main(String[] args) {
         List<Course> list = new ArrayList<>();
 
         CourseDAO dao = new CourseDAO();
- // Test getAllCourses
-        List<Course> courses = dao.getAllCourses();
-        System.out.println("Total courses: " + courses.size());
-        
-        // Test getAllCategories
-        List<String> categories = dao.getAllCategories();
-        System.out.println("Categories: " + categories);
+//        // Test getAllCourses
+//        List<Course> courses = dao.getAllCourses();
+//        System.out.println("Total courses: " + courses.size());
+//
+//        // Test getAllCategories
+//        List<String> categories = dao.getAllCategories();
+//        System.out.println("Categories: " + categories);
 
-//        list = dao.getCourseByUserID(3);
+//        list = dao.getCourseByUserID(2);
 //        for (Course course : list) {
 //            System.out.println(course);
 //        }
 
-//        Course course = dao.getCourseByCourseID(2);
+//        Course course = dao.getCourseByCourseID(2, 2);
 //        System.out.println(course);
 
 //        UserDAO udao = new UserDAO();
 //        User user = udao.getByUserID(3);
 //        int result = dao.insertCourse("C Sharf 123", "Dot Net Programming", 3, 9999, 999999, 0, "https://www.youtube.com/watch?v=de6UvFKbuZQ");
 //        System.out.println(result);
-
 //        int result = dao.updateCourse(8, "Bootstrap 5", "Web Develop", 1234, 123456789, 0, "https://www.youtube.com/watch?v=de6UvFKbuZQ");
 //        System.out.println(result);
-
 //        int result = dao.deleteCourse(9);
 //        System.out.println(result);
-
 //        int result = dao.countCoursesByUserID(2);
 //        System.out.println(result);
-
 //        int result = dao.onGoingLearner(16);
 //        System.out.println(result);
-
 //        int result = dao.countLearnersByUserID(2);
 //        System.out.println(result);
     }

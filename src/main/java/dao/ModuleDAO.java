@@ -20,9 +20,9 @@ public class ModuleDAO extends DBContext {
 
     public List<Module> getAllModuleByCourseID(int courseID) {
         List<Module> list = new ArrayList<>();
-        String sql = "SELECT M.*, C.CourseName, C.CourseCategory FROM Modules M\n" +
-                "JOIN Courses C ON M.CourseID = C.CourseID\n" +
-                "WHERE C.CourseID = ?";
+        String sql = "SELECT M.*, C.CourseName, C.CourseCategory FROM Modules M\n"
+                + "JOIN Courses C ON M.CourseID = C.CourseID\n"
+                + "WHERE C.CourseID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -49,9 +49,9 @@ public class ModuleDAO extends DBContext {
     }
 
     public Module getModuleByID(int moduleID) {
-        String sql = "SELECT M.*, C.CourseName, C.CourseCategory FROM Modules M\n" +
-                "JOIN Courses C ON M.CourseID = C.CourseID\n" +
-                "WHERE M.ModuleID = ?";
+        String sql = "SELECT M.*, C.CourseName, C.CourseCategory FROM Modules M\n"
+                + "JOIN Courses C ON M.CourseID = C.CourseID\n"
+                + "WHERE M.ModuleID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -90,7 +90,7 @@ public class ModuleDAO extends DBContext {
             ps3.setInt(1, module.getCourse().getCourseID());
             ps3.executeUpdate();
 
-            int insert =  ps.executeUpdate();
+            int insert = ps.executeUpdate();
             return insert > 0 ? 1 : 0;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -99,9 +99,9 @@ public class ModuleDAO extends DBContext {
     }
 
     public int updateModule(int moduleID, String moduleName) {
-        String sql = "UPDATE Modules\n" +
-                "SET ModuleName = ?, ModuleLastUpdate = ?\n" +
-                "WHERE ModuleID = ?";
+        String sql = "UPDATE Modules\n"
+                + "SET ModuleName = ?, ModuleLastUpdate = ?\n"
+                + "WHERE ModuleID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -132,8 +132,8 @@ public class ModuleDAO extends DBContext {
     }
 
     public int deleteModule(int moduleID) {
-        String sql = "DELETE FROM Modules\n" +
-                "WHERE ModuleID = ?";
+        String sql = "DELETE FROM Modules\n"
+                + "WHERE ModuleID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -160,7 +160,26 @@ public class ModuleDAO extends DBContext {
         }
         return 0;
     }
+//==========================================
 
+    public int moduleUpdateTime(int id) {
+        String updateSql = "UPDATE [dbo].[Modules] SET [ModuleLastUpdate] = GETDATE() WHERE [ModuleID] = ?;";
+        try {
+            PreparedStatement ps = conn.prepareStatement(updateSql);
+            ps.setInt(1, id);
+            int rowsAffected = ps.executeUpdate();
+
+            if (rowsAffected > 0) {
+                return 1; // Cập nhật thành công
+            } else {
+                return 0; // Không có dòng nào bị ảnh hưởng
+            }
+        } catch (SQLException e) {
+            System.out.println("Error updating module time: " + e.getMessage());
+            return 0; // Trả về 0 nếu có lỗi
+        }
+    }
+//=========================================================
     public static void main(String[] args) {
         ModuleDAO dao = new ModuleDAO();
         CourseDAO courseDAO = new CourseDAO();
@@ -170,19 +189,15 @@ public class ModuleDAO extends DBContext {
 //        for (Module module : modules) {
 //            System.out.println(module);
 //        }
-
 //        Module m = dao.getModuleByID(1);
 //        System.out.println(m);
-
 //        Course course = new Course();
 //        course = courseDAO.getCourseByCourseID(2);
 //        Module module = new Module("Miền Bắc Tiến Lên", course);
 //        int result = dao.insertModule(module);
 //        System.out.println(result);
-
 //        int result = dao.updateModule(6,"Ba Cào Thắng");
 //        System.out.println(result);
-
 //        int result = dao.deleteModule(7);
 //        System.out.println(result);
     }
