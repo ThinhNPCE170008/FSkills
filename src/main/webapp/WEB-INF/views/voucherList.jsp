@@ -1,275 +1,364 @@
-<%--
-    Document   : voucherList
-    Created on : Jun 1, 2025, 5:32:27 PM
-    Author     : DELL
---%>
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Vouchers List</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f4f7f6;
-                margin: 0;
-                padding: 0;
-                display: flex;
-                min-height: 100vh;
-            }
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Quản Trị F-SKILL - Quản lý Voucher</title>
 
-            .main-content {
-                flex-grow: 1;
-                padding: 20px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
+    <link rel="icon" type="image/png" href="https://placehold.co/32x32/0284c7/ffffff?text=FS">
 
-            .voucher-list-container {
-                background-color: #ffffff;
-                border-radius: 10px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                padding: 30px;
-                width: 100%;
-                /* Tăng kích thước bảng - Thay đổi max-width ở đây */
-                max-width: 1100px; /* Tăng từ 900px lên 1100px */
-                box-sizing: border-box;
-                margin-top: 20px;
-            }
+    <script src="https://cdn.tailwindcss.com"></script>
 
-            h2 {
-                color: #333;
-                text-align: left;
-                margin-bottom: 25px;
-                border-bottom: 2px solid #007bff;
-                padding-bottom: 10px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-            h2 span {
-                flex-grow: 1;
-                text-align: left;
-            }
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-            .return-to-dashboard {
-                padding: 8px 15px;
-                background-color: #007bff;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                font-size: 0.9em;
-                text-decoration: none;
-                transition: background-color 0.3s ease;
-            }
-            .return-to-dashboard:hover {
-                background-color: #0056b3;
-            }
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
-            .search-add-section {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 20px;
-                flex-wrap: wrap;
-                /* Thêm padding-top để tạo khoảng cách cho cả phần tìm kiếm và nút add */
-                padding-top: 15px; /* Thêm padding-top */
-            }
-            .search-bar {
-                display: flex;
-                align-items: center;
-                margin-bottom: 10px;
-            }
-            .search-bar input[type="text"] {
-                padding: 8px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                margin-right: 10px;
-                width: 200px;
-            }
-            .search-bar button {
-                padding: 8px 15px;
-                background-color: #007bff;
-                color: white;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                transition: background-color 0.3s ease;
-            }
-            .search-bar button:hover {
-                background-color: #0056b3;
-            }
-            .search-bar .reset-button {
-                background-color: #6c757d;
-                color: white;
-                margin-left: 10px;
-            }
-            .search-bar .reset-button:hover {
-                background-color: #5a6268;
-            }
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css"/>
 
-            .add-button {
-                padding: 10px 20px;
-                background-color: #28a745;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                transition: background-color 0.3s ease;
-                text-decoration: none;
-                display: inline-block;
-                margin-bottom: 10px;
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            DEFAULT: '#0284c7',
+                            light: '#03a9f4',
+                            dark: '#075985',
+                        },
+                        secondary: '#475569',
+                    }
+                }
             }
-            .add-button:hover {
-                background-color: #218838;
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+            border-radius: 10px;
+        }
+
+        .sidebar-container {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        .sidebar-container.collapsed {
+            transform: translateX(-100%);
+        }
+        .sidebar-toggle {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: #0284c7;
+            color: white;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .sidebar-toggle:hover {
+            background-color: #075985;
+            transform: scale(1.1);
+        }
+        @media (max-width: 768px) {
+            .sidebar-container {
+                transform: translateX(-100%);
             }
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-top: 20px;
+            .sidebar-container.active {
+                transform: translateX(0);
             }
-            th, td {
-                border: 1px solid #ddd;
-                /* Tăng padding cho ô bảng để có nhiều không gian hơn */
-                padding: 12px; /* Tăng từ 10px lên 12px */
-                text-align: left;
-            }
-            th {
-                background-color: #f2f2f2;
-                color: #333;
-                text-transform: uppercase;
-                /* Tăng font size cho tiêu đề cột */
-                font-size: 1em; /* Tăng từ 0.9em lên 1em */
-            }
-            td {
-                /* Tăng font size cho nội dung bảng */
-                font-size: 1em; /* Tăng từ 0.9em lên 1em */
-            }
-            tr:nth-child(even) {
-                background-color: #f9f9f9;
-            }
-            tr:hover {
-                background-color: #f1f1f1;
-            }
-            .actions {
-                white-space: nowrap;
-            }
-            .actions a {
-                margin-right: 8px;
-                text-decoration: none;
-                padding: 5px 10px;
-                border-radius: 4px;
-            }
-            .actions a.edit {
-                background-color: #ffc107;
-                color: black;
-            }
-            .actions a.edit:hover {
-                background-color: #e0a800;
-            }
-            .actions button {
-                padding: 5px 10px;
-                background-color: #dc3545;
-                color: white;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                transition: background-color 0.3s ease;
-            }
-            .actions button:hover {
-                background-color: #c82333;
-            }
-            .no-vouchers {
-                text-align: center;
-                color: #666;
-                margin-top: 30px;
-            }
-            .global-message {
-                margin-bottom: 20px;
-                padding: 10px;
-                border-radius: 5px;
-                font-weight: bold;
-                text-align: center;
-                background-color: #e2e3e5;
-                color: #383d41;
-                border: 1px solid #d6d8db;
-            }
-        </style>
-    </head>
-    <body>
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+            color: #1f2937;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #f9fafb;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6b7280;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .actions-cell form {
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        .action-btn {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease;
+        }
+        .action-btn svg {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .action-btn-edit { color: #f59e0b; }
+        .action-btn-edit:hover { background-color: #fef3c7; }
+
+        .action-btn-delete { color: #ef4444; }
+        .action-btn-delete:hover { background-color: #fee2e2; }
+
+        .no-results td {
+            text-align: center;
+            color: #6b7280;
+            padding: 2.5rem;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen font-inter bg-[#f0f2f5] text-gray-800">
+    <button class="sidebar-toggle hidden md:hidden">
+        <i class="bi bi-list text-lg"></i>
+    </button>
+
+    <header class="bg-white shadow-md p-4 flex items-center justify-between rounded-b-lg">
+        <div class="flex items-center space-x-2">
+            <img src="${pageContext.request.contextPath}/img/logo.png" alt="F-SKILL Logo" class=" w-20 h-15"/>
+            <span class="text-2xl font-bold text-gray-800"></span>
+        </div>
+
+        <div class="relative flex-grow mx-4 max-w-md">
+            <input type="text" placeholder="Tìm kiếm..."
+                   class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary">
+            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+        </div>
+
+        <div class="flex items-center space-x-4">
+            <div class="relative cursor-pointer" id="notification-bell">
+                <i class="fas fa-bell text-gray-600 text-xl"></i>
+                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span>
+                <div id="notification-popup"
+                     class="hidden absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                    <div class="p-4 border-b border-gray-200 font-semibold text-gray-800">Thông báo mới</div>
+                    <ul class="divide-y divide-gray-100">
+                        <li class="p-3 hover:bg-gray-50 cursor-pointer">
+                            <p class="text-sm font-medium text-gray-900">Thông báo 1: Đã có hóa đơn mới.</p>
+                            <p class="text-xs text-gray-500">2 giờ trước</p>
+                        </li>
+                        <li class="p-3 hover:bg-gray-50 cursor-pointer">
+                            <p class="text-sm font-medium text-gray-900">Thông báo 2: Cập nhật hệ thống.</p>
+                            <p class="text-xs text-gray-500">Hôm qua</p>
+                        </li>
+                        <li class="p-3 hover:bg-gray-50 cursor-pointer">
+                            <p class="text-sm font-medium text-gray-900">Thông báo 3: Lịch họp sắp tới.</p>
+                            <p class="text-xs text-gray-500">3 ngày trước</p>
+                        </li>
+                    </ul>
+                    <div class="p-3 text-center border-t border-gray-200">
+                        <a href="#" class="text-blue-600 text-sm hover:underline">Xem tất cả</a>
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-sm font-semibold">
+                    <c:choose>
+                        <c:when test="${not empty sessionScope.adminUser.avatar}">
+                            <img src="${sessionScope.adminUser.avatar}" alt="Avatar" class="w-full h-full object-cover rounded-full">
+                        </c:when>
+                        <c:otherwise>
+                            AD
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+                <span class="font-medium text-gray-700">
+                    <c:choose>
+                        <c:when test="${not empty sessionScope.adminUser.displayName}">
+                            ${sessionScope.adminUser.displayName}
+                        </c:when>
+                        <c:otherwise>
+                            Admin User
+                        </c:otherwise>
+                    </c:choose>
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex flex-grow">
         <jsp:include page="/layout/sidebar.jsp"/>
 
-        <div class="main-content">
-            <div class="voucher-list-container">
-                <h2>
-                    <span>List of Vouchers</span>
-                    <a href="adminDashboard" class="return-to-dashboard">Return to Dashboard</a>
-                </h2>
-
-                <c:if test="${not empty globalMessage}">
-                    <p class="global-message">
-                        ${globalMessage}
-                    </p>
-                </c:if>
-
-                <div class="search-add-section">
-                    <div class="search-bar">
-                        <form action="voucherList" method="get">
-                            <input type="text" name="searchTerm" placeholder="Search Voucher" value="${param.searchTerm}">
-                            <button type="submit">Search</button>
-                            <button type="button" class="reset-button" onclick="window.location.href = 'voucherList'">All voucher</button>
-                        </form>
-                    </div>
-                    <div>
-                        <a href="addVoucher" class="add-button">Add new voucher</a>
+        <main class="flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
+            <div class="bg-white p-6 rounded shadow-sm max-w-6xl mx-auto">
+                <div class="page-header flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
+                    <h2 class="text-2xl font-bold text-gray-800 m-0">List of Vouchers</h2>
+                    <div class="header-actions flex gap-3">
+                        <a href="${pageContext.request.contextPath}/adminDashboard" class="text-gray-600 font-medium py-2 px-3 rounded-md hover:bg-gray-100 transition duration-200">
+                            Return to Dashboard
+                        </a>
                     </div>
                 </div>
 
-                <c:choose>
-                    <c:when test="${not empty voucherList}">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Expiration Date</th>
-                                    <th>Sale Type</th>
-                                    <th>Sale Amount</th>
-                                    <th>Minimum Price</th>
-                                    <th>Course ID</th>
-                                    <th>Amount</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach var="voucher" items="${voucherList}">
+                <c:if test="${not empty globalMessage}">
+                    <p class="global-message bg-blue-100 text-blue-800 p-3 rounded-lg mb-4 text-center">
+                        ${globalMessage}
+                    </p>
+                    <c:remove var="globalMessage" scope="session"/>
+                </c:if>
+
+                <div class="search-add-section flex justify-between items-center mb-6 flex-wrap gap-4 pt-4">
+                    <div class="search-bar flex items-center gap-3 flex-grow">
+                        <form action="voucherList" method="get" class="flex-grow flex gap-3">
+                            <input type="text" name="searchTerm" placeholder="Search Voucher..." value="${param.searchTerm}"
+                                   class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition duration-200">
+                            <button type="submit" class="btn btn-primary bg-primary text-white py-3 px-5 rounded-lg hover:bg-primary-dark transition duration-200">
+                                <i class="fas fa-search mr-2"></i>Search
+                            </button>
+                            <button type="button" class="btn btn-secondary bg-gray-200 text-gray-700 py-3 px-5 rounded-lg hover:bg-gray-300 transition duration-200" onclick="window.location.href = 'voucherList'">
+                                Show All
+                            </button>
+                        </form>
+                    </div>
+                    <div>
+                        <a href="addVoucher" class="add-button bg-green-600 text-white py-3 px-5 rounded-lg hover:bg-green-700 transition duration-200 flex items-center gap-2">
+                            <i class="fas fa-plus-circle"></i> Add new voucher
+                        </a>
+                    </div>
+                </div>
+
+                <div class="table-wrapper overflow-x-auto bg-white rounded-lg shadow-sm">
+                    <c:choose>
+                        <c:when test="${not empty voucherList}">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
                                     <tr>
-                                        <td>${voucher.voucherID}</td>
-                                        <td>${voucher.expiredDate}</td>
-                                        <td>${voucher.saleType}</td>
-                                        <td>${voucher.saleAmount}</td>
-                                        <td>${voucher.minPrice}</td>
-                                        <td>${voucher.courseID}</td>
-                                        <td>${voucher.amount}</td>
-                                        <td class="actions">
-                                            <a href="editVoucher?voucherID=${voucher.voucherID}" class="edit">Edit</a>
-                                            <form action="deleteVoucher" method="post" style="display:inline-block;">
-                                                <input type="hidden" name="voucherID" value="${voucher.voucherID}">
-                                                <button type="submit" onclick="return confirm('Do you sure to delete ${voucher.voucherID} ?');">Delete</button>
-                                            </form>
-                                        </td>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expiration Date</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sale Type</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sale Amount</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Minimum Price</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course ID</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                        <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <c:forEach var="voucher" items="${voucherList}">
+                                        <tr class="hover:bg-gray-50">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${voucher.voucherID}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${voucher.expiredDate}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${voucher.saleType}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${voucher.saleAmount}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${voucher.minPrice}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${voucher.courseID}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${voucher.amount}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-center actions-cell">
+                                                <a href="editVoucher?voucherID=${voucher.voucherID}" class="action-btn action-btn-edit" title="Edit Voucher">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <form action="deleteVoucher" method="post" class="inline-block mx-1" onsubmit="return confirm('Are you sure you want to delete voucher ID ${voucher.voucherID}? This action cannot be undone.');">
+                                                    <input type="hidden" name="voucherID" value="${voucher.voucherID}">
+                                                    <button type="submit" class="action-btn action-btn-delete" title="Delete Voucher">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
                                     </c:forEach>
-                            </tbody>
-                        </table>
-                    </c:when>
-                    <c:otherwise>
-                        <p class="no-vouchers">Do not found any vouchers.</p>
-                    </c:otherwise>
-                </c:choose>
+                                </tbody>
+                            </table>
+                        </c:when>
+                        <c:otherwise>
+                            <p class="no-results px-6 py-10 text-gray-500 text-center text-base">
+                                <c:choose>
+                                    <c:when test="${not empty param.searchTerm}">
+                                        No voucher found matching '${param.searchTerm}'.
+                                    </c:when>
+                                    <c:otherwise>
+                                        There are no vouchers to display.
+                                    </c:otherwise>
+                                </c:choose>
+                            </p>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
             </div>
-        </div>
-    </body>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+    <script>
+        const notificationBell = document.getElementById('notification-bell');
+        const notificationPopup = document.getElementById('notification-popup');
+
+        notificationBell.addEventListener('click', (event) => {
+            event.stopPropagation();
+            notificationPopup.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!notificationBell.contains(event.target) && !notificationPopup.contains(event.target)) {
+                notificationPopup.classList.add('hidden');
+            }
+        });
+
+        document.querySelector('.sidebar-toggle').addEventListener('click', () => {
+            document.querySelector('.sidebar-container').classList.toggle('active');
+        });
+    </script>
+</body>
 </html>
