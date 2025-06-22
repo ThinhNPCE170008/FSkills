@@ -17,7 +17,7 @@ import java.io.IOException;
  * Servlet này xử lý yêu cầu hiển thị trang Admin Dashboard.
  * Nó có thể chịu trách nhiệm lấy các dữ liệu tổng quan cho dashboard.
  */
-@WebServlet(name = "AdminDashboardServlet", urlPatterns = {"/adminDashboard"})
+@WebServlet(name = "AdminDashboardServlet", urlPatterns = {"/admin"})
 public class AdminDashboardServlet extends HttpServlet {
 
     @Override

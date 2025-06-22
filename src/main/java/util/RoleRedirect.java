@@ -16,7 +16,7 @@ public class RoleRedirect {
     public static void redirect(User user, HttpServletResponse response) throws IOException {
         switch (user.getRole()) {
             case ADMIN:
-                response.sendRedirect("adminDashboard");
+                response.sendRedirect("admin");
                 break;
             case INSTRUCTOR:
                 response.sendRedirect("instructor");

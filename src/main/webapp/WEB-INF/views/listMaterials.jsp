@@ -66,13 +66,13 @@
     <body>
         <jsp:include page="/layout/headerInstructor.jsp"/>
 
-        <div class="container py-5">
-            <div class="container py-5">
+        <div class="container py-2 ps-3">
+            <div class="container py-2 ps-3">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="instructor">Home</a></li>
+                        <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/instructor">Home</a></li>
                         <li class="breadcrumb-item">
-                            <a href="managemodule?id=${course.courseID}">${course.courseName}</a>
+                            <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${course.courseID}">${course.courseName}</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">
                             ${module.moduleName}
@@ -82,7 +82,7 @@
 
                 </nav>
                 <div class="text-end">
-                    <a href="InstructorMaterial?action=create&moduleId=${module.moduleID}&courseId=${course.courseID}"
+                    <a href="${pageContext.request.contextPath}/instructor/courses/modules/material?action=create&moduleId=${module.moduleID}&courseId=${course.courseID}"
                        class="btn btn-lg d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill shadow-sm fw-semibold text-white"
                        style="background: linear-gradient(135deg, #0d6efd, #0a58ca); transition: all 0.3s ease;"
                        onmouseover="this.style.background = 'linear-gradient(135deg, #0a58ca, #0d6efd)'"
@@ -97,93 +97,103 @@
                         <div class="alert alert-warning text-center">No material available.</div>
                     </c:when>
                     <c:otherwise>
-                        <table class="table table-bordered table-hover shadow-sm bg-white rounded mt-4">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Type</th>
-                                    <th>Video</th>
-                                    <th>Last Update</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach var="material" items="${listMaterial}">
+                        <div class="bg-white p-5 rounded-4 shadow-lg mx-auto mt-6" style="max-width: 1500px;" >
+                            <h1 class="text-center mb-4 fw-bold text-primary-emphasis display-5" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">
+                                <i class="bi bi-journal-text me-2" style="font-size: 2rem;"></i>
+                                <span style="border-bottom: 4px solid #0d6efd; padding-bottom: 6px;">All Material</span>
+                            </h1>
+
+                            <table class="table table-bordered table-hover shadow-sm bg-white rounded mt-4">
+                                <thead>
                                     <tr>
-                                        <!-- Name -->
-                                        <td>${material.materialName}</td>
-
-                                        <!-- Type -->
-                                        <td>${material.type}</td>
-
-                                        <td>
-                                            <c:choose>
-
-                                                <c:when test="${material.type == 'video' && not empty material.materialLocation}">
-                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#videoModal${material.materialId}">
-                                                        <video class="img-fluid rounded shadow-sm d-block mx-auto" style="max-height: 160px;" muted>
-                                                            <source src="${material.materialLocation}" type="video/mp4">
-                                                            Your browser does not support the video tag.
-                                                        </video>
-
-                                                    </a>
-                                                </c:when>
-
-
-                                                <c:when test="${material.type == 'pdf' && not empty material.materialLocation}">
-                                                    <a href="${material.materialLocation}" target="_blank">
-                                                        ${material.materialLocation}
-                                                    </a>
-                                                </c:when>
-
-
-                                                <c:when test="${material.type == 'link' && not empty material.materialLocation}">
-                                                    <a href="${material.materialLocation}" target="_blank">
-                                                        ${material.materialLocation}
-                                                    </a>
-                                                </c:when>
-
-
-                                                <c:otherwise>
-                                                    <span class="text-muted fst-italic">Material not available</span>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </td>
-
-
-                                        <!-- Last Update -->
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${not empty material.materialLastUpdate}">
-                                                    <fmt:formatDate value="${material.materialLastUpdate}" pattern=" HH:mm dd/MM/yyyy"/>
-                                                </c:when>
-                                                <c:otherwise>N/A</c:otherwise>
-                                            </c:choose>
-                                        </td>
-
-                                        <!-- Actions -->
-                                        <td class="align-middle text-center">
-                                            <div class="d-flex justify-content-center gap-2">
-                                                <a class="btn btn-outline-info btn-sm" type="button"
-                                                   href="InstructorMaterial?action=details&moduleId=${module.moduleID}&courseId=${course.courseID}&materialId=${material.materialId}" >
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                                <a class="btn btn-primary btn-sm"
-                                                   href="InstructorMaterial?action=update&moduleId=${module.moduleID}&courseId=${course.courseID}&materialId=${material.materialId}">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-
-
-                                                <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                                        data-bs-target="#deleteModal${material.materialId}">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </button>
-                                            </div>
-                                        </td>
+                                        <th>Order</th>
+                                        <th>Name</th>
+                                        <th>Type</th>
+                                        <th>Video</th>
+                                        <th>Last Update</th>
+                                        <th>Actions</th>
                                     </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="material" items="${listMaterial}">
+                                        <tr>
+                                            <!-- Name -->
+                                            <td>${material.materialOrder}</td>
+                                            <td>${material.materialName}</td>
+
+                                            <!-- Type -->
+                                            <td>${material.type}</td>
+
+                                            <td>
+                                                <c:choose>
+
+                                                    <c:when test="${material.type == 'video' && not empty material.materialLocation}">
+                                                        <a href="#" data-bs-toggle="modal" data-bs-target="#videoModal${material.materialId}">
+                                                            <video class="img-fluid rounded shadow-sm d-block mx-auto" style="max-height: 160px;" muted>
+                                                                <source src="${pageContext.request.contextPath}/${material.materialLocation}" type="video/mp4">
+
+                                                                Your browser does not support the video tag.
+                                                            </video>
+
+                                                        </a>
+                                                    </c:when>
+
+
+                                                    <c:when test="${material.type == 'pdf' && not empty material.materialLocation}">
+                                                        <a href="${material.materialLocation}" target="_blank">
+                                                            ${material.materialLocation}
+                                                        </a>
+                                                    </c:when>
+
+
+                                                    <c:when test="${material.type == 'link' && not empty material.materialLocation}">
+                                                        <a href="${material.materialLocation}" target="_blank">
+                                                            ${material.materialLocation}
+                                                        </a>
+                                                    </c:when>
+
+
+                                                    <c:otherwise>
+                                                        <span class="text-muted fst-italic">Material not available</span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+
+
+                                            <!-- Last Update -->
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${not empty material.materialLastUpdate}">
+                                                        <fmt:formatDate value="${material.materialLastUpdate}" pattern=" HH:mm dd/MM/yyyy"/>
+                                                    </c:when>
+                                                    <c:otherwise>N/A</c:otherwise>
+                                                </c:choose>
+                                            </td>
+
+                                            <!-- Actions -->
+                                            <td class="align-middle text-center">
+                                                <div class="d-flex justify-content-center gap-2">
+                                                    <a class="btn btn-outline-info btn-sm" type="button"
+                                                       href="${pageContext.request.contextPath}/instructor/courses/modules/material?action=details&moduleId=${module.moduleID}&courseId=${course.courseID}&materialId=${material.materialId}" >
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a class="btn btn-primary btn-sm"
+                                                       href="${pageContext.request.contextPath}/instructor/courses/modules/material?action=update&moduleId=${module.moduleID}&courseId=${course.courseID}&materialId=${material.materialId}">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+
+
+                                                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                                            data-bs-target="#deleteModal${material.materialId}">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
                     </c:otherwise>
                 </c:choose>
             </div>
@@ -200,7 +210,7 @@
 
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <form method="POST" action="InstructorMaterial">
+                        <form method="POST" action="${pageContext.request.contextPath}/instructor/courses/modules/material?action=delete">
                             <input type="hidden" name="action" value="delete">
                             <input type="hidden" name="moduleId" value="${module.moduleID}">
                             <input type="hidden" name="courseId" value="${course.courseID}">

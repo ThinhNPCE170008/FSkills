@@ -126,7 +126,7 @@
                                 </c:choose>
                             </td>
                             <td class="d-flex flex-column gap-1">
-                                <a href="InstructorMaterial?moduleId=${module.moduleID}&courseId=${course.courseID}" 
+                                <a href="${pageContext.request.contextPath}/instructor/courses/modules/material?moduleId=${module.moduleID}&courseId=${course.courseID}" 
                                    class="btn btn-sm btn-info text-white">
                                     <i class="fas fa-eye"></i> Detail
                                 </a>
