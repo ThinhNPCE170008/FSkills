@@ -238,14 +238,18 @@
     </header>
 
     <div class="flex flex-grow">
+        <jsp:include page="/layout/sidebar_admin.jsp" />
+        <%--
+        Cho này neu sai thi lay dong code duoi nayyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
         <jsp:include page="/layout/sidebar.jsp"/>
+        --%>
 
         <main class="flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
             <div class="bg-white p-6 rounded shadow-sm max-w-6xl mx-auto">
                 <div class="page-header flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
                     <h2 class="text-2xl font-bold text-gray-800 m-0">List of Vouchers</h2>
                     <div class="header-actions flex gap-3">
-                        <a href="${pageContext.request.contextPath}/adminDashboard" class="text-gray-600 font-medium py-2 px-3 rounded-md hover:bg-gray-100 transition duration-200">
+                        <a href="${pageContext.request.contextPath}/admin" class="text-gray-600 font-medium py-2 px-3 rounded-md hover:bg-gray-100 transition duration-200">
                             Return to Dashboard
                         </a>
                     </div>

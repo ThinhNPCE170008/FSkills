@@ -97,11 +97,11 @@
 
     <!-- Sidebar menu -->
     <ul class="nav nav-pills flex-column">
-        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/adminDashboard"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/admin"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a></li>
         <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/bills"><i class="bi bi-receipt"></i> <span>Bills</span></a></li>
-        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/company"><i class="bi bi-building"></i> <span>Company</span></a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/voucherList"><i class="bi bi-building"></i> <span>Company</span></a></li>
         <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/manageDegree"><i class="bi bi-mortarboard"></i> <span>Manage Degree</span></a></li>
-        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/manageAccounts"><i class="bi bi-people"></i> <span>Manage Account</span></a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/alluser"><i class="bi bi-people"></i> <span>Manage Account</span></a></li>
         <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/report"><i class="bi bi-bar-chart"></i> <span>Report</span></a></li>
                <div  class="d-flex flex-column mb-4 pt-5 border-top">
         <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/editProfile"><i class="bi bi-person"></i> <span>Profile</span></a></li>
