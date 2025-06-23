@@ -8,22 +8,21 @@ package model;
  *
  * @author DELL
  */
-import java.sql.Date;
-import java.sql.Timestamp; 
+import java.sql.Timestamp;
 
 public class Voucher {
     private int voucherID;
-    private Date expiredDate;
+    private Timestamp expiredDate;
     private String saleType;
     private int saleAmount;
-    private int minPrice; 
+    private int minPrice;
     private int courseID;
     private int amount;
 
     public Voucher() {
     }
 
-    public Voucher(int voucherID, Date expiredDate, String saleType, int saleAmount, int minPrice, int courseID, int amount) {
+    public Voucher(int voucherID, Timestamp expiredDate, String saleType, int saleAmount, int minPrice, int courseID, int amount) {
         this.voucherID = voucherID;
         this.expiredDate = expiredDate;
         this.saleType = saleType;
@@ -42,11 +41,11 @@ public class Voucher {
         this.voucherID = voucherID;
     }
 
-    public Date getExpiredDate() {
+    public Timestamp getExpiredDate() {
         return expiredDate;
     }
 
-    public void setExpiredDate(Date expiredDate) {
+    public void setExpiredDate(Timestamp expiredDate) {
         this.expiredDate = expiredDate;
     }
 

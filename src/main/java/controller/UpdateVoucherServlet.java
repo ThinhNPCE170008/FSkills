@@ -14,8 +14,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Date;
-import java.time.LocalDate;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +45,7 @@ public class UpdateVoucherServlet extends HttpServlet {
         String amountStr = request.getParameter("amount");
 
         int voucherID = 0;
-        Date expiredDate = null;
+        Timestamp expiredDate = null;
         int saleAmount = 0;
         int minPrice = 0;
         int courseID = 0;
@@ -65,13 +65,14 @@ public class UpdateVoucherServlet extends HttpServlet {
             errorMessages.put("expiredDate", "Please enter this value.");
         } else {
             try {
-                LocalDate date = LocalDate.parse(expiredDateStr);
-                expiredDate = Date.valueOf(date);
-                if (expiredDate.before(new Date(System.currentTimeMillis()))) {
+                LocalDateTime inputDateTime = LocalDateTime.parse(expiredDateStr);
+                expiredDate = Timestamp.valueOf(inputDateTime); 
+                if (inputDateTime.isBefore(LocalDateTime.now())) {
                     errorMessages.put("expiredDate", "The expired day must be in the future.");
                 }
             } catch (DateTimeParseException e) {
-                errorMessages.put("expiredDate", "Use YYYY-MM-DD.");
+                LOGGER.log(Level.WARNING, "Invalid Expiration Date format: " + expiredDateStr, e);
+                errorMessages.put("expiredDate", "Invalid format. Use YYYY-MM-DDTHH:MM (e.g., 2025-06-23T14:30).");
             }
         }
 
@@ -110,7 +111,6 @@ public class UpdateVoucherServlet extends HttpServlet {
             }
         }
 
-
         if (courseIDStr == null || courseIDStr.trim().isEmpty()) {
             errorMessages.put("courseID", "Course ID cannot be empty.");
         } else {
@@ -123,7 +123,6 @@ public class UpdateVoucherServlet extends HttpServlet {
                 errorMessages.put("courseID", "Invalid Course ID (must be an integer).");
             }
         }
-
 
         if (amountStr == null || amountStr.trim().isEmpty()) {
             errorMessages.put("amount", "Amount cannot be empty.");
@@ -138,16 +137,14 @@ public class UpdateVoucherServlet extends HttpServlet {
             }
         }
 
-
         // truyền lại các giá trị đã nhập
         if (!errorMessages.isEmpty()) {
             globalMessage = "Voucher update failed. Please check for errors.";
             request.setAttribute("globalMessage", globalMessage);
             request.setAttribute("errorMessages", errorMessages);
 
-
             Voucher voucherForDisplay = new Voucher();
-            voucherForDisplay.setVoucherID(voucherID); 
+            voucherForDisplay.setVoucherID(voucherID);
             voucherForDisplay.setExpiredDate(expiredDate);
             voucherForDisplay.setSaleType(saleType);
             voucherForDisplay.setSaleAmount(saleAmount);
@@ -155,15 +152,15 @@ public class UpdateVoucherServlet extends HttpServlet {
             voucherForDisplay.setCourseID(courseID);
             voucherForDisplay.setAmount(amount);
 
-            request.setAttribute("voucher", voucherForDisplay); 
-            
+            request.setAttribute("voucher", voucherForDisplay);
+
             request.getRequestDispatcher("/WEB-INF/views/voucherDetails.jsp").forward(request, response);
             return;
         }
 
         Voucher updatedVoucher = new Voucher();
         updatedVoucher.setVoucherID(voucherID);
-        updatedVoucher.setExpiredDate(expiredDate);
+        updatedVoucher.setExpiredDate(expiredDate); 
         updatedVoucher.setSaleType(saleType.trim());
         updatedVoucher.setSaleAmount(saleAmount);
         updatedVoucher.setMinPrice(minPrice);
@@ -174,14 +171,14 @@ public class UpdateVoucherServlet extends HttpServlet {
         try {
             boolean success = voucherDAO.updateVoucher(updatedVoucher);
             if (success) {
-                request.setAttribute("globalMessage", "Voucher updated successfully!"); 
-                request.setAttribute("successMessage", true); 
+                request.setAttribute("globalMessage", "Voucher updated successfully!");
+                request.setAttribute("successMessage", true);
                 response.sendRedirect(request.getContextPath() + "/voucherList");
             } else {
                 globalMessage = "Voucher update failed. Voucher not found or no changes made.";
                 request.setAttribute("globalMessage", globalMessage);
-                request.setAttribute("errorGlobalMessage", true); 
-                request.setAttribute("voucher", updatedVoucher); 
+                request.setAttribute("errorGlobalMessage", true);
+                request.setAttribute("voucher", updatedVoucher);
                 request.getRequestDispatcher("/WEB-INF/views/voucherDetails.jsp").forward(request, response);
             }
         } catch (SQLException ex) {
@@ -189,9 +186,37 @@ public class UpdateVoucherServlet extends HttpServlet {
             globalMessage = "Database error: " + ex.getMessage();
             request.setAttribute("globalMessage", globalMessage);
             request.setAttribute("errorGlobalMessage", true);
-            
+
             request.setAttribute("voucher", updatedVoucher);
             request.getRequestDispatcher("/WEB-INF/views/voucherDetails.jsp").forward(request, response);
         }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String voucherIDParam = request.getParameter("voucherID");
+        VoucherDAO voucherDAO = new VoucherDAO();
+        Voucher voucher = null;
+        String globalMessage = "";
+
+        if (voucherIDParam != null && !voucherIDParam.isEmpty()) {
+            try {
+                int voucherID = Integer.parseInt(voucherIDParam);
+                voucher = voucherDAO.getVoucherByID(voucherID);
+                if (voucher == null) {
+                    globalMessage = "Voucher with ID " + voucherID + " not found.";
+                }
+            } catch (NumberFormatException e) {
+                globalMessage = "Invalid Voucher ID format.";
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, "Database error retrieving voucher.", ex);
+                globalMessage = "Database error: " + ex.getMessage();
+            }
+        }
+
+        request.setAttribute("voucher", voucher);
+        request.setAttribute("globalMessage", globalMessage);
+        request.getRequestDispatcher("/WEB-INF/views/voucherDetails.jsp").forward(request, response);
     }
 }

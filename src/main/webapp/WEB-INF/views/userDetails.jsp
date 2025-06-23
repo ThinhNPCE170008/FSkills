@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : userDetails
     Created on : May 23, 2025, 2:53:00 PM
     Author     : DELL
@@ -6,6 +6,7 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
     <head>
         <title>User Details</title>
@@ -195,7 +196,7 @@
             <c:choose>
                 <c:when test="${not empty allInform}">
                     <c:forEach var="user" items="${allInform}" begin="0" end="0">
-                        <form action="updateUserServlet" method="POST">                        
+                        <form action="updateUserServlet" method="POST">
 
                             <div class="detail-item">
                                 <span class="detail-label">Username:</span>
@@ -223,7 +224,7 @@
 
                             <div class="detail-item">
                                 <span class="detail-label">Role:</span>
-                                <span class="detail-value" id="displayRole">${user.role}</span> 
+                                <span class="detail-value" id="displayRole">${user.role}</span>
                                 <input type="hidden" name="role" value="${user.role}">
                             </div>
 
@@ -247,7 +248,9 @@
 
                             <div class="detail-item">
                                 <span class="detail-label">Date Of Birth:</span>
-                                <span class="detail-value" id="displayDateOfBirth">${user.dateOfBirth}</span>
+                                <span class="detail-value" id="displayDateOfBirth">
+                                    <fmt:formatDate value="${user.dateOfBirth}" pattern="dd/MM/yyyy"/>
+                                </span>
                                 <input type="date" id="inputDateOfBirth" name="dateOfBirth" class="detail-input"
                                         value="<c:if test="${param.dateOfBirth != null}">${param.dateOfBirth}</c:if><c:if test="${param.dateOfBirth == null && not empty user.dateOfBirth}">${user.dateOfBirth.toString().substring(0, 10)}</c:if>">
                                 <c:if test="${not empty errorMessages['dateOfBirth']}">
@@ -257,7 +260,9 @@
 
                             <div class="detail-item">
                                 <span class="detail-label">User Create Date:</span>
-                                <span class="detail-value" id="displayUserCreateDate">${user.userCreateDate}</span>
+                                <span class="detail-value" id="displayUserCreateDate">
+                                    <fmt:formatDate value="${user.userCreateDate}" pattern="HH:mm dd/MM/yyyy"/>
+                                </span>
                             </div>
 
                             <div class="detail-item">

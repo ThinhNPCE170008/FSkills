@@ -20,6 +20,7 @@ public class Course {
     private String courseSummary;
     private String courseHighlight;
     private int status;
+    private  int totalEnrolled;
 
     public Course() {
     }
@@ -29,7 +30,7 @@ public class Course {
         this.courseName = courseName;
     }
 
-    public Course(int courseID, String courseName, Category category, User user, int approveStatus, Timestamp publicDate, Timestamp courseLastUpdate, int salePrice, int originalPrice, int isSale, String courseImageLocation, String courseSummary, String courseHighlight, int status) {
+    public Course(int courseID, String courseName, Category category, User user, int approveStatus, Timestamp publicDate, Timestamp courseLastUpdate, int salePrice, int originalPrice, int isSale, String courseImageLocation, String courseSummary, String courseHighlight, int status, int totalEnrolled) {
         this.courseID = courseID;
         this.courseName = courseName;
         this.category = category;
@@ -44,6 +45,7 @@ public class Course {
         this.courseSummary = courseSummary;
         this.courseHighlight = courseHighlight;
         this.status = status;
+        this.totalEnrolled = totalEnrolled;
     }
 
     public Course(int courseID, String courseName, Category category, User user, int approveStatus, Timestamp publicDate, Timestamp courseLastUpdate, String courseImageLocation) {
@@ -169,6 +171,13 @@ public class Course {
         this.status = status;
     }
 
+    public int getTotalEnrolled() {
+        return totalEnrolled;
+    }
+
+    public void setTotalEnrolled(int totalEnrolled) {
+        this.totalEnrolled = totalEnrolled;
+    }
 
     @Override
     public String toString() {
@@ -184,6 +193,10 @@ public class Course {
                 ", originalPrice=" + originalPrice +
                 ", isSale=" + isSale +
                 ", courseImageLocation='" + courseImageLocation + '\'' +
+                ", courseSummary='" + courseSummary + '\'' +
+                ", courseHighlight='" + courseHighlight + '\'' +
+                ", status=" + status +
+                ", totalEnrolled=" + totalEnrolled +
                 '}';
     }
 }

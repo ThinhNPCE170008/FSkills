@@ -16,7 +16,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
     <style>
-        /* �p d?ng ph�ng ch? Inter */
         body {
             font-family: 'Inter', sans-serif;
         }
@@ -73,13 +72,11 @@
             margin-left: 250px;
         }
 
-        /* Ki?u d�ng cho main */
         main {
             transition: margin-left 0.3s ease-in-out;
             padding: 1.5rem;
         }
 
-        /* ?n sidebar tr�n thi?t b? di ??ng */
         @media (max-width: 768px) {
             .sidebar-container {
                 width: 0;
@@ -98,14 +95,13 @@
     </style>
 </head>
 <body>
-    <!-- Sidebar Container -->
-    <div class="sidebar-container bg-white border-r border-gray-200 shadow-xl rounded-r-lg p-3">
-        <!-- Logo Section -->
-        <a href="${pageContext.request.contextPath}/homePage_Guest.jsp" class="flex items-center mb-6 text-decoration-none sidebar-logo text-gray-800" aria-label="F-SKILL Home">
-            <img src="${pageContext.request.contextPath}/img/logo.png" alt="F-SKILL Logo" class="w-15 h-15 mr-2 rounded-md" loading="lazy"/>
-            <span class="text-xl font-extrabold whitespace-nowrap">F-SKILL</span>
-        </a>
-
+<!-- Sidebar Container -->
+<div class="sidebar-container bg-white border-r border-gray-200 shadow-xl rounded-r-lg p-3">
+    <!-- Logo Section -->
+    <a href="${pageContext.request.contextPath}/homePage_Guest.jsp" class="flex items-center mb-6 text-decoration-none sidebar-logo text-gray-800" aria-label="F-SKILL Home">
+        <img src="${pageContext.request.contextPath}/img/logo.png" alt="F-SKILL Logo" class="w-15 h-15 mr-2 rounded-md" loading="lazy"/>
+        <span class="text-xl font-extrabold whitespace-nowrap">F-SKILL</span>
+    </a>
         <!-- Avatar v� Th�ng tin ng??i d�ng -->
         <div class="flex flex-col items-center mb-6 pb-4 border-b border-gray-200">
             <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-xl font-semibold border-2 border-indigo-500 shadow-md">
@@ -129,11 +125,9 @@
                         </c:otherwise>
                     </c:choose>
                 </span>
-                <span class="block text-sm text-gray-500">Admin</span>
-            </div>
+            <span class="block text-sm text-gray-500">Admin</span>
         </div>
 
-        <!-- C�c li�n k?t ?i?u h??ng -->
         <ul class="flex flex-col space-y-2">
             <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/adminDashboard" aria-label="Dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
             <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/bills" aria-label="Bills"><i class="fas fa-receipt"></i> <span>Bills</span></a></li>
@@ -148,5 +142,20 @@
             </div>
         </ul>
     </div>
+
+    <!-- Sidebar menu -->
+    <ul class="nav nav-pills flex-column">
+        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/admin"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/bills"><i class="bi bi-receipt"></i> <span>Bills</span></a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/voucherList"><i class="bi bi-building"></i> <span>Company</span></a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/manageDegree"><i class="bi bi-mortarboard"></i> <span>Manage Degree</span></a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/alluser"><i class="bi bi-people"></i> <span>Manage Account</span></a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/report"><i class="bi bi-bar-chart"></i> <span>Report</span></a></li>
+               <div  class="d-flex flex-column mb-4 pt-5 border-top">
+        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/editProfile"><i class="bi bi-person"></i> <span>Profile</span></a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/logout"><i class="bi bi-box-arrow-right"></i> <span>Logout</span></a></li>
+               </div>
+    </ul>
+</div>
 </body>
 </html>
