@@ -10,8 +10,8 @@
         return;
     }
 
-    // L?y danh sách thông báo (m?c dù không ???c s? d?ng tr?c ti?p trong hi?n th? sidebar này,
-    // nh?ng là m?t th?c hành t?t ?? gi? l?i n?u c?n thi?t ? n?i khác ho?c cho các tính n?ng trong t??ng lai)
+    // L?y danh sï¿½ch thï¿½ng bï¿½o (m?c dï¿½ khï¿½ng ???c s? d?ng tr?c ti?p trong hi?n th? sidebar nï¿½y,
+    // nh?ng lï¿½ m?t th?c hï¿½nh t?t ?? gi? l?i n?u c?n thi?t ? n?i khï¿½c ho?c cho cï¿½c tï¿½nh n?ng trong t??ng lai)
     List<Notification> listNotification = (List<Notification>) request.getAttribute("listNotification");
 %>
 <!DOCTYPE html>
@@ -27,28 +27,28 @@
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
         <style>
-            /* Áp d?ng phông ch? Inter ?? có giao di?n hi?n ??i */
+            /* ï¿½p d?ng phï¿½ng ch? Inter ?? cï¿½ giao di?n hi?n ??i */
             body {
                 font-family: 'Inter', sans-serif;
             }
 
-            /* CSS tùy ch?nh cho hành vi sidebar (chuy?n ??i chi?u r?ng và kh? n?ng hi?n th? v?n b?n) */
+            /* CSS tï¿½y ch?nh cho hï¿½nh vi sidebar (chuy?n ??i chi?u r?ng vï¿½ kh? n?ng hi?n th? v?n b?n) */
             .sidebar-container {
                 /* Chi?u r?ng ban ??u khi thu g?n */
                 width: 100px;
-                /* Chuy?n ??i m??t mà cho thay ??i chi?u r?ng */
+                /* Chuy?n ??i m??t mï¿½ cho thay ??i chi?u r?ng */
                 transition: width 0.3s ease-in-out;
-                /* ?n n?i dung tràn ra kh?i chi?u ngang khi thu g?n */
+                /* ?n n?i dung trï¿½n ra kh?i chi?u ngang khi thu g?n */
                 overflow-x: hidden;
-                /* C? ??nh v? trí bên trái c?a khung nhìn */
+                /* C? ??nh v? trï¿½ bï¿½n trï¿½i c?a khung nhï¿½n */
                 position: fixed;
                 top: 0;
                 left: 0;
-                /* Chi?u cao ??y ?? c?a khung nhìn */
+                /* Chi?u cao ??y ?? c?a khung nhï¿½n */
                 height: 100vh;
-                /* ??m b?o nó n?m trên các n?i dung khác */
+                /* ??m b?o nï¿½ n?m trï¿½n cï¿½c n?i dung khï¿½c */
                 z-index: 1000;
-                /* Các l?p Tailwind cho n?n, vi?n và ?? bóng ???c áp d?ng tr?c ti?p */
+                /* Cï¿½c l?p Tailwind cho n?n, vi?n vï¿½ ?? bï¿½ng ???c ï¿½p d?ng tr?c ti?p */
             }
 
             /* M? r?ng chi?u r?ng sidebar khi di chu?t qua */
@@ -56,62 +56,62 @@
                 width: 250px;
             }
 
-            /* ?n các ph?n t? v?n b?n theo m?c ??nh ? ch? ?? thu g?n */
+            /* ?n cï¿½c ph?n t? v?n b?n theo m?c ??nh ? ch? ?? thu g?n */
             .sidebar-container .sidebar-logo span,
             .sidebar-container .nav-link span,
             .sidebar-container .user-info span {
                 opacity: 0; /* Ban ??u trong su?t */
-                visibility: hidden; /* ?n kh?i trình ??c màn hình và t??ng tác */
-                /* ??m b?o v?n b?n không b? ng?t dòng khi sidebar m? r?ng */
+                visibility: hidden; /* ?n kh?i trï¿½nh ??c mï¿½n hï¿½nh vï¿½ t??ng tï¿½c */
+                /* ??m b?o v?n b?n khï¿½ng b? ng?t dï¿½ng khi sidebar m? r?ng */
                 white-space: nowrap;
-                /* Chuy?n ??i m??t mà cho c? ?? m? và kh? n?ng hi?n th? */
+                /* Chuy?n ??i m??t mï¿½ cho c? ?? m? vï¿½ kh? n?ng hi?n th? */
                 transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
             }
 
-            /* Hi?n th? các ph?n t? v?n b?n khi di chu?t qua sidebar */
+            /* Hi?n th? cï¿½c ph?n t? v?n b?n khi di chu?t qua sidebar */
             .sidebar-container:hover .sidebar-logo span,
             .sidebar-container:hover .nav-link span,
             .sidebar-container:hover .user-info span {
-                opacity: 1; /* Hoàn toàn hi?n th? */
+                opacity: 1; /* Hoï¿½n toï¿½n hi?n th? */
                 visibility: visible; /* Hi?n th? */
             }
 
-            /* ??m b?o các bi?u t??ng có chi?u r?ng và c?n ch?nh nh?t quán */
+            /* ??m b?o cï¿½c bi?u t??ng cï¿½ chi?u r?ng vï¿½ c?n ch?nh nh?t quï¿½n */
             .sidebar-container .nav-link i {
-                min-width: 24px; /* Chi?u r?ng c? ??nh cho bi?u t??ng ?? tránh d?ch chuy?n */
-                text-align: center; /* C?n gi?a bi?u t??ng trong không gian ???c phân b? */
-                margin-right: 8px; /* Kho?ng cách gi?a bi?u t??ng và v?n b?n */
+                min-width: 24px; /* Chi?u r?ng c? ??nh cho bi?u t??ng ?? trï¿½nh d?ch chuy?n */
+                text-align: center; /* C?n gi?a bi?u t??ng trong khï¿½ng gian ???c phï¿½n b? */
+                margin-right: 8px; /* Kho?ng cï¿½ch gi?a bi?u t??ng vï¿½ v?n b?n */
             }
 
-            /* ?i?u ch?nh l? c?a thân trang ?? n?i dung không b? che b?i sidebar c? ??nh */
+            /* ?i?u ch?nh l? c?a thï¿½n trang ?? n?i dung khï¿½ng b? che b?i sidebar c? ??nh */
             body {
                 margin-left: 60px; /* L? ban ??u cho sidebar thu g?n */
-                transition: margin-left 0.3s ease-in-out; /* Chuy?n ??i m??t mà cho l? thân trang */
+                transition: margin-left 0.3s ease-in-out; /* Chuy?n ??i m??t mï¿½ cho l? thï¿½n trang */
             }
 
-            /* ?i?u ch?nh l? c?a thân trang khi sidebar m? r?ng khi di chu?t qua */
+            /* ?i?u ch?nh l? c?a thï¿½n trang khi sidebar m? r?ng khi di chu?t qua */
             .sidebar-container:hover ~ main {
                 margin-left: 250px;
             }
 
-            /* Ki?u dáng c? b?n cho khu v?c n?i dung chính */
+            /* Ki?u dï¿½ng c? b?n cho khu v?c n?i dung chï¿½nh */
             main {
-                transition: margin-left 0.3s ease-in-out; /* Chuy?n ??i m??t mà cho n?i dung chính */
-                padding: 1.5rem; /* T?ng kho?ng ??m ?? có giao di?n ??p h?n */
+                transition: margin-left 0.3s ease-in-out; /* Chuy?n ??i m??t mï¿½ cho n?i dung chï¿½nh */
+                padding: 1.5rem; /* T?ng kho?ng ??m ?? cï¿½ giao di?n ??p h?n */
             }
 
-            /* ?n sidebar trên màn hình nh? (ví d?: di ??ng) ?? có tr?i nghi?m di ??ng t?t h?n
-               B?n có th? mu?n tri?n khai m?t nút chuy?n ??i cho di ??ng thay vì di chu?t qua */
+            /* ?n sidebar trï¿½n mï¿½n hï¿½nh nh? (vï¿½ d?: di ??ng) ?? cï¿½ tr?i nghi?m di ??ng t?t h?n
+               B?n cï¿½ th? mu?n tri?n khai m?t nï¿½t chuy?n ??i cho di ??ng thay vï¿½ di chu?t qua */
             @media (max-width: 768px) {
                 .sidebar-container {
-                    width: 0; /* Thu g?n hoàn toàn trên màn hình nh? */
-                    left: -60px; /* ?n kh?i màn hình */
+                    width: 0; /* Thu g?n hoï¿½n toï¿½n trï¿½n mï¿½n hï¿½nh nh? */
+                    left: -60px; /* ?n kh?i mï¿½n hï¿½nh */
                 }
                 .sidebar-container:hover {
-                    width: 0; /* Gi? thu g?n khi di chu?t qua trên màn hình nh? */
+                    width: 0; /* Gi? thu g?n khi di chu?t qua trï¿½n mï¿½n hï¿½nh nh? */
                 }
                 body {
-                    margin-left: 0; /* Không có l? trên màn hình nh? */
+                    margin-left: 0; /* Khï¿½ng cï¿½ l? trï¿½n mï¿½n hï¿½nh nh? */
                 }
                 .sidebar-container:hover ~ main {
                     margin-left: 0;
@@ -130,31 +130,30 @@
                 <span class="text-xl font-extrabold whitespace-nowrap"></span>
             </a>
 
-            <!-- Avatar và Thông tin ng??i dùng -->
-            <div class="flex flex-col items-center mb-6 pb-4 border-b border-gray-200">
-                <!-- Hình ?nh placeholder cho avatar ng??i dùng. Thay th? b?ng URL avatar ng??i dùng th?c t?. -->
-                <img src="https://placehold.co/80x80/6366f1/ffffff?text=User" alt="User Avatar" class="rounded-full w-16 h-16 mb-2 object-cover border-2 border-indigo-500 shadow-md">
-                <div class="user-info text-center">
-                    <span class="block text-gray-800 font-medium">${acc.username != null ? acc.username : 'Guest User'}</span>
-                    <span class="block text-sm text-gray-500">${acc.role != null ? acc.role : 'Guest'}</span>
-                </div>
-            </div>
-
-            <!-- Các liên k?t ?i?u h??ng -->
+            <!--Avatar-->
+            <c:choose>
+                <c:when test="${not empty user.avatar}">
+                    <img src="${user.avatar}" alt="User Avatar" class="rounded-circle mb-2" style="width: 60px; height: 60px;">
+                </c:when>
+                <c:otherwise>
+                    <img src="https://placehold.co/80x80/cccccc/333333?text=User" alt="Default Avatar" class="rounded-circle mb-2" style="width: 60px; height: 60px;">
+                </c:otherwise>
+            </c:choose>
+            <!-- Cï¿½c liï¿½n k?t ?i?u h??ng -->
             <ul class="flex flex-col space-y-2">
-                <!-- Liên k?t ?i?u h??ng cho khách -->
+                <!-- Liï¿½n k?t ?i?u h??ng cho khï¿½ch -->
                 <c:if test="${sessionScope.role == null}">
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/home"><i class="fas fa-home"></i> <span>Home</span></a></li>
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/AllCourses.jsp"><i class="fas fa-book"></i> <span>All Courses</span></a></li>
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/globalAnn.jsp"><i class="fas fa-bullhorn"></i> <span>Announcements</span></a></li>
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/#"><i class="fas fa-shopping-cart"></i> <span>Cart</span></a></li>
-                    <!-- Dòng phân cách -->
+                    <!-- Dï¿½ng phï¿½n cï¿½ch -->
                     <div class="flex flex-col mt-6 pt-5 border-t border-gray-200">
                         <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/login"><i class="fas fa-sign-in-alt"></i> <span>Sign In / Up</span></a></li>
                     </div>
                 </c:if>
 
-                <!-- Liên k?t ?i?u h??ng cho ng??i h?c -->
+                <!-- Liï¿½n k?t ?i?u h??ng cho ng??i h?c -->
                 <c:if test="${sessionScope.role == 'LEARNER'}">
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/homePage.jsp"><i class="fas fa-home"></i> <span>Home</span></a></li>
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/AllCourses.jsp"><i class="fas fa-book"></i> <span>All Courses</span></a></li>
@@ -163,21 +162,21 @@
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="#"><i class="fas fa-shopping-cart"></i> <span>Cart</span></a></li>
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="notifications.jsp"><i class="fas fa-bell"></i> <span>Notifications</span></a></li>
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/Degree"><i class="fas fa-graduation-cap"></i> <span>Degree</span></a></li>
-                    <!-- Dòng phân cách -->
+                    <!-- Dï¿½ng phï¿½n cï¿½ch -->
                     <div class="flex flex-col mt-6 pt-5 border-t border-gray-200">
                         <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/editProfile"><i class="fas fa-user-circle"></i> <span>Profile</span></a></li>
                         <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/logout"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
                     </div>
                 </c:if>
 
-                <!-- Liên k?t ?i?u h??ng cho ng??i h??ng d?n -->
+                <!-- Liï¿½n k?t ?i?u h??ng cho ng??i h??ng d?n -->
                 <c:if test="${sessionScope.role == 'INSTRUCTOR'}">
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/Instructor"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="manageCourses.jsp"><i class="fas fa-laptop-code"></i> <span>Manage Courses</span></a></li>
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="analytics.jsp"><i class="fas fa-chart-line"></i> <span>Analytics</span></a></li>
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="feedback.jsp"><i class="fas fa-comment-dots"></i> <span>Feedback</span></a></li>
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="notifications.jsp"><i class="fas fa-bell"></i> <span>Notifications</span></a></li>
-                    <!-- Dòng phân cách -->
+                    <!-- Dï¿½ng phï¿½n cï¿½ch -->
                     <div class="flex flex-col mt-6 pt-5 border-t border-gray-200">
                         <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="editProfile.jsp"><i class="fas fa-user-circle"></i> <span>Profile</span></a></li>
                         <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="logout.jsp"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>

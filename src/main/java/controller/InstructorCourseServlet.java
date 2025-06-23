@@ -1,68 +1,70 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
-
 package controller;
 
 import dao.CourseDAO;
 import dao.NotificationDAO;
 import dao.UserDAO;
+
 import java.io.IOException;
 import java.io.PrintWriter;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+
 import java.util.List;
+
+import model.Category;
 import model.Course;
 import model.Role;
 import model.User;
 
 /**
- *
  * @author NgoThinh1902
  */
-@WebServlet(name="InstructorCourseServlet", urlPatterns={"/instructor/courses"})
+@WebServlet(name = "InstructorCourseServlet", urlPatterns = {"/instructor/courses"})
 public class InstructorCourseServlet extends HttpServlet {
-   
-    /** 
+
+    /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
+     *
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet InstructorCourseServlet</title>");  
+            out.println("<title>Servlet InstructorCourseServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet InstructorCourseServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet InstructorCourseServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    } 
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+
+    /**
      * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
+     *
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         String contextPath = request.getContextPath();
         HttpSession session = request.getSession();
 
@@ -86,26 +88,52 @@ public class InstructorCourseServlet extends HttpServlet {
             action = "list";
         }
 
-        switch (action) {
-            case "list":
-                List<Course> list = cdao.getCourseByUserID(acc.getUserId());
+        try {
+            switch (action) {
+                case "list":
+                    List<Course> list = cdao.getCourseByUserID(acc.getUserId());
 
-                request.setAttribute("listCourse", list);
-                request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
-                break;
+                    request.setAttribute("listCourse", list);
+                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                    break;
+                case "create":
+                    List<Category> listCatCreate = cdao.getAllCategory();
+
+                    request.setAttribute("listCategory", listCatCreate);
+                    request.getRequestDispatcher("/WEB-INF/views/createCourse.jsp").forward(request, response);
+                    break;
+                case "update":
+                    String courseIdUpdate = request.getParameter("courseID");
+                    if (courseIdUpdate == null || courseIdUpdate.isEmpty()) {
+                        response.sendRedirect(contextPath + "/instructor/courses?action=list");
+                        return;
+                    }
+
+                    int courseId = Integer.parseInt(courseIdUpdate);
+                    List<Category> listCatUpdate = cdao.getAllCategory();
+                    Course listCourseUpdate = cdao.getCourseByCourseID(courseId);
+
+                    request.setAttribute("listCategory", listCatUpdate);
+                    request.setAttribute("listCourse", listCourseUpdate);
+                    request.getRequestDispatcher("/WEB-INF/views/updateCourse.jsp").forward(request, response);
+                    break;
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
+     *
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         CourseDAO cdao = new CourseDAO();
         UserDAO udao = new UserDAO();
 
@@ -114,57 +142,58 @@ public class InstructorCourseServlet extends HttpServlet {
 
             if (action.equalsIgnoreCase("create")) {
                 int userID = Integer.parseInt(request.getParameter("userID"));
-
                 String courseName = request.getParameter("courseName");
-                String courseCategory = request.getParameter("courseCategory");
+                int categoryId = Integer.parseInt(request.getParameter("category_id"));
+
                 int originalPrice = Integer.parseInt(request.getParameter("originalPrice"));
                 int salePrice = Integer.parseInt(request.getParameter("salePrice"));
                 String courseImageLocation = request.getParameter("courseImageLocation");
                 int isSale = request.getParameter("isSale") != null ? 1 : 0;
 
-                if (courseName == null || courseCategory == null) {
+                String courseSummary = request.getParameter("courseSummary");
+                String courseHighlight = request.getParameter("courseHighlight");
+
+                if (courseName == null) {
                     courseName = "";
-                    courseCategory = "";
                 }
                 courseName = courseName.trim();
-                courseCategory = courseCategory.trim();
 
-                if (courseName.isEmpty() || courseCategory.isEmpty()) {
+                if (courseName.isEmpty()) {
                     User acc = udao.getByUserID(userID);
                     List<Course> list = cdao.getCourseByUserID(acc.getUserId());
 
                     request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Create failed: Course Name or Course Category is required.");
+                    request.setAttribute("err", "Create failed: Course Name is required.");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 }
 
-                if (courseName.length() > 30 || courseCategory.length() > 30) {
+                if (courseName.length() > 30) {
                     User acc = udao.getByUserID(userID);
                     List<Course> list = cdao.getCourseByUserID(acc.getUserId());
 
                     request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Create failed: Course Name or Course Category must not exceed 30 characters.");
+                    request.setAttribute("err", "Create failed: Course Name must not exceed 30 characters.");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 }
 
-                if (courseName.contains("  ") || courseCategory.contains("  ")) {
+                if (courseName.contains("  ")) {
                     User acc = udao.getByUserID(userID);
                     List<Course> list = cdao.getCourseByUserID(acc.getUserId());
 
                     request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Create failed: Course Name or Course Category must not contain consecutive spaces.");
+                    request.setAttribute("err", "Create failed: Course Name must not contain consecutive spaces.");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 }
 
-                if (courseName.matches(".*\\d.*") || courseCategory.matches(".*\\d.*")) {
+                if (courseName.matches(".*\\d.*")) {
                     User acc = udao.getByUserID(userID);
                     List<Course> list = cdao.getCourseByUserID(acc.getUserId());
 
                     request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Create failed: Course Name or Course Category must not contain numbers.");
+                    request.setAttribute("err", "Create failed: Course Name must not contain numbers.");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 }
@@ -179,7 +208,7 @@ public class InstructorCourseServlet extends HttpServlet {
                     return;
                 }
 
-                int insert = cdao.insertCourse(courseName, courseCategory, userID, salePrice, originalPrice, isSale, courseImageLocation);
+                int insert = cdao.insertCourse(courseName, categoryId, userID, salePrice, originalPrice, isSale, courseImageLocation, courseSummary, courseHighlight);
 
                 if (insert > 0) {
                     User acc = udao.getByUserID(userID);
@@ -194,58 +223,59 @@ public class InstructorCourseServlet extends HttpServlet {
                 }
             } else if (action.equalsIgnoreCase("update")) {
                 int userID = Integer.parseInt(request.getParameter("userID"));
-
                 int courseID = Integer.parseInt(request.getParameter("courseID"));
                 String courseName = request.getParameter("courseName");
-                String courseCategory = request.getParameter("courseCategory");
+
+                int categoryId = Integer.parseInt(request.getParameter("category_id"));
                 int originalPrice = Integer.parseInt(request.getParameter("originalPrice"));
                 int salePrice = Integer.parseInt(request.getParameter("salePrice"));
+
                 String courseImageLocation = request.getParameter("courseImageLocation");
                 int isSale = request.getParameter("isSale") != null ? 1 : 0;
+                String courseSummary = request.getParameter("courseSummary");
+                String courseHighlight = request.getParameter("courseHighlight");
 
-                if (courseName == null || courseCategory == null) {
+                if (courseName == null) {
                     courseName = "";
-                    courseCategory = "";
                 }
                 courseName = courseName.trim();
-                courseCategory = courseCategory.trim();
 
-                if (courseName.isEmpty() || courseCategory.isEmpty()) {
+                if (courseName.isEmpty()) {
                     User acc = udao.getByUserID(userID);
                     List<Course> list = cdao.getCourseByUserID(acc.getUserId());
 
                     request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Update failed: Course Name or Course Category is required.");
+                    request.setAttribute("err", "Create failed: Course Name is required.");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 }
 
-                if (courseName.length() > 30 || courseCategory.length() > 30) {
+                if (courseName.length() > 30) {
                     User acc = udao.getByUserID(userID);
                     List<Course> list = cdao.getCourseByUserID(acc.getUserId());
 
                     request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Update failed: Course Name or Course Category must not exceed 30 characters.");
+                    request.setAttribute("err", "Create failed: Course Name must not exceed 30 characters.");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 }
 
-                if (courseName.contains("  ") || courseCategory.contains("  ")) {
+                if (courseName.contains("  ")) {
                     User acc = udao.getByUserID(userID);
                     List<Course> list = cdao.getCourseByUserID(acc.getUserId());
 
                     request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Update failed: Course Name or Course Category must not contain consecutive spaces.");
+                    request.setAttribute("err", "Create failed: Course Name must not contain consecutive spaces.");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 }
 
-                if (courseName.matches(".*\\d.*") || courseCategory.matches(".*\\d.*")) {
+                if (courseName.matches(".*\\d.*")) {
                     User acc = udao.getByUserID(userID);
                     List<Course> list = cdao.getCourseByUserID(acc.getUserId());
 
                     request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Update failed: Course Name or Course Category must not contain numbers.");
+                    request.setAttribute("err", "Create failed: Course Name must not contain numbers.");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 }
@@ -260,7 +290,7 @@ public class InstructorCourseServlet extends HttpServlet {
                     return;
                 }
 
-                int update = cdao.updateCourse(courseID, courseName, courseCategory, salePrice, originalPrice, isSale, courseImageLocation);
+                int update = cdao.updateCourse(courseID, courseName, categoryId, salePrice, originalPrice, isSale, courseImageLocation, courseSummary, courseHighlight);
 
                 if (update > 0) {
                     User acc = udao.getByUserID(userID);
@@ -303,8 +333,9 @@ public class InstructorCourseServlet extends HttpServlet {
         }
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override

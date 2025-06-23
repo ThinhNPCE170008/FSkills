@@ -12,6 +12,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.Category;
+
+/**
+ * @author Ngo Phuoc Thinh - CE170008 - SE1815
+ */
 public class ModuleDAO extends DBContext {
 
     public ModuleDAO() {
@@ -20,25 +25,32 @@ public class ModuleDAO extends DBContext {
 
     public List<Module> getAllModuleByCourseID(int courseID) {
         List<Module> list = new ArrayList<>();
-        String sql = "SELECT M.*, C.CourseName, C.CourseCategory FROM Modules M\n"
-                + "JOIN Courses C ON M.CourseID = C.CourseID\n"
-                + "WHERE C.CourseID = ?";
+        String sql = "SELECT m.*, c.CourseName, cat.category_id, cat.category_name "
+                + "FROM Modules m "
+                + "JOIN Courses c ON m.CourseID = c.CourseID "
+                + "JOIN Category cat ON c.category_id = cat.category_id "
+                + "WHERE c.CourseID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, courseID);
-
             ResultSet rs = ps.executeQuery();
+
             while (rs.next()) {
-                int moduleID = rs.getInt("ModuleID");
-                String moduleName = rs.getString("ModuleName");
-                Timestamp moduleLastUpdate = rs.getTimestamp("ModuleLastUpdate");
+                Category category = new Category();
+                category.setId(rs.getInt("category_id"));
+                category.setName(rs.getNString("category_name"));
 
-                String courseName = rs.getString("CourseName");
-                String courseCategory = rs.getString("CourseCategory");
+                Course course = new Course();
+                course.setCourseID(courseID);
+                course.setCourseName(rs.getNString("CourseName"));
+                course.setCategory(category);
 
-                Course course = new Course(courseName, courseCategory);
-                Module module = new Module(moduleID, moduleName, course, moduleLastUpdate);
+                Module module = new Module();
+                module.setModuleID(rs.getInt("moduleID"));
+                module.setModuleName(rs.getString("moduleName"));
+                module.setCourse(course);
+                module.setModuleLastUpdate(rs.getTimestamp("ModuleLastUpdate"));
 
                 list.add(module);
             }
@@ -49,24 +61,32 @@ public class ModuleDAO extends DBContext {
     }
 
     public Module getModuleByID(int moduleID) {
-        String sql = "SELECT M.*, C.CourseName, C.CourseCategory FROM Modules M\n"
-                + "JOIN Courses C ON M.CourseID = C.CourseID\n"
-                + "WHERE M.ModuleID = ?";
+        String sql = "SELECT m.*, c.CourseName, c.CourseID, cat.category_id, cat.category_name " +
+                "FROM Modules m " +
+                "JOIN Courses c ON m.CourseID = c.CourseID " +
+                "JOIN Category cat ON c.category_id = cat.category_id " +
+                "WHERE m.ModuleID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, moduleID);
-
             ResultSet rs = ps.executeQuery();
+
             while (rs.next()) {
-                String moduleName = rs.getString("ModuleName");
-                Timestamp moduleLastUpdate = rs.getTimestamp("ModuleLastUpdate");
+                Category category = new Category();
+                category.setId(rs.getInt("category_id"));
+                category.setName(rs.getNString("category_name"));
 
-                String courseName = rs.getString("CourseName");
-                String courseCategory = rs.getString("CourseCategory");
+                Course course = new Course();
+                course.setCourseID(rs.getInt("CourseID"));
+                course.setCourseName(rs.getNString("CourseName"));
+                course.setCategory(category);
 
-                Course course = new Course(courseName, courseCategory);
-                Module module = new Module(moduleID, moduleName, course, moduleLastUpdate);
+                Module module = new Module();
+                module.setModuleID(rs.getInt("moduleID"));
+                module.setModuleName(rs.getString("moduleName"));
+                module.setCourse(course);
+                module.setModuleLastUpdate(rs.getTimestamp("ModuleLastUpdate"));
 
                 return module;
             }
@@ -160,8 +180,8 @@ public class ModuleDAO extends DBContext {
         }
         return 0;
     }
-//==========================================
 
+    // Created by DuyHKCE180230
     public int moduleUpdateTime(int id) {
         String updateSql = "UPDATE [dbo].[Modules] SET [ModuleLastUpdate] = GETDATE() WHERE [ModuleID] = ?;";
         try {
@@ -170,21 +190,21 @@ public class ModuleDAO extends DBContext {
             int rowsAffected = ps.executeUpdate();
 
             if (rowsAffected > 0) {
-                return 1; // Cập nhật thành công
+                return 1;
             } else {
-                return 0; // Không có dòng nào bị ảnh hưởng
+                return 0;
             }
         } catch (SQLException e) {
             System.out.println("Error updating module time: " + e.getMessage());
-            return 0; // Trả về 0 nếu có lỗi
+            return 0;
         }
     }
-//=========================================================
-    public static void main(String[] args) {
-        ModuleDAO dao = new ModuleDAO();
-        CourseDAO courseDAO = new CourseDAO();
-        List<Module> modules = new ArrayList<>();
 
+//    public static void main(String[] args) {
+//        ModuleDAO dao = new ModuleDAO();
+//        CourseDAO courseDAO = new CourseDAO();
+//        List<Module> modules = new ArrayList<>();
+//
 //        modules = dao.getAllModuleByCourseID(1);
 //        for (Module module : modules) {
 //            System.out.println(module);
@@ -200,5 +220,5 @@ public class ModuleDAO extends DBContext {
 //        System.out.println(result);
 //        int result = dao.deleteModule(7);
 //        System.out.println(result);
-    }
+//    }
 }
