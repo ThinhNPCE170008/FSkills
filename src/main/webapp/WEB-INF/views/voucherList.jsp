@@ -1,5 +1,12 @@
+<%--
+    Document   : voucherDetails
+    Created on : Jun 1, 2025, 5:34:00 PM
+    Author     : DELL
+--%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -302,7 +309,9 @@
                                     <c:forEach var="voucher" items="${voucherList}">
                                         <tr class="hover:bg-gray-50">
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${voucher.voucherID}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${voucher.expiredDate}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                <fmt:formatDate value="${voucher.expiredDate}" pattern="HH:mm dd/MM/yyyy"/>
+                                            </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${voucher.saleType}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${voucher.saleAmount}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${voucher.minPrice}</td>
