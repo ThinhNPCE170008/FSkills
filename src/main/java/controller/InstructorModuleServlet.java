@@ -125,6 +125,7 @@ public class InstructorModuleServlet extends HttpServlet {
             throws ServletException, IOException {
         CourseDAO cDao = new CourseDAO();
         ModuleDAO mDao = new ModuleDAO();
+
         Course course = null;
         Module module = null;
 

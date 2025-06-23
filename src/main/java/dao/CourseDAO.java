@@ -675,10 +675,13 @@ public class CourseDAO extends DBContext {
 //        User user = udao.getByUserID(3);
 //        int result = dao.insertCourse("C Sharf 123", "Dot Net Programming", 3, 9999, 999999, 0, "https://www.youtube.com/watch?v=de6UvFKbuZQ");
 //        System.out.println(result);
+
 //        int result = dao.updateCourse(8, "Bootstrap 5", "Web Develop", 1234, 123456789, 0, "https://www.youtube.com/watch?v=de6UvFKbuZQ");
 //        System.out.println(result);
+
 //        int result = dao.deleteCourse(9);
 //        System.out.println(result);
+
 //        int result = dao.countCoursesByUserID(2);
 //        System.out.println(result);
 
@@ -690,6 +693,5 @@ public class CourseDAO extends DBContext {
 
 //        Course course = dao.getCourseByCourseID(6);
 //        System.out.println(course);
-
     }
 }

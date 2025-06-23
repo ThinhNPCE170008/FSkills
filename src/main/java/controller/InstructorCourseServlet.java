@@ -158,6 +158,7 @@ public class InstructorCourseServlet extends HttpServlet {
                 if (courseName == null) {
                     courseName = "";
                 }
+
                 courseName = courseName.trim();
 
                 if (courseName.isEmpty()) {
