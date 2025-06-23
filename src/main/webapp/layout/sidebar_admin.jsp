@@ -16,7 +16,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
     <style>
-        /* Áp d?ng phông ch? Inter */
+        /* ï¿½p d?ng phï¿½ng ch? Inter */
         body {
             font-family: 'Inter', sans-serif;
         }
@@ -73,13 +73,13 @@
             margin-left: 250px;
         }
 
-        /* Ki?u dáng cho main */
+        /* Ki?u dï¿½ng cho main */
         main {
             transition: margin-left 0.3s ease-in-out;
             padding: 1.5rem;
         }
 
-        /* ?n sidebar trên thi?t b? di ??ng */
+        /* ?n sidebar trï¿½n thi?t b? di ??ng */
         @media (max-width: 768px) {
             .sidebar-container {
                 width: 0;
@@ -106,7 +106,7 @@
             <span class="text-xl font-extrabold whitespace-nowrap">F-SKILL</span>
         </a>
 
-        <!-- Avatar và Thông tin ng??i dùng -->
+        <!-- Avatar vï¿½ Thï¿½ng tin ng??i dï¿½ng -->
         <div class="flex flex-col items-center mb-6 pb-4 border-b border-gray-200">
             <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-xl font-semibold border-2 border-indigo-500 shadow-md">
                 <c:choose>
@@ -133,7 +133,7 @@
             </div>
         </div>
 
-        <!-- Các liên k?t ?i?u h??ng -->
+        <!-- Cï¿½c liï¿½n k?t ?i?u h??ng -->
         <ul class="flex flex-col space-y-2">
             <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/adminDashboard" aria-label="Dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
             <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/bills" aria-label="Bills"><i class="fas fa-receipt"></i> <span>Bills</span></a></li>
@@ -143,7 +143,7 @@
             <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/manageAccounts" aria-label="Manage Accounts"><i class="fas fa-users"></i> <span>Manage Accounts</span></a></li>
             <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/report" aria-label="Report"><i class="fas fa-chart-bar"></i> <span>Report</span></a></li>
             <div class="flex flex-col mt-6 pt-5 border-t border-gray-200">
-                <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/editProfile" aria-label="Profile"><i class="fas fa-user-circle"></i> <span>Profile</span></a></li>
+                <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/learner/profile" aria-label="Profile"><i class="fas fa-user-circle"></i> <span>Profile</span></a></li>
                 <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/logout" aria-label="Logout"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
             </div>
         </ul>

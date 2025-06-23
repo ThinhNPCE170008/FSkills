@@ -18,11 +18,22 @@
 </head>
 <body>
 <div class="change-password-container">
-    <a href="${pageContext.request.contextPath}/editProfile" class="back-button">
-        <i class="bi bi-arrow-left"></i> Back
-    </a>
+    <c:choose>
+        <c:when test="${user.role == 'INSTRUCTOR'}">
+            <a href="${pageContext.request.contextPath}/instructor/profile?action=edit" class="back-button">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </c:when>
+        <c:otherwise>
+            <a href="${pageContext.request.contextPath}/learner/profile?action=edit" class="back-button">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </c:otherwise>
+    </c:choose>
+
     <h1>Change Password</h1>
-    <form action="${pageContext.request.contextPath}/changePassword" method="POST">
+
+    <form action="${pageContext.request.contextPath}${user.role == 'INSTRUCTOR' ? '/instructor/profile' : '/learner/profile'}?action=password" method="POST">
         <div class="form-group">
             <label for="oldPassword">Old Password</label>
             <input type="password" id="oldPassword" name="oldPassword" required>

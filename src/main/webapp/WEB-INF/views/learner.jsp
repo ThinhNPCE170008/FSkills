@@ -78,7 +78,7 @@
         <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">My Courses</a>
         <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Analytics</a>
         <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Feedback</a>
-        <a href="${pageContext.request.contextPath}/editProfile" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Profile</a>
+        <a href="${pageContext.request.contextPath}${user.role == 'INSTRUCTOR' ? '/instructor/profile' : '/learner/profile'}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Profile</a>
       </nav>
 
       <div class="relative flex items-center space-x-4">

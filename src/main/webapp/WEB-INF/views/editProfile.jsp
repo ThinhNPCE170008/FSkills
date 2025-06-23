@@ -14,23 +14,7 @@
 <body>
 <div class="profile-edit-container">
   <header>
-    <img src="img/logo.png" alt="Logo" class="logo-img"/>
-    <nav>
-      <a href="#">My Course</a>
-      <a href="#">Home</a>
-      <a href="#">All Courses</a>
-      <%-- 2. Update Degree Icon --%>
-      <a href="${pageContext.request.contextPath}/Degree"><i class="bi bi-journal-text"></i> Degree</a>
-      <div class="icons">
-        <%-- 4. Update Cart Icon --%>
-        <span class="cart">
-                            <i class="bi bi-cart3"></i><span class="badge">2</span>
-                        </span>
-        <%-- 5. Update Bell Icon --%>
-        <span class="bell"><i class="bi bi-bell"></i></span>
-        <div class="user">Hi, <c:out value="${not empty sessionScope.user.displayName ? sessionScope.user.displayName : 'Guest'}"/></div>
-      </div>
-    </nav>
+    <jsp:include page="/layout/sidebar_user.jsp" />
   </header>
 
   <div class="welcome-section">
@@ -53,7 +37,7 @@
     <div class="profile-card">
       <div class="profile-header">
         <div class="avatar">
-          <img src="${profile.avatar}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+          <img src="${pageContext.request.contextPath}/${profile.avatar}" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
         </div>
         <div class="user-info">
           <h2><c:out value="${profile.displayName}"/></h2>
@@ -99,7 +83,7 @@
     </div>
 
     <%-- Profile Edit Form (Initially Hidden) --%>
-    <form class="profile-form" action="editProfile" method="POST" enctype="multipart/form-data">
+    <form class="profile-form" action="${pageContext.request.contextPath}${user.role == 'INSTRUCTOR' ? '/instructor/profile' : '/learner/profile'}?action=edit" method="POST" enctype="multipart/form-data">
       <div class="avatar-section">
         <div class="avatar-container">
           <img src="${pageContext.request.contextPath}/${profile.avatar}" alt="Profile Picture" id="avatar-preview">
@@ -179,7 +163,7 @@
   });
 
   changePasswordBtn.addEventListener('click', () => {
-    window.location.href = '${pageContext.request.contextPath}/changePassword';
+    window.location.href = '${pageContext.request.contextPath}${user.role == 'INSTRUCTOR' ? '/instructor/profile' : '/learner/profile'}?action=password';
   });
 
   // Preview avatar
