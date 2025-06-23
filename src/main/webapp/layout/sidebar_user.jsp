@@ -3,9 +3,7 @@
 <%@page import="model.User"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%
-    // ??m b?o ng??i dùng ?ã ??ng nh?p, n?u không thì chuy?n h??ng ??n trang ??ng nh?p
-    // L?u ý: Trong ?ng d?ng th?c t?, nên cân nh?c s? d?ng b? l?c xác th?c m?nh m? h?n
-    // thay vì các scriptlet JSP tr?c ti?p ?? ??m b?o b?o m?t và d? b?o trì.
+
     User acc = (User) session.getAttribute("user");
     if (acc == null) {
         response.sendRedirect("login");
@@ -187,7 +185,5 @@
                 </c:if>
             </ul>
         </div>
-
-        
     </body>
 </html>
