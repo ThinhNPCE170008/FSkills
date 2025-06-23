@@ -19,7 +19,7 @@
     </head>
     <body class="w-100 m-0 p-0">
         <div class="profile-edit-container w-100 mt-20">
-            <jsp:include page="/layout/header.jsp"/>
+            <jsp:include page="/layout/sidebar_user.jsp"/>
             <!-- Degree Table Section -->
             <div class="bg-white p-4 rounded-4 shadow-lg">
                 <!-- Nút Submit Luôn Hiển Thị -->

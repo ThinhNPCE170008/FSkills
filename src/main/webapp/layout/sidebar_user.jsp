@@ -111,7 +111,7 @@
             <!--Avatar-->
             <c:choose>
                 <c:when test="${not empty user.avatar}">
-                    <img src="${user.avatar}" alt="User Avatar" class="rounded-circle mb-2" style="width: 60px; height: 60px;">
+                    <img src="${pageContext.request.contextPath}/${user.avatar}" alt="User Avatar" class="rounded-circle mb-2" style="width: 60px; height: 60px;">
                 </c:when>
                 <c:otherwise>
                     <img src="https://placehold.co/80x80/cccccc/333333?text=User" alt="Default Avatar" class="rounded-circle mb-2" style="width: 60px; height: 60px;">
@@ -129,7 +129,7 @@
                 </c:if>
 
                 <c:if test="${user.role == 'LEARNER'}">
-                    <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/homePage.jsp"><i class="fas fa-home"></i> <span>Home</span></a></li>
+                    <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/homePage_Guest.jsp"><i class="fas fa-home"></i> <span>Home</span></a></li>
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/AllCourses.jsp"><i class="fas fa-book"></i> <span>All Courses</span></a></li>
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="#"><i class="fas fa-graduation-cap"></i> <span>My Courses</span></a></li>
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/globalAnn.jsp"><i class="fas fa-bullhorn"></i> <span>Announcements</span></a></li>
@@ -137,7 +137,7 @@
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="notifications.jsp"><i class="fas fa-bell"></i> <span>Notifications</span></a></li>
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/Degree"><i class="fas fa-graduation-cap"></i> <span>Degree</span></a></li>
                     <div class="flex flex-col mt-6 pt-5 border-t border-gray-200">
-                        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/editProfile"><i class="fas fa-user-circle"></i> <span>Profile</span></a></li>
+                        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/learner/profile"><i class="fas fa-user-circle"></i> <span>Profile</span></a></li>
                         <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/logout"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
                     </div>
                 </c:if>
@@ -149,7 +149,7 @@
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="feedback.jsp"><i class="fas fa-comment-dots"></i> <span>Feedback</span></a></li>
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="notifications.jsp"><i class="fas fa-bell"></i> <span>Notifications</span></a></li>
                     <div class="flex flex-col mt-6 pt-5 border-t border-gray-200">
-                        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="editProfile.jsp"><i class="fas fa-user-circle"></i> <span>Profile</span></a></li>
+                        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/instructor/profile"><i class="fas fa-user-circle"></i> <span>Profile</span></a></li>
                         <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/logout"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
                     </div>
                 </c:if>
