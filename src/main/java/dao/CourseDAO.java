@@ -23,31 +23,6 @@ public class CourseDAO extends DBContext {
         super();
     }
 
-    public List<Category> getAllCategory() {
-        List<Category> list = new ArrayList<>();
-
-        String sql = "SELECT * FROM Category";
-
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                Category cat = new Category();
-                cat.setId(rs.getInt("category_id"));
-                cat.setName(rs.getString("category_name"));
-                cat.setDescription(rs.getNString("description"));
-                cat.setCreated_at(rs.getTimestamp("created_at"));
-                cat.setUpdated_at(rs.getTimestamp("updated_at"));
-
-                list.add(cat);
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return list;
-    }
-
     public List<Course> getCourseByUserID(int userID) {
         List<Course> list = new ArrayList<>();
 
@@ -117,15 +92,25 @@ public class CourseDAO extends DBContext {
     public List<Course> get3CourseByUserID(int userID) {
         List<Course> list = new ArrayList<>();
 
-        String sql = "SELECT\n"
-                + "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber,\n"
-                + "c.*,\n"
-                + "cat.category_id, cat.category_name\n"
-                + "FROM Courses c\n"
-                + "JOIN Users u ON c.UserID = u.UserID\n"
-                + "JOIN Category cat ON c.category_id = cat.category_id\n"
-                + "WHERE c.UserID = ? AND c.Status = 0\n"
-                + "ORDER BY c.PublicDate DESC";
+        String sql = "SELECT TOP 3\n" +
+                "    u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber,\n" +
+                "    c.*, \n" +
+                "    cat.category_id, cat.category_name,\n" +
+                "    COUNT(DISTINCT e.UserID) AS TotalEnrolled,\n" +
+                "    AVG(f.Rate) AS AvgRate\n" +
+                "FROM Courses c\n" +
+                "JOIN Users u ON c.UserID = u.UserID\n" +
+                "JOIN Category cat ON c.category_id = cat.category_id\n" +
+                "LEFT JOIN Enroll e ON c.CourseID = e.CourseID\n" +
+                "LEFT JOIN Feedbacks f ON c.CourseID = f.CourseID\n" +
+                "WHERE c.UserID = ? AND c.Status = 0\n" +
+                "GROUP BY \n" +
+                "    u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber,\n" +
+                "    c.CourseID, c.CourseName, c.OriginalPrice, c.SalePrice, c.IsSale, \n" +
+                "    c.CourseImageLocation, c.PublicDate, c.CourseLastUpdate, c.Status, c.ApproveStatus, c.UserID, c.category_id,\n" +
+                "    c.CourseSummary, c.CourseHighlight,\n" +
+                "    cat.category_id, cat.category_name\n" +
+                "ORDER BY AvgRate DESC;";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -173,6 +158,7 @@ public class CourseDAO extends DBContext {
                 course.setCourseImageLocation(rs.getString("CourseImageLocation"));
                 course.setCourseSummary(rs.getNString("CourseSummary"));
                 course.setCourseHighlight(rs.getNString("CourseHighlight"));
+                course.setTotalEnrolled(rs.getInt("TotalEnrolled"));
 
                 list.add(course);
             }
@@ -365,6 +351,29 @@ public class CourseDAO extends DBContext {
             System.out.println(e.getMessage());
         }
         return 0;
+    }
+
+    public double getAverageRatingByCourseID(int userID) {
+        double avgRating = 0.0;
+        String sql = "SELECT \n" +
+                "    AVG(Rate) AS AvgRating\n" +
+                "FROM Feedbacks f\n" +
+                "JOIN Courses c ON c.CourseID = f.CourseID\n" +
+                "WHERE c.UserID = ?";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userID);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                avgRating = rs.getDouble("avgRating");
+
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return avgRating;
     }
 
     //    public List<Course> getAllCourses() {
@@ -631,7 +640,6 @@ public class CourseDAO extends DBContext {
         }
     }
 
-    //==============================================
     public static void main(String[] args) {
         List<Course> list = new ArrayList<>();
 
@@ -649,10 +657,10 @@ public class CourseDAO extends DBContext {
 //            System.out.println(course);
 //        }
 
-//        list = dao.get3CourseByUserID(3);
-//        for (Course course : list) {
-//            System.out.println(course);
-//        }
+        list = dao.get3CourseByUserID(3);
+        for (Course course : list) {
+            System.out.println(course);
+        }
 
 //        Course course = dao.getCourseByCourseID(1);
 //        System.out.println(course);
@@ -679,5 +687,9 @@ public class CourseDAO extends DBContext {
 
 //        int result = dao.countLearnersByUserID(3);
 //        System.out.println(result);
+
+//        Course course = dao.getCourseByCourseID(6);
+//        System.out.println(course);
+
     }
 }

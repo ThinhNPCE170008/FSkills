@@ -125,7 +125,7 @@
                                     <td>
                                         <c:choose>
                                             <c:when test="${not empty c.publicDate}">
-                                                <fmt:formatDate value="${c.publicDate}" pattern="HH:mm dd-MM-yyyy"/>
+                                                <fmt:formatDate value="${c.publicDate}" pattern="HH:mm dd/MM/yyyy"/>
                                             </c:when>
                                             <c:otherwise>N/A</c:otherwise>
                                         </c:choose>
@@ -133,7 +133,7 @@
                                     <td>
                                         <c:choose>
                                             <c:when test="${not empty c.courseLastUpdate}">
-                                                <fmt:formatDate value="${c.courseLastUpdate}" pattern="HH:mm dd-MM-yyyy"/>
+                                                <fmt:formatDate value="${c.courseLastUpdate}" pattern="HH:mm dd/MM/yyyy"/>
                                             </c:when>
                                             <c:otherwise>N/A</c:otherwise>
                                         </c:choose>
@@ -170,6 +170,11 @@
                                         </c:choose>
                                     </td>
                                     <td class="d-flex flex-column gap-1">
+                                        <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${c.courseID}"
+                                           class="btn btn-sm btn-info text-white">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+
                                         <a href="${pageContext.request.contextPath}/instructor/courses?action=update&courseID=${c.courseID}" class="btn btn-warning btn-sm">
                                             <i class="fas fa-edit"></i>
                                         </a>

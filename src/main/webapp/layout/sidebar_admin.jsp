@@ -16,7 +16,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
     <style>
-        /* ¡p d?ng phÙng ch? Inter */
+        /* √Åp d?ng ph√¥ng ch? Inter */
         body {
             font-family: 'Inter', sans-serif;
         }
@@ -73,13 +73,13 @@
             margin-left: 250px;
         }
 
-        /* Ki?u d·ng cho main */
+        /* Ki?u d√°ng cho main */
         main {
             transition: margin-left 0.3s ease-in-out;
             padding: 1.5rem;
         }
 
-        /* ?n sidebar trÍn thi?t b? di ??ng */
+        /* ?n sidebar tr√™n thi?t b? di ??ng */
         @media (max-width: 768px) {
             .sidebar-container {
                 width: 0;
@@ -98,27 +98,27 @@
     </style>
 </head>
 <body>
-    <!-- Sidebar Container -->
-    <div class="sidebar-container bg-white border-r border-gray-200 shadow-xl rounded-r-lg p-3">
-        <!-- Logo Section -->
-        <a href="${pageContext.request.contextPath}/homePage_Guest.jsp" class="flex items-center mb-6 text-decoration-none sidebar-logo text-gray-800" aria-label="F-SKILL Home">
-            <img src="${pageContext.request.contextPath}/img/logo.png" alt="F-SKILL Logo" class="w-15 h-15 mr-2 rounded-md" loading="lazy"/>
-            <span class="text-xl font-extrabold whitespace-nowrap">F-SKILL</span>
-        </a>
+<!-- Sidebar Container -->
+<div class="sidebar-container bg-white border-r border-gray-200 shadow-xl rounded-r-lg p-3">
+    <!-- Logo Section -->
+    <a href="${pageContext.request.contextPath}/homePage_Guest.jsp" class="flex items-center mb-6 text-decoration-none sidebar-logo text-gray-800" aria-label="F-SKILL Home">
+        <img src="${pageContext.request.contextPath}/img/logo.png" alt="F-SKILL Logo" class="w-15 h-15 mr-2 rounded-md" loading="lazy"/>
+        <span class="text-xl font-extrabold whitespace-nowrap">F-SKILL</span>
+    </a>
 
-        <!-- Avatar v‡ ThÙng tin ng??i d˘ng -->
-        <div class="flex flex-col items-center mb-6 pb-4 border-b border-gray-200">
-            <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-xl font-semibold border-2 border-indigo-500 shadow-md">
-                <c:choose>
-                    <c:when test="${not empty sessionScope.user.avatar}">
-                        <img src="${pageContext.request.contextPath}/${sessionScope.user.avatar}" alt="Admin Avatar" class="rounded-full w-16 h-16 object-cover" loading="lazy">
-                    </c:when>
-                    <c:otherwise>
-                        AD
-                    </c:otherwise>
-                </c:choose>
-            </div>
-            <div class="user-info text-center mt-2">
+    <!-- Avatar v√† Th√¥ng tin ng??i d√πng -->
+    <div class="flex flex-col items-center mb-6 pb-4 border-b border-gray-200">
+        <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-xl font-semibold border-2 border-indigo-500 shadow-md">
+            <c:choose>
+                <c:when test="${not empty sessionScope.user.avatar}">
+                    <img src="${pageContext.request.contextPath}/${sessionScope.user.avatar}" alt="Admin Avatar" class="rounded-full w-16 h-16 object-cover" loading="lazy">
+                </c:when>
+                <c:otherwise>
+                    AD
+                </c:otherwise>
+            </c:choose>
+        </div>
+        <div class="user-info text-center mt-2">
                 <span class="block text-gray-800 font-medium">
                     <c:choose>
                         <c:when test="${not empty sessionScope.user.displayName}">
@@ -129,24 +129,24 @@
                         </c:otherwise>
                     </c:choose>
                 </span>
-                <span class="block text-sm text-gray-500">Admin</span>
-            </div>
+            <span class="block text-sm text-gray-500">Admin</span>
         </div>
-
-        <!-- C·c liÍn k?t ?i?u h??ng -->
-        <ul class="flex flex-col space-y-2">
-            <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/adminDashboard" aria-label="Dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
-            <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/bills" aria-label="Bills"><i class="fas fa-receipt"></i> <span>Bills</span></a></li>
-            <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/company" aria-label="Company"><i class="fas fa-building"></i> <span>Company</span></a></li>
-            <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/announcements" aria-label="Announcements"><i class="fas fa-bullhorn"></i> <span>Announcements</span></a></li>
-            <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/manageDegree" aria-label="Manage Degree"><i class="fas fa-graduation-cap"></i> <span>Manage Degree</span></a></li>
-            <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/manageAccounts" aria-label="Manage Accounts"><i class="fas fa-users"></i> <span>Manage Accounts</span></a></li>
-            <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/report" aria-label="Report"><i class="fas fa-chart-bar"></i> <span>Report</span></a></li>
-            <div class="flex flex-col mt-6 pt-5 border-t border-gray-200">
-                <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/editProfile" aria-label="Profile"><i class="fas fa-user-circle"></i> <span>Profile</span></a></li>
-                <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/logout" aria-label="Logout"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
-            </div>
-        </ul>
     </div>
+
+    <!-- C√°c li√™n k?t ?i?u h??ng -->
+    <ul class="flex flex-col space-y-2">
+        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/adminDashboard" aria-label="Dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/bills" aria-label="Bills"><i class="fas fa-receipt"></i> <span>Bills</span></a></li>
+        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/company" aria-label="Company"><i class="fas fa-building"></i> <span>Company</span></a></li>
+        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/announcements" aria-label="Announcements"><i class="fas fa-bullhorn"></i> <span>Announcements</span></a></li>
+        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/manageDegree" aria-label="Manage Degree"><i class="fas fa-graduation-cap"></i> <span>Manage Degree</span></a></li>
+        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/manageAccounts" aria-label="Manage Accounts"><i class="fas fa-users"></i> <span>Manage Accounts</span></a></li>
+        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/report" aria-label="Report"><i class="fas fa-chart-bar"></i> <span>Report</span></a></li>
+        <div class="flex flex-col mt-6 pt-5 border-t border-gray-200">
+            <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/editProfile" aria-label="Profile"><i class="fas fa-user-circle"></i> <span>Profile</span></a></li>
+            <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/logout" aria-label="Logout"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+        </div>
+    </ul>
+</div>
 </body>
 </html>
