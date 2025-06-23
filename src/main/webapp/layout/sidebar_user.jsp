@@ -67,50 +67,56 @@
             <a href="${pageContext.request.contextPath}/homePage_Guest.jsp" class="d-flex align-items-center mb-4 text-decoration-none sidebar-logo">
                 <img src="${pageContext.request.contextPath}/img/logo.png" alt="F-SKILL Logo" class="me-2" style="height: 40px;" />
             </a>
+
             <!--Avatar-->
-            <div class="d-flex flex-column align-items-center mb-4 pb-4 border-bottom">
-                <img src="https://placehold.co/80x80/cccccc/333333?text=Learner" alt="User Avatar" class="rounded-circle mb-2" style="width: 60px; height: 60px;">
-            </div>
+            <c:choose>
+                <c:when test="${not empty user.avatar}">
+                    <img src="${user.avatar}" alt="User Avatar" class="rounded-circle mb-2" style="width: 60px; height: 60px;">
+                </c:when>
+                <c:otherwise>
+                    <img src="https://placehold.co/80x80/cccccc/333333?text=User" alt="Default Avatar" class="rounded-circle mb-2" style="width: 60px; height: 60px;">
+                </c:otherwise>
+            </c:choose>
 
 
             <!-- Navigation -->
             <ul class="nav nav-pills flex-column">
                 <!-- Guest -->
-                <c:if test="${sessionScope.role == null}">
-                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/home"><i class="bi bi-house"></i> <span>Home</span></a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/AllCourses.jsp"><i class="bi bi-book"></i> <span>All Courses</span></a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/globalAnn.jsp"><i class="bi bi-megaphone"></i> <span>Announcements</span></a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/#"><i class="bi bi-cart"></i> <span>Cart</span></a></li>
-                    <div  class="d-flex flex-column mb-4 pt-5 border-top">
-                        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/login"><i class="bi bi-box-arrow-in-right"></i> <span>Sign In / Up</span></a></li>
-                    </div>
-                </c:if>
+<%--                <c:if test="${user.role == null}">--%>
+<%--                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/home"><i class="bi bi-house"></i> <span>Home</span></a></li>--%>
+<%--                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/AllCourses.jsp"><i class="bi bi-book"></i> <span>All Courses</span></a></li>--%>
+<%--                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/globalAnn.jsp"><i class="bi bi-megaphone"></i> <span>Announcements</span></a></li>--%>
+<%--                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/#"><i class="bi bi-cart"></i> <span>Cart</span></a></li>--%>
+<%--                    <div  class="d-flex flex-column mb-4 pt-5 border-top">--%>
+<%--                        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/login"><i class="bi bi-box-arrow-in-right"></i> <span>Sign In / Up</span></a></li>--%>
+<%--                    </div>--%>
+<%--                </c:if>--%>
 
                 <!-- Learner -->
-                <c:if test="${sessionScope.role == 'LEARNER'}">
-                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/homePage.jsp"><i class="bi bi-house"></i> <span>Home</span></a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/AllCourses.jsp"><i class="bi bi-book"></i> <span>All Courses</span></a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="#"><i class="bi bi-backpack"></i> <span>My Courses</span></a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/globalAnn.jsp"><i class="bi bi-megaphone"></i> <span>Announcements</span></a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="#"><i class="bi bi-cart"></i> <span>Cart</span></a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="notifications.jsp"><i class="bi bi-bell"></i> <span>Notifications</span></a></li>
-                     <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/Degree"><i class="bi bi-mortarboard"></i> <span>Degree</span></a></li>
-                    <div  class="d-flex flex-column mb-4 pt-5 border-top">
-                        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/editProfile"><i class="bi bi-person"></i> <span>Profile</span></a></li>
-                        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/logout"><i class="bi bi-box-arrow-right"></i> <span>Logout</span></a></li>
-                    </div>
-                </c:if>
+<%--                <c:if test="${user.role == 'LEARNER'}">--%>
+<%--                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/homePage.jsp"><i class="bi bi-house"></i> <span>Home</span></a></li>--%>
+<%--                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/AllCourses.jsp"><i class="bi bi-book"></i> <span>All Courses</span></a></li>--%>
+<%--                    <li class="nav-item"><a class="nav-link text-dark" href="#"><i class="bi bi-backpack"></i> <span>My Courses</span></a></li>--%>
+<%--                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/globalAnn.jsp"><i class="bi bi-megaphone"></i> <span>Announcements</span></a></li>--%>
+<%--                    <li class="nav-item"><a class="nav-link text-dark" href="#"><i class="bi bi-cart"></i> <span>Cart</span></a></li>--%>
+<%--                    <li class="nav-item"><a class="nav-link text-dark" href="notifications.jsp"><i class="bi bi-bell"></i> <span>Notifications</span></a></li>--%>
+<%--                     <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/Degree"><i class="bi bi-mortarboard"></i> <span>Degree</span></a></li>--%>
+<%--                    <div  class="d-flex flex-column mb-4 pt-5 border-top">--%>
+<%--                        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/editProfile"><i class="bi bi-person"></i> <span>Profile</span></a></li>--%>
+<%--                        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/logout"><i class="bi bi-box-arrow-right"></i> <span>Logout</span></a></li>--%>
+<%--                    </div>--%>
+<%--                </c:if>--%>
 
                 <!-- Instructor -->
-                <c:if test="${sessionScope.role == 'INSTRUCTOR'}">
-                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/Instructor"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="manageCourses.jsp"><i class="bi bi-journal-code"></i> <span>Manage Courses</span></a></li>
+                <c:if test="${user.role == 'INSTRUCTOR'}">
+                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/instructor"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a></li>
+                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/instructor/courses?action=list"><i class="bi bi-journal-code"></i> <span>Manage Courses</span></a></li>
                     <li class="nav-item"><a class="nav-link text-dark" href="analytics.jsp"><i class="bi bi-graph-up"></i> <span>Analytics</span></a></li>
                     <li class="nav-item"><a class="nav-link text-dark" href="feedback.jsp"><i class="bi bi-chat-left-dots"></i> <span>Feedback</span></a></li>
                     <li class="nav-item"><a class="nav-link text-dark" href="notifications.jsp"><i class="bi bi-bell"></i> <span>Notifications</span></a></li>
                     <div  class="d-flex flex-column mb-4 pt-5 border-top">
                         <li class="nav-item"><a class="nav-link text-dark" href="editProfile.jsp"><i class="bi bi-person"></i> <span>Profile</span></a></li>                  
-                        <li class="nav-item"><a class="nav-link text-dark" href="logout.jsp"><i class="bi bi-box-arrow-right"></i> <span>Logout</span></a></li>
+                        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/logout"><i class="bi bi-box-arrow-right"></i> <span>Logout</span></a></li>
                     </div>
                 </c:if>
             </ul>

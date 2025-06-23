@@ -2,6 +2,9 @@ package model;
 
 import java.sql.Timestamp;
 
+/**
+ * @author Ngo Phuoc Thinh - CE170008 - SE1815
+ */
 public class Module {
     private int moduleID;
     private String moduleName;
