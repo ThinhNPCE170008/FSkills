@@ -1,9 +1,10 @@
+<%--
+    Document   : userList
+    Created on : May 23, 2025, 2:53:00 PM
+    Author     : DELL
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%-- Nếu bạn cần import các DAO/Model, hãy thêm ở đây --%>
-<%-- <%@page import="dao.UserDAO" %> --%>
-<%-- <%@page import="model.User" %> --%>
-<%-- <%@page import="java.util.List" %> --%>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -299,9 +300,6 @@
     </header>
 
     <div class="flex flex-grow">
-        <%--
-        <jsp:include page="/layout/sidebar.jsp"/>
-        --%>
         <jsp:include page="/layout/sidebar_admin.jsp" />
 
         <main class="flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
