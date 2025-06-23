@@ -9,6 +9,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Ngo Phuoc Thinh - CE170008 - SE1815
+ */
 public class CategoryDAO extends DBContext {
     public CategoryDAO() {
         super();

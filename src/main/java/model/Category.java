@@ -66,7 +66,7 @@ public class Category {
     @Override
     public String toString() {
         return "Category{" +
-                "id=" + id +
+                "id:" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", created_at=" + created_at +
