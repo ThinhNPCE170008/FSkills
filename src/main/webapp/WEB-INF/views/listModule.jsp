@@ -59,7 +59,7 @@
     </style>
 </head>
 <body>
-<jsp:include page="/layout/headerInstructor.jsp"/>
+<jsp:include page="/layout/sidebar_user.jsp"/>
 
 <div class="container py-5">
     <div class="container py-5">
@@ -79,7 +79,7 @@
                      style="width: 160px; height: 100px; object-fit: cover;" alt="Avatar">
                 <div>
                     <h5 class="mb-1"><strong>Course Name:</strong> ${course.courseName}</h5>
-                    <p class="mb-0"><strong>Category:</strong> ${course.courseCategory}</p>
+                    <p class="mb-0"><strong>Category:</strong> ${course.category.name}</p>
                     <p class="mb-0">
                         <strong>Status:</strong>
                         <span class="badge ${course.approveStatus == 1 ? 'badge-approved' : 'badge-pending'}">
@@ -90,7 +90,7 @@
                         <strong>Public Date:</strong>
                         <c:choose>
                             <c:when test="${not empty course.publicDate}">
-                                <fmt:formatDate value="${course.publicDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                <fmt:formatDate value="${course.publicDate}" pattern="HH:mm dd-MM-yyyy"/>
                             </c:when>
                             <c:otherwise>N/A</c:otherwise>
                         </c:choose>
@@ -120,7 +120,7 @@
                             <td>
                                 <c:choose>
                                     <c:when test="${not empty module.moduleLastUpdate}">
-                                        <fmt:formatDate value="${module.moduleLastUpdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                        <fmt:formatDate value="${module.moduleLastUpdate}" pattern="HH:mm dd/MM/yyyy"/>
                                     </c:when>
                                     <c:otherwise>N/A</c:otherwise>
                                 </c:choose>
@@ -128,14 +128,16 @@
                             <td class="d-flex flex-column gap-1">
                                 <a href="${pageContext.request.contextPath}/instructor/courses/modules/material?moduleId=${module.moduleID}&courseId=${course.courseID}" 
                                    class="btn btn-sm btn-info text-white">
-                                    <i class="fas fa-eye"></i> Detail
+                                    <i class="fas fa-eye"></i>
                                 </a>
                                 <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                                        data-bs-target="#updateModal${module.moduleID}">Update
+                                        data-bs-target="#updateModal${module.moduleID}">
+                                    <i class="fas fa-edit"></i>
                                 </button>
 
                                 <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                        data-bs-target="#deleteModal${module.moduleID}">Delete
+                                        data-bs-target="#deleteModal${module.moduleID}">
+                                    <i class="fas fa-trash-alt"></i>
                                 </button>
                             </td>
                         </tr>
@@ -146,7 +148,7 @@
         </c:choose>
     </div>
 </div>
-<jsp:include page="/layout/footerInstructor.jsp" />
+<jsp:include page="/layout/footer.jsp" />
 
 <!-- Create Module Modal -->
 <div class="modal fade" id="createModuleModal" tabindex="-1" aria-labelledby="createModuleModalLabel"
