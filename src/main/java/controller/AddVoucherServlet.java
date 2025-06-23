@@ -14,8 +14,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Date;
-import java.time.LocalDate;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +32,7 @@ public class AddVoucherServlet extends HttpServlet {
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
+        request.setAttribute("voucher", new Voucher());
         request.getRequestDispatcher("/WEB-INF/views/voucherDetails.jsp").forward(request, response);
     }
 
@@ -51,18 +52,20 @@ public class AddVoucherServlet extends HttpServlet {
         String courseIDStr = request.getParameter("courseID");
         String amountStr = request.getParameter("amount");
 
-        Date expiredDate = null;
+        Timestamp expiredDate = null;
+
         if (expiredDateStr == null || expiredDateStr.trim().isEmpty()) {
             errorMessages.put("expiredDate", "Expiration date cannot be empty.");
         } else {
             try {
-                LocalDate date = LocalDate.parse(expiredDateStr);
-                expiredDate = Date.valueOf(date);
-                if (expiredDate.before(new Date(System.currentTimeMillis()))) {
+                LocalDateTime inputDateTime = LocalDateTime.parse(expiredDateStr);
+                expiredDate = Timestamp.valueOf(inputDateTime);
+                if (inputDateTime.isBefore(LocalDateTime.now())) {
                     errorMessages.put("expiredDate", "Expiration date must be in the future.");
                 }
             } catch (DateTimeParseException e) {
-                errorMessages.put("expiredDate", "Invalid expiration date format. Use YYYY-MM-DD.");
+                LOGGER.log(Level.WARNING, "Invalid Expiration Date format: " + expiredDateStr, e);
+                errorMessages.put("expiredDate", "Invalid format. Use `YYYY-MM-DDTHH:MM` (e.g., 2025-06-23T14:30).");
             }
         }
 
@@ -135,7 +138,18 @@ public class AddVoucherServlet extends HttpServlet {
             globalMessage = "Failed to add Voucher. Please check for errors.";
             request.setAttribute("globalMessage", globalMessage);
             request.setAttribute("errorMessages", errorMessages);
-            request.setAttribute("param", request.getParameterMap());
+            
+            // Giữ lại các giá trị đã nhập
+            Voucher voucherForDisplay = new Voucher();
+            voucherForDisplay.setExpiredDate(expiredDate);
+            voucherForDisplay.setSaleType(saleType);
+            voucherForDisplay.setSaleAmount(saleAmount);
+            voucherForDisplay.setMinPrice(minPrice);
+            voucherForDisplay.setCourseID(courseID);
+            voucherForDisplay.setAmount(amount);
+            
+            request.setAttribute("voucher", voucherForDisplay);
+
             request.getRequestDispatcher("/WEB-INF/views/voucherDetails.jsp").forward(request, response);
             return;
         }
@@ -153,20 +167,18 @@ public class AddVoucherServlet extends HttpServlet {
             boolean success = voucherDAO.addVoucher(newVoucher);
             if (success) {
                 request.setAttribute("globalMessage", "Voucher added successfully!");
-                response.sendRedirect(request.getContextPath() + "/voucherList");
+                response.sendRedirect(request.getContextPath() + "/voucherList?message=" + java.net.URLEncoder.encode("Voucher added successfully!", "UTF-8"));
             } else {
-                globalMessage = "Failed to add Voucher. An error occurred.";
+                globalMessage = "Failed to add Voucher. An error occurred, possibly due to duplicate data or database issue.";
                 request.setAttribute("globalMessage", globalMessage);
-                request.setAttribute("errorMessages", errorMessages);
-                request.setAttribute("param", request.getParameterMap());
+                request.setAttribute("voucher", newVoucher); 
                 request.getRequestDispatcher("/WEB-INF/views/voucherDetails.jsp").forward(request, response);
             }
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Database error adding voucher", ex);
             globalMessage = "Database error: " + ex.getMessage();
             request.setAttribute("globalMessage", globalMessage);
-            request.setAttribute("errorMessages", errorMessages);
-            request.setAttribute("param", request.getParameterMap());
+            request.setAttribute("voucher", newVoucher); 
             request.getRequestDispatcher("/WEB-INF/views/voucherDetails.jsp").forward(request, response);
         }
     }

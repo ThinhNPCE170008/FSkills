@@ -136,7 +136,7 @@
                     <ul>
                         <li class="mb-2">
                             <%-- Thêm URL cho Dashboard --%>
-                            <a href="${pageContext.request.contextPath}/adminDashboard" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
+                            <a href="${pageContext.request.contextPath}/admin" class="nav-item flex items-center p-3 rounded-lg transition-all duration-200 hover:bg-gray-900 group">
                                 <i class="fas fa-tachometer-alt nav-icon text-gray-600 mr-3 text-lg group-hover:text-white"></i>
                                 <span class="nav-text text-gray-800 font-medium group-hover:text-white">Dashboard</span>
                             </a>

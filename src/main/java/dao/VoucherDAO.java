@@ -14,7 +14,8 @@ import util.DBContext;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Date;
+// import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -80,7 +81,7 @@ public class VoucherDAO extends DBContext {
     public boolean addVoucher(Voucher voucher) throws SQLException {
         String sql = "INSERT INTO Vouchers (ExpiredDate, SaleType, SaleAmount, MinPrice, CourseID, Amount) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setDate(1, voucher.getExpiredDate());
+            ps.setTimestamp(1, voucher.getExpiredDate());
             ps.setString(2, voucher.getSaleType());
             ps.setInt(3, voucher.getSaleAmount());
             ps.setInt(4, voucher.getMinPrice());
@@ -97,7 +98,7 @@ public class VoucherDAO extends DBContext {
     public boolean updateVoucher(Voucher voucher) throws SQLException {
         String sql = "UPDATE Vouchers SET ExpiredDate = ?, SaleType = ?, SaleAmount = ?, MinPrice = ?, CourseID = ?, Amount = ? WHERE VoucherID = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setDate(1, voucher.getExpiredDate());
+            ps.setTimestamp(1, voucher.getExpiredDate());
             ps.setString(2, voucher.getSaleType());
             ps.setInt(3, voucher.getSaleAmount());
             ps.setInt(4, voucher.getMinPrice());
@@ -127,7 +128,7 @@ public class VoucherDAO extends DBContext {
     private Voucher setVoucher(ResultSet rs) throws SQLException {
         Voucher voucher = new Voucher();
         voucher.setVoucherID(rs.getInt("VoucherID"));
-        voucher.setExpiredDate(rs.getDate("ExpiredDate"));
+        voucher.setExpiredDate(rs.getTimestamp("ExpiredDate"));
         voucher.setSaleType(rs.getString("SaleType"));
         voucher.setSaleAmount(rs.getInt("SaleAmount"));
         voucher.setMinPrice(rs.getInt("MinPrice"));

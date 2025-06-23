@@ -133,19 +133,18 @@
         </div>
     </div>
 
-    <!-- Các liên k?t ?i?u h??ng -->
-    <ul class="flex flex-col space-y-2">
-        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/adminDashboard" aria-label="Dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
-        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/bills" aria-label="Bills"><i class="fas fa-receipt"></i> <span>Bills</span></a></li>
-        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/company" aria-label="Company"><i class="fas fa-building"></i> <span>Company</span></a></li>
-        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/announcements" aria-label="Announcements"><i class="fas fa-bullhorn"></i> <span>Announcements</span></a></li>
-        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/manageDegree" aria-label="Manage Degree"><i class="fas fa-graduation-cap"></i> <span>Manage Degree</span></a></li>
-        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/manageAccounts" aria-label="Manage Accounts"><i class="fas fa-users"></i> <span>Manage Accounts</span></a></li>
-        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/report" aria-label="Report"><i class="fas fa-chart-bar"></i> <span>Report</span></a></li>
-        <div class="flex flex-col mt-6 pt-5 border-t border-gray-200">
-            <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/editProfile" aria-label="Profile"><i class="fas fa-user-circle"></i> <span>Profile</span></a></li>
-            <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/logout" aria-label="Logout"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
-        </div>
+    <!-- Sidebar menu -->
+    <ul class="nav nav-pills flex-column">
+        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/admin"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/bills"><i class="bi bi-receipt"></i> <span>Bills</span></a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/voucherList"><i class="bi bi-building"></i> <span>Company</span></a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/manageDegree"><i class="bi bi-mortarboard"></i> <span>Manage Degree</span></a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/alluser"><i class="bi bi-people"></i> <span>Manage Account</span></a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/report"><i class="bi bi-bar-chart"></i> <span>Report</span></a></li>
+               <div  class="d-flex flex-column mb-4 pt-5 border-top">
+        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/editProfile"><i class="bi bi-person"></i> <span>Profile</span></a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/logout"><i class="bi bi-box-arrow-right"></i> <span>Logout</span></a></li>
+               </div>
     </ul>
 </div>
 </body>
