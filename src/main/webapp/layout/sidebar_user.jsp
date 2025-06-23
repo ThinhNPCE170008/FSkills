@@ -111,7 +111,7 @@
             <!--Avatar-->
             <c:choose>
                 <c:when test="${not empty user.avatar}">
-                    <img src="${pageContext.request.contextPath}/${user.avatar}" alt="User Avatar" class="rounded-circle mb-2" style="width: 60px; height: 60px;">
+                    <img src="${user.avatar}" alt="User Avatar" class="rounded-circle mb-2" style="width: 60px; height: 60px;">
                 </c:when>
                 <c:otherwise>
                     <img src="https://placehold.co/80x80/cccccc/333333?text=User" alt="Default Avatar" class="rounded-circle mb-2" style="width: 60px; height: 60px;">
