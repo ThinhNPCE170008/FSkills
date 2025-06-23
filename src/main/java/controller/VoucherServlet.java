@@ -47,7 +47,7 @@ public class VoucherServlet extends HttpServlet {
                 } catch (NumberFormatException e) {
                     LOGGER.log(Level.INFO, "Search term for VoucherID is not a valid integer: " + searchTerm);
                     voucherList = new java.util.ArrayList<>();
-                    globalMessage = "ID Voucher pmust be an integer.";
+                    globalMessage = "ID Voucher must be an integer.";
                 }
             } else {
                 voucherList = voucherDAO.getAllVouchers();

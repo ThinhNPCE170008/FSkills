@@ -1,5 +1,5 @@
 <%--
-    Document   : voucherDetails
+    Document   : voucherList
     Created on : Jun 1, 2025, 5:34:00 PM
     Author     : DELL
 --%>
@@ -263,10 +263,9 @@
                 </div>
 
                 <c:if test="${not empty globalMessage}">
-                    <p class="global-message bg-blue-100 text-blue-800 p-3 rounded-lg mb-4 text-center">
+                    <p class="global-message bg-red-100 text-red-800 p-3 rounded-lg mb-4 text-center">
                         ${globalMessage}
                     </p>
-                    <c:remove var="globalMessage" scope="session"/>
                 </c:if>
 
                 <div class="search-add-section flex justify-between items-center mb-6 flex-wrap gap-4 pt-4">
@@ -334,16 +333,12 @@
                             </table>
                         </c:when>
                         <c:otherwise>
-                            <p class="no-results px-6 py-10 text-gray-500 text-center text-base">
-                                <c:choose>
-                                    <c:when test="${not empty param.searchTerm}">
-                                        No voucher found matching '${param.searchTerm}'.
-                                    </c:when>
-                                    <c:otherwise>
-                                        There are no vouchers to display.
-                                    </c:otherwise>
-                                </c:choose>
-                            </p>
+                            <%-- Chỉ hiển thị thông báo "There are no vouchers to display." nếu voucherList trống VÀ không có globalMessage (ví dụ: từ tìm kiếm cụ thể) --%>
+                            <c:if test="${empty globalMessage}">
+                                <p class="no-results px-6 py-10 text-gray-500 text-center text-base">
+                                    There are no vouchers to display.
+                                </p>
+                            </c:if>
                         </c:otherwise>
                     </c:choose>
                 </div>
