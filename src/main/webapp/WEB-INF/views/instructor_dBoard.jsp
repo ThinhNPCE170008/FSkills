@@ -87,123 +87,122 @@
 </head>
 
 <body class="bg-gray-50">
-<!-- ======================= Header ======================= -->
-<header class="bg-white sticky top-0 z-50 header-shadow">
-    <div class="container mx-auto px-4">
-        <div class="flex items-center justify-between h-20 px-6">
-            <div class="flex items-center space-x-2">
-                <img src="img/logo.png" alt="F-SKILL Logo" class=" w-20 h-15"/>
-            </div>
+<%--<header class="bg-white sticky top-0 z-50 header-shadow">--%>
+<%--    <div class="container mx-auto px-4">--%>
+<%--        <div class="flex items-center justify-between h-20 px-6">--%>
+<%--            <div class="flex items-center space-x-2">--%>
+<%--                <img src="img/logo.png" alt="F-SKILL Logo" class=" w-20 h-15"/>--%>
+<%--            </div>--%>
 
-            <nav class="hidden lg:flex items-center space-x-8">
-                <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Dashboard</a>
-                <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">My Courses</a>
-                <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Analytics</a>
-                <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Feedback</a>
-                <a href="editProfile"
-                   class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Profile</a>
-            </nav>
+<%--            <nav class="hidden lg:flex items-center space-x-8">--%>
+<%--                <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Dashboard</a>--%>
+<%--                <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">My Courses</a>--%>
+<%--                <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Analytics</a>--%>
+<%--                <a href="#" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Feedback</a>--%>
+<%--                <a href="editProfile"--%>
+<%--                   class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Profile</a>--%>
+<%--            </nav>--%>
 
-            <div class="relative flex items-center space-x-4">
-                <button id="notificationBtn"
-                        class="text-gray-600 hover:text-indigo-600 focus:outline-none text-xl relative">
-                    <i class="fas fa-bell"></i>
-                    <% if (listNotification != null && !listNotification.isEmpty()) {%>
-                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">
-                                <%= listNotification.size()%>
-                            </span>
-                    <% } %>
-                </button>
+<%--            <div class="relative flex items-center space-x-4">--%>
+<%--                <button id="notificationBtn"--%>
+<%--                        class="text-gray-600 hover:text-indigo-600 focus:outline-none text-xl relative">--%>
+<%--                    <i class="fas fa-bell"></i>--%>
+<%--                    <% if (listNotification != null && !listNotification.isEmpty()) {%>--%>
+<%--                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">--%>
+<%--                                <%= listNotification.size()%>--%>
+<%--                            </span>--%>
+<%--                    <% } %>--%>
+<%--                </button>--%>
 
-                <!-- Dropdown -->
-                <div id="notificationDropdown"
-                     class="hidden absolute top-full right-0 mt-2 w-[400px] bg-white border rounded-xl shadow-xl z-50">
-                    <!-- Header -->
-                    <div class="flex items-center justify-between px-4 py-3 border-b">
-                        <span class="text-lg font-semibold text-gray-800">Notifications</span>
-                        <i class="fas fa-cog text-gray-500 hover:text-indigo-500 cursor-pointer"></i>
-                    </div>
+<%--                <!-- Dropdown -->--%>
+<%--                <div id="notificationDropdown"--%>
+<%--                     class="hidden absolute top-full right-0 mt-2 w-[400px] bg-white border rounded-xl shadow-xl z-50">--%>
+<%--                    <!-- Header -->--%>
+<%--                    <div class="flex items-center justify-between px-4 py-3 border-b">--%>
+<%--                        <span class="text-lg font-semibold text-gray-800">Notifications</span>--%>
+<%--                        <i class="fas fa-cog text-gray-500 hover:text-indigo-500 cursor-pointer"></i>--%>
+<%--                    </div>--%>
 
-                    <!-- Danh sách thông báo -->
-                    <ul class="max-h-96 overflow-y-auto divide-y divide-gray-200">
-                        <%
-                            if (listNotification != null) {
-                                for (Notification n : listNotification) {
-                        %>
-                        <a href="<%= n.getLink()%>" class="block">
-                            <li class="flex items-start px-4 py-3 hover:bg-gray-50 cursor-pointer">
-                                <img src="#" class="w-10 h-10 rounded-full mr-3 mt-1" alt="avatar">
-                                <div class="flex-1">
-                                    <p class="text-sm text-gray-800 font-semibold"><%= n.getNotificationMessage()%>
-                                    </p>
-                                    <span class="text-xs text-gray-500"><%= n.getNotificationDate()%></span>
-                                </div>
-                            </li>
-                        </a>
+<%--                    <!-- Danh sách thông báo -->--%>
+<%--                    <ul class="max-h-96 overflow-y-auto divide-y divide-gray-200">--%>
+<%--                        <%--%>
+<%--                            if (listNotification != null) {--%>
+<%--                                for (Notification n : listNotification) {--%>
+<%--                        %>--%>
+<%--                        <a href="<%= n.getLink()%>" class="block">--%>
+<%--                            <li class="flex items-start px-4 py-3 hover:bg-gray-50 cursor-pointer">--%>
+<%--                                <img src="#" class="w-10 h-10 rounded-full mr-3 mt-1" alt="avatar">--%>
+<%--                                <div class="flex-1">--%>
+<%--                                    <p class="text-sm text-gray-800 font-semibold"><%= n.getNotificationMessage()%>--%>
+<%--                                    </p>--%>
+<%--                                    <span class="text-xs text-gray-500"><%= n.getNotificationDate()%></span>--%>
+<%--                                </div>--%>
+<%--                            </li>--%>
+<%--                        </a>--%>
 
-                        <%
-                            }
-                        } else {
-                        %>
-                        <div class="alert alert-warning text-center">
-                            No data found.
-                        </div>
-                        <%
-                            }
-                        %>
+<%--                        <%--%>
+<%--                            }--%>
+<%--                        } else {--%>
+<%--                        %>--%>
+<%--                        <div class="alert alert-warning text-center">--%>
+<%--                            No data found.--%>
+<%--                        </div>--%>
+<%--                        <%--%>
+<%--                            }--%>
+<%--                        %>--%>
 
-                    </ul>
-                    <div class="px-4 py-2 text-center text-sm text-indigo-600 hover:underline cursor-pointer border-t">
-                        View all notifications
-                    </div>
-                </div>
-                <div class="relative">
-                    <c:set var="user" value="${sessionScope.user}"/>
-                    <!-- Button trigger -->
-                    <button id="userMenuBtn" class="flex items-center space-x-2 focus:outline-none">
-                        <img src="${user.avatar}" alt="Instructor Avatar"
-                             class="w-10 h-10 rounded-full border-2 border-indigo-200">
-                        <span class="hidden md:inline font-medium text-gray-700">${user.displayName}</span>
-                        <i class="fas fa-chevron-down text-gray-500 text-xs"></i>
-                    </button>
+<%--                    </ul>--%>
+<%--                    <div class="px-4 py-2 text-center text-sm text-indigo-600 hover:underline cursor-pointer border-t">--%>
+<%--                        View all notifications--%>
+<%--                    </div>--%>
+<%--                </div>--%>
+<%--                <div class="relative">--%>
+<%--                    <c:set var="user" value="${sessionScope.user}"/>--%>
+<%--                    <!-- Button trigger -->--%>
+<%--                    <button id="userMenuBtn" class="flex items-center space-x-2 focus:outline-none">--%>
+<%--                        <img src="${user.avatar}" alt="Instructor Avatar"--%>
+<%--                             class="w-10 h-10 rounded-full border-2 border-indigo-200">--%>
+<%--                        <span class="hidden md:inline font-medium text-gray-700">${user.displayName}</span>--%>
+<%--                        <i class="fas fa-chevron-down text-gray-500 text-xs"></i>--%>
+<%--                    </button>--%>
 
-                    <!-- Dropdown -->
-                    <div id="userDropdownMenu"
-                         class="animate-dropdown absolute right-0 mt-2 w-48 bg-white border rounded-xl shadow-lg z-50 transition-all duration-200 ease-in-out">
-                        <ul class="py-2 text-sm text-gray-700">
-                            <li><a href="editProfile" class="block px-4 py-2 hover:bg-gray-100">Manage Profile</a></li>
-                            <li>
-                                <hr class="my-1 border-gray-200">
-                            </li>
-                            <li><a href="logout" class="block px-4 py-2 text-red-600 hover:bg-gray-100">Logout</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <script>
-                const bellBtn = document.getElementById('notificationBtn');
-                const dropdown = document.getElementById('notificationDropdown');
+<%--                    <!-- Dropdown -->--%>
+<%--                    <div id="userDropdownMenu"--%>
+<%--                         class="animate-dropdown absolute right-0 mt-2 w-48 bg-white border rounded-xl shadow-lg z-50 transition-all duration-200 ease-in-out">--%>
+<%--                        <ul class="py-2 text-sm text-gray-700">--%>
+<%--                            <li><a href="editProfile" class="block px-4 py-2 hover:bg-gray-100">Manage Profile</a></li>--%>
+<%--                            <li>--%>
+<%--                                <hr class="my-1 border-gray-200">--%>
+<%--                            </li>--%>
+<%--                            <li><a href="logout" class="block px-4 py-2 text-red-600 hover:bg-gray-100">Logout</a></li>--%>
+<%--                        </ul>--%>
+<%--                    </div>--%>
+<%--                </div>--%>
+<%--            </div>--%>
+<%--            <script>--%>
+<%--                const bellBtn = document.getElementById('notificationBtn');--%>
+<%--                const dropdown = document.getElementById('notificationDropdown');--%>
 
-                bellBtn.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    if (dropdown.style.display === 'block') {
-                        dropdown.style.display = 'none';
-                    } else {
-                        dropdown.style.display = 'block';
-                    }
-                });
+<%--                bellBtn.addEventListener('click', function (e) {--%>
+<%--                    e.stopPropagation();--%>
+<%--                    if (dropdown.style.display === 'block') {--%>
+<%--                        dropdown.style.display = 'none';--%>
+<%--                    } else {--%>
+<%--                        dropdown.style.display = 'block';--%>
+<%--                    }--%>
+<%--                });--%>
 
-                document.addEventListener('click', function () {
-                    dropdown.style.display = 'none';
-                });
-            </script>
+<%--                document.addEventListener('click', function () {--%>
+<%--                    dropdown.style.display = 'none';--%>
+<%--                });--%>
+<%--            </script>--%>
 
 
-        </div>
-    </div>
-    </div>
-</header>
-
+<%--        </div>--%>
+<%--    </div>--%>
+<%--    </div>--%>
+<%--</header>--%>
+<jsp:include page="/layout/sidebar_user.jsp"/>
 <!-- ======================= Main Content ======================= -->
 <main class="container mx-auto px-4 py-8 md:py-12">
     <section id="dashboard" class="mb-12">
@@ -253,7 +252,8 @@
     <section id="my-courses">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl md:text-3xl font-bold text-gray-800">My Courses</h2>
-            <a href="instructor/courses" class="text-indigo-600 font-semibold hover:underline">View All</a>
+            <a href="${pageContext.request.contextPath}/instructor/courses"
+               class="text-indigo-600 font-semibold hover:underline">View All</a>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -314,6 +314,6 @@
     });
 </script>
 
-<jsp:include page="/layout/footerInstructor.jsp"/>
+<jsp:include page="/layout/footer.jsp"/>
 </body>
 </html>
