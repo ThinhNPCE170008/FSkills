@@ -1,14 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
-
 package controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
+import dao.CategoryDAO;
 import dao.CourseDAO;
 import dao.ModuleDAO;
 import jakarta.servlet.ServletException;
@@ -17,10 +13,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.Course;
-import model.Module;
-import model.Role;
-import model.User;
+import model.*;
 
 /**
  * @author Ngo Phuoc Thinh - CE170008 - SE1815
@@ -69,8 +62,10 @@ public class InstructorModuleServlet extends HttpServlet {
         String contextPath = request.getContextPath();
         HttpSession session = request.getSession();
 
-        ModuleDAO mdao = new ModuleDAO();
-        CourseDAO cdao = new CourseDAO();
+        ModuleDAO mDao = new ModuleDAO();
+        CourseDAO cDao = new CourseDAO();
+        CategoryDAO catDao = new CategoryDAO();
+
         Course course = null;
 
         User acc = (User) session.getAttribute("user");
@@ -89,7 +84,7 @@ public class InstructorModuleServlet extends HttpServlet {
 
         try {
             courseId = Integer.parseInt(courseIdParam);
-            course = cdao.getCourseByCourseID(courseId);
+            course = cDao.getCourseByCourseID(courseId);
             session.setAttribute("course", course);
 
             if (course == null) {
@@ -104,19 +99,16 @@ public class InstructorModuleServlet extends HttpServlet {
 
             switch (action) {
                 case "list":
-                    List<Module> list = mdao.getAllModuleByCourseID(courseId);
+                    List<Category> listCat = catDao.getAllCategory();
+                    List<Module> list = mDao.getAllModuleByCourseID(courseId);
 
                     request.setAttribute("listModule", list);
-                    // request.setAttribute("courseDetails", course);
+                    request.setAttribute("listCategory", listCat);
                     request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
                 default:
             }
-            // Sau đó bạn có thể dùng courseId để query dữ liệu từ DB
-            // Ví dụ:
-            // Course course = courseDAO.getCourseById(courseId);
-            // request.setAttribute("course", course);
         } catch (NumberFormatException e) {
-
+            System.out.println(e.getMessage());
         }
     }
 
@@ -131,27 +123,27 @@ public class InstructorModuleServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        CourseDAO cdao = new CourseDAO();
-        ModuleDAO mdao = new ModuleDAO();
+        CourseDAO cDao = new CourseDAO();
+        ModuleDAO mDao = new ModuleDAO();
         Course course = null;
         Module module = null;
 
         int courseID = Integer.parseInt(request.getParameter("courseID"));
-        course = cdao.getCourseByCourseID(courseID);
+        course = cDao.getCourseByCourseID(courseID);
 
         if (request.getMethod().equalsIgnoreCase("POST")) {
             String action = request.getParameter("action");
 
             if (action.equalsIgnoreCase("create")) {
-                course = cdao.getCourseByCourseID(courseID);
+                course = cDao.getCourseByCourseID(courseID);
 
                 String moduleName = request.getParameter("moduleName");
                 module = new Module(moduleName, course);
 
-                int insert = mdao.insertModule(module);
+                int insert = mDao.insertModule(module);
 
                 if (insert > 0) {
-                    List<Module> list = mdao.getAllModuleByCourseID(courseID);
+                    List<Module> list = mDao.getAllModuleByCourseID(courseID);
 
                     request.setAttribute("listModule", list);
                     request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
@@ -163,10 +155,10 @@ public class InstructorModuleServlet extends HttpServlet {
                 int moduleID = Integer.parseInt(request.getParameter("moduleID"));
                 String moduleName = request.getParameter("moduleName");
 
-                int update = mdao.updateModule(moduleID, moduleName);
+                int update = mDao.updateModule(moduleID, moduleName);
 
                 if (update > 0) {
-                    List<Module> list = mdao.getAllModuleByCourseID(courseID);
+                    List<Module> list = mDao.getAllModuleByCourseID(courseID);
 
                     request.setAttribute("listModule", list);
                     request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
@@ -177,10 +169,10 @@ public class InstructorModuleServlet extends HttpServlet {
             } else if (action.equalsIgnoreCase("delete")) {
                 int moduleID = Integer.parseInt(request.getParameter("moduleID"));
 
-                int delete = mdao.deleteModule(moduleID);
+                int delete = mDao.deleteModule(moduleID);
 
                 if (delete > 0) {
-                    List<Module> list = mdao.getAllModuleByCourseID(courseID);
+                    List<Module> list = mDao.getAllModuleByCourseID(courseID);
 
                     request.setAttribute("listModule", list);
                     request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);

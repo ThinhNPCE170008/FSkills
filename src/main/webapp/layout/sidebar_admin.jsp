@@ -1,44 +1,35 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<c:if test="${sessionScope.user == null}">
+    <c:redirect url="login"/>
+</c:if>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Sidebar</title>
 
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#0284c7',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        };
-    </script>
+    <!-- Font Awesome CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
     <style>
-        /* Sidebar co/gi�n khi hover */
+        /* Áp d?ng phông ch? Inter */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* CSS cho sidebar */
         .sidebar-container {
-            width: 60px;
-            transition: width 0.3s ease;
+            width: 100px;
+            transition: width 0.3s ease-in-out;
             overflow-x: hidden;
-            background-color: #f8f9fa;
-            height: 100vh;
             position: fixed;
             top: 0;
             left: 0;
+            height: 100vh;
             z-index: 1000;
         }
 
@@ -46,52 +37,99 @@
             width: 250px;
         }
 
-        /* ?n text khi sidebar nh? */
+        /* ?n v?n b?n khi thu g?n */
+        .sidebar-container .sidebar-logo span,
         .sidebar-container .nav-link span,
-        .sidebar-container .user-info {
-            display: none;
+        .sidebar-container .user-info span {
+            opacity: 0;
+            visibility: hidden;
+            white-space: nowrap;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
         }
 
+        /* Hi?n th? v?n b?n khi m? r?ng */
+        .sidebar-container:hover .sidebar-logo span,
         .sidebar-container:hover .nav-link span,
-        .sidebar-container:hover .user-info {
-            display: inline;
+        .sidebar-container:hover .user-info span {
+            opacity: 1;
+            visibility: visible;
         }
 
+        /* C?n ch?nh bi?u t??ng */
         .sidebar-container .nav-link i {
+            min-width: 24px;
+            text-align: center;
             margin-right: 8px;
         }
 
+        /* ?i?u ch?nh l? body */
         body {
             margin-left: 60px;
-            transition: margin-left 0.3s ease;
+            transition: margin-left 0.3s ease-in-out;
         }
 
+        /* ?i?u ch?nh l? main khi sidebar m? r?ng */
         .sidebar-container:hover ~ main {
             margin-left: 250px;
         }
 
+        /* Ki?u dáng cho main */
         main {
-            transition: margin-left 0.3s ease;
-            padding: 1rem;
+            transition: margin-left 0.3s ease-in-out;
+            padding: 1.5rem;
+        }
+
+        /* ?n sidebar trên thi?t b? di ??ng */
+        @media (max-width: 768px) {
+            .sidebar-container {
+                width: 0;
+                left: -60px;
+            }
+            .sidebar-container:hover {
+                width: 0;
+            }
+            body {
+                margin-left: 0;
+            }
+            .sidebar-container:hover ~ main {
+                margin-left: 0;
+            }
         }
     </style>
 </head>
-<body class="font-sans">
-
-<!-- Sidebar -->
-<div class="sidebar-container border-end p-3">
-    <!-- Logo -->
-    <a href="${pageContext.request.contextPath}/homePage_Guest.jsp" class="d-flex align-items-center mb-4 text-decoration-none">
-        <img src="${pageContext.request.contextPath}/img/logo.png" alt="F-SKILL Logo" class="me-2" style="height: 40px;" />
-        <span class="fs-5 fw-bold text-dark user-info"></span>
+<body>
+<!-- Sidebar Container -->
+<div class="sidebar-container bg-white border-r border-gray-200 shadow-xl rounded-r-lg p-3">
+    <!-- Logo Section -->
+    <a href="${pageContext.request.contextPath}/homePage_Guest.jsp" class="flex items-center mb-6 text-decoration-none sidebar-logo text-gray-800" aria-label="F-SKILL Home">
+        <img src="${pageContext.request.contextPath}/img/logo.png" alt="F-SKILL Logo" class="w-15 h-15 mr-2 rounded-md" loading="lazy"/>
+        <span class="text-xl font-extrabold whitespace-nowrap">F-SKILL</span>
     </a>
 
-    <!-- Avatar & User Info -->
-    <div class="d-flex flex-column align-items-center mb-4 pb-4 border-bottom">
-        <img src="https://placehold.co/80x80/cccccc/333333?text=Admin" alt="User Avatar" class="rounded-circle mb-2" style="width: 60px; height: 60px;">
-        <div class="text-center user-info">
-            <h6 class="mb-0 text-dark">John Doe</h6>
-            <p class="text-muted small">Administrator</p>
+    <!-- Avatar và Thông tin ng??i dùng -->
+    <div class="flex flex-col items-center mb-6 pb-4 border-b border-gray-200">
+        <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-xl font-semibold border-2 border-indigo-500 shadow-md">
+            <c:choose>
+                <c:when test="${not empty sessionScope.user.avatar}">
+                    <img src="${pageContext.request.contextPath}/${sessionScope.user.avatar}" alt="Admin Avatar" class="rounded-full w-16 h-16 object-cover" loading="lazy">
+                </c:when>
+                <c:otherwise>
+                    AD
+                </c:otherwise>
+            </c:choose>
+        </div>
+        <div class="user-info text-center mt-2">
+                <span class="block text-gray-800 font-medium">
+                    <c:choose>
+                        <c:when test="${not empty sessionScope.user.displayName}">
+                            <c:out value="${sessionScope.user.displayName}"/>
+                        </c:when>
+                        <c:otherwise>
+                            Admin User
+                        </c:otherwise>
+                    </c:choose>
+                </span>
+            <span class="block text-sm text-gray-500">Admin</span>
         </div>
     </div>
 
@@ -109,12 +147,5 @@
                </div>
     </ul>
 </div>
-
-
-
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>

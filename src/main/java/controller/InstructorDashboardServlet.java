@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
 import dao.CourseDAO;
@@ -91,12 +87,15 @@ public class InstructorDashboardServlet extends HttpServlet {
 
         int totalCourses = cdao.countCoursesByUserID(acc.getUserId());
         int totalLearners = cdao.countLearnersByUserID(acc.getUserId());
+        double totalRating = cdao.getAverageRatingByCourseID(acc.getUserId());
         List<Course> listLittle = cdao.get3CourseByUserID(acc.getUserId());
 
         request.setAttribute("listLittle", listLittle);
         request.setAttribute("totalCourses", totalCourses);
         request.setAttribute("totalLearners", totalLearners);
+        request.setAttribute("totalRating", totalRating);
         request.getRequestDispatcher("/Notification").forward(request, response);
+
     }
 
     /**

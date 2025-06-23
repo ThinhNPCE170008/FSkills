@@ -32,6 +32,10 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+
+        footer {
+            margin-top: 2%;
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col justify-end">

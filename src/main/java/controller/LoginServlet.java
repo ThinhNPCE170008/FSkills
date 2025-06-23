@@ -1,6 +1,6 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this templte
  */
 package controller;
 
@@ -102,6 +102,7 @@ public class LoginServlet extends HttpServlet {
             }
 
             session.setAttribute("user", user);
+            session.setAttribute("role", user.getRole().toString());
             RoleRedirect.redirect(user, response);
         } else {
             String token = null;
@@ -124,6 +125,7 @@ public class LoginServlet extends HttpServlet {
                     User user = dao.findByToken(token);
                     if (user != null) {
                         session.setAttribute("user", user);
+                        session.setAttribute("role", user.getRole().toString());
                         RoleRedirect.redirect(user, response);
                         return;
                     }
@@ -202,6 +204,7 @@ public class LoginServlet extends HttpServlet {
 
             if (user != null) {
                 session.setAttribute("user", user);
+                session.setAttribute("role", user.getRole().toString());
 
                 if ("on".equalsIgnoreCase(rememberMe)) {
                     try {
@@ -234,7 +237,7 @@ public class LoginServlet extends HttpServlet {
             }
         }
     }
-    
+
     /**
      * Returns a short description of the servlet.
      *

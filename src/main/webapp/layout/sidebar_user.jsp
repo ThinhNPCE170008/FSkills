@@ -1,26 +1,42 @@
+<%@page import="model.Notification"%>
+<%@page import="java.util.List"%>
+<%@page import="model.User"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%
+
+    User acc = (User) session.getAttribute("user");
+    if (acc == null) {
+        response.sendRedirect("login");
+        return;
+    }
+
+    List<Notification> listNotification = (List<Notification>) request.getAttribute("listNotification");
+%>
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Sidebar</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title></title>
 
-        <!-- Bootstrap CSS & Icons -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
-        <!-- Tailwind CSS -->
+        <!-- Tailwind CSS CDN -->
         <script src="https://cdn.tailwindcss.com"></script>
+        <!-- Font Awesome cho nhi?u lo?i bi?u t??ng hi?n ??i -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
         <style>
+            body {
+                font-family: 'Inter', sans-serif;
+            }
+
             .sidebar-container {
-                width: 60px;
-                transition: width 0.3s ease;
+                width: 100px;
+                transition: width 0.3s ease-in-out;
                 overflow-x: hidden;
-                background-color: #f8f9fa;
-                height: 100vh;
                 position: fixed;
                 top: 0;
                 left: 0;
+                height: 100vh;
                 z-index: 1000;
             }
 
@@ -29,23 +45,30 @@
             }
 
             .sidebar-container .sidebar-logo span,
-            .sidebar-container .nav-link span {
-                display: none;
+            .sidebar-container .nav-link span,
+            .sidebar-container .user-info span {
+                opacity: 0;
+                visibility: hidden;
+                white-space: nowrap;
+                transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
             }
 
             .sidebar-container:hover .sidebar-logo span,
-            .sidebar-container:hover .nav-link span {
-                display: inline;
+            .sidebar-container:hover .nav-link span,
+            .sidebar-container:hover .user-info span {
+                opacity: 1;
+                visibility: visible;
             }
 
             .sidebar-container .nav-link i {
+                min-width: 24px;
+                text-align: center;
                 margin-right: 8px;
             }
 
             body {
-                
                 margin-left: 60px;
-                transition: margin-left 0.3s ease;
+                transition: margin-left 0.3s ease-in-out;
             }
 
             .sidebar-container:hover ~ main {
@@ -53,64 +76,81 @@
             }
 
             main {
-                transition: margin-left 0.3s ease;
-                padding: 1rem;
+                transition: margin-left 0.3s ease-in-out;
+                padding: 1.5rem;
+            }
+
+            @media (max-width: 768px) {
+                .sidebar-container {
+                    width: 0;
+                    left: -60px;
+                }
+                .sidebar-container:hover {
+                    width: 0;
+                }
+                body {
+                    margin-left: 0;
+                }
+                .sidebar-container:hover ~ main {
+                    margin-left: 0;
+                }
             }
         </style>
     </head>
     <body>
 
-        <!-- Sidebar -->
-        <div class="sidebar-container border-end p-3">
+        <!-- Sidebar Container -->
+        <div class="sidebar-container bg-white border-r border-gray-200 shadow-xl rounded-r-lg p-3 sm:w-60 md:w-60 lg:w-60 xl:w-60">
 
-            <!-- Logo -->
-            <a href="${pageContext.request.contextPath}/homePage_Guest.jsp" class="d-flex align-items-center mb-4 text-decoration-none sidebar-logo">
-                <img src="${pageContext.request.contextPath}/img/logo.png" alt="F-SKILL Logo" class="me-2" style="height: 40px;" />
+            <!-- Logo Section -->
+            <a href="${pageContext.request.contextPath}/homePage_Guest.jsp" class="flex items-center mb-6 text-decoration-none sidebar-logo text-gray-800">
+                <img src="${pageContext.request.contextPath}/img/logo.png" alt="F-SKILL Logo" class="w-15 h-15 mr-2 rounded-md"/>
+                <span class="text-xl font-extrabold whitespace-nowrap"></span>
             </a>
+
             <!--Avatar-->
-            <div class="d-flex flex-column align-items-center mb-4 pb-4 border-bottom">
-                <img src="https://placehold.co/80x80/cccccc/333333?text=Learner" alt="User Avatar" class="rounded-circle mb-2" style="width: 60px; height: 60px;">
-            </div>
-
-
-            <!-- Navigation -->
-            <ul class="nav nav-pills flex-column">
-                <!-- Guest -->
-                <c:if test="${sessionScope.role == null}">
-                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/home"><i class="bi bi-house"></i> <span>Home</span></a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/AllCourses.jsp"><i class="bi bi-book"></i> <span>All Courses</span></a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/globalAnn.jsp"><i class="bi bi-megaphone"></i> <span>Announcements</span></a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/#"><i class="bi bi-cart"></i> <span>Cart</span></a></li>
-                    <div  class="d-flex flex-column mb-4 pt-5 border-top">
-                        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/login"><i class="bi bi-box-arrow-in-right"></i> <span>Sign In / Up</span></a></li>
+            <c:choose>
+                <c:when test="${not empty user.avatar}">
+                    <img src="${user.avatar}" alt="User Avatar" class="rounded-circle mb-2" style="width: 60px; height: 60px;">
+                </c:when>
+                <c:otherwise>
+                    <img src="https://placehold.co/80x80/cccccc/333333?text=User" alt="Default Avatar" class="rounded-circle mb-2" style="width: 60px; height: 60px;">
+                </c:otherwise>
+            </c:choose>
+            <ul class="flex flex-col space-y-2">
+                <c:if test="${user.role == null}">
+                    <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/home"><i class="fas fa-home"></i> <span>Home</span></a></li>
+                    <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/AllCourses.jsp"><i class="fas fa-book"></i> <span>All Courses</span></a></li>
+                    <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/globalAnn.jsp"><i class="fas fa-bullhorn"></i> <span>Announcements</span></a></li>
+                    <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/#"><i class="fas fa-shopping-cart"></i> <span>Cart</span></a></li>
+                    <div class="flex flex-col mt-6 pt-5 border-t border-gray-200">
+                        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/login"><i class="fas fa-sign-in-alt"></i> <span>Sign In / Up</span></a></li>
                     </div>
                 </c:if>
 
-                <!-- Learner -->
-                <c:if test="${sessionScope.role == 'LEARNER'}">
-                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/homePage.jsp"><i class="bi bi-house"></i> <span>Home</span></a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/AllCourses.jsp"><i class="bi bi-book"></i> <span>All Courses</span></a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="#"><i class="bi bi-backpack"></i> <span>My Courses</span></a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/globalAnn.jsp"><i class="bi bi-megaphone"></i> <span>Announcements</span></a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="#"><i class="bi bi-cart"></i> <span>Cart</span></a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="notifications.jsp"><i class="bi bi-bell"></i> <span>Notifications</span></a></li>
-                     <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/Degree"><i class="bi bi-mortarboard"></i> <span>Degree</span></a></li>
-                    <div  class="d-flex flex-column mb-4 pt-5 border-top">
-                        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/editProfile"><i class="bi bi-person"></i> <span>Profile</span></a></li>
-                        <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/logout"><i class="bi bi-box-arrow-right"></i> <span>Logout</span></a></li>
+                <c:if test="${user.role == 'LEARNER'}">
+                    <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/homePage.jsp"><i class="fas fa-home"></i> <span>Home</span></a></li>
+                    <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/AllCourses.jsp"><i class="fas fa-book"></i> <span>All Courses</span></a></li>
+                    <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="#"><i class="fas fa-graduation-cap"></i> <span>My Courses</span></a></li>
+                    <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/globalAnn.jsp"><i class="fas fa-bullhorn"></i> <span>Announcements</span></a></li>
+                    <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="#"><i class="fas fa-shopping-cart"></i> <span>Cart</span></a></li>
+                    <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="notifications.jsp"><i class="fas fa-bell"></i> <span>Notifications</span></a></li>
+                    <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/Degree"><i class="fas fa-graduation-cap"></i> <span>Degree</span></a></li>
+                    <div class="flex flex-col mt-6 pt-5 border-t border-gray-200">
+                        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/editProfile"><i class="fas fa-user-circle"></i> <span>Profile</span></a></li>
+                        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/logout"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
                     </div>
                 </c:if>
 
-                <!-- Instructor -->
-                <c:if test="${sessionScope.role == 'INSTRUCTOR'}">
-                    <li class="nav-item"><a class="nav-link text-dark" href="${pageContext.request.contextPath}/Instructor"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="manageCourses.jsp"><i class="bi bi-journal-code"></i> <span>Manage Courses</span></a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="analytics.jsp"><i class="bi bi-graph-up"></i> <span>Analytics</span></a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="feedback.jsp"><i class="bi bi-chat-left-dots"></i> <span>Feedback</span></a></li>
-                    <li class="nav-item"><a class="nav-link text-dark" href="notifications.jsp"><i class="bi bi-bell"></i> <span>Notifications</span></a></li>
-                    <div  class="d-flex flex-column mb-4 pt-5 border-top">
-                        <li class="nav-item"><a class="nav-link text-dark" href="editProfile.jsp"><i class="bi bi-person"></i> <span>Profile</span></a></li>                  
-                        <li class="nav-item"><a class="nav-link text-dark" href="logout.jsp"><i class="bi bi-box-arrow-right"></i> <span>Logout</span></a></li>
+                <c:if test="${user.role == 'INSTRUCTOR'}">
+                    <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/instructor"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                    <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/instructor/courses?action=list"><i class="fas fa-laptop-code"></i> <span>Manage Courses</span></a></li>
+                    <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="analytics.jsp"><i class="fas fa-chart-line"></i> <span>Analytics</span></a></li>
+                    <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="feedback.jsp"><i class="fas fa-comment-dots"></i> <span>Feedback</span></a></li>
+                    <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="notifications.jsp"><i class="fas fa-bell"></i> <span>Notifications</span></a></li>
+                    <div class="flex flex-col mt-6 pt-5 border-t border-gray-200">
+                        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="editProfile.jsp"><i class="fas fa-user-circle"></i> <span>Profile</span></a></li>
+                        <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/logout"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
                     </div>
                 </c:if>
             </ul>
