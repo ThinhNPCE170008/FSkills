@@ -76,7 +76,7 @@ public class ProfileServlet extends HttpServlet {
 
             if (profile != null) {
                 request.setAttribute("profile", profile);
-                request.getRequestDispatcher("/WEB-INF/views/editProfile.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/profile.jsp").forward(request, response);
             } else {
                 throw new SQLException("Profile not found.");
             }
@@ -96,7 +96,10 @@ public class ProfileServlet extends HttpServlet {
 
     private void showChangePasswordPage(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/views/changePassword.jsp").forward(request, response);
+        // Redirect to edit profile page since change password is now integrated there
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        showEditProfilePage(request, response, user);
     }
 
     @Override
@@ -180,7 +183,7 @@ public class ProfileServlet extends HttpServlet {
             if (!profile.validateEmail() || !profile.validatePhoneNumber() || !profile.validateDisplayName()) {
                 request.setAttribute("profile", profile);
                 request.setAttribute("error", "Invalid input data");
-                request.getRequestDispatcher("/WEB-INF/views/editProfile.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/profile.jsp").forward(request, response);
                 return;
             }
 
@@ -221,9 +224,20 @@ public class ProfileServlet extends HttpServlet {
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
 
+        // Validate password requirements
+        boolean isLengthValid = newPassword.length() >= 8;
+        boolean hasBothCases = newPassword.matches(".*[a-z].*") && newPassword.matches(".*[A-Z].*");
+        boolean hasSpecialChar = newPassword.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*");
+
+        if (!isLengthValid || !hasBothCases || !hasSpecialChar) {
+            request.setAttribute("err", "Create failed: Password does not meet requirements!");
+            request.getRequestDispatcher("/WEB-INF/views/profile.jsp").forward(request, response);
+            return;
+        }
+
         if (!newPassword.equals(confirmPassword)) {
-            request.setAttribute("errorMessage", "New passwords do not match.");
-            request.getRequestDispatcher("/WEB-INF/views/changePassword.jsp").forward(request, response);
+            request.setAttribute("err", "Error: Incorrect confirmpassword");
+            request.getRequestDispatcher("/WEB-INF/views/profile.jsp").forward(request, response);
             return;
         }
 
@@ -231,18 +245,32 @@ public class ProfileServlet extends HttpServlet {
         try {
             boolean isPasswordCorrect = userDAO.checkPassword(user.getUserId(), oldPassword);
             if (!isPasswordCorrect) {
-                request.setAttribute("errorMessage", "Old password is incorrect.");
-                request.getRequestDispatcher("/WEB-INF/views/changePassword.jsp").forward(request, response);
+                request.setAttribute("err", "Error: Incorrect old password");
+                showEditProfilePage(request, response, user);
                 return;
             }
 
             userDAO.updatePassword(user.getUserId(), newPassword);
-            request.setAttribute("successMessage", "Password changed successfully.");
-            request.getRequestDispatcher("/WEB-INF/views/changePassword.jsp").forward(request, response);
+
+            // Get the referer URL (previous page)
+            String referer = request.getHeader("Referer");
+            if (referer != null && !referer.isEmpty()) {
+                // Add success parameter to the URL
+                if (referer.contains("?")) {
+                    referer += "&passwordSuccess=true";
+                } else {
+                    referer += "?passwordSuccess=true";
+                }
+                response.sendRedirect(referer);
+            } else {
+                // Fallback if referer is not available
+                request.setAttribute("successMessage", "Password changed successfully.");
+                showEditProfilePage(request, response, user);
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "An error occurred: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/changePassword.jsp").forward(request, response);
+            request.setAttribute("err", "Create failed: " + e.getMessage());
+            showEditProfilePage(request, response, user);
         }
     }
 
