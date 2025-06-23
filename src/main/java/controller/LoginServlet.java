@@ -152,7 +152,7 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
         String turnstileToken = request.getParameter("cf-turnstile-response");
         if (turnstileToken == null || turnstileToken.isEmpty()) {
-            request.setAttribute("err", "<p style='color: red; text-align: center'>Captcha verification failed.</p>");
+            request.setAttribute("err", "Login failed: Captcha verification failed!!!");
             request.getRequestDispatcher("login.jsp").forward(request, response);
             return;
         }
@@ -180,14 +180,13 @@ public class LoginServlet extends HttpServlet {
 
         JsonObject json = JsonParser.parseString(responseStr.toString()).getAsJsonObject();
 
-        // Kiểm tra kết quả trả về
         boolean success = json.get("success").getAsBoolean();
         if (!success) {
-            String errorMsg = "Captcha verification failed.";
+            String errorMsg = "Captcha verification failed!!!";
             if (json.has("error-codes")) {
                 errorMsg += " Error codes: " + json.get("error-codes").toString();
             }
-            request.setAttribute("err", "<p style='color: red; text-align: center'>" + errorMsg + "</p>");
+            request.setAttribute("err", "Login failed: " + errorMsg);
             request.getRequestDispatcher("login.jsp").forward(request, response);
             return;
         }
@@ -232,7 +231,7 @@ public class LoginServlet extends HttpServlet {
 
                 RoleRedirect.redirect(user, response);
             } else {
-                request.setAttribute("err", "<p style=\"color: red; text-align: center\">The user or password are wrong</p>");
+                request.setAttribute("err", "Login failed: The user or password are wrong!!!");
                 request.getRequestDispatcher("login.jsp").forward(request, response);
             }
         }
