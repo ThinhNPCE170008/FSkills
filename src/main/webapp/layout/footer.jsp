@@ -40,8 +40,8 @@
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col justify-end">
     <!-- Footer content -->
-    <footer class="bg-white text-gray-900 rounded-t-lg shadow-lg">
-        <div class="container mx-auto px-4 pt-12 pb-6"> 
+    <footer class="bg-white text-gray-900 rounded-t-lg shadow-lg mt-0">
+        <div class="mx-auto px-4 pt-12 pb-6">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8"> 
                 <!-- About F-Skill -->
                 <div class="lg:col-span-1">

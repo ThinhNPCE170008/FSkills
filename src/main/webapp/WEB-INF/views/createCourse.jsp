@@ -75,7 +75,7 @@
 
                 <div class="mb-3">
                     <label for="courseName" class="form-label">Course Name</label>
-                    <input type="text" class="form-control" id="courseName" name="courseName" maxlength="30" required>
+                    <input type="text" class="form-control" id="courseName" name="courseName" required>
                 </div>
 
                 <div class="mb-3">
@@ -89,13 +89,13 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="originalPrice" class="form-label">Original Price (VND)</label>
-                    <input type="number" class="form-control" id="originalPrice" name="originalPrice" min="0" max="10000000" required>
+                    <label for="originalPrice" class="form-label">Original Price (Thousand VND)</label>
+                    <input type="number" class="form-control" id="originalPrice" name="originalPrice" min="0" max="10000" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="salePrice" class="form-label">Sale Price (VND)</label>
-                    <input type="number" class="form-control" id="salePrice" name="salePrice" min="0" max="10000000" required>
+                    <label for="salePrice" class="form-label">Sale Price (Thousand VND)</label>
+                    <input type="number" class="form-control" id="salePrice" name="salePrice" min="0" max="10000" required>
                 </div>
 
                 <div class="mb-3">
@@ -141,13 +141,18 @@
                     const categorySelect = document.getElementById("category_id");
                     const originalPriceInput = document.getElementById("originalPrice");
                     const salePriceInput = document.getElementById("salePrice");
+                    const summaryInput = document.getElementById("courseSummary");
+                    const highlightInput = document.getElementById("courseHighlight");
 
                     const name = nameInput.value.trim();
                     const category = categorySelect.value;
                     const originalPrice = parseFloat(originalPriceInput.value);
                     const salePrice = parseFloat(salePriceInput.value);
+                    const summary = summaryInput.value.trim();
+                    const highlight = highlightInput.value.trim();
 
                     const regexValid = /^(?!.*\d)(?!.* {2,}).+$/u;
+                    const spaceOnlyRegex = /^(?!.* {2,}).+$/u;
 
                     if (!name) {
                         showJsToast("Course Name is required.");
@@ -156,8 +161,15 @@
                         return;
                     }
 
-                    if (name.length > 30 || !regexValid.test(name)) {
-                        showJsToast("Invalid Course Name.");
+                    if (name.length > 30) {
+                        showJsToast("Course name cannot be longer than 30 characters.");
+                        nameInput.focus();
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if (!regexValid.test(name)) {
+                        showJsToast("Course name does not contain numbers or spaces.");
                         nameInput.focus();
                         e.preventDefault();
                         return;
@@ -187,6 +199,20 @@
                     if (salePrice >= originalPrice) {
                         showJsToast("Sale Price cannot be greater than or equal to the Original Price.");
                         salePriceInput.focus();
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if (summary && !spaceOnlyRegex.test(summary)) {
+                        showJsToast("Summary must not contain consecutive spaces.");
+                        summaryInput.focus();
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if (highlight && !spaceOnlyRegex.test(highlight)) {
+                        showJsToast("Highlight must not contain consecutive spaces.");
+                        highlightInput.focus();
                         e.preventDefault();
                         return;
                     }

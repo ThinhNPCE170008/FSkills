@@ -64,7 +64,31 @@
     <body>
         <jsp:include page="/layout/sidebar_user.jsp"/>
 
-        <div class="container py-5">
+        <div class="px-5 py-6">
+            <nav class="text-base text-gray-500 mb-6" aria-label="Breadcrumb">
+                <ol class="list-none p-0 inline-flex space-x-2">
+                    <li class="inline-flex items-center">
+                        <a href="${pageContext.request.contextPath}/instructor"
+                           class="text-indigo-600 hover:text-indigo-700 font-medium no-underline">Dashboard</a>
+                    </li>
+                    <li class="inline-flex items-center">
+                        <span class="mx-2 text-gray-400">/</span>
+                    </li>
+
+                    <li class="inline-flex items-center">
+                        <a href="${pageContext.request.contextPath}/instructor/courses?action=list"
+                           class="text-indigo-600 hover:text-indigo-700 font-medium no-underline">Dashboard</a>
+                    </li>
+                    <li class="inline-flex items-center">
+                        <span class="mx-2 text-gray-400">/</span>
+                    </li>
+
+                    <li class="inline-flex items-center">
+                        <span class="text-gray-800 font-semibold">Manage Module</span>
+                    </li>
+                </ol>
+            </nav>
+
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <a href="${pageContext.request.contextPath}/instructor/courses?action=list" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Back
@@ -134,7 +158,7 @@
                                             <c:otherwise>N/A</c:otherwise>
                                         </c:choose>
                                     </td>
-                                    <td class="d-flex flex-column gap-1">
+                                    <td class="d-flex gap-1">
                                         <a href="${pageContext.request.contextPath}/instructor/courses/modules/material?moduleId=${module.moduleID}&courseId=${course.courseID}"
                                            class="btn btn-sm btn-info text-white">
                                             <i class="fas fa-eye"></i>
@@ -270,6 +294,15 @@
                     const nameInput = document.getElementById("moduleName");
                     const name = nameInput.value.trim();
 
+                    const spaceOnlyRegex = /^(?!.* {2,}).+$/u;
+
+                    if (!spaceOnlyRegex.test(name)) {
+                        showJsToast("Module name must not contain consecutive spaces.");
+                        nameInput.focus();
+                        e.preventDefault();
+                        return;
+                    }
+
                     if (!name) {
                         showJsToast("Module Name is required.");
                         nameInput.focus();
@@ -297,6 +330,15 @@
                         const moduleID = form.id.replace("updateModuleForm", "");
                         const nameInput = document.getElementById("updateModuleName" + moduleID);
                         const name = nameInput.value.trim();
+
+                        const spaceOnlyRegex = /^(?!.* {2,}).+$/u;
+
+                        if (!spaceOnlyRegex.test(name)) {
+                            showJsToast("Module name must not contain consecutive spaces.");
+                            nameInput.focus();
+                            e.preventDefault();
+                            return;
+                        }
 
                         if (!name) {
                             showJsToast("Course Name is required.");

@@ -91,13 +91,21 @@
     <body class="bg-gray-50">
         <jsp:include page="/layout/sidebar_user.jsp"/>
         <!-- ======================= Main Content ======================= -->
-        <main class="container mx-auto px-4 py-8 md:py-12">
+        <main class="mx-auto px-5 py-8 md:py-12">
+            <nav class="text-base text-gray-500 mb-6" aria-label="Breadcrumb">
+                <ol class="list-none p-0 inline-flex space-x-2">
+                    <li class="inline-flex items-center">
+                        <span class="text-gray-800 font-semibold">Dashboard</span>
+                    </li>
+                </ol>
+            </nav>
+
             <section id="dashboard" class="mb-12">
                 <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Welcome Back, ${user.displayName}</h1>
                 <p class="text-gray-500 text-lg">Here's your teaching dashboard for today.</p>
             </section>
 
-            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
                 <!-- Card 1 -->
                 <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center justify-center text-center">
                     <div class="bg-indigo-100 p-4 rounded-full mb-3">
@@ -123,15 +131,6 @@
                     </div>
                     <p class="text-gray-500 text-sm">Average Rating</p>
                     <p class="text-3xl font-bold text-gray-800">${totalRating}</p>
-                </div>
-
-                <!-- Card 4 -->
-                <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center justify-center text-center">
-                    <div class="bg-red-100 p-4 rounded-full mb-3">
-                        <i class="fas fa-comments text-2xl text-red-500"></i>
-                    </div>
-                    <p class="text-gray-500 text-sm">Pending Feedback</p>
-                    <p class="text-3xl font-bold text-gray-800">Coming Soon</p>
                 </div>
             </section>
 

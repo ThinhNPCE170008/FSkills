@@ -87,7 +87,7 @@ public class InstructorDashboardServlet extends HttpServlet {
 
         int totalCourses = cdao.countCoursesByUserID(acc.getUserId());
         int totalLearners = cdao.countLearnersByUserID(acc.getUserId());
-        double totalRating = cdao.getAverageRatingByCourseID(acc.getUserId());
+        double totalRating = cdao.getAverageRatingByUserID(acc.getUserId());
 
         List<Course> listLittle = cdao.get3CourseByUserID(acc.getUserId());
 
