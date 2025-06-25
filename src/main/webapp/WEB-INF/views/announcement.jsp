@@ -12,6 +12,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trang Quản Trị F-SKILL</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -58,68 +59,8 @@
     </style>
 </head>
 <body class="flex flex-col h-screen">
-<header class="bg-white shadow-md p-4 flex items-center justify-between rounded-b-lg">
-    <div class="flex items-center space-x-2">
-        <%-- Đã sửa đường dẫn ảnh logo.png --%>
-        <img src="${pageContext.request.contextPath}/img/logo.png" alt="F-SKILL Logo" class=" w-20 h-15"/>
-        <span class="text-2xl font-bold text-gray-800"></span>
-    </div>
-
-    <div class="relative flex-grow mx-4 max-w-md">
-        <input type="text" placeholder="Tìm kiếm..."
-               class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-    </div>
-
-    <div class="flex items-center space-x-4">
-        <div class="relative cursor-pointer" id="notification-bell">
-            <i class="fas fa-bell text-gray-600 text-xl"></i>
-            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span>
-            <div id="notification-popup"
-                 class="hidden absolute right-0 mt-2 w-72 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                <div class="p-4 border-b border-gray-200 font-semibold text-gray-800">Thông báo mới</div>
-                <ul class="divide-y divide-gray-100">
-                    <li class="p-3 hover:bg-gray-50 cursor-pointer">
-                        <p class="text-sm font-medium text-gray-900">Thông báo 1: Đã có hóa đơn mới.</p>
-                        <p class="text-xs text-gray-500">2 giờ trước</p>
-                    </li>
-                    <li class="p-3 hover:bg-gray-50 cursor-pointer">
-                        <p class="text-sm font-medium text-gray-900">Thông báo 2: Cập nhật hệ thống.</p>
-                        <p class="text-xs text-gray-500">Hôm qua</p>
-                    </li>
-                    <li class="p-3 hover:bg-gray-50 cursor-pointer">
-                        <p class="text-sm font-medium text-gray-900">Thông báo 3: Lịch họp sắp tới.</p>
-                        <p class="text-xs text-gray-500">3 ngày trước</p>
-                    </li>
-                </ul>
-                <div class="p-3 text-center border-t border-gray-200">
-                    <a href="#" class="text-blue-600 text-sm hover:underline">Xem tất cả</a>
-                </div>
-            </div>
-        </div>
-        <%-- Phần user profile/avatar --%>
-        <div class="flex items-center space-x-2">
-            <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-sm font-semibold">
-                <%-- Bạn có thể hiển thị ảnh đại diện admin ở đây nếu có --%>
-                AD
-            </div>
-            <%-- Hiển thị tên Admin từ session --%>
-            <span class="font-medium text-gray-700">
-                        <c:choose>
-                            <c:when test="${not empty sessionScope.adminUser.displayName}">
-                                ${sessionScope.adminUser.displayName}
-                            </c:when>
-                            <c:otherwise>
-                                Admin User
-                            </c:otherwise>
-                        </c:choose>
-                    </span>
-        </div>
-    </div>
-</header>
-
 <div class="flex flex-grow">
-    <jsp:include page="/layout/sidebar.jsp"/>
+    <jsp:include page="/layout/sidebar_admin.jsp"/>
 
     <main class="flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
         <div class="bg-white p-6 rounded shadow-sm">

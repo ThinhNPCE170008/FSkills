@@ -117,7 +117,7 @@
                     <img src="https://placehold.co/80x80/cccccc/333333?text=User" alt="Default Avatar" class="rounded-circle mb-2" style="width: 60px; height: 60px;">
                 </c:otherwise>
             </c:choose>
-            <ul class="flex flex-col space-y-2">
+            <ul class="flex flex-col space-y-2 p-1">
                 <c:if test="${user.role == null}">
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/home"><i class="fas fa-home"></i> <span>Home</span></a></li>
                     <li><a class="nav-link flex items-center text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 p-2 rounded-md transition-colors duration-200" href="${pageContext.request.contextPath}/AllCourses.jsp"><i class="fas fa-book"></i> <span>All Courses</span></a></li>
