@@ -353,7 +353,7 @@ public class CourseDAO extends DBContext {
         return 0;
     }
 
-    public double getAverageRatingByCourseID(int userID) {
+    public double getAverageRatingByUserID(int userID) {
         double avgRating = 0.0;
         String sql = "SELECT \n" +
                 "    AVG(Rate) AS AvgRating\n" +

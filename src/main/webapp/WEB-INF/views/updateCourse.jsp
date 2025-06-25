@@ -29,7 +29,7 @@
                 <div class="mb-3">
                     <label class="form-label">Course Name</label>
                     <input type="text" name="courseName" id="updateCourseName${listCourse.courseID}"
-                           value="${listCourse.courseName}" class="form-control" maxlength="30" required>
+                           value="${listCourse.courseName}" class="form-control" required>
                 </div>
 
                 <div class="mb-3">
@@ -45,21 +45,33 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Original Price</label>
+                    <label class="form-label">Original Price (Thousand VND)</label>
                     <input type="number" name="originalPrice" id="updateOriginalPrice${listCourse.courseID}"
-                           value="${listCourse.originalPrice}" class="form-control" min="0" max="10000000" required>
+                           value="${listCourse.originalPrice}" class="form-control" min="0" max="10000" required>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Sale Price</label>
+                    <label class="form-label">Sale Price (Thousand VND)</label>
                     <input type="number" name="salePrice" id="updateSalePrice${listCourse.courseID}"
-                           value="${listCourse.salePrice}" class="form-control" min="0" max="10000000" required>
+                           value="${listCourse.salePrice}" class="form-control" min="0" max="10000" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Image URL</label>
                     <input type="url" name="courseImageLocation" value="${listCourse.courseImageLocation}"
                            class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="courseSummary" class="form-label">Summary</label>
+                    <input type="text" class="form-control" id="updateCourseSummary${listCourse.courseID}" name="courseSummary"
+                           value="${listCourse.courseSummary}" maxlength="255">
+                </div>
+
+                <div class="mb-3">
+                    <label for="courseHighlight" class="form-label">Highlight</label>
+                    <textarea class="form-control" id="updateCourseHighlight${listCourse.courseID}"
+                              name="courseHighlight" rows="4">${listCourse.courseHighlight}</textarea>
                 </div>
 
                 <div class="form-check mb-3">
@@ -88,14 +100,19 @@
                 const categoryInput = document.getElementById("updateCourseCategory" + courseID);
                 const originalPriceInput = document.getElementById("updateOriginalPrice" + courseID);
                 const salePriceInput = document.getElementById("updateSalePrice" + courseID);
+                const summaryInput = document.getElementById("updateCourseSummary" + courseID);
+                const highlightInput = document.getElementById("updateCourseHighlight" + courseID);
 
                 const regexValid = /^(?!.*\d)(?!.* {2,}).+$/u;
+                const spaceOnlyRegex = /^(?!.* {2,}).+$/u;
 
                 form.addEventListener("submit", function (e) {
                     const name = nameInput.value.trim();
                     const category = categoryInput.value;
                     const originalPrice = parseInt(originalPriceInput.value);
                     const salePrice = parseInt(salePriceInput.value);
+                    const summary = summaryInput.value.trim();
+                    const highlight = highlightInput.value.trim();
 
                     if (!name) {
                         showJsToast("Course Name is required.");
@@ -103,8 +120,16 @@
                         e.preventDefault();
                         return;
                     }
-                    if (name.length > 30 || !regexValid.test(name)) {
-                        showJsToast("Invalid Course Name.");
+
+                    if (name.length > 30) {
+                        showJsToast("Course name cannot be longer than 30 characters.");
+                        nameInput.focus();
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if (!regexValid.test(name)) {
+                        showJsToast("Course name does not contain numbers or spaces.");
                         nameInput.focus();
                         e.preventDefault();
                         return;
@@ -135,6 +160,20 @@
                     if (salePrice >= originalPrice) {
                         showJsToast("Sale Price cannot be greater than or equal to Original Price.");
                         salePriceInput.focus();
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if (summary && !spaceOnlyRegex.test(summary)) {
+                        showJsToast("Summary must not contain consecutive spaces.");
+                        summaryInput.focus();
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if (highlight && !spaceOnlyRegex.test(highlight)) {
+                        showJsToast("Highlight must not contain consecutive spaces.");
+                        highlightInput.focus();
                         e.preventDefault();
                         return;
                     }

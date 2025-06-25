@@ -71,7 +71,22 @@
     <body>
         <jsp:include page="/layout/sidebar_user.jsp"/>
 
-        <div class="container py-5">
+        <div class="px-5 py-6">
+            <nav class="text-base text-gray-500 mb-6" aria-label="Breadcrumb">
+                <ol class="list-none p-0 inline-flex space-x-2">
+                    <li class="inline-flex items-center">
+                        <a href="${pageContext.request.contextPath}/instructor"
+                           class="text-indigo-600 hover:text-indigo-700 font-medium no-underline">Dashboard</a>
+                    </li>
+                    <li class="inline-flex items-center">
+                        <span class="mx-2 text-gray-400">/</span>
+                    </li>
+                    <li class="inline-flex items-center">
+                        <span class="text-gray-800 font-semibold">Manage Course</span>
+                    </li>
+                </ol>
+            </nav>
+
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <a href="${pageContext.request.contextPath}/instructor" class="btn btn-secondary">
                     <i class="fas fa-arrow-left"></i> Back
@@ -147,13 +162,13 @@
                                                     </c:when>
                                                     <c:otherwise>
                                                         <span class="price-sale">
-                                                            <fmt:formatNumber value="${c.salePrice}" pattern="#,##0"/> VND
+                                                            <fmt:formatNumber value="${c.salePrice * 1000}" pattern="#,##0"/> VND
                                                         </span><br>
                                                     </c:otherwise>
                                                 </c:choose>
 
-                                                <span class="price-original text-decoration-line-through text-muted">
-                                                    <fmt:formatNumber value="${c.originalPrice}" pattern="#,##0"/> VND
+                                                <span class="price-original text-decoration-line-through text-muted fw-semibold fs-6">
+                                                    <fmt:formatNumber value="${c.originalPrice * 1000}" pattern="#,##0"/> VND
                                                 </span>
                                             </c:when>
 
@@ -163,7 +178,9 @@
                                                         <span class="text-success fw-bold">Free</span>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <fmt:formatNumber value="${c.originalPrice}" pattern="#,##0"/> VND
+                                                        <span class="fw-bold fs-6">
+                                                            <fmt:formatNumber value="${c.originalPrice * 1000}" pattern="#,##0"/> VND
+                                                        </span>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </c:otherwise>
