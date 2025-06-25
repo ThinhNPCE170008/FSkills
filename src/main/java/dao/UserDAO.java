@@ -91,6 +91,68 @@ public class UserDAO extends DBContext {
         }
         return list;
     }
+    
+    public List<User> getAllLearners() {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT UserID, UserName, DisplayName, Role, BanStatus, ReportAmount FROM Users WHERE Role = ? ORDER BY ReportAmount DESC";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, Role.LEARNER.ordinal()); 
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User u = new User();
+                u.setUserId(rs.getInt("UserID"));
+                u.setUserName(rs.getString("UserName"));
+                u.setDisplayName(rs.getString("DisplayName"));
+                u.setRole(Role.LEARNER); 
+                int banInt = rs.getInt("BanStatus");
+                switch (banInt) {
+                    case 0:
+                        u.setBan(Ban.NORMAL);
+                        break;
+                    case 1:
+                        u.setBan(Ban.BANNED);
+                        break;
+                }
+                u.setReports(rs.getInt("ReportAmount"));
+                list.add(u);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<User> getAllInstructors() {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT UserID, UserName, DisplayName, Role, BanStatus, ReportAmount FROM Users WHERE Role = ? ORDER BY ReportAmount DESC";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, Role.INSTRUCTOR.ordinal()); 
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User u = new User();
+                u.setUserId(rs.getInt("UserID"));
+                u.setUserName(rs.getString("UserName"));
+                u.setDisplayName(rs.getString("DisplayName"));
+                u.setRole(Role.INSTRUCTOR); 
+                int banInt = rs.getInt("BanStatus");
+                switch (banInt) {
+                    case 0:
+                        u.setBan(Ban.NORMAL);
+                        break;
+                    case 1:
+                        u.setBan(Ban.BANNED);
+                        break;
+                }
+                u.setReports(rs.getInt("ReportAmount"));
+                list.add(u);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 
     public List<User> searchUsersByName(String searchName) throws SQLException {
         List<User> users = new ArrayList<>();
@@ -115,6 +177,66 @@ public class UserDAO extends DBContext {
                             u.setRole(Role.ADMIN);
                             break;
                     }
+                    int banInt = rs.getInt("BanStatus");
+                    switch (banInt) {
+                        case 0:
+                            u.setBan(Ban.NORMAL);
+                            break;
+                        case 1:
+                            u.setBan(Ban.BANNED);
+                            break;
+                    }
+                    u.setReports(rs.getInt("ReportAmount"));
+                    users.add(u);
+                }
+            }
+        }
+        return users;
+    }
+    
+    public List<User> searchLearnersByName(String searchName) throws SQLException {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT UserID, UserName, DisplayName, Role, BanStatus, ReportAmount FROM Users WHERE Role = ? AND LOWER(UserName) LIKE LOWER(?) ORDER BY ReportAmount DESC";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, Role.LEARNER.ordinal());
+            ps.setString(2, "%" + searchName + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    User u = new User();
+                    u.setUserId(rs.getInt("UserID"));
+                    u.setUserName(rs.getString("UserName"));
+                    u.setDisplayName(rs.getString("DisplayName"));
+                    u.setRole(Role.LEARNER);
+                    int banInt = rs.getInt("BanStatus");
+                    switch (banInt) {
+                        case 0:
+                            u.setBan(Ban.NORMAL);
+                            break;
+                        case 1:
+                            u.setBan(Ban.BANNED);
+                            break;
+                    }
+                    u.setReports(rs.getInt("ReportAmount"));
+                    users.add(u);
+                }
+            }
+        }
+        return users;
+    }
+
+    public List<User> searchInstructorsByName(String searchName) throws SQLException {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT UserID, UserName, DisplayName, Role, BanStatus, ReportAmount FROM Users WHERE Role = ? AND LOWER(UserName) LIKE LOWER(?) ORDER BY ReportAmount DESC";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, Role.INSTRUCTOR.ordinal());
+            ps.setString(2, "%" + searchName + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    User u = new User();
+                    u.setUserId(rs.getInt("UserID"));
+                    u.setUserName(rs.getString("UserName"));
+                    u.setDisplayName(rs.getString("DisplayName"));
+                    u.setRole(Role.INSTRUCTOR);
                     int banInt = rs.getInt("BanStatus");
                     switch (banInt) {
                         case 0:
