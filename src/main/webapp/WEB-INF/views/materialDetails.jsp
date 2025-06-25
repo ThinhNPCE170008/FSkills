@@ -61,7 +61,7 @@
         </style>
     </head>
     <body>
-        <jsp:include page="/layout/headerInstructor.jsp"/>
+        <jsp:include page="/layout/sidebar_user.jsp"/>
 
         <div class="container py-5">
             <nav aria-label="breadcrumb">
@@ -153,6 +153,6 @@
                 </div>
             </div>
         </div>
-
+        <jsp:include page="/layout/footer.jsp"/>
     </body>
 </html>
