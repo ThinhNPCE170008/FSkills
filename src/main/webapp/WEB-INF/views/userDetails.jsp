@@ -443,7 +443,7 @@
                     </c:otherwise>
                 </c:choose>
             </div>
-            <a href="alluser" class="return-link">Return to User List</a>
+            <a href="alluser?roleFilter=${requestScope.currentListRoleFilter != null ? requestScope.currentListRoleFilter : 'Learner'}" class="return-link">Return to User List</a>
         </div>
     </div>
 </body>

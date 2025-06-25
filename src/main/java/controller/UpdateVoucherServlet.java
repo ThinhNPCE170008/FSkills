@@ -91,7 +91,7 @@ public class UpdateVoucherServlet extends HttpServlet {
                     errorMessages.put("saleAmount", "Must be >0.");
                 }
                 if (saleType != null && saleType.equals("PERCENT") && (saleAmount > 100 || saleAmount < 0)) {
-                    errorMessages.put("saleAmount", "Please input 0-100.");
+                    errorMessages.put("saleAmount", "Please input 1-100.");
                 }
             } catch (NumberFormatException e) {
                 errorMessages.put("saleAmount", "Must be an integer.");
