@@ -50,7 +50,7 @@
                 </div>
 
                 <div class="mt-3">
-                    <a href="register.jsp" class="btn btn-link login-signup-forgot-link">Don't have an account? Sign Up</a>
+                    <a href="${pageContext.request.contextPath}/signup" class="btn btn-link login-signup-forgot-link">Don't have an account? Sign Up</a>
                 </div>
             </div>
         </div>

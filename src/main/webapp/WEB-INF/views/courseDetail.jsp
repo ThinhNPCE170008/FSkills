@@ -76,7 +76,7 @@
                         <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
                     </div>
                     <a href="${pageContext.request.contextPath}/login" class="hidden sm:inline-block text-secondary hover:text-primary font-semibold transition-colors">Login</a>
-                    <a href="${pageContext.request.contextPath}/register.jsp" class="px-5 py-2.5 rounded-full font-semibold bg-primary text-white hover:bg-primary-dark transition-all duration-300 shadow-md hover:shadow-lg">
+                    <a href="${pageContext.request.contextPath}/signup.jsp" class="px-5 py-2.5 rounded-full font-semibold bg-primary text-white hover:bg-primary-dark transition-all duration-300 shadow-md hover:shadow-lg">
                         Sign Up
                     </a>
                 </div>

@@ -417,6 +417,78 @@ public class UserDAO extends DBContext {
         return null;
     }
 
+    public int insertUser(User user) {
+        String hashMD5 = hashMD5(user.getPassword());
+
+        String sql = "INSERT INTO users (UserName, DisplayName, Email, Password, Role, PhoneNumber, IsVerified, BanStatus) VALUES (?, 'Newbie', ?, ?, 0, ?, 0, 0)";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, user.getUserName());
+            ps.setString(2, user.getEmail());
+            ps.setString(3, hashMD5);
+            ps.setString(4, user.getPhone());
+
+            int result = ps.executeUpdate();
+            return result > 0 ? 1 : 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
+
+    public User getByUsername(String userName) {
+        String sql = "SELECT * FROM users WHERE UserName = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, userName);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                User user = new User();
+                user.setUserId(rs.getInt("UserID"));
+                user.setUserName(rs.getString("UserName"));
+                user.setDisplayName(rs.getNString("DisplayName"));
+                user.setEmail(rs.getString("Email"));
+                user.setPassword(rs.getString("Password"));
+                int roleInt = rs.getInt("Role");
+                switch (roleInt) {
+                    case 0:
+                        user.setRole(Role.LEARNER);
+                        break;
+                    case 1:
+                        user.setRole(Role.INSTRUCTOR);
+                        break;
+                    case 2:
+                        user.setRole(Role.ADMIN);
+                        break;
+                }
+                user.setGender(rs.getInt("Gender"));
+                user.setDateOfBirth(rs.getTimestamp("DateOfBirth"));
+                user.setUserCreateDate(rs.getTimestamp("UserCreateDate"));
+                user.setAvatar(rs.getString("Avatar"));
+                user.setInfo(rs.getNString("Info"));
+                user.setReports(rs.getInt("ReportAmount"));
+                user.setPhone(rs.getString("PhoneNumber"));
+                user.setIsVerified(rs.getBoolean("IsVerified"));
+                int banInt = rs.getInt("BanStatus");
+                switch (banInt) {
+                    case 0:
+                        user.setBan(Ban.NORMAL);
+                        break;
+                    case 1:
+                        user.setBan(Ban.BANNED);
+                        break;
+                }
+
+                return user;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
     public User getByUserID(int userID) {
         String sql = "SELECT * FROM Users WHERE UserID = ?";
 
