@@ -122,6 +122,8 @@
             </form>
         </div>
 
+        <jsp:include page="/layout/footer.jsp"/>
+
         <!-- Toast -->
         <div id="jsToast" class="toast align-items-center text-white bg-danger border-0 position-fixed bottom-0 end-0 m-3 d-none" role="alert">
             <div class="d-flex">
@@ -240,7 +242,7 @@
             });
         </script>
 
-        <jsp:include page="/layout/footer.jsp"/>
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
