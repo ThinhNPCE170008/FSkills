@@ -64,7 +64,7 @@
         </style>
     </head>
     <body>
-        <jsp:include page="/layout/headerInstructor.jsp"/>
+        <jsp:include page="/layout/sidebar_user.jsp"/>
 
         <div class="container py-2 ps-3">
             <div class="container py-2 ps-3">
@@ -94,7 +94,7 @@
 
                 <c:choose>
                     <c:when test="${empty listMaterial}">
-                        <div class="alert alert-warning text-center">No material available.</div>
+                        <div class="alert alert-warning text-center mt-6">No material available.</div>
                     </c:when>
                     <c:otherwise>
                         <div class="bg-white p-5 rounded-4 shadow-lg mx-auto mt-6" style="max-width: 1500px;" >
@@ -198,7 +198,7 @@
                 </c:choose>
             </div>
         </div>
-        <jsp:include page="/layout/footerInstructor.jsp"/>
+        <jsp:include page="/layout/footer.jsp"/>
         <!-- Delete Modal -->
         <c:forEach var="material" items="${listMaterial}">
             <div class="modal fade" id="deleteModal${material.materialId}" tabindex="-1" aria-labelledby="deleteModalLabel"
