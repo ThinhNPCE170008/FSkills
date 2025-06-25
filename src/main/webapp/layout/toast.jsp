@@ -22,7 +22,7 @@
         toastEl.classList.remove('d-none', 'bg-danger', 'bg-success', 'bg-warning', 'bg-info');
         toastEl.classList.add('bg-' + type);
 
-        const bsToast = new bootstrap.Toast(toastEl, { delay: 4000 });
+        const bsToast = new bootstrap.Toast(toastEl, { delay: 3000 });
         bsToast.show();
     }
 </script>
