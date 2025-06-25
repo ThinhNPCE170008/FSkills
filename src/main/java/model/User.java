@@ -103,6 +103,14 @@ public class User {
         this.info = info;
     }
 
+    // Using Sign Up
+    public User(String userName, String email, String password, String phone) {
+        this.userName = userName;
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+    }
+
     public int getUserId() {
         return userId;
     }
