@@ -14,6 +14,7 @@
         <title>${announcement.title}</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/style.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
         <style>
             /* CSS của bạn */
             body { font-family: Arial, sans-serif; margin: 20px; background-color: #f0f2f5; }
