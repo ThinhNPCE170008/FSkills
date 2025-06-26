@@ -30,29 +30,24 @@
             /* Global styles for Inter font and background */
             body {
                 font-family: 'Inter', sans-serif;
-                background-color: #f0f2f5; /* Adjusted to match other admin pages */
-            }
-
-            /* Adjust body margin and main content area for sidebar */
-            body {
-                margin: 0; /* Reset default body margin */
-                display: flex; /* Use flexbox for main layout */
+                background-color: #f0f2f5;
+                margin: 0;
+                display: flex;
                 min-height: 100vh;
-                background-color: #f0f2f5; /* Unified background */
             }
 
-            /* Sidebar styles from sidebar_admin.jsp's original <style> block */
+            /* Sidebar styles */
             .sidebar-container {
                 width: 100px;
                 transition: width 0.3s ease-in-out;
                 overflow-x: hidden;
-                position: fixed; /* Keep it fixed */
+                position: fixed;
                 top: 0;
                 left: 0;
                 height: 100vh;
                 z-index: 1000;
-                background-color: #ffffff; /* Example sidebar background */
-                box-shadow: 2px 0 5px rgba(0,0,0,0.1); /* Optional shadow */
+                background-color: #ffffff;
+                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
             }
 
             .sidebar-container:hover {
@@ -81,18 +76,17 @@
                 margin-right: 8px;
             }
 
-            /* Apply margin-left to the main content area */
+            /* Main content area */
             .main-content {
-                margin-left: 100px; /* Initial margin for collapsed sidebar */
-                flex-grow: 1; /* Allow main content to take remaining space */
+                margin-left: 100px;
+                flex-grow: 1;
                 transition: margin-left 0.3s ease-in-out;
-                padding: 20px; /* Consistent padding */
-                display: flex; /* Use flex to align content within main-content */
-                flex-direction: column; /* Stack items vertically */
-                align-items: center; /* Center horizontally */
+                padding: 20px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
             }
 
-            /* Adjust main content margin when sidebar expands */
             .sidebar-container:hover ~ .main-content {
                 margin-left: 250px;
             }
@@ -101,7 +95,7 @@
             @media (max-width: 768px) {
                 .sidebar-container {
                     width: 0;
-                    left: -60px; /* Hide completely */
+                    left: -60px;
                 }
                 .sidebar-container:hover {
                     width: 0;
@@ -114,131 +108,155 @@
                 }
             }
 
-            /* Voucher Details Specific Styles (Adjusted for consistency) */
+            /* Form container */
             .container {
                 background-color: #ffffff;
                 border-radius: 10px;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                padding: 25px; /* Consistent padding */
+                padding: 25px;
                 width: 100%;
-                max-width: 600px; /* Adjusted max-width */
+                max-width: 900px; /* Tăng max-width để chứa 2 cột */
                 box-sizing: border-box;
-                margin-bottom: 20px; /* Space from bottom if content below */
-                margin-top: 0; /* Reset margin-top from original */
+                margin-bottom: 20px;
             }
-            h2 {
-                color: #333;
-                text-align: center;
-                margin-bottom: 20px; /* Consistent margin */
-                border-bottom: 2px solid #007bff;
-                padding-bottom: 8px; /* Consistent padding */
-                display: flex; /* Allow content inside h2 to be flexed */
-                justify-content: center; /* Center the title, no edit button here */
+            
+            /* Header for title and button */
+            .header-container {
+                display: flex;
+                justify-content: space-between;
                 align-items: center;
+                margin-bottom: 20px;
+                padding-bottom: 8px;
+                border-bottom: 2px solid #e0e0e0; /* Border màu xám nhạt hơn */
+            }
+            
+            /* Tiêu đề */
+            .header-container h2 {
+                color: #333;
+                margin: 0;
                 font-size: 1.5em;
-            }
-            h2 span {
+                font-weight: 700; /* Đậm hơn */
                 flex-grow: 1;
-                text-align: center;
+                text-align: center; /* Tiêu đề vẫn ở giữa */
             }
 
-            .form-group {
-                margin-bottom: 15px;
-            }
-            .form-group label {
-                display: block;
-                margin-bottom: 5px;
-                font-weight: bold;
-                color: #555;
-            }
-            .form-group input[type="text"],
-            .form-group input[type="number"],
-            .form-group input[type="datetime-local"],
-            .form-group select {
-                width: 100%; /* Make input/select fill the width */
-                padding: 8px 12px; /* Consistent padding for box style */
-                border: 1px solid #e0e0e0; /* Subtle border for box style */
-                border-radius: 5px; /* Rounded corners for box style */
-                box-sizing: border-box;
-                font-size: 1em;
-                background-color: #ffffff; /* White background for input fields */
-                transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            }
-            .form-group input[type="text"]:focus,
-            .form-group input[type="number"]:focus,
-            .form-group input[type="datetime-local"]:focus,
-            .form-group select:focus {
-                border-color: #007bff;
-                box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-                outline: none;
-            }
-
-            .button-group {
-                text-align: center;
-                margin-top: 20px;
-            }
-            .save-button, .cancel-button {
-                padding: 9px 18px; /* Consistent padding */
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                font-size: 0.9em; /* Consistent font size */
-                transition: background-color 0.3s ease;
-            }
-            .save-button {
-                background-color: #28a745;
-                color: white;
-                margin-right: 10px;
-            }
-            .save-button:hover {
-                background-color: #218838;
-            }
-            .cancel-button {
-                background-color: #6c757d;
-                color: white;
-            }
-            .cancel-button:hover {
-                background-color: #5a6268;
-            }
-
-            .error-message {
-                color: red;
-                font-size: 0.85em; /* Consistent font size */
-                margin-top: 5px;
-                display: block;
-            }
-            .global-message {
-                margin-bottom: 15px; /* Consistent margin */
-                padding: 8px; /* Consistent padding */
-                border-radius: 5px;
-                font-weight: bold;
-                text-align: center;
-                font-size: 0.95em;
-            }
-            .success-message {
-                background-color: #d4edda;
-                color: #155724;
-                border: 1px solid #c3e6cb;
-            }
-            .error-global-message {
-                background-color: #f8d7da;
-                color: #721c24;
-                border: 1px solid #f5c6cb;
-            }
-
-            .return-link {
-                display: inline-block;
-                margin-top: 15px; /* Consistent margin */
-                padding: 9px 18px; /* Consistent padding */
+            /* Nút Return */
+            .return-button {
+                padding: 9px 18px;
                 background-color: #007bff;
                 color: white;
                 text-decoration: none;
                 border-radius: 5px;
                 transition: background-color 0.3s ease;
                 font-size: 0.9em;
+                white-space: nowrap;
+                order: -1; /* Đẩy nút về bên trái trong flexbox */
+                margin-right: auto; /* Đẩy nút sang trái hết mức có thể */
             }
-            .return-link:hover {
+            .return-button:hover {
                 background-color: #0056b3;
+            }
+            
+            /* Container cho các trường nhập liệu */
+            .form-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr; /* Chia thành 2 cột bằng nhau */
+                gap: 20px; /* Khoảng cách giữa các cột và hàng */
+            }
+            
+            /* Form group style (cần thiết cho box input) */
+            .form-group {
+                margin-bottom: 15px; /* Giảm margin-bottom vì đã có gap */
+            }
+            
+            .form-group label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: 600; /* Đậm hơn */
+                color: #4a5568; /* Màu xám đậm hơn */
+            }
+            
+            /* Input box style */
+            .form-group input[type="text"],
+            .form-group input[type="number"],
+            .form-group input[type="datetime-local"],
+            .form-group select {
+                width: 100%;
+                padding: 10px 15px; /* Tăng padding để trông dày dặn hơn */
+                border: 1px solid #d1d5db; /* Viền màu xám */
+                border-radius: 8px; /* Bo góc nhiều hơn */
+                box-sizing: border-box;
+                font-size: 1em;
+                background-color: #f9fafb; /* Nền xám nhạt */
+                transition: all 0.2s ease-in-out;
+                box-shadow: inset 0 1px 2px rgba(0,0,0,0.05); /* Thêm box shadow nhẹ */
+            }
+            
+            .form-group input[type="text"]:focus,
+            .form-group input[type="number"]:focus,
+            .form-group input[type="datetime-local"]:focus,
+            .form-group select:focus {
+                border-color: #4c51bf; /* Màu xanh tím khi focus */
+                background-color: #ffffff; /* Nền trắng khi focus */
+                box-shadow: 0 0 0 3px rgba(76, 81, 191, 0.2); /* Ring shadow */
+                outline: none;
+            }
+
+            /* Button group */
+            .button-group {
+                text-align: center;
+                margin-top: 20px;
+                grid-column: 1 / -1; /* Mở rộng qua 2 cột */
+            }
+
+            .save-button, .cancel-button {
+                padding: 10px 24px;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 1em;
+                font-weight: 600;
+                transition: background-color 0.3s ease, transform 0.2s ease;
+            }
+            .save-button {
+                background-color: #10b981; /* Màu xanh lá cây */
+                color: white;
+                margin-right: 10px;
+            }
+            .save-button:hover {
+                background-color: #059669;
+                transform: translateY(-2px);
+            }
+            .cancel-button {
+                background-color: #6b7280; /* Màu xám */
+                color: white;
+            }
+            .cancel-button:hover {
+                background-color: #4b5563;
+                transform: translateY(-2px);
+            }
+
+            .error-message {
+                color: #ef4444;
+                font-size: 0.85em;
+                margin-top: 5px;
+                display: block;
+            }
+            .global-message {
+                margin-bottom: 15px;
+                padding: 12px;
+                border-radius: 8px;
+                font-weight: 600;
+                text-align: center;
+                font-size: 0.95em;
+            }
+            .success-message {
+                background-color: #d1fae5;
+                color: #065f46;
+            }
+            .error-global-message {
+                background-color: #fee2e2;
+                color: #991b1b;
             }
         </style>
     </head>
@@ -248,10 +266,16 @@
 
             <div class="main-content">
                 <div class="container">
-                    <h2>
-                        <c:if test="${not empty voucher && voucher.voucherID > 0}">Edit Voucher Information</c:if>
-                        <c:if test="${empty voucher || voucher.voucherID == 0}">Add New Voucher</c:if>
-                    </h2>
+                    <%-- 1. Nút Return ở sát bên trái, tiêu đề ở giữa --%>
+                    <div class="header-container">
+                        <a href="voucherList" class="return-button">Return to Voucher List</a>
+                        <h2 class="font-bold text-xl text-gray-800">
+                            <c:if test="${not empty voucher && voucher.voucherID > 0}">Edit Voucher Information</c:if>
+                            <c:if test="${empty voucher || voucher.voucherID == 0}">Add New Voucher</c:if>
+                        </h2>
+                        <%-- Thêm một div rỗng để giữ tiêu đề ở giữa --%>
+                        <div></div>
+                    </div>
 
                     <c:if test="${not empty globalMessage}">
                         <p class="global-message <c:if test="${not empty successMessage}">success-message</c:if> <c:if test="${not empty errorMessages}">error-global-message</c:if>">
@@ -262,76 +286,87 @@
                     <form action="
                             <c:if test="${not empty voucher && voucher.voucherID > 0}">updateVoucher</c:if>
                             <c:if test="${empty voucher || voucher.voucherID == 0}">addVoucher</c:if>
-                                " method="post">
-                        <%-- Chỉ hiển thị Voucher ID nếu đang ở chế độ chỉnh sửa (voucher tồn tại và voucherID > 0) --%>
-                        <c:if test="${not empty voucher && voucher.voucherID > 0}">
-                            <div class="form-group">
-                                <label for="voucherID">Voucher ID:</label>
-                                <%-- Dùng readonly để không cho người dùng sửa ID --%>
-                                <input type="number" id="voucherID" name="voucherID"
-                                       value="${voucher.voucherID}"
-                                       readonly>
-                                <c:if test="${not empty errorMessages['voucherID']}">
-                                    <span class="error-message">${errorMessages['voucherID']}</span>
+                                  " method="post">
+                        
+                        <%-- 2. Chia 8 trường thành 2 cột --%>
+                        <div class="form-grid">
+                            <%-- Cột 1 --%>
+                            <div class="column-1">
+                                <c:if test="${not empty voucher && voucher.voucherID > 0}">
+                                    <div class="form-group">
+                                        <label for="voucherID">Voucher ID:</label>
+                                        <input type="number" id="voucherID" name="voucherID"
+                                               value="${voucher.voucherID}"
+                                               readonly>
+                                        <c:if test="${not empty errorMessages['voucherID']}">
+                                            <span class="error-message">${errorMessages['voucherID']}</span>
+                                        </c:if>
+                                    </div>
                                 </c:if>
+                                <div class="form-group">
+                                    <label for="voucherName">Voucher Name:<span style="color:red">*</span></label>
+                                    <input type="text" id="voucherName" name="voucherName"
+                                           value="${not empty param.voucherName ? param.voucherName : voucher.voucherName}" required>
+                                    <c:if test="${not empty errorMessages['voucherName']}">
+                                        <span class="error-message">${errorMessages['voucherName']}</span>
+                                    </c:if>
+                                </div>
+                                <div class="form-group">
+                                    <label for="voucherCode">Voucher Code:<span style="color:red">*</span></label>
+                                    <input type="text" id="voucherCode" name="voucherCode"
+                                           value="${not empty param.voucherCode ? param.voucherCode : voucher.voucherCode}" required>
+                                    <c:if test="${not empty errorMessages['voucherCode']}">
+                                        <span class="error-message">${errorMessages['voucherCode']}</span>
+                                    </c:if>
+                                </div>
+                                <div class="form-group">
+                                    <label for="expiredDate">Expiration Date:<span style="color:red">*</span></label>
+                                    <input type="datetime-local" id="expiredDate" name="expiredDate"
+                                           value="<c:if test="${not empty param.expiredDate}">${param.expiredDate}</c:if><c:if test="${empty param.expiredDate && not empty voucher.expiredDate}"><fmt:formatDate value="${voucher.expiredDate}" pattern="yyyy-MM-dd'T'HH:mm"/></c:if>" required>
+                                    <c:if test="${not empty errorMessages['expiredDate']}">
+                                        <span class="error-message">${errorMessages['expiredDate']}</span>
+                                    </c:if>
+                                </div>
                             </div>
-                        </c:if>
-
-                        <div class="form-group">
-                            <label for="expiredDate">Expiration Date:<span style="color:red">*</span></label>
-                            <input type="datetime-local" id="expiredDate" name="expiredDate"
-                                   value="<c:if test="${not empty param.expiredDate}">${param.expiredDate}</c:if><c:if test="${empty param.expiredDate && not empty voucher.expiredDate}"><fmt:formatDate value="${voucher.expiredDate}" pattern="yyyy-MM-dd'T'HH:mm"/></c:if>" required>
-                            <c:if test="${not empty errorMessages['expiredDate']}">
-                                <span class="error-message">${errorMessages['expiredDate']}</span>
-                            </c:if>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="saleType">Sale Type:<span style="color:red">*</span></label>
-                            <select id="saleType" name="saleType" required>
-                                <option value="">-- Select Type --</option>
-                                <option value="PERCENT" <c:if test="${(not empty param.saleType && param.saleType eq 'PERCENT') || (empty param.saleType && not empty voucher.saleType && voucher.saleType eq 'PERCENT')}">selected</c:if>>Percentage (%)</option>
-                                <option value="FIXED" <c:if test="${(not empty param.saleType && param.saleType eq 'FIXED') || (empty param.saleType && not empty voucher.saleType && voucher.saleType eq 'FIXED')}">selected</c:if>>Fixed Value</option>
-                            </select>
-                            <c:if test="${not empty errorMessages['saleType']}">
-                                <span class="error-message">${errorMessages['saleType']}</span>
-                            </c:if>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="saleAmount">Sale Amount:<span style="color:red">*</span></label>
-                            <input type="number" id="saleAmount" name="saleAmount"
-                                   value="${not empty param.saleAmount ? param.saleAmount : voucher.saleAmount}" required>
-                            <c:if test="${not empty errorMessages['saleAmount']}">
-                                <span class="error-message">${errorMessages['saleAmount']}</span>
-                            </c:if>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="minPrice">Minimum Applicable Price:<span style="color:red">*</span></label>
-                            <input type="number" id="minPrice" name="minPrice"
-                                   value="${not empty param.minPrice ? param.minPrice : voucher.minPrice}" required>
-                            <c:if test="${not empty errorMessages['minPrice']}">
-                                <span class="error-message">${errorMessages['minPrice']}</span>
-                            </c:if>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="courseID">Course ID:<span style="color:red">*</span></label>
-                            <input type="number" id="courseID" name="courseID"
-                                   value="${not empty param.courseID ? param.courseID : voucher.courseID}" required>
-                            <c:if test="${not empty errorMessages['courseID']}">
-                                <span class="error-message">${errorMessages['courseID']}</span>
-                            </c:if>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="amount">Amount:<span style="color:red">*</span></label>
-                            <input type="number" id="amount" name="amount"
-                                   value="${not empty param.amount ? param.amount : voucher.amount}" required>
-                            <c:if test="${not empty errorMessages['amount']}">
-                                <span class="error-message">${errorMessages['amount']}</span>
-                            </c:if>
+                            
+                            <%-- Cột 2 --%>
+                            <div class="column-2">
+                                <div class="form-group">
+                                    <label for="saleType">Sale Type:<span style="color:red">*</span></label>
+                                    <select id="saleType" name="saleType" required>
+                                        <option value="">-- Select Type --</option>
+                                        <option value="PERCENT" <c:if test="${(not empty param.saleType && param.saleType eq 'PERCENT') || (empty param.saleType && not empty voucher.saleType && voucher.saleType eq 'PERCENT')}">selected</c:if>>Percentage (%)</option>
+                                        <option value="FIXED" <c:if test="${(not empty param.saleType && param.saleType eq 'FIXED') || (empty param.saleType && not empty voucher.saleType && voucher.saleType eq 'FIXED')}">selected</c:if>>Fixed Value</option>
+                                    </select>
+                                    <c:if test="${not empty errorMessages['saleType']}">
+                                        <span class="error-message">${errorMessages['saleType']}</span>
+                                    </c:if>
+                                </div>
+                                <div class="form-group">
+                                    <label for="saleAmount">Sale Amount:<span style="color:red">*</span></label>
+                                    <input type="number" id="saleAmount" name="saleAmount"
+                                           value="${not empty param.saleAmount ? param.saleAmount : voucher.saleAmount}" required>
+                                    <c:if test="${not empty errorMessages['saleAmount']}">
+                                        <span class="error-message">${errorMessages['saleAmount']}</span>
+                                    </c:if>
+                                </div>
+                                <div class="form-group">
+                                    <label for="minPrice">Minimum Applicable Price:<span style="color:red">*</span></label>
+                                    <input type="number" id="minPrice" name="minPrice"
+                                           value="${not empty param.minPrice ? param.minPrice : voucher.minPrice}" required>
+                                    <c:if test="${not empty errorMessages['minPrice']}">
+                                        <span class="error-message">${errorMessages['minPrice']}</span>
+                                    </c:if>
+                                </div>
+                                <div class="form-group">
+                                    <label for="amount">Amount:<span style="color:red">*</span></label>
+                                    <input type="number" id="amount" name="amount"
+                                           value="${not empty param.amount ? param.amount : voucher.amount}" required>
+                                    <c:if test="${not empty errorMessages['amount']}">
+                                        <span class="error-message">${errorMessages['amount']}</span>
+                                    </c:if>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="button-group">
@@ -343,7 +378,6 @@
                         </div>
                     </form>
                 </div>
-                <a href="voucherList" class="return-link">Return to Voucher List</a>
             </div>
         </div>
     </body>

@@ -1,10 +1,5 @@
 package controller;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
-
 import dao.VoucherDAO;
 import model.Voucher;
 import jakarta.servlet.ServletException;
@@ -32,32 +27,34 @@ public class VoucherServlet extends HttpServlet {
         VoucherDAO voucherDAO = new VoucherDAO();
         List<Voucher> voucherList = null;
         String searchTerm = request.getParameter("searchTerm");
-        
+
+        // Lấy thông báo toàn cục nếu có
         Object globalMsgObj = request.getAttribute("globalMessage");
         String globalMessage = (globalMsgObj instanceof String) ? (String) globalMsgObj : null;
 
         try {
             if (searchTerm != null && !searchTerm.trim().isEmpty()) {
-                try {
-                    int id = Integer.parseInt(searchTerm.trim());
-                    voucherList = voucherDAO.searchVouchers(String.valueOf(id));
-                    if (voucherList.isEmpty()) {
-                        globalMessage = "Do not find any Voucher with ID: " + searchTerm;
-                    }
-                } catch (NumberFormatException e) {
-                    LOGGER.log(Level.INFO, "Search term for VoucherID is not a valid integer: " + searchTerm);
-                    voucherList = new java.util.ArrayList<>();
-                    globalMessage = "ID Voucher must be an integer.";
+                // Sửa logic: KHÔNG CẦN cố gắng parse thành số nữa.
+                // Chỉ cần gọi hàm searchVouchers với searchTerm.
+                voucherList = voucherDAO.searchVouchers(searchTerm);
+
+                if (voucherList.isEmpty()) {
+                    globalMessage = "Không tìm thấy voucher nào phù hợp với từ khóa: '" + searchTerm + "'.";
                 }
             } else {
+                // Nếu searchTerm rỗng, hiển thị tất cả voucher
                 voucherList = voucherDAO.getAllVouchers();
             }
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Database error while fetching vouchers", ex);
-            globalMessage = "Error!!!" + ex.getMessage();
+            LOGGER.log(Level.SEVERE, "Lỗi cơ sở dữ liệu khi tìm kiếm voucher", ex);
+            globalMessage = "Đã xảy ra lỗi khi lấy dữ liệu từ cơ sở dữ liệu.";
+            // Gán danh sách rỗng để tránh lỗi null pointer exception trên JSP
+            voucherList = new java.util.ArrayList<>();
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Unexpected error while fetching vouchers", ex);
-            globalMessage = "Error!!!.";
+            LOGGER.log(Level.SEVERE, "Lỗi không mong muốn khi tìm kiếm voucher", ex);
+            globalMessage = "Đã xảy ra lỗi không mong muốn.";
+            // Gán danh sách rỗng
+            voucherList = new java.util.ArrayList<>();
         }
 
         request.setAttribute("voucherList", voucherList);

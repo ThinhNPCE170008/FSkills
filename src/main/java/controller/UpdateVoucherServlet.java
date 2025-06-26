@@ -37,18 +37,18 @@ public class UpdateVoucherServlet extends HttpServlet {
         String globalMessage = "";
 
         String voucherIDStr = request.getParameter("voucherID");
+        String voucherName = request.getParameter("voucherName");
+        String voucherCode = request.getParameter("voucherCode");
         String expiredDateStr = request.getParameter("expiredDate");
         String saleType = request.getParameter("saleType");
         String saleAmountStr = request.getParameter("saleAmount");
         String minPriceStr = request.getParameter("minPrice");
-        String courseIDStr = request.getParameter("courseID");
         String amountStr = request.getParameter("amount");
 
         int voucherID = 0;
         Timestamp expiredDate = null;
         int saleAmount = 0;
         int minPrice = 0;
-        int courseID = 0;
         int amount = 0;
 
         if (voucherIDStr == null || voucherIDStr.trim().isEmpty()) {
@@ -59,6 +59,14 @@ public class UpdateVoucherServlet extends HttpServlet {
             } catch (NumberFormatException e) {
                 errorMessages.put("voucherID", "Voucher ID must be an integer.");
             }
+        }
+        
+        if (voucherName == null || voucherName.trim().isEmpty()) {
+            errorMessages.put("voucherName", "Voucher name cannot be empty.");
+        }
+        
+        if (voucherCode == null || voucherCode.trim().isEmpty()) {
+            errorMessages.put("voucherCode", "Voucher code cannot be empty.");
         }
 
         if (expiredDateStr == null || expiredDateStr.trim().isEmpty()) {
@@ -110,20 +118,7 @@ public class UpdateVoucherServlet extends HttpServlet {
                 errorMessages.put("minPrice", "Invalid minimum price (must be an integer).");
             }
         }
-
-        if (courseIDStr == null || courseIDStr.trim().isEmpty()) {
-            errorMessages.put("courseID", "Course ID cannot be empty.");
-        } else {
-            try {
-                courseID = Integer.parseInt(courseIDStr.trim());
-                if (courseID < 0) {
-                    errorMessages.put("courseID", "Course ID must be non-negative.");
-                }
-            } catch (NumberFormatException e) {
-                errorMessages.put("courseID", "Invalid Course ID (must be an integer).");
-            }
-        }
-
+       
         if (amountStr == null || amountStr.trim().isEmpty()) {
             errorMessages.put("amount", "Amount cannot be empty.");
         } else {
@@ -137,7 +132,6 @@ public class UpdateVoucherServlet extends HttpServlet {
             }
         }
 
-        // truyền lại các giá trị đã nhập
         if (!errorMessages.isEmpty()) {
             globalMessage = "Voucher update failed. Please check for errors.";
             request.setAttribute("globalMessage", globalMessage);
@@ -145,11 +139,12 @@ public class UpdateVoucherServlet extends HttpServlet {
 
             Voucher voucherForDisplay = new Voucher();
             voucherForDisplay.setVoucherID(voucherID);
+            voucherForDisplay.setVoucherName(voucherName);
+            voucherForDisplay.setVoucherCode(voucherCode);
             voucherForDisplay.setExpiredDate(expiredDate);
             voucherForDisplay.setSaleType(saleType);
             voucherForDisplay.setSaleAmount(saleAmount);
             voucherForDisplay.setMinPrice(minPrice);
-            voucherForDisplay.setCourseID(courseID);
             voucherForDisplay.setAmount(amount);
 
             request.setAttribute("voucher", voucherForDisplay);
@@ -160,11 +155,12 @@ public class UpdateVoucherServlet extends HttpServlet {
 
         Voucher updatedVoucher = new Voucher();
         updatedVoucher.setVoucherID(voucherID);
+        updatedVoucher.setVoucherName(voucherName.trim());
+        updatedVoucher.setVoucherCode(voucherCode.trim());
         updatedVoucher.setExpiredDate(expiredDate); 
         updatedVoucher.setSaleType(saleType.trim());
         updatedVoucher.setSaleAmount(saleAmount);
         updatedVoucher.setMinPrice(minPrice);
-        updatedVoucher.setCourseID(courseID);
         updatedVoucher.setAmount(amount);
 
         VoucherDAO voucherDAO = new VoucherDAO();
@@ -191,7 +187,7 @@ public class UpdateVoucherServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/views/voucherDetails.jsp").forward(request, response);
         }
     }
-
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
