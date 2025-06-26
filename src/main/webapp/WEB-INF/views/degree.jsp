@@ -34,6 +34,10 @@
                 <c:choose>
                     <c:when test="${not empty listDegree}">
                         <div class="text-center my-5">
+                            <a href="${pageContext.request.contextPath}/instructor/profile"
+                               class="btn btn-sucess btn-lg px-4 ms-2">
+                                <i class="bi bi-back"></i> Back
+                            </a>
                             <h2 class="fw-bold text-uppercase text-gradient bg-gradient mb-0 display-5">
                                 Your Degree
                             </h2>
@@ -76,7 +80,7 @@
                                                              style="height: 100%;">
                                                             <a href="#" data-bs-toggle="modal"
                                                                data-bs-target="#zoomImageModal${deg.degreeId}">
-                                                                <img src="${deg.image}" class="rounded-3 shadow"
+                                                                <img src="${pageContext.request.contextPath}/${deg.image}" class="rounded-3 shadow"
                                                                      style="max-height: 80px; object-fit: cover; cursor: zoom-in;"/>
                                                             </a>
                                                         </div>
@@ -154,7 +158,7 @@
                                 aria-label="Close"></button>
                     </div>
 
-                    <form method="POST" action="Degree" enctype="multipart/form-data">
+                    <form method="POST" action="${pageContext.request.contextPath}/instructor/profile/degree?action=create" enctype="multipart/form-data">
                         <input type="hidden" name="action" value="create">
                         <c:if test="${not empty sessionScope.user}">
                             <input type="hidden" name="userId" value="${sessionScope.user.userId}">
@@ -163,7 +167,8 @@
                             <div class="mb-3">
                                 <label for="degreeLink" class="form-label fw-bold">Link of Degree</label>
                                 <input type="text" class="form-control" id="degreeLink" name="degreeLink"
-                                       placeholder="Enter link..." required
+                                       required
+                                       placeholder="Enter link..."
                                        pattern="https?://.+"
                                        title="Please enter a valid URL starting with http:// or https://"
                                        oninvalid="this.setCustomValidity('Please enter a valid URL starting with http://')"
@@ -223,7 +228,7 @@
                                 aria-label="Close"></button>
                     </div>
 
-                    <form method="POST" action="Degree" enctype="multipart/form-data">
+                    <form method="POST" action="${pageContext.request.contextPath}/instructor/profile/degree?action=edit" enctype="multipart/form-data">
                         <input type="hidden" name="action" value="edit">
 
                         <div class="modal-body">
@@ -253,8 +258,11 @@
                                     <label class="form-label fw-bold">Current Image</label><br>
                                     <c:choose>
                                         <c:when test="${not empty deg.image}">
-                                            <img src="${deg.image}" alt="Current Image" class="img-fluid rounded"
-                                                 style="max-width: 200px; max-height: 200px; object-fit: cover;">
+                                            <a href="#" data-bs-toggle="modal"
+                                               data-bs-target="#zoomImageModal${deg.degreeId}">
+                                                <img src="${pageContext.request.contextPath}/${deg.image}" alt="Current Image" class="img-fluid rounded"
+                                                     style="max-width: 200px; max-height: 200px; object-fit: cover;">
+                                            </a>
                                         </c:when>
                                         <c:otherwise>
                                             <p>No image available</p>
@@ -313,7 +321,7 @@
                                         <a href="#"
                                            data-bs-toggle="modal"
                                            data-bs-target="#zoomImageModal${deg.degreeId}">
-                                            <img src="${deg.image}"
+                                            <img src="${pageContext.request.contextPath}/${deg.image}"
                                                  class="rounded shadow-sm"
                                                  style="max-height: 80px; object-fit: cover; cursor: zoom-in;"/>
                                         </a>
@@ -335,7 +343,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content bg-transparent border-0 d-flex justify-content-center align-items-center">
                     <div class="modal-body p-0 text-center">
-                        <img src="${deg.image}" alt="Zoomed Image" class="img-fluid rounded shadow"
+                        <img src="${pageContext.request.contextPath}/${deg.image}" alt="Zoomed Image" class="img-fluid rounded shadow"
                              style="max-height: 90vh; max-width: 90vw; object-fit: contain;">
                     </div>
                 </div>
@@ -375,7 +383,7 @@
 
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form method="POST" action="Degree">
+                    <form method="POST" action="${pageContext.request.contextPath}/instructor/profile/degree?action=delete">
                         <input type="hidden" name="action" value="delete">
 
                         <div class="modal-body">
@@ -392,6 +400,7 @@
             </div>
         </div>
     </c:forEach>
+    <jsp:include page="/layout/toast.jsp"/>
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

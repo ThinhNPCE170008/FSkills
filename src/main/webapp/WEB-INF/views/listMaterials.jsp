@@ -104,7 +104,7 @@
                                         <th>Order</th>
                                         <th>Name</th>
                                         <th>Type</th>
-                                        <th>Video</th>
+                                        <th>Materials</th>
                                         <th>Last Update</th>
                                         <th>Actions</th>
                                     </tr>
@@ -193,7 +193,6 @@
                 </c:choose>
             </div>
         </div>
-        <jsp:include page="/layout/footer.jsp"/>
         <!-- Delete Modal -->
         <c:forEach var="material" items="${listMaterial}">
             <div class="modal fade" id="deleteModal${material.materialId}" tabindex="-1" aria-labelledby="deleteModalLabel"
@@ -243,6 +242,8 @@
             </c:if>             
 
         </c:forEach>
+        <jsp:include page="/layout/footer.jsp"/>
+        <jsp:include page="/layout/toast.jsp"/>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

@@ -5,24 +5,26 @@
 package model;
 
 import java.sql.Timestamp;
+import util.ImageBase64;
 
 /**
  *
  * @author huakh
  */
 public class Announcement {
+
     private int annoucementID;
     private String title;
     private String announcementText;
     private Timestamp createDate;
     private Timestamp TakeDownDate;
-    private String announcementImage;
+    private byte[] announcementImage;
     private User userId;
 
     public Announcement() {
     }
 
-    public Announcement(int annoucementID, String title, String annoucementText, Timestamp createDate, Timestamp TakeDownDate, String announcementImage, User userId) {
+    public Announcement(int annoucementID, String title, String annoucementText, Timestamp createDate, Timestamp TakeDownDate, byte[] announcementImage, User userId) {
         this.annoucementID = annoucementID;
         this.title = title;
         this.announcementText = annoucementText;
@@ -72,11 +74,11 @@ public class Announcement {
         this.TakeDownDate = TakeDownDate;
     }
 
-    public String getAnnouncementImage() {
+    public byte[] getAnnouncementImage() {
         return announcementImage;
     }
 
-    public void setAnnouncementImage(String announcementImage) {
+    public void setAnnouncementImage(byte[] announcementImage) {
         this.announcementImage = announcementImage;
     }
 
@@ -92,6 +94,8 @@ public class Announcement {
     public String toString() {
         return "Announcement{" + "annoucementID=" + annoucementID + ", title=" + title + ", annoucementText=" + announcementText + ", createDate=" + createDate + ", TakeDownDate=" + TakeDownDate + ", announcementImage=" + announcementImage + ", userId=" + userId + '}';
     }
-    
-    
+
+    public String getImageDataURI() {
+        return ImageBase64.toDataURI(announcementImage, "image/jpeg");
+    }
 }

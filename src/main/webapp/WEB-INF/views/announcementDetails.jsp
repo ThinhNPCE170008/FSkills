@@ -51,7 +51,7 @@
         </style>
     </head>
     <body class="flex flex-col h-screen">
-      
+
         <jsp:include page="/layout/header_admin.jsp" />
 
         <div class="flex flex-grow">
@@ -78,14 +78,17 @@
 
                             <div class="mt-4">
                                 <c:choose>
-                                    <c:when test="${dataAnn.announcementImage eq 'No Image'}">
+                                    <c:when test="${empty dataAnn.imageDataURI}">
                                         <div class="alert alert-warning text-center">No Image</div>
                                     </c:when>
                                     <c:otherwise>
-                                        <img src="${pageContext.request.contextPath}/${dataAnn.announcementImage}" alt="Image" style="max-width: 100%; max-height: 300px;" class="rounded shadow-sm">
+                                        <img src="${dataAnn.imageDataURI}" alt="Image"
+                                             style="max-width: 100%; max-height: 300px;"
+                                             class="rounded shadow-sm">
                                     </c:otherwise>
                                 </c:choose>
                             </div>
+
                         </c:when>
 
                         <c:otherwise>

@@ -4,10 +4,13 @@
  */
 package dao;
 
+import java.io.InputStream;
+import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import model.Announcement;
@@ -34,7 +37,7 @@ public class AnnouncementDAO extends DBContext {
                 String announcementText = rs.getString("AnnouncementText");
                 Timestamp createAt = rs.getTimestamp("CreateAt");
                 Timestamp takeDownDate = rs.getTimestamp("TakeDownDate");
-                String announcementImage = rs.getString("AnnouncementImage");
+                byte[] announcementImage = rs.getBytes("AnnouncementImage");
                 int userId = rs.getInt("UserID");
                 String userName = rs.getString("UserName");
                 String displayName = rs.getString("DisplayName");
@@ -49,7 +52,7 @@ public class AnnouncementDAO extends DBContext {
     }
 
     public int insert(String Title, String AnnouncementText, String TakeDownDate,
-            String AnnouncementImage, int UserID) {
+            InputStream AnnouncementImage, int UserID) {
         String sql = "INSERT INTO Announcement (Title, AnnouncementText,CreateAt,TakeDownDate,AnnouncementImage,UserID) VALUES (?,?,GETDATE(),?,?,?);";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -57,7 +60,11 @@ public class AnnouncementDAO extends DBContext {
             ps.setString(2, AnnouncementText);
             Timestamp takeDownTimestamp = Timestamp.valueOf(TakeDownDate.replace("T", " ") + ":00");
             ps.setTimestamp(3, takeDownTimestamp);
-            ps.setString(4, AnnouncementImage);
+            if (AnnouncementImage != null) {
+                ps.setBinaryStream(4, AnnouncementImage, AnnouncementImage.available());
+            } else {
+                ps.setNull(4, Types.VARBINARY);
+            }
             ps.setInt(5, UserID);
             int row = ps.executeUpdate();
             if (row > 0) {
@@ -70,6 +77,8 @@ public class AnnouncementDAO extends DBContext {
             return 0;
         }
     }
+
+   
 
     public Announcement getAnnouncementById(int id) {
         Announcement ann = null;
@@ -85,7 +94,7 @@ public class AnnouncementDAO extends DBContext {
                 String announcementText = rs.getString("AnnouncementText");
                 Timestamp createAt = rs.getTimestamp("CreateAt");
                 Timestamp takeDownDate = rs.getTimestamp("TakeDownDate");
-                String announcementImage = rs.getString("AnnouncementImage");
+                byte[] announcementImage = rs.getBytes("AnnouncementImage");
                 int userId = rs.getInt("UserID");
                 String userName = rs.getString("UserName");
                 String displayName = rs.getString("DisplayName");
@@ -99,27 +108,36 @@ public class AnnouncementDAO extends DBContext {
     }
 
     public boolean update(String title, String announcementText, String takeDownDate,
-            String announcementImage, String annoucementID) {
-        String sql = "UPDATE Announcement SET Title = ?, AnnouncementText = ?, CreateAt = GETDATE(), TakeDownDate = ?, AnnouncementImage = ?\n"
-                + "WHERE AnnoucementID = ?";
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
+            InputStream announcementImage, String annoucementID, boolean updateImage) {
+        String sql;
+        if (updateImage) {
+            sql = "UPDATE Announcement SET Title = ?, AnnouncementText = ?, CreateAt = GETDATE(), TakeDownDate = ?, AnnouncementImage = ? WHERE AnnoucementID = ?";
+        } else {
+            sql = "UPDATE Announcement SET Title = ?, AnnouncementText = ?, CreateAt = GETDATE(), TakeDownDate = ? WHERE AnnoucementID = ?";
+        }
+
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, title);
             ps.setString(2, announcementText);
-            ps.setString(3, takeDownDate);
-            ps.setString(4, announcementImage);
-            ps.setString(5, annoucementID);
-            int num = ps.executeUpdate();
-            if (num > 0) {
-                return true;
+            if (updateImage) {
+                ps.setString(3, takeDownDate);
+                if (announcementImage != null) {
+                    ps.setBlob(4, announcementImage);
+                } else {
+                    ps.setNull(4, Types.BLOB);
+                }
+                ps.setString(5, annoucementID);
             } else {
-                return false;
+                ps.setString(3, takeDownDate);
+                ps.setString(4, annoucementID);
             }
+            return ps.executeUpdate() > 0;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("Update failed: " + e.getMessage());
+            return false;
         }
-        return false;
     }
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------
     public List<Announcement> userAnnDetail(int Id) throws SQLException {
         List<Announcement> list = new ArrayList<>();
@@ -133,7 +151,7 @@ public class AnnouncementDAO extends DBContext {
                 a.setAnnouncementText(rs.getString("AnnouncementText"));
                 a.setCreateDate(rs.getTimestamp("CreateAt"));
                 a.setTakeDownDate(rs.getTimestamp("TakeDownDate"));
-                a.setAnnouncementImage(rs.getString("AnnouncementImage"));
+                a.setAnnouncementImage(rs.getBytes("AnnouncementImage"));
                 list.add(a);
             }
         } catch (Exception e) {
@@ -141,7 +159,7 @@ public class AnnouncementDAO extends DBContext {
         }
         return list;
     }
-    
+
     public List<Announcement> userAnn(int Id) throws SQLException {
         List<Announcement> list = new ArrayList<>();
         String sql = "Select title, CreateAt from announcement";
@@ -159,14 +177,14 @@ public class AnnouncementDAO extends DBContext {
         }
         return list;
     }
-    
+
     public List<Announcement> searchAnnouncements(String keyword) {
         List<Announcement> list = new ArrayList<>();
         String sql = "SELECT A.AnnoucementID, A.Title, A.AnnouncementText, A.CreateAt, "
-                    + "A.TakeDownDate, A.AnnouncementImage, U.UserID, U.UserName, U.DisplayName "
-                    + "FROM Announcement A JOIN Users U ON A.UserID = U.UserID "
-                    + "WHERE A.Title LIKE ? OR A.AnnouncementText LIKE ? "
-                    + "ORDER BY A.CreateAt DESC;";
+                + "A.TakeDownDate, A.AnnouncementImage, U.UserID, U.UserName, U.DisplayName "
+                + "FROM Announcement A JOIN Users U ON A.UserID = U.UserID "
+                + "WHERE A.Title LIKE ? OR A.AnnouncementText LIKE ? "
+                + "ORDER BY A.CreateAt DESC;";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             // Thêm '%' vào đầu và cuối keyword để tìm kiếm chuỗi con
@@ -179,7 +197,7 @@ public class AnnouncementDAO extends DBContext {
                 String announcementText = rs.getString("AnnouncementText");
                 Timestamp createAt = rs.getTimestamp("CreateAt");
                 Timestamp takeDownDate = rs.getTimestamp("TakeDownDate");
-                String announcementImage = rs.getString("AnnouncementImage");
+                byte[] announcementImage = rs.getBytes("AnnouncementImage");
                 int userId = rs.getInt("UserID");
                 String userName = rs.getString("UserName");
                 String displayName = rs.getString("DisplayName");
@@ -193,6 +211,7 @@ public class AnnouncementDAO extends DBContext {
         return list;
     }
 //-----------------------------------------------------------------------------------------------------------------------------------------------------
+
     public int delete(int id) {
         String sql = "DELETE FROM Announcement WHERE AnnoucementID = ?";
         try {

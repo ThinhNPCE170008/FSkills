@@ -146,9 +146,15 @@ public class InstructorMaterialServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String course = request.getParameter("courseId");
+        String module = request.getParameter("moduleId");
+        String material = request.getParameter("materialId");
         CourseDAO cdao = new CourseDAO();
         ModuleDAO mdao = new ModuleDAO();
         MaterialDAO madao = new MaterialDAO();
+        int courseId = -1;
+        int moduleId = -1;
+        int materialId = -1;
         if (request.getMethod().equalsIgnoreCase("POST")) {
             String action = request.getParameter("action");
 
@@ -156,10 +162,89 @@ public class InstructorMaterialServlet extends HttpServlet {
                 String courseIdStr = request.getParameter("courseId");
                 String moduleIdStr = request.getParameter("moduleId");
                 String materialName = request.getParameter("materialName");
+
+                if (materialName.trim() == null || materialName.trim().isEmpty() || materialName.matches(".*\\s{2,}.*")) {
+                    moduleId = Integer.parseInt(module);
+                    Module mo = mdao.getModuleByID(moduleId);
+                    request.setAttribute("module", mo);
+                    request.setAttribute("err", "Material name must not contain consecutive spaces!");
+                    request.getRequestDispatcher("/WEB-INF/views/createMaterials.jsp").forward(request, response);
+                    return;
+                }
+
+                if (materialName.length() > 255) {
+                    moduleId = Integer.parseInt(module);
+                    Module mo = mdao.getModuleByID(moduleId);
+                    request.setAttribute("module", mo);
+                    request.setAttribute("err", "Material name cannot exceed 255 letters!");
+                    request.getRequestDispatcher("/WEB-INF/views/createMaterials.jsp").forward(request, response);
+                    return;
+                }
                 String type = request.getParameter("type");
                 String materialOrderStr = request.getParameter("materialOrder");
-                String videoTimeStr = request.getParameter("videoTime"); // "hh:mm:ss"
+                if (materialOrderStr == null || materialOrderStr.trim().isEmpty()) {
+                    moduleId = Integer.parseInt(module);
+                    Module mo = mdao.getModuleByID(moduleId);
+                    request.setAttribute("module", mo);
+                    request.setAttribute("err", "Material order must not be empty.");
+                    request.getRequestDispatcher("/WEB-INF/views/createMaterials.jsp").forward(request, response);
+                    return;
+                }
+
+                int materialOrder;
+                try {
+                    materialOrder = Integer.parseInt(materialOrderStr.trim());
+
+                    // Tùy chọn: kiểm tra số âm
+                    if (materialOrder < 0) {
+                        moduleId = Integer.parseInt(module);
+                        Module mo = mdao.getModuleByID(moduleId);
+                        request.setAttribute("module", mo);
+                        request.setAttribute("err", "Material order must be a non-negative number.");
+                        request.getRequestDispatcher("/WEB-INF/views/createMaterials.jsp").forward(request, response);
+                        return;
+                    }
+
+                } catch (NumberFormatException e) {
+                    moduleId = Integer.parseInt(module);
+                    Module mo = mdao.getModuleByID(moduleId);
+                    request.setAttribute("module", mo);
+                    request.setAttribute("err", "Material order must be a valid integer.");
+                    request.getRequestDispatcher("/WEB-INF/views/createMaterials.jsp").forward(request, response);
+                    return;
+                }
+
+                String videoTimeStr = request.getParameter("videoTime");
+
+                if (videoTimeStr == null || videoTimeStr.trim().isEmpty()) {
+                    moduleId = Integer.parseInt(module);
+                    Module mo = mdao.getModuleByID(moduleId);
+                    request.setAttribute("module", mo);
+                    request.setAttribute("err", "Video time cannot empty!");
+                    request.getRequestDispatcher("/WEB-INF/views/createMaterials.jsp").forward(request, response);
+                    return;
+                }
+
+                // Định dạng: hh:mm:ss hoặc mm:ss
+                String timePattern = "^((\\d{1,2}):)?([0-5]?\\d):([0-5]\\d)$";
+                if (!videoTimeStr.matches(timePattern)) {
+                    moduleId = Integer.parseInt(module);
+                    Module mo = mdao.getModuleByID(moduleId);
+                    request.setAttribute("module", mo);
+                    request.setAttribute("err", "Video time must be in format hh:mm:ss or mm:ss (e.g., 01:30 or 00:05:30).");
+                    request.getRequestDispatcher("/WEB-INF/views/createMaterials.jsp").forward(request, response);
+                    return;
+                }
+
                 String materialDescription = request.getParameter("materialDescription");
+                if (materialDescription == null || materialDescription.trim().isEmpty() || materialDescription.matches(".*\\s{2,}.*")) {
+                    moduleId = Integer.parseInt(module);
+                    Module mo = mdao.getModuleByID(moduleId);
+                    request.setAttribute("module", mo);
+                    request.setAttribute("err", "Material description must not be empty.");
+                    request.getRequestDispatcher("/WEB-INF/views/createMaterials.jsp").forward(request, response);
+                    return;
+                }
                 String materialLocation = "";
                 if ("video".equals(type)) {
                     // Nhận file
@@ -200,28 +285,42 @@ public class InstructorMaterialServlet extends HttpServlet {
                 }
 
                 try {
-                    int moduleId = Integer.parseInt(moduleIdStr);
-                    int courseId = Integer.parseInt(courseIdStr);
-                    int materialOrder = Integer.parseInt(materialOrderStr);
+                    moduleId = Integer.parseInt(moduleIdStr);
+                    courseId = Integer.parseInt(courseIdStr);
 
                     MaterialDAO dao = new MaterialDAO();
                     ModuleDAO moddao = new ModuleDAO();
                     CourseDAO coudao = new CourseDAO();
                     int res = dao.insertMaterial(moduleId, materialName, type, materialOrder,
                             materialLocation, videoTimeStr, materialDescription);
-                    
+
                     int rowmod = moddao.moduleUpdateTime(moduleId);
                     int rowcou = coudao.courseUpdateTime(courseId);
                     if (res == 1) {
-                        response.sendRedirect("material?moduleId=" + moduleId + "&courseId=" + courseId);
+                        courseId = Integer.parseInt(course);
+                        moduleId = Integer.parseInt(module);
+                        Module m = mdao.getModuleByID(moduleId);
+                        List<Material> listMaterial = madao.getAllMaterial(courseId, moduleId);
+                        request.setAttribute("module", m);
+                        request.setAttribute("listMaterial", listMaterial);
+                        request.setAttribute("success", "Material created successfully!");
+                        request.getRequestDispatcher("/WEB-INF/views/listMaterials.jsp").forward(request, response);
+
                     } else {
-                        request.setAttribute("err", "<p>Create failed</p>");
-                        request.getRequestDispatcher("error234.jsp").forward(request, response);
+                        moduleId = Integer.parseInt(module);
+                        Module mo = mdao.getModuleByID(moduleId);
+                        request.setAttribute("module", mo);
+                        request.setAttribute("err", "Failed to create material!!");
+                        request.getRequestDispatcher("/WEB-INF/views/createMaterials.jsp").forward(request, response);
+
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    request.setAttribute("err", "<p>Create failed</p>");
-                    request.getRequestDispatcher("error123.jsp").forward(request, response);
+                    moduleId = Integer.parseInt(module);
+                    Module mo = mdao.getModuleByID(moduleId);
+                    request.setAttribute("module", mo);
+                    request.setAttribute("err", "Error failed to create material!!");
+                    request.getRequestDispatcher("/WEB-INF/views/createMaterials.jsp").forward(request, response);
+
                 }
             } else if (action.equalsIgnoreCase("delete")) {
                 String idRaw = request.getParameter("id");
@@ -229,27 +328,148 @@ public class InstructorMaterialServlet extends HttpServlet {
                 String moduleIdStr = request.getParameter("moduleId");
                 int id = 0;
                 try {
-                    int moduleId = Integer.parseInt(moduleIdStr);
-                    int courseId = Integer.parseInt(courseIdStr);
+                    moduleId = Integer.parseInt(moduleIdStr);
+                    courseId = Integer.parseInt(courseIdStr);
                     id = Integer.parseInt(idRaw);
                     if (madao.delete(id) == 1) {
-                        response.sendRedirect("material?moduleId=" + moduleId + "&courseId=" + courseId);
+                        courseId = Integer.parseInt(course);
+                        moduleId = Integer.parseInt(module);
+                        Module m = mdao.getModuleByID(moduleId);
+                        List<Material> listMaterial = madao.getAllMaterial(courseId, moduleId);
+                        request.setAttribute("module", m);
+                        request.setAttribute("listMaterial", listMaterial);
+                        request.setAttribute("success", "Material deleted successfully!");
+                        request.getRequestDispatcher("/WEB-INF/views/listMaterials.jsp").forward(request, response);
                     } else {
-                        response.sendRedirect("failDelete.jsp");
+                        courseId = Integer.parseInt(course);
+                        moduleId = Integer.parseInt(module);
+                        Module m = mdao.getModuleByID(moduleId);
+                        List<Material> listMaterial = madao.getAllMaterial(courseId, moduleId);
+                        request.setAttribute("module", m);
+                        request.setAttribute("listMaterial", listMaterial);
+                        request.setAttribute("success", "Failed to delete material!");
+                        request.getRequestDispatcher("/WEB-INF/views/listMaterials.jsp").forward(request, response);
                     }
                 } catch (Exception e) {
-                    PrintWriter out = response.getWriter();
-                    out.print(e.getMessage());
+                    courseId = Integer.parseInt(course);
+                    moduleId = Integer.parseInt(module);
+                    Module m = mdao.getModuleByID(moduleId);
+                    List<Material> listMaterial = madao.getAllMaterial(courseId, moduleId);
+                    request.setAttribute("module", m);
+                    request.setAttribute("listMaterial", listMaterial);
+                    request.setAttribute("success", "Error failed to delete material!");
+                    request.getRequestDispatcher("/WEB-INF/views/listMaterials.jsp").forward(request, response);
                 }
             } else if (action.equalsIgnoreCase("update")) {
                 String courseIdStr = request.getParameter("courseId");
                 String moduleIdStr = request.getParameter("moduleId");
                 String materialIdStr = request.getParameter("materialId");
                 String materialName = request.getParameter("materialName");
+                if (materialName.trim() == null || materialName.trim().isEmpty()|| materialName.matches(".*\\s{2,}.*")) {
+                    moduleId = Integer.parseInt(module);
+                    materialId = Integer.parseInt(material);
+                    Material ma = madao.getMaterialById(materialId);
+                    Module mo = mdao.getModuleByID(moduleId);
+                    request.setAttribute("material", ma);
+                    request.setAttribute("module", mo);
+                    request.setAttribute("err", "Material name must not contain consecutive spaces!");
+                    request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
+                    return;
+                }
+
+                if (materialName.length() > 255) {
+                    moduleId = Integer.parseInt(module);
+                    materialId = Integer.parseInt(material);
+                    Material ma = madao.getMaterialById(materialId);
+                    Module mo = mdao.getModuleByID(moduleId);
+                    request.setAttribute("material", ma);
+                    request.setAttribute("module", mo);
+                    request.setAttribute("err", "Material name cannot exceed 255 letters!");
+                    request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
+                    return;
+                }
+
                 String type = request.getParameter("type");
+
                 String materialOrderStr = request.getParameter("materialOrder");
+                if (materialOrderStr == null || materialOrderStr.trim().isEmpty()) {
+                    moduleId = Integer.parseInt(module);
+                    materialId = Integer.parseInt(material);
+                    Material ma = madao.getMaterialById(materialId);
+                    Module mo = mdao.getModuleByID(moduleId);
+                    request.setAttribute("material", ma);
+                    request.setAttribute("module", mo);
+                    request.setAttribute("err", "Material order must not be empty.");
+                    request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
+                    return;
+                }
+                int materialOrder;
+                try {
+                    materialOrder = Integer.parseInt(materialOrderStr.trim());
+
+                    // Tùy chọn: kiểm tra số âm
+                    if (materialOrder < 0) {
+                        moduleId = Integer.parseInt(module);
+                        materialId = Integer.parseInt(material);
+                        Material ma = madao.getMaterialById(materialId);
+                        Module mo = mdao.getModuleByID(moduleId);
+                        request.setAttribute("material", ma);
+                        request.setAttribute("module", mo);
+                        request.setAttribute("err", "Material order must be a non-negative number.");
+                        request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    moduleId = Integer.parseInt(module);
+                    materialId = Integer.parseInt(material);
+                    Material ma = madao.getMaterialById(materialId);
+                    Module mo = mdao.getModuleByID(moduleId);
+                    request.setAttribute("material", ma);
+                    request.setAttribute("module", mo);
+                    request.setAttribute("err", "Material order must be a valid integer.");
+                    request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
+                    return;
+                }
+
                 String videoTime = request.getParameter("videoTime");
+                if ("00:00:00".equals(videoTime) || videoTime == null || videoTime.trim().isEmpty()) {
+                    moduleId = Integer.parseInt(module);
+                    materialId = Integer.parseInt(material);
+                    Material ma = madao.getMaterialById(materialId);
+                    Module mo = mdao.getModuleByID(moduleId);
+                    request.setAttribute("material", ma);
+                    request.setAttribute("module", mo);
+                    request.setAttribute("err", "Video time cannot empty!");
+                    request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
+                    return;
+                }
+                // Định dạng: hh:mm:ss hoặc mm:ss
+                String timePattern = "^((\\d{1,2}):)?([0-5]?\\d):([0-5]\\d)$";
+                if (!videoTime.matches(timePattern)) {
+                    moduleId = Integer.parseInt(module);
+                    materialId = Integer.parseInt(material);
+                    Material ma = madao.getMaterialById(materialId);
+                    Module mo = mdao.getModuleByID(moduleId);
+                    request.setAttribute("material", ma);
+                    request.setAttribute("module", mo);
+                    request.setAttribute("err", "Video time must be in format hh:mm:ss or mm:ss (e.g., 01:30 or 00:05:30).");
+                    request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
+                    return;
+                }
+
                 String materialDescription = request.getParameter("materialDescription");
+                if (materialDescription == null || materialDescription.trim().isEmpty() || materialDescription.matches(".*\\s{2,}.*")) {
+                    moduleId = Integer.parseInt(module);
+                    materialId = Integer.parseInt(material);
+                    Material ma = madao.getMaterialById(materialId);
+                    Module mo = mdao.getModuleByID(moduleId);
+                    request.setAttribute("material", ma);
+                    request.setAttribute("module", mo);
+                    request.setAttribute("err", "Material description must not be empty!");
+                    request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
+                    return;
+                }
+
                 String materialLocation = ""; // sẽ quyết định tùy type
 
                 if ("video".equals(type)) {
@@ -285,10 +505,9 @@ public class InstructorMaterialServlet extends HttpServlet {
                 }
 
                 try {
-                    int moduleId = Integer.parseInt(moduleIdStr);
-                    int courseId = Integer.parseInt(courseIdStr);
-                    int materialId = Integer.parseInt(materialIdStr);
-                    int materialOrder = Integer.parseInt(materialOrderStr);
+                    moduleId = Integer.parseInt(moduleIdStr);
+                    courseId = Integer.parseInt(courseIdStr);
+                    materialId = Integer.parseInt(materialIdStr);
                     MaterialDAO dao = new MaterialDAO();
                     ModuleDAO moddao = new ModuleDAO();
                     CourseDAO coudao = new CourseDAO();
@@ -297,15 +516,34 @@ public class InstructorMaterialServlet extends HttpServlet {
                     int rowmod = moddao.moduleUpdateTime(moduleId);
                     int rowcou = coudao.courseUpdateTime(courseId);
                     if (res == true) {
-                        response.sendRedirect("material?moduleId=" + moduleId + "&courseId=" + courseId);
+                        courseId = Integer.parseInt(course);
+                        moduleId = Integer.parseInt(module);
+                        Module m = mdao.getModuleByID(moduleId);
+                        List<Material> listMaterial = madao.getAllMaterial(courseId, moduleId);
+                        request.setAttribute("module", m);
+                        request.setAttribute("listMaterial", listMaterial);
+                        request.setAttribute("success", "Material updated successfully!");
+                        request.getRequestDispatcher("/WEB-INF/views/listMaterials.jsp").forward(request, response);
                     } else {
-                        request.setAttribute("err", "<p>Create failed</p>");
-                        request.getRequestDispatcher("error234.jsp").forward(request, response);
+                        moduleId = Integer.parseInt(module);
+                        materialId = Integer.parseInt(material);
+                        Material ma = madao.getMaterialById(materialId);
+                        Module mo = mdao.getModuleByID(moduleId);
+                        request.setAttribute("material", ma);
+                        request.setAttribute("module", mo);
+                        request.setAttribute("err", "Failed to update material!");
+                        request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    request.setAttribute("err", "<p>Create failed</p>");
-                    request.getRequestDispatcher("error123.jsp").forward(request, response);
+                    moduleId = Integer.parseInt(module);
+                    materialId = Integer.parseInt(material);
+                    Material ma = madao.getMaterialById(materialId);
+                    Module mo = mdao.getModuleByID(moduleId);
+                    request.setAttribute("material", ma);
+                    request.setAttribute("module", mo);
+                    request.setAttribute("err", "Error failed to update material!");
+                    request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
+
                 }
             }
         }
