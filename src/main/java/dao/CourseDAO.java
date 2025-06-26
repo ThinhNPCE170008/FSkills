@@ -1,9 +1,11 @@
 package dao;
 
+import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +79,7 @@ public class CourseDAO extends DBContext {
                 course.setSalePrice(rs.getInt("SalePrice"));
                 course.setOriginalPrice(rs.getInt("OriginalPrice"));
                 course.setIsSale(rs.getInt("IsSale"));
-                course.setCourseImageLocation(rs.getString("CourseImageLocation"));
+                course.setCourseImageLocation(rs.getBytes("CourseImageLocation"));
                 course.setCourseSummary(rs.getNString("CourseSummary"));
                 course.setCourseHighlight(rs.getNString("CourseHighlight"));
 
@@ -92,25 +94,25 @@ public class CourseDAO extends DBContext {
     public List<Course> get3CourseByUserID(int userID) {
         List<Course> list = new ArrayList<>();
 
-        String sql = "SELECT TOP 3\n" +
-                "    u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber,\n" +
-                "    c.*, \n" +
-                "    cat.category_id, cat.category_name,\n" +
-                "    COUNT(DISTINCT e.UserID) AS TotalEnrolled,\n" +
-                "    AVG(f.Rate) AS AvgRate\n" +
-                "FROM Courses c\n" +
-                "JOIN Users u ON c.UserID = u.UserID\n" +
-                "JOIN Category cat ON c.category_id = cat.category_id\n" +
-                "LEFT JOIN Enroll e ON c.CourseID = e.CourseID\n" +
-                "LEFT JOIN Feedbacks f ON c.CourseID = f.CourseID\n" +
-                "WHERE c.UserID = ? AND c.Status = 0\n" +
-                "GROUP BY \n" +
-                "    u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber,\n" +
-                "    c.CourseID, c.CourseName, c.OriginalPrice, c.SalePrice, c.IsSale, \n" +
-                "    c.CourseImageLocation, c.PublicDate, c.CourseLastUpdate, c.Status, c.ApproveStatus, c.UserID, c.category_id,\n" +
-                "    c.CourseSummary, c.CourseHighlight,\n" +
-                "    cat.category_id, cat.category_name\n" +
-                "ORDER BY AvgRate DESC;";
+        String sql = "SELECT TOP 3\n"
+                + "    u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber,\n"
+                + "    c.*, \n"
+                + "    cat.category_id, cat.category_name,\n"
+                + "    COUNT(DISTINCT e.UserID) AS TotalEnrolled,\n"
+                + "    AVG(f.Rate) AS AvgRate\n"
+                + "FROM Courses c\n"
+                + "JOIN Users u ON c.UserID = u.UserID\n"
+                + "JOIN Category cat ON c.category_id = cat.category_id\n"
+                + "LEFT JOIN Enroll e ON c.CourseID = e.CourseID\n"
+                + "LEFT JOIN Feedbacks f ON c.CourseID = f.CourseID\n"
+                + "WHERE c.UserID = ? AND c.Status = 0\n"
+                + "GROUP BY \n"
+                + "    u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber,\n"
+                + "    c.CourseID, c.CourseName, c.OriginalPrice, c.SalePrice, c.IsSale, \n"
+                + "    c.CourseImageLocation, c.PublicDate, c.CourseLastUpdate, c.Status, c.ApproveStatus, c.UserID, c.category_id,\n"
+                + "    c.CourseSummary, c.CourseHighlight,\n"
+                + "    cat.category_id, cat.category_name\n"
+                + "ORDER BY AvgRate DESC;";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -155,7 +157,7 @@ public class CourseDAO extends DBContext {
                 course.setSalePrice(rs.getInt("SalePrice"));
                 course.setOriginalPrice(rs.getInt("OriginalPrice"));
                 course.setIsSale(rs.getInt("IsSale"));
-                course.setCourseImageLocation(rs.getString("CourseImageLocation"));
+                course.setCourseImageLocation(rs.getBytes("CourseImageLocation"));
                 course.setCourseSummary(rs.getNString("CourseSummary"));
                 course.setCourseHighlight(rs.getNString("CourseHighlight"));
                 course.setTotalEnrolled(rs.getInt("TotalEnrolled"));
@@ -202,7 +204,7 @@ public class CourseDAO extends DBContext {
                 course.setSalePrice(rs.getInt("SalePrice"));
                 course.setOriginalPrice(rs.getInt("OriginalPrice"));
                 course.setIsSale(rs.getInt("IsSale"));
-                course.setCourseImageLocation(rs.getString("CourseImageLocation"));
+                course.setCourseImageLocation(rs.getBytes("CourseImageLocation"));
                 course.setCourseSummary(rs.getNString("CourseSummary"));
                 course.setCourseHighlight(rs.getNString("CourseHighlight"));
 
@@ -214,7 +216,7 @@ public class CourseDAO extends DBContext {
         return null;
     }
 
-    public int insertCourse(String courseName, int categoryId, int userID, int salePrice, int originalPrice, int isSale, String courseImageLocation, String courseSummary, String courseHighlight) {
+    public int insertCourse(String courseName, int categoryId, int userID, int salePrice, int originalPrice, int isSale, InputStream courseImageLocation, String courseSummary, String courseHighlight) {
 
         String sql = "INSERT INTO Courses\n"
                 + "(CourseName, category_id, UserID, ApproveStatus, CourseLastUpdate, SalePrice, "
@@ -231,7 +233,11 @@ public class CourseDAO extends DBContext {
             ps.setInt(6, salePrice);
             ps.setInt(7, originalPrice);
             ps.setInt(8, isSale);
-            ps.setNString(9, courseImageLocation);
+            if (courseImageLocation != null) {
+                ps.setBinaryStream(9, courseImageLocation, courseImageLocation.available());
+            } else {
+                ps.setNull(9, Types.VARBINARY);
+            }
             ps.setNString(10, courseSummary);
             ps.setNString(11, courseHighlight);
 
@@ -243,7 +249,7 @@ public class CourseDAO extends DBContext {
         return 0;
     }
 
-    public int updateCourse(int courseID, String courseName, int categoryId, int salePrice, int originalPrice, int isSale, String courseImageLocation, String courseSummary, String courseHighlight) {
+    public int updateCourse(int courseID, String courseName, int categoryId, int salePrice, int originalPrice, int isSale, InputStream courseImageLocation, String courseSummary, String courseHighlight) {
 
         String sql = "UPDATE Courses\n"
                 + "SET CourseName = ?, category_id = ?, CourseLastUpdate = ?, SalePrice = ?, OriginalPrice = ?, IsSale = ?, CourseImageLocation = ?, CourseSummary = ?, CourseHighlight = ?\n"
@@ -257,7 +263,11 @@ public class CourseDAO extends DBContext {
             ps.setInt(4, salePrice);
             ps.setInt(5, originalPrice);
             ps.setInt(6, isSale);
-            ps.setNString(7, courseImageLocation);
+            if (courseImageLocation != null) {
+                ps.setBinaryStream(7, courseImageLocation, courseImageLocation.available());
+            } else {
+                ps.setNull(7, Types.VARBINARY);
+            }
             ps.setNString(8, courseSummary);
             ps.setNString(9, courseHighlight);
             ps.setInt(10, courseID);
@@ -355,13 +365,13 @@ public class CourseDAO extends DBContext {
 
     public double getAverageRatingByUserID(int userID) {
         double avgRating = 0.0;
-        String sql = "SELECT \n" +
-                "    AVG(Rate) AS AvgRating\n" +
-                "FROM Feedbacks f\n" +
-                "JOIN Courses c ON c.CourseID = f.CourseID\n" +
-                "WHERE c.UserID = ?";
+        String sql = "SELECT \n"
+                + "    AVG(Rate) AS AvgRating\n"
+                + "FROM Feedbacks f\n"
+                + "JOIN Courses c ON c.CourseID = f.CourseID\n"
+                + "WHERE c.UserID = ?";
 
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userID);
             ResultSet rs = ps.executeQuery();
 
@@ -540,7 +550,7 @@ public class CourseDAO extends DBContext {
 //    }
     public double getAverageCourseRating(int courseID) {
         String sql = "SELECT AVG(RatingValue) AS AverageRating FROM CourseRatings WHERE CourseID = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, courseID);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -555,7 +565,7 @@ public class CourseDAO extends DBContext {
 
     public int getCourseRatingCount(int courseID) {
         String sql = "SELECT COUNT(*) AS RatingCount FROM CourseRatings WHERE CourseID = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, courseID);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -571,7 +581,7 @@ public class CourseDAO extends DBContext {
     public List<CourseSection> getCourseCurriculum(int courseID) {
         List<CourseSection> curriculum = new ArrayList<>();
         String sql = "SELECT SectionTitle, SectionDescription FROM CourseSections WHERE CourseID = ? ORDER BY SectionOrder";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, courseID);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -608,7 +618,7 @@ public class CourseDAO extends DBContext {
     public List<String> getCourseHighlights(int courseID) {
         List<String> highlights = new ArrayList<>();
         String sql = "SELECT Highlight FROM CourseHighlights WHERE CourseID = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, courseID);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -639,24 +649,24 @@ public class CourseDAO extends DBContext {
             return 0; // Trả về 0 nếu có lỗi
         }
     }
-/*============*/
-        
+
+    /*============*/
 
     // Methods for AllCoursesServlet
     public List<Course> getAllCourses(int page, int pageSize) {
         List<Course> list = new ArrayList<>();
         int offset = (page - 1) * pageSize;
 
-        String sql = "SELECT " +
-                "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber, " +
-                "c.*, " +
-                "cat.category_id, cat.category_name " +
-                "FROM Courses c " +
-                "JOIN Users u ON c.UserID = u.UserID " +
-                "JOIN Category cat ON c.category_id = cat.category_id " +
-                "WHERE c.Status = 0 AND c.ApproveStatus = 1 " +
-                "ORDER BY c.PublicDate DESC " +
-                "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        String sql = "SELECT "
+                + "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber, "
+                + "c.*, "
+                + "cat.category_id, cat.category_name "
+                + "FROM Courses c "
+                + "JOIN Users u ON c.UserID = u.UserID "
+                + "JOIN Category cat ON c.category_id = cat.category_id "
+                + "WHERE c.Status = 0 AND c.ApproveStatus = 1 "
+                + "ORDER BY c.PublicDate DESC "
+                + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -678,17 +688,17 @@ public class CourseDAO extends DBContext {
         List<Course> list = new ArrayList<>();
         int offset = (page - 1) * pageSize;
 
-        String sql = "SELECT " +
-                "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber, " +
-                "c.*, " +
-                "cat.category_id, cat.category_name " +
-                "FROM Courses c " +
-                "JOIN Users u ON c.UserID = u.UserID " +
-                "JOIN Category cat ON c.category_id = cat.category_id " +
-                "WHERE c.Status = 0 AND c.ApproveStatus = 1 " +
-                "AND (c.CourseName LIKE ? OR c.CourseSummary LIKE ? OR cat.category_name LIKE ?) " +
-                "ORDER BY c.PublicDate DESC " +
-                "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        String sql = "SELECT "
+                + "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber, "
+                + "c.*, "
+                + "cat.category_id, cat.category_name "
+                + "FROM Courses c "
+                + "JOIN Users u ON c.UserID = u.UserID "
+                + "JOIN Category cat ON c.category_id = cat.category_id "
+                + "WHERE c.Status = 0 AND c.ApproveStatus = 1 "
+                + "AND (c.CourseName LIKE ? OR c.CourseSummary LIKE ? OR cat.category_name LIKE ?) "
+                + "ORDER BY c.PublicDate DESC "
+                + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -714,16 +724,16 @@ public class CourseDAO extends DBContext {
         List<Course> list = new ArrayList<>();
         int offset = (page - 1) * pageSize;
 
-        String sql = "SELECT " +
-                "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber, " +
-                "c.*, " +
-                "cat.category_id, cat.category_name " +
-                "FROM Courses c " +
-                "JOIN Users u ON c.UserID = u.UserID " +
-                "JOIN Category cat ON c.category_id = cat.category_id " +
-                "WHERE c.Status = 0 AND c.ApproveStatus = 1 AND cat.category_name = ? " +
-                "ORDER BY c.PublicDate DESC " +
-                "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        String sql = "SELECT "
+                + "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber, "
+                + "c.*, "
+                + "cat.category_id, cat.category_name "
+                + "FROM Courses c "
+                + "JOIN Users u ON c.UserID = u.UserID "
+                + "JOIN Category cat ON c.category_id = cat.category_id "
+                + "WHERE c.Status = 0 AND c.ApproveStatus = 1 AND cat.category_name = ? "
+                + "ORDER BY c.PublicDate DESC "
+                + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -746,18 +756,18 @@ public class CourseDAO extends DBContext {
         List<Course> list = new ArrayList<>();
         int offset = (page - 1) * pageSize;
 
-        String sql = "SELECT " +
-                "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber, " +
-                "c.*, " +
-                "cat.category_id, cat.category_name " +
-                "FROM Courses c " +
-                "JOIN Users u ON c.UserID = u.UserID " +
-                "JOIN Category cat ON c.category_id = cat.category_id " +
-                "WHERE c.Status = 0 AND c.ApproveStatus = 1 " +
-                "AND (c.CourseName LIKE ? OR c.CourseSummary LIKE ? OR cat.category_name LIKE ?) " +
-                "AND cat.category_name = ? " +
-                "ORDER BY c.PublicDate DESC " +
-                "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        String sql = "SELECT "
+                + "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber, "
+                + "c.*, "
+                + "cat.category_id, cat.category_name "
+                + "FROM Courses c "
+                + "JOIN Users u ON c.UserID = u.UserID "
+                + "JOIN Category cat ON c.category_id = cat.category_id "
+                + "WHERE c.Status = 0 AND c.ApproveStatus = 1 "
+                + "AND (c.CourseName LIKE ? OR c.CourseSummary LIKE ? OR cat.category_name LIKE ?) "
+                + "AND cat.category_name = ? "
+                + "ORDER BY c.PublicDate DESC "
+                + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -795,10 +805,10 @@ public class CourseDAO extends DBContext {
     }
 
     public int getSearchCoursesCount(String keyword) {
-        String sql = "SELECT COUNT(*) as total FROM Courses c " +
-                "JOIN Category cat ON c.category_id = cat.category_id " +
-                "WHERE c.Status = 0 AND c.ApproveStatus = 1 " +
-                "AND (c.CourseName LIKE ? OR c.CourseSummary LIKE ? OR cat.category_name LIKE ?)";
+        String sql = "SELECT COUNT(*) as total FROM Courses c "
+                + "JOIN Category cat ON c.category_id = cat.category_id "
+                + "WHERE c.Status = 0 AND c.ApproveStatus = 1 "
+                + "AND (c.CourseName LIKE ? OR c.CourseSummary LIKE ? OR cat.category_name LIKE ?)";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             String searchPattern = "%" + keyword + "%";
@@ -816,9 +826,9 @@ public class CourseDAO extends DBContext {
     }
 
     public int getCoursesByCategoryCount(String categoryName) {
-        String sql = "SELECT COUNT(*) as total FROM Courses c " +
-                "JOIN Category cat ON c.category_id = cat.category_id " +
-                "WHERE c.Status = 0 AND c.ApproveStatus = 1 AND cat.category_name = ?";
+        String sql = "SELECT COUNT(*) as total FROM Courses c "
+                + "JOIN Category cat ON c.category_id = cat.category_id "
+                + "WHERE c.Status = 0 AND c.ApproveStatus = 1 AND cat.category_name = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, categoryName);
@@ -833,11 +843,11 @@ public class CourseDAO extends DBContext {
     }
 
     public int getSearchAndFilterCoursesCount(String keyword, String categoryName) {
-        String sql = "SELECT COUNT(*) as total FROM Courses c " +
-                "JOIN Category cat ON c.category_id = cat.category_id " +
-                "WHERE c.Status = 0 AND c.ApproveStatus = 1 " +
-                "AND (c.CourseName LIKE ? OR c.CourseSummary LIKE ? OR cat.category_name LIKE ?) " +
-                "AND cat.category_name = ?";
+        String sql = "SELECT COUNT(*) as total FROM Courses c "
+                + "JOIN Category cat ON c.category_id = cat.category_id "
+                + "WHERE c.Status = 0 AND c.ApproveStatus = 1 "
+                + "AND (c.CourseName LIKE ? OR c.CourseSummary LIKE ? OR cat.category_name LIKE ?) "
+                + "AND cat.category_name = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             String searchPattern = "%" + keyword + "%";
@@ -893,7 +903,7 @@ public class CourseDAO extends DBContext {
         course.setSalePrice(rs.getInt("SalePrice"));
         course.setOriginalPrice(rs.getInt("OriginalPrice"));
         course.setIsSale(rs.getInt("IsSale"));
-        course.setCourseImageLocation(rs.getString("CourseImageLocation"));
+        course.setCourseImageLocation(rs.getBytes("CourseImageLocation"));
         course.setCourseSummary(rs.getNString("CourseSummary"));
         course.setCourseHighlight(rs.getNString("CourseHighlight"));
 
@@ -903,12 +913,12 @@ public class CourseDAO extends DBContext {
 
     public static void main(String[] args) {
         List<Course> list = new ArrayList<>();
-
         CourseDAO dao = new CourseDAO();
+
 //        // Test getAllCourses
 //        List<Course> courses = dao.getAllCourses();
 //        System.out.println("Total courses: " + courses.size());
-//
+
 //        // Test getAllCategories
 //        List<String> categories = dao.getAllCategories();
 //        System.out.println("Categories: " + categories);
@@ -918,10 +928,10 @@ public class CourseDAO extends DBContext {
 //            System.out.println(course);
 //        }
 
-        list = dao.get3CourseByUserID(3);
-        for (Course course : list) {
-            System.out.println(course);
-        }
+//        list = dao.get3CourseByUserID(3);
+//        for (Course course : list) {
+//            System.out.println(course);
+//        }
 
 //        Course course = dao.getCourseByCourseID(1);
 //        System.out.println(course);
