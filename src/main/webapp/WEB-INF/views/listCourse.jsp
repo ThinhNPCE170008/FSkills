@@ -12,6 +12,12 @@
 
         <style>
             body {
+                font-family: 'Inter', sans-serif;
+                background-color: #f8f9fa;
+                overflow-x: hidden; /* Prevent horizontal scrollbar */
+            }
+
+            body {
                 background-color: #f8f9fa;
                 font-family: 'Segoe UI', sans-serif;
             }
@@ -70,6 +76,7 @@
     </head>
     <body>
         <jsp:include page="/layout/sidebar_user.jsp"/>
+        <jsp:include page="/layout/header_user.jsp"/>
 
         <div class="px-5 py-6">
             <nav class="text-base text-gray-500 mb-6" aria-label="Breadcrumb">

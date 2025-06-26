@@ -41,10 +41,6 @@
                 box-sizing: border-box;
             }
 
-            .header-shadow {
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            }
-
             .card {
                 background-color: white;
                 border-radius: 0.75rem;
@@ -57,39 +53,12 @@
                 box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
             }
 
-            .btn-primary-gradient {
-                background-image: linear-gradient(to right, #4f46e5, #6366f1);
-                color: white;
-                transition: all 0.3s ease;
-                box-shadow: 0 4px 6px rgba(99, 102, 241, 0.2);
-            }
-
-            .btn-primary-gradient:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 7px 10px rgba(99, 102, 241, 0.3);
-            }
-
             .stat-card i {
                 transition: transform 0.3s ease;
             }
 
             .stat-card:hover i {
                 transform: scale(1.1);
-            }
-
-            .animate-dropdown {
-                opacity: 0;
-                transform: translateY(-10px);
-                transition: opacity 0.2s ease, transform 0.2s ease;
-                visibility: hidden;
-                pointer-events: none;
-            }
-
-            .dropdown-open {
-                opacity: 1 !important;
-                transform: translateY(0) !important;
-                visibility: visible !important;
-                pointer-events: auto !important;
             }
         </style>
     </head>
@@ -98,13 +67,13 @@
         <jsp:include page="/layout/sidebar_user.jsp"/>
         <jsp:include page="/layout/header_user.jsp"/>
         <!-- ======================= Main Content ======================= -->
-        <main class="main container mx-auto px-4 py-8 md:py-12">
+        <main class="main mx-auto px-4 py-8 md:py-12">
             <section id="dashboard" class="mb-12">
                 <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Welcome Back, ${user.displayName}</h1>
                 <p class="text-gray-500 text-lg">Here's your teaching dashboard for today.</p>
             </section>
 
-            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
                 <!-- Card 1 -->
                 <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center justify-center text-center">
                     <div class="bg-indigo-100 p-4 rounded-full mb-3">
