@@ -1,8 +1,19 @@
+<<<<<<< update/validate
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+=======
+>>>>>>> main
 package util;
 
 import java.util.Base64;
 
 /**
+<<<<<<< update/validate
+ *
+=======
+>>>>>>> main
  * @author huakh
  */
 public class ImageBase64 {

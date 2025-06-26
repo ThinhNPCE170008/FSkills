@@ -26,7 +26,7 @@ import model.User;
  * @author Hua Khanh Duy - CE180230 - SE1814
  */
 @MultipartConfig
-@WebServlet(name = "Degree", urlPatterns = {"/Degree"})
+@WebServlet(name = "Degree", urlPatterns = {"/instructor/profile/degree"})
 public class DegreeServlet extends HttpServlet {
 
     /**
@@ -69,7 +69,7 @@ public class DegreeServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         String action = request.getParameter("action");
-        User user= (User) session.getAttribute("user");
+        User user = (User) session.getAttribute("user");
         DegreeDAO degreeDAO = new DegreeDAO();
         if (action == null) {
             action = "listDegree";
@@ -78,7 +78,7 @@ public class DegreeServlet extends HttpServlet {
             List<Degree> listDegree = (List<Degree>) degreeDAO.getDegreeById(user.getUserId());
             request.setAttribute("user", user);
             request.setAttribute("listDegree", listDegree);
-            request.getRequestDispatcher("WEB-INF/views/degree.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/degree.jsp").forward(request, response);
         }
     }
 
@@ -95,11 +95,31 @@ public class DegreeServlet extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
         DegreeDAO degreeDAO = new DegreeDAO();
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
         if (action.equalsIgnoreCase("create")) {
             try {
                 String id = request.getParameter("userId");
                 int userId = Integer.parseInt(id);
                 String degreeLink = request.getParameter("degreeLink");
+
+                if (degreeLink == null || degreeLink.trim().isEmpty()|| degreeLink.matches(".*\\s{2,}.*")) {
+                    request.setAttribute("err", "Degree link must not be empty and must not contain spaces.");
+                    List<Degree> listDegree = (List<Degree>) degreeDAO.getDegreeById(user.getUserId());
+                    request.setAttribute("listDegree", listDegree);
+                    request.getRequestDispatcher("/WEB-INF/views/degree.jsp").forward(request, response);
+                    return;
+                }
+
+                if (!degreeLink.startsWith("http://") && !degreeLink.startsWith("https://")) {
+                    request.setAttribute("err", "Degree must start with http:// or https:// !!");
+                    List<Degree> listDegree = (List<Degree>) degreeDAO.getDegreeById(user.getUserId());
+                    request.setAttribute("listDegree", listDegree);
+                    request.getRequestDispatcher("/WEB-INF/views/degree.jsp").forward(request, response);
+
+                    return;
+                }
+
                 // Nhận file
                 Part filePart = request.getPart("degreeImage");
                 String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
@@ -118,15 +138,23 @@ public class DegreeServlet extends HttpServlet {
                 int res = degreeDAO.insert(userId, imagePath, degreeLink);
 
                 if (res == 1) {
-                    response.sendRedirect("Degree");
+                    request.setAttribute("success", "Degree submitted successfully!");
+                    List<Degree> listDegree = (List<Degree>) degreeDAO.getDegreeById(user.getUserId());
+                    request.setAttribute("listDegree", listDegree);
+                    request.getRequestDispatcher("/WEB-INF/views/degree.jsp").forward(request, response);
                 } else {
-                    request.setAttribute("err", "<p>Create failed</p>");
-                    request.getRequestDispatcher("fail1.jsp").forward(request, response);
+                    request.setAttribute("err", "<p>Create failed!</p>");
+                    List<Degree> listDegree = (List<Degree>) degreeDAO.getDegreeById(user.getUserId());
+                    request.setAttribute("listDegree", listDegree);
+                    request.getRequestDispatcher("/WEB-INF/views/degree.jsp").forward(request, response);
+                    return;
                 }
             } catch (Exception e) {
-                e.printStackTrace(); // In lỗi chi tiết ra console
-                request.setAttribute("err", "<p>Create failed</p>");
-                request.getRequestDispatcher("fail2.jsp").forward(request, response);
+                request.setAttribute("err", "<p>Error submit!!!</p>");
+                List<Degree> listDegree = (List<Degree>) degreeDAO.getDegreeById(user.getUserId());
+                request.setAttribute("listDegree", listDegree);
+                request.getRequestDispatcher("/WEB-INF/views/degree.jsp").forward(request, response);
+                return;
             }
         } else if (action.equalsIgnoreCase("delete")) {
             String idRaw = request.getParameter("id");
@@ -134,17 +162,42 @@ public class DegreeServlet extends HttpServlet {
             try {
                 id = Integer.parseInt(idRaw);
                 if (degreeDAO.delete(id) == 1) {
-                    response.sendRedirect("Degree");
+                    request.setAttribute("success", "Degree deleted successfully!");
+                    List<Degree> listDegree = (List<Degree>) degreeDAO.getDegreeById(user.getUserId());
+                    request.setAttribute("listDegree", listDegree);
+                    request.getRequestDispatcher("/WEB-INF/views/degree.jsp").forward(request, response);
                 } else {
-                    response.sendRedirect("failss.jsp");
+                    request.setAttribute("err", "Failed to delete degree!");
+                    List<Degree> listDegree = (List<Degree>) degreeDAO.getDegreeById(user.getUserId());
+                    request.setAttribute("listDegree", listDegree);
+                    request.getRequestDispatcher("/WEB-INF/views/degree.jsp").forward(request, response);
+                    return;
                 }
             } catch (Exception e) {
-                PrintWriter out = response.getWriter();
-                out.print(e.getMessage());
+                request.setAttribute("err", "Error failed to delete degree!");
+                List<Degree> listDegree = (List<Degree>) degreeDAO.getDegreeById(user.getUserId());
+                request.setAttribute("listDegree", listDegree);
+                request.getRequestDispatcher("/WEB-INF/views/degree.jsp").forward(request, response);
+                return;
             }
         } else if (action.equalsIgnoreCase("edit")) {
             try {
                 String degreeLink = request.getParameter("degreeLink");
+                if (degreeLink == null || degreeLink.trim().isEmpty() || degreeLink.matches(".*\\s{2,}.*")) {
+                    request.setAttribute("err", "Degree link must not be empty and must not contain spaces.");
+                    List<Degree> listDegree = (List<Degree>) degreeDAO.getDegreeById(user.getUserId());
+                    request.setAttribute("listDegree", listDegree);
+                    request.getRequestDispatcher("/WEB-INF/views/degree.jsp").forward(request, response);
+                return;
+                }
+
+                if (!degreeLink.startsWith("http://") && !degreeLink.startsWith("https://")) {
+                    request.setAttribute("err", "Degree must start with http:// or https:// !!");
+                    List<Degree> listDegree = (List<Degree>) degreeDAO.getDegreeById(user.getUserId());
+                    request.setAttribute("listDegree", listDegree);
+                    request.getRequestDispatcher("/WEB-INF/views/degree.jsp").forward(request, response);
+                return;
+                }
                 Part filePart = request.getPart("degreeImage");
                 String degreeId = request.getParameter("degreeId");
                 String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
@@ -167,13 +220,24 @@ public class DegreeServlet extends HttpServlet {
                 boolean res = degreeDAO.update(imagePath, degreeLink, degreeId);
 
                 if (res) {
-                    response.sendRedirect("Degree");
+                    request.setAttribute("success", "Degree edited successfully!");
+                    List<Degree> listDegree = (List<Degree>) degreeDAO.getDegreeById(user.getUserId());
+                    request.setAttribute("listDegree", listDegree);
+                    request.getRequestDispatcher("/WEB-INF/views/degree.jsp").forward(request, response);
+
                 } else {
-                    response.sendRedirect("failqq.jsp");
+                    request.setAttribute("err", "Failed to edit degree!");
+                    List<Degree> listDegree = (List<Degree>) degreeDAO.getDegreeById(user.getUserId());
+                    request.setAttribute("listDegree", listDegree);
+                    request.getRequestDispatcher("/WEB-INF/views/degree.jsp").forward(request, response);
+                return;
                 }
             } catch (Exception e) {
-                e.printStackTrace();
-                response.sendRedirect("failbb.jsp");
+                request.setAttribute("err", "Error failed to delete degree!");
+                List<Degree> listDegree = (List<Degree>) degreeDAO.getDegreeById(user.getUserId());
+                request.setAttribute("listDegree", listDegree);
+                request.getRequestDispatcher("/WEB-INF/views/degree.jsp").forward(request, response);
+            return;
             }
         }
 

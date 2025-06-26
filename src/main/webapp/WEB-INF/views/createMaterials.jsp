@@ -69,116 +69,116 @@
     </head>
     <body>
         <jsp:include page="/layout/header_user.jsp"/>
-<div class="container py-2 ps-3">
         <div class="container py-2 ps-3">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/instructor">Home</a></li>
-                    <li class="breadcrumb-item">
-                        <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${course.courseID}">${course.courseName}</a>
-                    </li>
-                    <li class="breadcrumb-item">
-                        <a href="${pageContext.request.contextPath}/instructor/courses/modules/material?moduleId=${module.moduleID}&courseId=${course.courseID}">
-                            ${module.moduleName}
-                        </a>
-                    </li>
-                    <li class="breadcrumb-item">
-                        Create New
-                    </li>
-                </ol>
-            </nav>
-            <div class="bg-white p-5 rounded-4 shadow-lg mx-auto" style="max-width: 900px;">
-                <h3 class="mb-4 text-primary fw-semibold text-center">
-                    <i class="bi bi-journal-plus"></i> Create New Material
-                </h3>
-                <form method="POST" action="${pageContext.request.contextPath}/instructor/courses/modules/material?action=create" enctype="multipart/form-data" onsubmit="return prepareCreateMaterial()">
-                    <input type="hidden" name="action" value="create">
-                    <input type="hidden" name="moduleId" value="${module.moduleID}">
-                    <input type="hidden" name="courseId" value="${course.courseID}">
-                    <div class="row g-4">
-                        <!-- Material Name -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Material Name</label>
-                            <input type="text" name="materialName" class="form-control" required
-                                   maxlength="1000" pattern=".{3,}" title="Must be at least 3 characters">
-                        </div>
-
-                        <!-- Type -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Material Type</label>
-                            <select class="form-select form-select-lg" id="type" name="type" onchange="toggleInputFields()" required>
-                                <option value="">-- Choose Type --</option>
-                                <option value="video">Video</option>
-                                <option value="pdf">PDF/Doc</option>
-                                <option value="link">Link</option>
-                            </select>
-                        </div>
-
-                        <!-- Upload Video -->
-                        <div class="col-md-6 d-none" id="videoUploadDiv">
-                            <label class="form-label fw-semibold">Upload Video</label>
-                            <input type="file" name="videoFile" id="videoFile" class="form-control" accept="video/*"
-                                   onchange="previewSelectedVideo(); updateMaterialLocation('video')">
-
-                            <!-- Video preview -->
-                            <div id="videoPreviewContainer" class="mt-3 d-none">
-                                <label class="form-label">Video Preview</label>
-                                <video id="videoPreview" width="200%" controls>
-                                    <source id="videoPreviewSource" src="" type="video/mp4">
-                                    Your browser does not support the video tag.
-                                </video>
-                            </div>
-                        </div>
-
-
-                        <div class="col-md-6 d-none" id="fileUploadDiv">
-                            <label class="form-label fw-semibold">Upload File (PDF/DOC)</label>
-                            <input type="file" name="docFile" class="form-control" accept=".pdf,.doc,.docx">
-                        </div>
-
-                        <div class="col-md-6 d-none" id="linkInputDiv">
-                            <label class="form-label fw-semibold">Material Link</label>
-                            <input type="url" name="materialLink" class="form-control"
-                                   placeholder="https://..." pattern="https?://.+" title="Must start with http:// or https://">
-                        </div>
-
-                        <div class="col-md-6 d-none" id="videoDurationDiv">
-                            <label class="form-label fw-semibold">Video Duration (hh:mm:ss)</label>
-                            <input type="text" class="form-control" id="durationInput"
-                                   placeholder="e.g. 5:03, 00:02:59" onchange="updateVideoDuration()">
-                            <div id="durationError" class="text-danger small mt-1 d-none">
-                                ⚠ Please enter correct format hh:mm:ss (time can be shortened)
-                            </div>
-                            <input type="hidden" name="videoTime" id="videoTime" value="00:00:00" required>
-                        </div>
-
-                        <!-- Order -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Display Order</label>
-                            <input type="number" name="materialOrder" class="form-control" required min="1" max="1000">
-                        </div>
-
-                        <!-- Description -->
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">Material Description</label>
-                            <textarea name="materialDescription" class="form-control" rows="4" placeholder="Enter description..."></textarea>
-                        </div>
-
-                        <!-- Buttons -->
-                        <div class="col-12 text-center pt-3">
-                            <button type="submit" class="btn btn-success btn-lg px-4 shadow-sm">
-                                <i class="bi bi-check-circle-fill"></i> Create
-                            </button>
-                            <a href="${pageContext.request.contextPath}/instructor/courses/modules/material?moduleId=${module.moduleID}&courseId=${course.courseID}""
-                               class="btn btn-outline-secondary btn-lg px-4 ms-2">
-                                <i class="bi bi-x-circle"></i> Cancel
+            <div class="container py-2 ps-3">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/instructor">Home</a></li>
+                        <li class="breadcrumb-item">
+                            <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${course.courseID}">${course.courseName}</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="${pageContext.request.contextPath}/instructor/courses/modules/material?moduleId=${module.moduleID}&courseId=${course.courseID}">
+                                ${module.moduleName}
                             </a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            Create New
+                        </li>
+                    </ol>
+                </nav>
+                <div class="bg-white p-5 rounded-4 shadow-lg mx-auto" style="max-width: 900px;">
+                    <h3 class="mb-4 text-primary fw-semibold text-center">
+                        <i class="bi bi-journal-plus"></i> Create New Material
+                    </h3>
+                    <form method="POST" action="${pageContext.request.contextPath}/instructor/courses/modules/material?action=create" enctype="multipart/form-data" onsubmit="return prepareCreateMaterial()">
+                        <input type="hidden" name="action" value="create">
+                        <input type="hidden" name="moduleId" value="${module.moduleID}">
+                        <input type="hidden" name="courseId" value="${course.courseID}">
+                        <div class="row g-4">
+                            <!-- Material Name -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Material Name</label>
+                                <input type="text" name="materialName" class="form-control" required
+                                       maxlength="1000" pattern=".{3,}" title="Must be at least 3 characters">
+                            </div>
+
+                            <!-- Type -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Material Type</label>
+                                <select class="form-select form-select-lg" id="type" name="type" onchange="toggleInputFields()" required>
+                                    <option value="">-- Choose Type --</option>
+                                    <option value="video">Video</option>
+                                    <option value="pdf">PDF/Doc</option>
+                                    <option value="link">Link</option>
+                                </select>
+                            </div>
+
+                            <!-- Upload Video -->
+                            <div class="col-md-6 d-none" id="videoUploadDiv">
+                                <label class="form-label fw-semibold">Upload Video</label>
+                                <input type="file" name="videoFile" id="videoFile" class="form-control" accept="video/*"
+                                       onchange="previewSelectedVideo(); updateMaterialLocation('video')">
+
+                                <!-- Video preview -->
+                                <div id="videoPreviewContainer" class="mt-3 d-none">
+                                    <label class="form-label">Video Preview</label>
+                                    <video id="videoPreview" width="200%" controls>
+                                        <source id="videoPreviewSource" src="" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-6 d-none" id="fileUploadDiv">
+                                <label class="form-label fw-semibold">Upload File (PDF/DOC)</label>
+                                <input type="file" name="docFile" class="form-control" accept=".pdf,.doc,.docx">
+                            </div>
+
+                            <div class="col-md-6 d-none" id="linkInputDiv">
+                                <label class="form-label fw-semibold">Material Link</label>
+                                <input type="url" name="materialLink" class="form-control"
+                                       placeholder="https://..." pattern="https?://.+" title="Must start with http:// or https://">
+                            </div>
+
+                            <div class="col-md-6 d-none" id="videoDurationDiv">
+                                <label class="form-label fw-semibold">Video Duration (hh:mm:ss)</label>
+                                <input type="text" class="form-control" id="durationInput"
+                                       placeholder="e.g. 5:03, 00:02:59" onchange="updateVideoDuration()">
+                                <div id="durationError" class="text-danger small mt-1 d-none">
+                                    ⚠ Please enter correct format hh:mm:ss (time can be shortened)
+                                </div>
+                                <input type="hidden" name="videoTime" id="videoTime" value="00:00:00" required>
+                            </div>
+
+                            <!-- Order -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Display Order</label>
+                                <input type="number" name="materialOrder" class="form-control" required min="1" max="1000">
+                            </div>
+
+                            <!-- Description -->
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Material Description</label>
+                                <textarea name="materialDescription" class="form-control" rows="4" placeholder="Enter description..."></textarea>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="col-12 text-center pt-3">
+                                <button type="submit" class="btn btn-success btn-lg px-4 shadow-sm">
+                                    <i class="bi bi-check-circle-fill"></i> Create
+                                </button>
+                                <a href="${pageContext.request.contextPath}/instructor/courses/modules/material?moduleId=${module.moduleID}&courseId=${course.courseID}""
+                                   class="btn btn-outline-secondary btn-lg px-4 ms-2">
+                                    <i class="bi bi-x-circle"></i> Cancel
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
-</div>
         <script>
             function toggleInputFields() {
                 const type = document.getElementById("type").value;
@@ -317,5 +317,6 @@
         </script>
         <jsp:include page="/layout/footer.jsp"/>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <jsp:include page="/layout/toast.jsp"/>
     </body>
 </html>
