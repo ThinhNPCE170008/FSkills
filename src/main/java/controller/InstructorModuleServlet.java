@@ -125,6 +125,7 @@ public class InstructorModuleServlet extends HttpServlet {
             throws ServletException, IOException {
         CourseDAO cDao = new CourseDAO();
         ModuleDAO mDao = new ModuleDAO();
+
         Course course = null;
         Module module = null;
 
@@ -145,6 +146,7 @@ public class InstructorModuleServlet extends HttpServlet {
                 if (insert > 0) {
                     List<Module> list = mDao.getAllModuleByCourseID(courseID);
 
+                    request.setAttribute("success", "Module created successfully!!!");
                     request.setAttribute("listModule", list);
                     request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
                 } else {
@@ -160,6 +162,7 @@ public class InstructorModuleServlet extends HttpServlet {
                 if (update > 0) {
                     List<Module> list = mDao.getAllModuleByCourseID(courseID);
 
+                    request.setAttribute("success", "Module updated successfully!!!");
                     request.setAttribute("listModule", list);
                     request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
                 } else {
@@ -174,6 +177,7 @@ public class InstructorModuleServlet extends HttpServlet {
                 if (delete > 0) {
                     List<Module> list = mDao.getAllModuleByCourseID(courseID);
 
+                    request.setAttribute("success", "Course deleted successfully!!!");
                     request.setAttribute("listModule", list);
                     request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
                 } else {

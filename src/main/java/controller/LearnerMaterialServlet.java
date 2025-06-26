@@ -6,6 +6,7 @@
 package controller;
 
 import dao.EnrollDAO;
+import dao.MaterialDAO;
 import dao.StudyDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,6 +16,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
 import model.User;
 
 /**
@@ -62,6 +64,7 @@ public class LearnerMaterialServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         EnrollDAO eDAO = new EnrollDAO();
+        MaterialDAO matDAO = new MaterialDAO();
         if (user == null) {
             response.sendRedirect(request.getContextPath() + "/login");
         } else {
@@ -76,6 +79,7 @@ public class LearnerMaterialServlet extends HttpServlet {
                     request.setAttribute("CourseID", moduleID);
                     request.setAttribute("ModuleID", moduleID);
                     request.setAttribute("MaterialID", materialID);
+                    request.setAttribute("Material",(ArrayList) matDAO.getAllMaterial(courseID, moduleID));
                     request.setAttribute("User", user);
                     request.getRequestDispatcher("/WEB-INF/views/learnerMaterialView.jsp").forward(request, response);
                 }
