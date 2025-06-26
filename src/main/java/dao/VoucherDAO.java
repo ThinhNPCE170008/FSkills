@@ -26,8 +26,7 @@ public class VoucherDAO extends DBContext {
 
     public List<Voucher> getAllVouchers() throws SQLException {
         List<Voucher> vouchers = new ArrayList<>();
-        // Updated SQL query: added VoucherName, VoucherCode, removed CourseID
-        String sql = "SELECT VoucherID, VoucherName, VoucherCode, ExpiredDate, SaleType, SaleAmount, MinPrice, Amount FROM Vouchers";
+        String sql = "SELECT VoucherID, VoucherName, VoucherCode, ExpiredDate, SaleType, SaleAmount, MinPrice, Amount FROM Vouchers ORDER BY ExpiredDate ASC";
         try ( PreparedStatement ps = conn.prepareStatement(sql);  ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 vouchers.add(setVoucher(rs));
@@ -113,6 +112,17 @@ public class VoucherDAO extends DBContext {
             return rowsAffected > 0;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Error in updateVoucher for ID " + voucher.getVoucherID() + ": " + e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    public boolean deleteExpiredVouchers() throws SQLException {
+        String sql = "DELETE FROM Vouchers WHERE ExpiredDate < GETDATE()";
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error in deleteExpiredVouchers: " + e.getMessage(), e);
             throw e;
         }
     }

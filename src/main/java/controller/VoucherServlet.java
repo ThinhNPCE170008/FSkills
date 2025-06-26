@@ -28,32 +28,22 @@ public class VoucherServlet extends HttpServlet {
         List<Voucher> voucherList = null;
         String searchTerm = request.getParameter("searchTerm");
 
-        // Lấy thông báo toàn cục nếu có
         Object globalMsgObj = request.getAttribute("globalMessage");
         String globalMessage = (globalMsgObj instanceof String) ? (String) globalMsgObj : null;
 
         try {
             if (searchTerm != null && !searchTerm.trim().isEmpty()) {
-                // Sửa logic: KHÔNG CẦN cố gắng parse thành số nữa.
-                // Chỉ cần gọi hàm searchVouchers với searchTerm.
                 voucherList = voucherDAO.searchVouchers(searchTerm);
 
                 if (voucherList.isEmpty()) {
-                    globalMessage = "Không tìm thấy voucher nào phù hợp với từ khóa: '" + searchTerm + "'.";
+                    globalMessage = "Cannot find any vouchers with name: '" + searchTerm + "'.";
                 }
             } else {
-                // Nếu searchTerm rỗng, hiển thị tất cả voucher
                 voucherList = voucherDAO.getAllVouchers();
             }
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Lỗi cơ sở dữ liệu khi tìm kiếm voucher", ex);
-            globalMessage = "Đã xảy ra lỗi khi lấy dữ liệu từ cơ sở dữ liệu.";
-            // Gán danh sách rỗng để tránh lỗi null pointer exception trên JSP
-            voucherList = new java.util.ArrayList<>();
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Lỗi không mong muốn khi tìm kiếm voucher", ex);
-            globalMessage = "Đã xảy ra lỗi không mong muốn.";
-            // Gán danh sách rỗng
+            LOGGER.log(Level.SEVERE, "Error.", ex);
+            globalMessage = "Error.";
             voucherList = new java.util.ArrayList<>();
         }
 
