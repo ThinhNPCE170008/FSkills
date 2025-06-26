@@ -20,6 +20,7 @@
             <script src="https://cdn.tailwindcss.com"></script>
             <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
             <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
             <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -264,8 +265,8 @@
         <div class="flex flex-grow w-full">
             <jsp:include page="/layout/sidebar_admin.jsp" />
 
-            <div class="main-content">
-                <div class="container">
+            <div class="container">
+                <div class="px-3">
                     <div class="relative mb-6 pb-4 border-b-2 border-gray-200 text-center">
                         <a href="voucherList"
                            class="absolute left-0 top-1/2 -translate-y-1/2 px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition">
@@ -381,5 +382,7 @@
                 </div>
             </div>
         </div>
+                              <jsp:include page="/layout/toast.jsp" />
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
