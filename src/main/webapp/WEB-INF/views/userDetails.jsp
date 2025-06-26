@@ -1,9 +1,4 @@
-<%--
-    Document   : userDetails
-    Created on : May 23, 2025, 2:53:00 PM
-    Author     : DELL
---%>
-
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -15,6 +10,7 @@
         <title>User Details</title>
 
         <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
         <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
@@ -322,11 +318,14 @@
             </style>
         </head>
         <body>
-            <div class="flex flex-grow w-full">
             <jsp:include page="/layout/sidebar_admin.jsp" />
 
-            <div class="main-content">
-                <div class="container">
+
+
+            <div class="flex flex-grow w-full">
+
+            <div style="margin-left: 0;" class="main-content px-5 py-5">
+                <div style="margin: 0;" class="container px-5">
                     <h2 class="flex items-center justify-between w-full gap-4 text-xl font-bold text-gray-800 mb-4">
                         <a href="alluser?roleFilter=${requestScope.currentListRoleFilter != null ? requestScope.currentListRoleFilter : 'Learner'}"
                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded">
@@ -350,9 +349,8 @@
                     <c:choose>
                         <c:when test="${not empty allInform}">
                             <c:forEach var="user" items="${allInform}" begin="0" end="0">
-                                <form action="updateUserServlet" method="POST">
+                                <form id="updateUserForm" action="updateUserServlet" method="POST">
                                     <div class="detail-grid">
-                                        <%-- Dòng 1: Username và Display Name --%>
                                         <div class="detail-item non-editable">
                                             <span class="detail-label">Username:</span>
                                             <span class="detail-value" id="displayUsername">${user.userName}</span>
@@ -362,12 +360,9 @@
                                             <span class="detail-label">Display Name:<span style="color:red">*</span></span>
                                             <span class="detail-value" id="displayDisplayName">${user.displayName}</span>
                                             <input type="text" id="inputDisplayName" name="displayName" class="detail-input" value="${param.displayName != null ? param.displayName : user.displayName}" required>
-                                            <c:if test="${not empty errorMessages['displayName']}">
-                                                <span class="error-message">${errorMessages['displayName']}</span>
-                                            </c:if>
+                                            
                                         </div>
 
-                                        <%-- Dòng 2: Email và Role --%>
                                         <div class="detail-item">
                                             <span class="detail-label">Email:<span style="color:red">*</span></span>
                                             <span class="detail-value" id="displayEmail">${user.email}</span>
@@ -382,7 +377,6 @@
                                             <input type="hidden" name="role" value="${user.role}">
                                         </div>
 
-                                        <%-- Dòng 3: Ban Status và Reports --%>
                                         <div class="detail-item">
                                             <span class="detail-label">Ban Status:</span>
                                             <span class="detail-value" id="displayBanStatus">${user.ban}</span>
@@ -400,7 +394,6 @@
                                             <input type="hidden" name="reports" value="${user.reports}">
                                         </div>
 
-                                        <%-- Dòng 4: Date Of Birth và User Create Date --%>
                                         <div class="detail-item">
                                             <span class="detail-label">Date Of Birth:</span>
                                             <span class="detail-value" id="displayDateOfBirth">
@@ -419,7 +412,6 @@
                                             </span>
                                         </div>
 
-                                        <%-- Dòng 5: Phone Number và Info --%>
                                         <div class="detail-item">
                                             <span class="detail-label">Phone Number</span>
                                             <span class="detail-value" id="displayPhone">${user.phone}</span>
@@ -453,5 +445,9 @@
                 </div>
             </div>
         </div>
+
+        <jsp:include page="/layout/toast.jsp" />
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
+
 </html>
