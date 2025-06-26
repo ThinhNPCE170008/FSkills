@@ -28,7 +28,7 @@
 <c:if test="${not empty err}">
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            showJsToast("Error: ${fn:escapeXml(err)}", "danger");
+            showJsToast("${fn:escapeXml(err)}", "danger");
         });
     </script>
 </c:if>
@@ -36,7 +36,7 @@
 <c:if test="${not empty success}">
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            showJsToast("Successful: ${fn:escapeXml(success)}", "success");
+            showJsToast("${fn:escapeXml(success)}", "success");
         });
     </script>
 </c:if>
