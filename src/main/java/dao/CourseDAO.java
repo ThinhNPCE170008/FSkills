@@ -639,6 +639,267 @@ public class CourseDAO extends DBContext {
             return 0; // Trả về 0 nếu có lỗi
         }
     }
+/*============*/
+        
+
+    // Methods for AllCoursesServlet
+    public List<Course> getAllCourses(int page, int pageSize) {
+        List<Course> list = new ArrayList<>();
+        int offset = (page - 1) * pageSize;
+
+        String sql = "SELECT " +
+                "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber, " +
+                "c.*, " +
+                "cat.category_id, cat.category_name " +
+                "FROM Courses c " +
+                "JOIN Users u ON c.UserID = u.UserID " +
+                "JOIN Category cat ON c.category_id = cat.category_id " +
+                "WHERE c.Status = 0 AND c.ApproveStatus = 1 " +
+                "ORDER BY c.PublicDate DESC " +
+                "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, offset);
+            ps.setInt(2, pageSize);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Course course = buildCourseFromResultSet(rs);
+                list.add(course);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return list;
+    }
+
+    public List<Course> searchCourses(String keyword, int page, int pageSize) {
+        List<Course> list = new ArrayList<>();
+        int offset = (page - 1) * pageSize;
+
+        String sql = "SELECT " +
+                "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber, " +
+                "c.*, " +
+                "cat.category_id, cat.category_name " +
+                "FROM Courses c " +
+                "JOIN Users u ON c.UserID = u.UserID " +
+                "JOIN Category cat ON c.category_id = cat.category_id " +
+                "WHERE c.Status = 0 AND c.ApproveStatus = 1 " +
+                "AND (c.CourseName LIKE ? OR c.CourseSummary LIKE ? OR cat.category_name LIKE ?) " +
+                "ORDER BY c.PublicDate DESC " +
+                "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            String searchPattern = "%" + keyword + "%";
+            ps.setString(1, searchPattern);
+            ps.setString(2, searchPattern);
+            ps.setString(3, searchPattern);
+            ps.setInt(4, offset);
+            ps.setInt(5, pageSize);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Course course = buildCourseFromResultSet(rs);
+                list.add(course);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return list;
+    }
+
+    public List<Course> getCoursesByCategory(String categoryName, int page, int pageSize) {
+        List<Course> list = new ArrayList<>();
+        int offset = (page - 1) * pageSize;
+
+        String sql = "SELECT " +
+                "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber, " +
+                "c.*, " +
+                "cat.category_id, cat.category_name " +
+                "FROM Courses c " +
+                "JOIN Users u ON c.UserID = u.UserID " +
+                "JOIN Category cat ON c.category_id = cat.category_id " +
+                "WHERE c.Status = 0 AND c.ApproveStatus = 1 AND cat.category_name = ? " +
+                "ORDER BY c.PublicDate DESC " +
+                "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, categoryName);
+            ps.setInt(2, offset);
+            ps.setInt(3, pageSize);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Course course = buildCourseFromResultSet(rs);
+                list.add(course);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return list;
+    }
+
+    public List<Course> searchAndFilterCourses(String keyword, String categoryName, int page, int pageSize) {
+        List<Course> list = new ArrayList<>();
+        int offset = (page - 1) * pageSize;
+
+        String sql = "SELECT " +
+                "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber, " +
+                "c.*, " +
+                "cat.category_id, cat.category_name " +
+                "FROM Courses c " +
+                "JOIN Users u ON c.UserID = u.UserID " +
+                "JOIN Category cat ON c.category_id = cat.category_id " +
+                "WHERE c.Status = 0 AND c.ApproveStatus = 1 " +
+                "AND (c.CourseName LIKE ? OR c.CourseSummary LIKE ? OR cat.category_name LIKE ?) " +
+                "AND cat.category_name = ? " +
+                "ORDER BY c.PublicDate DESC " +
+                "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            String searchPattern = "%" + keyword + "%";
+            ps.setString(1, searchPattern);
+            ps.setString(2, searchPattern);
+            ps.setString(3, searchPattern);
+            ps.setString(4, categoryName);
+            ps.setInt(5, offset);
+            ps.setInt(6, pageSize);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Course course = buildCourseFromResultSet(rs);
+                list.add(course);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return list;
+    }
+
+    public int getTotalCoursesCount() {
+        String sql = "SELECT COUNT(*) as total FROM Courses WHERE Status = 0 AND ApproveStatus = 1";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
+
+    public int getSearchCoursesCount(String keyword) {
+        String sql = "SELECT COUNT(*) as total FROM Courses c " +
+                "JOIN Category cat ON c.category_id = cat.category_id " +
+                "WHERE c.Status = 0 AND c.ApproveStatus = 1 " +
+                "AND (c.CourseName LIKE ? OR c.CourseSummary LIKE ? OR cat.category_name LIKE ?)";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            String searchPattern = "%" + keyword + "%";
+            ps.setString(1, searchPattern);
+            ps.setString(2, searchPattern);
+            ps.setString(3, searchPattern);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
+
+    public int getCoursesByCategoryCount(String categoryName) {
+        String sql = "SELECT COUNT(*) as total FROM Courses c " +
+                "JOIN Category cat ON c.category_id = cat.category_id " +
+                "WHERE c.Status = 0 AND c.ApproveStatus = 1 AND cat.category_name = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, categoryName);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
+
+    public int getSearchAndFilterCoursesCount(String keyword, String categoryName) {
+        String sql = "SELECT COUNT(*) as total FROM Courses c " +
+                "JOIN Category cat ON c.category_id = cat.category_id " +
+                "WHERE c.Status = 0 AND c.ApproveStatus = 1 " +
+                "AND (c.CourseName LIKE ? OR c.CourseSummary LIKE ? OR cat.category_name LIKE ?) " +
+                "AND cat.category_name = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            String searchPattern = "%" + keyword + "%";
+            ps.setString(1, searchPattern);
+            ps.setString(2, searchPattern);
+            ps.setString(3, searchPattern);
+            ps.setString(4, categoryName);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
+
+    private Course buildCourseFromResultSet(ResultSet rs) throws SQLException {
+        User user = new User();
+        user.setUserId(rs.getInt("UserID"));
+        user.setDisplayName(rs.getString("DisplayName"));
+        user.setEmail(rs.getString("Email"));
+        user.setPhone(rs.getString("PhoneNumber"));
+        int roleInt = rs.getInt("Role");
+        switch (roleInt) {
+            case 0:
+                user.setRole(Role.LEARNER);
+                break;
+            case 1:
+                user.setRole(Role.INSTRUCTOR);
+                break;
+            case 2:
+                user.setRole(Role.ADMIN);
+                break;
+        }
+        user.setGender(rs.getInt("Gender"));
+        user.setDateOfBirth(rs.getTimestamp("DateOfBirth"));
+        user.setAvatar(rs.getString("Avatar"));
+        user.setInfo(rs.getNString("Info"));
+
+        Category category = new Category();
+        category.setId(rs.getInt("category_id"));
+        category.setName(rs.getNString("category_name"));
+
+        Course course = new Course();
+        course.setCourseID(rs.getInt("CourseID"));
+        course.setCourseName(rs.getNString("CourseName"));
+        course.setUser(user);
+        course.setCategory(category);
+        course.setApproveStatus(rs.getInt("ApproveStatus"));
+        course.setPublicDate(rs.getTimestamp("PublicDate"));
+        course.setCourseLastUpdate(rs.getTimestamp("CourseLastUpdate"));
+        course.setSalePrice(rs.getInt("SalePrice"));
+        course.setOriginalPrice(rs.getInt("OriginalPrice"));
+        course.setIsSale(rs.getInt("IsSale"));
+        course.setCourseImageLocation(rs.getString("CourseImageLocation"));
+        course.setCourseSummary(rs.getNString("CourseSummary"));
+        course.setCourseHighlight(rs.getNString("CourseHighlight"));
+
+        return course;
+    }
+//========
 
     public static void main(String[] args) {
         List<Course> list = new ArrayList<>();
