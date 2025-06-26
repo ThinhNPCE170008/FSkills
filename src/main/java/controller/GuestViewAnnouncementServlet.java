@@ -7,6 +7,7 @@ package controller;
 import dao.AnnouncementDAO;
 import model.Announcement;
 import java.io.IOException;
+// import java.sql.SQLException;
 import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -62,7 +63,7 @@ public class GuestViewAnnouncementServlet extends HttpServlet {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); 
             throw new ServletException("An application error occurred while processing announcement requests.", e);
         }
     }

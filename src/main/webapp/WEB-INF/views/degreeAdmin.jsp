@@ -61,6 +61,7 @@
         </style>
     </head>
     <body class="flex flex-col h-screen">
+        <jsp:include page="/layout/header_admin.jsp" />
 
         <div class="flex flex-grow">
             <jsp:include page="/layout/sidebar_admin.jsp"/>

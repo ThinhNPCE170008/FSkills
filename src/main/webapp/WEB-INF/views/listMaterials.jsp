@@ -1,8 +1,3 @@
-<%-- 
-    Document   : materials
-    Created on : 20/06/2025, 2:36:00 PM
-    Author     : Hua Khanh Duy - CE180230 - SE1814
---%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -64,7 +59,7 @@
         </style>
     </head>
     <body>
-        <jsp:include page="/layout/sidebar_user.jsp"/>
+        <jsp:include page="/layout/header_user.jsp"/>
 
         <div class="container py-2 ps-3">
             <div class="container py-2 ps-3">

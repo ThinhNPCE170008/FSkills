@@ -14,9 +14,8 @@ body {
     overflow-y: auto;
 }
 
-/* Đã sửa: profile-edit-container phủ toàn bộ chiều rộng, nền trắng, nội dung căn giữa với max-width */
+/* profile-edit-container styles - sidebar-related margins moved to sidebar.css */
 .profile-edit-container {
-    margin-left: 80px; /* Khoảng cách ban đầu với sidebar */
     padding: 10px;
     width: 95%; /* Phủ đầy chiều rộng */
     background-color: #ffffff; /* Nền trắng toàn trang */
@@ -24,12 +23,6 @@ body {
     box-sizing: border-box;
     transition: margin-left 0.3s ease, max-width 0.3s ease; /* Thêm transition cho max-width */
     overflow-y: hidden; /* Prevent vertical scrollbar */
-}
-
-/* Khi hover sidebar, profile-edit-container dịch sang phải và thu hẹp */
-.sidebar:hover + .profile-edit-container {
-    margin-left: 250px; /* Dịch sang phải khi sidebar mở rộng */
-    max-width: calc(100% - 250px); /* Thu hẹp chiều rộng để nhường chỗ cho sidebar */
 }
 
 
@@ -41,115 +34,7 @@ body {
     overflow: visible;
 }
 
-/* Sidebar styles */
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 80px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    overflow-y: auto;
-    transition: width 0.3s ease;
-    padding: 15px 0;
-}
-
-.sidebar:hover {
-    width: 250px;
-}
-
-.sidebar-content {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    padding: 0 15px;
-}
-
-/* Logo styles */
-.logo-link {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
-.logo-img {
-    max-width: 50px;
-    height: auto;
-    transition: max-width 0.3s ease;
-}
-
-.sidebar:hover .logo-img {
-    max-width: 120px;
-}
-
-/* Avatar styles */
-.user-avatar {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
-.avatar-img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #e9ecef;
-    transition: width 0.3s ease, height 0.3s ease;
-}
-
-.sidebar:hover .avatar-img {
-    width: 80px;
-    height: 80px;
-}
-
-/* Navigation styles */
-.sidebar-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    overflow: hidden;
-}
-
-.sidebar-nav a {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    color: #495057;
-    text-decoration: none;
-    border-radius: 6px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    white-space: nowrap;
-}
-
-.sidebar-nav a:hover {
-    background-color: #e9ecef;
-    color: #0056b3;
-}
-
-.sidebar-nav i {
-    font-size: 1.2rem;
-    min-width: 30px;
-    text-align: center;
-}
-
-.sidebar-nav span {
-    margin-left: 10px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.sidebar:hover .sidebar-nav span {
-    opacity: 1;
-}
-
-.divider {
-    height: 1px;
-    background-color: #e9ecef;
-    margin: 10px 0;
-}
+/* Sidebar styles moved to sidebar.css */
 
 /* Welcome section */
 .welcome-section {
@@ -610,17 +495,10 @@ body {
     box-sizing: border-box;
 }
 
-/* Responsive adjustments */
+/* Responsive adjustments - sidebar-related styles moved to sidebar.css */
 @media (max-width: 992px) {
     .profile-edit-container {
-        margin-left: 80px;
-        max-width: calc(100% - 80px);
         padding: 15px;
-    }
-
-    .sidebar:hover + .profile-edit-container {
-        margin-left: 250px;
-        max-width: calc(100% - 250px);
     }
 
     .profile-details, .form-row {
@@ -629,24 +507,8 @@ body {
 }
 
 @media (max-width: 768px) {
-    .sidebar {
-        width: 0;
-        padding: 15px 0;
-    }
-
-    .sidebar:hover {
-        width: 250px;
-    }
-
     .profile-edit-container {
-        margin-left: 0;
-        max-width: 100%;
         padding: 10px;
-    }
-
-    .sidebar:hover + .profile-edit-container {
-        margin-left: 250px;
-        max-width: calc(100% - 250px);
     }
 
     .profile-details, .form-row {
