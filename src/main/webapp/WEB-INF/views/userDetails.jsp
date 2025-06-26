@@ -36,25 +36,80 @@
             display: flex; /* Use flexbox for main layout */
             min-height: 100vh;
             background-color: #f0f2f5; /* Unified background */
-            overflow-x: hidden; /* Prevent horizontal scrollbar */
         }
 
-        /* No need to duplicate sidebar styles as they are included from sidebar.css */
+        /* Sidebar styles from sidebar_admin.jsp's original <style> block */
+        .sidebar-container {
+            width: 100px;
+            transition: width 0.3s ease-in-out;
+            overflow-x: hidden;
+            position: fixed; /* Keep it fixed */
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 1000;
+            background-color: #ffffff; /* Example sidebar background */
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1); /* Optional shadow */
+        }
+
+        .sidebar-container:hover {
+            width: 250px;
+        }
+
+        .sidebar-container .sidebar-logo span,
+        .sidebar-container .nav-link span,
+        .sidebar-container .user-info span {
+            opacity: 0;
+            visibility: hidden;
+            white-space: nowrap;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+
+        .sidebar-container:hover .sidebar-logo span,
+        .sidebar-container:hover .nav-link span,
+        .sidebar-container:hover .user-info span {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar-container .nav-link i {
+            min-width: 24px;
+            text-align: center;
+            margin-right: 8px;
+        }
 
         /* Apply margin-left to the main content area */
         .main-content {
-            margin-left: 80px; /* Initial margin for collapsed sidebar - match sidebar width */
+            margin-left: 100px; /* Initial margin for collapsed sidebar */
             flex-grow: 1; /* Allow main content to take remaining space */
-            transition: margin-left 0.3s ease, width 0.3s ease; /* Match transition in sidebar.css */
+            transition: margin-left 0.3s ease-in-out;
             padding: 20px; /* Consistent padding */
             display: flex; /* Use flex to align content within main-content */
             flex-direction: column; /* Stack items vertically */
             align-items: center; /* Center horizontally */
-            box-sizing: border-box; /* Include padding and border in the element's total width and height */
-            max-width: 100%; /* Ensure it doesn't overflow */
         }
 
-        /* Mobile styles are handled in sidebar.css */
+        /* Adjust main content margin when sidebar expands */
+        .sidebar-container:hover ~ .main-content {
+            margin-left: 250px;
+        }
+
+        /* Hide sidebar on mobile */
+        @media (max-width: 768px) {
+            .sidebar-container {
+                width: 0;
+                left: -60px; /* Hide completely */
+            }
+            .sidebar-container:hover {
+                width: 0;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .sidebar-container:hover ~ .main-content {
+                margin-left: 0;
+            }
+        }
 
 
         /* Existing userDetails.jsp styles - ADJUSTED FOR COMPACTNESS AND BOXES */
