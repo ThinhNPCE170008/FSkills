@@ -1,4 +1,3 @@
-
 <%@page import="model.Notification" %>
 <%@page import="java.util.List" %>
 <%@page import="model.User" %>
@@ -21,9 +20,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Instructor Dashboard | F-Skill</title>
 
-        <script src="https://cdn.tailwindcss.com"></script>
-
         <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
+        <script src="https://cdn.tailwindcss.com"></script>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -33,6 +31,14 @@
             body {
                 font-family: 'Inter', sans-serif;
                 background-color: #f8f9fa;
+                overflow-x: hidden; /* Prevent horizontal scrollbar */
+            }
+
+            /* Ensure content adapts to available space */
+            .main {
+                transition: margin-left 0.3s ease, width 0.3s ease;
+                max-width: 100%;
+                box-sizing: border-box;
             }
 
             .header-shadow {
@@ -90,22 +96,15 @@
 
     <body class="bg-gray-50">
         <jsp:include page="/layout/sidebar_user.jsp"/>
+        <jsp:include page="/layout/header_user.jsp"/>
         <!-- ======================= Main Content ======================= -->
-        <main class="mx-auto px-5 py-8 md:py-12">
-            <nav class="text-base text-gray-500 mb-6" aria-label="Breadcrumb">
-                <ol class="list-none p-0 inline-flex space-x-2">
-                    <li class="inline-flex items-center">
-                        <span class="text-gray-800 font-semibold">Dashboard</span>
-                    </li>
-                </ol>
-            </nav>
-
+        <main class="main container mx-auto px-4 py-8 md:py-12">
             <section id="dashboard" class="mb-12">
                 <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Welcome Back, ${user.displayName}</h1>
                 <p class="text-gray-500 text-lg">Here's your teaching dashboard for today.</p>
             </section>
 
-            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
                 <!-- Card 1 -->
                 <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center justify-center text-center">
                     <div class="bg-indigo-100 p-4 rounded-full mb-3">
@@ -132,6 +131,7 @@
                     <p class="text-gray-500 text-sm">Average Rating</p>
                     <p class="text-3xl font-bold text-gray-800">${totalRating}</p>
                 </div>
+
             </section>
 
             <section id="my-courses">

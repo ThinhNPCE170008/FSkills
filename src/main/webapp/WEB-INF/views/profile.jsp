@@ -7,58 +7,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Profile - F-Skills</title>
+
   <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/profile.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css">
 </head>
+
+
 <body>
-<div class="sidebar">
-  <div class="sidebar-content">
-    <a href="${pageContext.request.contextPath}/homePage_Guest.jsp" class="logo-link">
-      <img src="${pageContext.request.contextPath}/img/logo.png" alt="F-SKILL Logo" class="logo-img">
-    </a>
-
-    <!-- Avatar -->
-    <div class="user-avatar">
-      <c:choose>
-        <c:when test="${not empty sessionScope.user.avatar}">
-          <img src="${pageContext.request.contextPath}/${sessionScope.user.avatar}" alt="User Avatar" class="avatar-img">
-        </c:when>
-        <c:otherwise>
-          <img src="https://placehold.co/80x80/cccccc/333333?text=User" alt="Default Avatar" class="avatar-img">
-        </c:otherwise>
-      </c:choose>
-    </div>
-
-    <!-- Navigation Links -->
-    <nav class="sidebar-nav">
-      <c:if test="${sessionScope.user.role == 'LEARNER'}">
-        <a href="${pageContext.request.contextPath}/homePage_Guest.jsp"><i class="bi bi-house-door"></i> <span>Home</span></a>
-        <a href="${pageContext.request.contextPath}/AllCourses.jsp"><i class="bi bi-book"></i> <span>All Courses</span></a>
-        <a href="#"><i class="bi bi-mortarboard"></i> <span>My Courses</span></a>
-        <a href="${pageContext.request.contextPath}/globalAnn.jsp"><i class="bi bi-megaphone"></i> <span>Announcements</span></a>
-        <a href="#"><i class="bi bi-cart"></i> <span>Cart</span></a>
-        <a href="notifications.jsp"><i class="bi bi-bell"></i> <span>Notifications</span></a>
-        <a href="${pageContext.request.contextPath}/Degree"><i class="bi bi-award"></i> <span>Degree</span></a>
-        <div class="divider"></div>
-        <a href="${pageContext.request.contextPath}/learner/profile"><i class="bi bi-person-circle"></i> <span>Profile</span></a>
-        <a href="${pageContext.request.contextPath}/logout"><i class="bi bi-box-arrow-right"></i> <span>Logout</span></a>
-      </c:if>
-
-      <c:if test="${sessionScope.user.role == 'INSTRUCTOR'}">
-        <a href="${pageContext.request.contextPath}/instructor"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
-        <a href="${pageContext.request.contextPath}/instructor/courses?action=list"><i class="bi bi-laptop"></i> <span>Manage Courses</span></a>
-        <a href="analytics.jsp"><i class="bi bi-graph-up"></i> <span>Analytics</span></a>
-        <a href="feedback.jsp"><i class="bi bi-chat-dots"></i> <span>Feedback</span></a>
-        <a href="notifications.jsp"><i class="bi bi-bell"></i> <span>Notifications</span></a>
-        <div class="divider"></div>
-        <a href="${pageContext.request.contextPath}/instructor/profile"><i class="bi bi-person-circle"></i> <span>Profile</span></a>
-        <a href="${pageContext.request.contextPath}/logout"><i class="bi bi-box-arrow-right"></i> <span>Logout</span></a>
-      </c:if>
-    </nav>
-  </div>
-</div>
+<jsp:include page="/layout/sidebar_user.jsp" />
 <div class="profile-edit-container">
 
   <div class="welcome-section">
@@ -118,7 +77,7 @@
     </div>
 
     <%-- Profile Edit Form (Initially Hidden) --%>
-    <form class="profile-form" id="profileEditForm" action="${pageContext.request.contextPath}${sessionScope.user.role == 'INSTRUCTOR' ? '/instructor/profile' : '/learner/profile'}?action=edit" method="POST" enctype="multipart/form-data" style="display: none;">
+    <form class="profile-form" id="profileEditForm" action="${pageContext.request.contextPath}${sessionScope.user.role eq 'INSTRUCTOR' ? '/instructor/profile' : '/learner/profile'}?action=edit" method="POST" enctype="multipart/form-data" style="display: none;">
       <div class="avatar-section">
         <div class="avatar-container">
           <img src="${pageContext.request.contextPath}/${profile.avatar}" alt="Profile Picture" id="avatar-preview">
@@ -187,7 +146,7 @@
     <span class="avatar-modal-close password-modal-close">&times;</span>
     <h1>Change Password</h1>
 
-    <form id="passwordForm" action="${pageContext.request.contextPath}${sessionScope.user.role == 'INSTRUCTOR' ? '/instructor/profile' : '/learner/profile'}?action=password" method="POST">
+    <form id="passwordForm" action="${pageContext.request.contextPath}${sessionScope.user.role eq 'INSTRUCTOR' ? '/instructor/profile' : '/learner/profile'}?action=password" method="POST">
       <div class="form-group">
         <label for="oldPassword">Old Password</label>
         <input type="password" id="oldPassword" name="oldPassword" required>
@@ -212,7 +171,8 @@
 </div>
 
 <!-- Toast Notification -->
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
+<div style = "z-index: 2000;"
+        class="toast-container position-fixed bottom-0 end-0 p-3">
   <!-- Error Toast -->
   <div id="serverToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="d-flex">

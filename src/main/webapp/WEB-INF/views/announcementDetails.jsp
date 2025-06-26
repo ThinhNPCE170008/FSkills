@@ -51,10 +51,12 @@
         </style>
     </head>
     <body class="flex flex-col h-screen">
-        
+      
+        <jsp:include page="/layout/header_admin.jsp" />
 
         <div class="flex flex-grow">
-            <jsp:include page="/layout/sidebar_admin.jsp"/>   
+            <jsp:include page="/layout/sidebar_admin.jsp"/>
+
 
             <main class="flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
                 <div class="bg-white p-5 rounded shadow-sm">
