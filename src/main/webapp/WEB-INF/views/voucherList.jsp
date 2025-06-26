@@ -7,6 +7,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<fmt:setLocale value="vi_VN" scope="session"/>
+
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -141,6 +143,13 @@
                 border-bottom: none;
             }
 
+            /* CSS cho hàng hết hạn */
+            /* This can be removed if you use Tailwind CSS class directly */
+            .expired-row {
+                color: #ef4444; /* Red color */
+                font-weight: 600;
+            }
+
             .actions-cell form {
                 display: inline-block;
                 margin-right: 0.5rem;
@@ -169,11 +178,16 @@
                 background-color: #fef3c7;
             }
 
-            .action-btn-delete {
-                color: #ef4444;
+            .action-btn-delete-all {
+                background-color: #ef4444;
+                color: white;
+                font-weight: 600;
+                padding: 10px 15px;
+                border-radius: 8px;
+                transition: background-color 0.3s;
             }
-            .action-btn-delete:hover {
-                background-color: #fee2e2;
+            .action-btn-delete-all:hover {
+                background-color: #dc2626;
             }
 
             .no-results td {
@@ -181,6 +195,23 @@
                 color: #6b7280;
                 padding: 2.5rem;
                 font-size: 1rem;
+            }
+
+            .global-message {
+                margin-bottom: 15px;
+                padding: 12px;
+                border-radius: 8px;
+                font-weight: 600;
+                text-align: center;
+                font-size: 0.95em;
+            }
+            .success-message {
+                background-color: #d1fae5;
+                color: #065f46;
+            }
+            .error-global-message {
+                background-color: #fee2e2;
+                color: #991b1b;
             }
         </style>
     </head>
@@ -195,11 +226,6 @@
         <div class="flex flex-grow">
             <jsp:include page="/layout/sidebar_admin.jsp"/>
 
-            <%--
-            Cho này neu sai thi lay dong code duoi nayyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
-            <jsp:include page="/layout/sidebar.jsp"/>
-            --%>
-
             <main class="flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
                 <div class="bg-white p-6 rounded shadow-sm max-w-6xl mx-auto">
                     <div class="page-header flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
@@ -212,7 +238,13 @@
                     </div>
 
                     <c:if test="${not empty globalMessage}">
-                        <p class="global-message bg-red-100 text-red-800 p-3 rounded-lg mb-4 text-center">
+                        <p class="global-message
+                           <c:choose>
+                               <c:when test="${not empty successMessage}">success-message</c:when>
+                               <c:when test="${not empty errorMessages}">error-global-message</c:when>
+                               <c:otherwise>bg-gray-100 text-gray-800</c:otherwise>
+                           </c:choose>
+                           ">
                             ${globalMessage}
                         </p>
                     </c:if>
@@ -230,7 +262,12 @@
                                 </button>
                             </form>
                         </div>
-                        <div>
+                        <div class="action-buttons flex gap-3">
+                            <%-- Add a button to delete all expired vouchers --%>
+                            <button id="deleteExpiredBtn" class="action-btn-delete-all flex items-center gap-2" title="Delete all expired vouchers">
+                                <i class="fas fa-trash-alt"></i> Delete Expired
+                            </button>
+
                             <a href="addVoucher" class="add-button bg-green-600 text-white py-3 px-5 rounded-lg hover:bg-green-700 transition duration-200 flex items-center gap-2">
                                 <i class="fas fa-plus-circle"></i> Add new voucher
                             </a>
@@ -256,28 +293,36 @@
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200">
                                         <c:forEach var="voucher" items="${voucherList}">
-                                            <tr class="hover:bg-gray-50">
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${voucher.voucherID}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${voucher.voucherName}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${voucher.voucherCode}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            <jsp:useBean id="now" class="java.util.Date"/>
+
+                                            <c:set var="isExpired" value="${voucher.expiredDate lt now}"/>
+
+                                            <tr class="hover:bg-gray-50 <c:if test="${isExpired}">text-red-500 font-semibold</c:if>">
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${voucher.voucherID}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm">${voucher.voucherName}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm">${voucher.voucherCode}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm">
                                                     <fmt:formatDate value="${voucher.expiredDate}" pattern="HH:mm dd/MM/yyyy"/>
                                                 </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${voucher.saleType}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${voucher.saleAmount}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${voucher.minPrice}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${voucher.amount}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm">${voucher.saleType}</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                                    <c:choose>
+                                                        <c:when test="${voucher.saleType eq 'FIXED'}">
+                                                            <fmt:formatNumber value="${voucher.saleAmount}" pattern="#,###"/> VND
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            ${voucher.saleAmount}
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                                    <fmt:formatNumber value="${voucher.minPrice}" pattern="#,###"/> VND
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm">${voucher.amount}</td>
                                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-center actions-cell">
-                                                    <%-- Updated link to use updateVoucher as per the other JSP --%>
                                                     <a href="updateVoucher?voucherID=${voucher.voucherID}" class="action-btn action-btn-edit" title="Edit Voucher">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
-                                                    <form action="deleteVoucher" method="post" class="inline-block mx-1" onsubmit="return confirm('Are you sure you want to delete voucher ID ${voucher.voucherID}? This action cannot be undone.');">
-                                                        <input type="hidden" name="voucherID" value="${voucher.voucherID}">
-                                                        <button type="submit" class="action-btn action-btn-delete" title="Delete Voucher">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                    </form>
                                                 </td>
                                             </tr>
                                         </c:forEach>
@@ -285,7 +330,6 @@
                                 </table>
                             </c:when>
                             <c:otherwise>
-                                <%-- Chỉ hiển thị thông báo "There are no vouchers to display." nếu voucherList trống VÀ không có globalMessage (ví dụ: từ tìm kiếm cụ thể) --%>
                                 <c:if test="${empty globalMessage}">
                                     <p class="no-results px-6 py-10 text-gray-500 text-center text-base">
                                         There are no vouchers to display.
@@ -302,23 +346,50 @@
                 integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
         <script>
-                                                        const notificationBell = document.getElementById('notification-bell');
-                                                        const notificationPopup = document.getElementById('notification-popup');
+            const notificationBell = document.getElementById('notification-bell');
+            const notificationPopup = document.getElementById('notification-popup');
+            const deleteExpiredBtn = document.getElementById('deleteExpiredBtn');
 
-                                                        notificationBell.addEventListener('click', (event) => {
-                                                            event.stopPropagation();
-                                                            notificationPopup.classList.toggle('hidden');
-                                                        });
+            // Toggle notification popup
+            if (notificationBell && notificationPopup) {
+                notificationBell.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    notificationPopup.classList.toggle('hidden');
+                });
+            }
 
-                                                        document.addEventListener('click', (event) => {
-                                                            if (!notificationBell.contains(event.target) && !notificationPopup.contains(event.target)) {
-                                                                notificationPopup.classList.add('hidden');
-                                                            }
-                                                        });
+            // Hide notification popup when clicking outside
+            document.addEventListener('click', (event) => {
+                if (notificationPopup && !notificationPopup.contains(event.target) && !notificationBell.contains(event.target)) {
+                    notificationPopup.classList.add('hidden');
+                }
+            });
 
-                                                        document.querySelector('.sidebar-toggle').addEventListener('click', () => {
-                                                            document.querySelector('.sidebar-container').classList.toggle('active');
-                                                        });
+            // Sidebar toggle for mobile
+            document.querySelector('.sidebar-toggle').addEventListener('click', () => {
+                document.querySelector('.sidebar-container').classList.toggle('active');
+            });
+
+            // Confirm and submit delete expired vouchers form
+            if (deleteExpiredBtn) {
+                deleteExpiredBtn.addEventListener('click', () => {
+                    if (confirm('Are you sure you want to delete ALL expired vouchers? This action cannot be undone.')) {
+                        // Create a form dynamically to send a POST request
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = 'deleteVoucher'; // The servlet URL
+
+                        const actionInput = document.createElement('input');
+                        actionInput.type = 'hidden';
+                        actionInput.name = 'action';
+                        actionInput.value = 'deleteExpired';
+
+                        form.appendChild(actionInput);
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                });
+            }
         </script>
     </body>
 </html>
