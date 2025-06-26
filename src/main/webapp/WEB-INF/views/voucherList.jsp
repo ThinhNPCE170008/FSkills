@@ -274,7 +274,7 @@
                         </div>
                     </div>
 
-                    <div class="table-wrapper overflow-x-auto bg-white rounded-lg shadow-sm">
+                    <div class="table-wrapper overflow-x-hidden bg-white rounded-lg shadow-sm">
                         <c:choose>
                             <c:when test="${not empty voucherList}">
                                 <table class="min-w-full divide-y divide-gray-200">

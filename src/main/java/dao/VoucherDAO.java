@@ -57,7 +57,7 @@ public class VoucherDAO extends DBContext {
     public List<Voucher> searchVouchers(String searchTerm) throws SQLException {
         List<Voucher> vouchers = new ArrayList<>();
 
-        String sql = "SELECT VoucherID, VoucherName, VoucherCode, ExpiredDate, SaleType, SaleAmount, MinPrice, Amount FROM Vouchers WHERE VoucherName LIKE ?";
+        String sql = "SELECT VoucherID, VoucherName, VoucherCode, ExpiredDate, SaleType, SaleAmount, MinPrice, Amount FROM Vouchers WHERE VoucherName LIKE ? ORDER BY ExpiredDate ASC";
 
         try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             String trimmedSearchTerm = searchTerm.trim();
@@ -79,7 +79,6 @@ public class VoucherDAO extends DBContext {
     }
 
     public boolean addVoucher(Voucher voucher) throws SQLException {
-        // Updated SQL INSERT statement: added VoucherName, VoucherCode, removed CourseID
         String sql = "INSERT INTO Vouchers (VoucherName, VoucherCode, ExpiredDate, SaleType, SaleAmount, MinPrice, Amount) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, voucher.getVoucherName());
