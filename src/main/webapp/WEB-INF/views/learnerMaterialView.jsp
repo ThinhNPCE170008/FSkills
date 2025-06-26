@@ -11,6 +11,7 @@
     int courseID = (int) request.getAttribute("CourseID");
     int moduleID = (int) request.getAttribute("ModuleID");
     int materialID = (int) request.getAttribute("MaterialID");
+    ArrayList<Material> matList = (ArrayList) request.getAttribute("Material");
     MaterialDAO matDAO = new MaterialDAO();
     StudyDAO stuDAO = new StudyDAO();
 
@@ -21,7 +22,6 @@
     String type = mat.getType().toLowerCase();
     String matLocate = mat.getMaterialLocation();
     String path;
-    ArrayList<Material> matList = (ArrayList) matDAO.getAllMaterial(courseID, moduleID);
     if (matLocate.startsWith("materialUpload")) {
         path = request.getContextPath() + "/" + matLocate;
     } else {
@@ -39,39 +39,48 @@
     </head>
     <style>
         .material{
-            display: block;
+            display: grid;
+            grid-template-columns: 50px auto;
             padding: 20px;
             font-size: 18px;
-            border-bottom: grey solid 1px;
-            justify-content: center;
+            background-color: #dae3f1;
+        }
+        a.material{
+            background-color: #ffffff;
         }
         a.material:hover{
-            background-color: #f1f1f1;
-        }
-
-        .completedMaterial{
-            display: block;
-            padding: 20px;
-            font-size: 18px;
-            border-bottom: grey solid 1px;
-            justify-content: center;
-            background-color: #007bff;
-            color: white;
-        }
-
-        a.completedMaterial:hover{
-            background-color: #0066cc;
+            background-color: #dae3f1;
         }
 
         #material-list{
             border-right: grey solid 1px;
-            height: 90vh;
+            height: 80vh;
             overflow-y: scroll;
-            margin: 5vh 0;
+            margin: 10vh 0 10vh 0;
+        }
+
+        #material-list::-webkit-scrollbar {
+            display: none;
+        }
+
+        #material-list {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
 
         #material-content{
             overflow-y: scroll;
+            height: 80vh;
+            margin: 10vh 0;
+        }
+        
+        #material-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        #material-content {
+            -ms-overflow-style: none;  
+            scrollbar-width: none;  
         }
 
         .mat-des{
@@ -89,6 +98,28 @@
             margin: 30px;
             font-size: 18px;
         }
+
+        .headlink{
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+
+        #listOfLink{
+            height: 5vh;
+            padding-top: 3vh;
+        }
+        .arrow{
+            padding: 0 15px;
+        }
+        .check-icon{
+            color: #009900;
+            font-size: 22px;
+            grid-row: 1 / span 2;
+            align-self: center;
+            text-align: center;
+        }
     </style>
     <body>
         <%@include file="../../layout/sidebar_user.jsp"%>
@@ -98,40 +129,61 @@
                     <%  for (Material m : matList) {
                             if (m.getMaterialId() != materialID) {
                     %>
-                    <li><a class="<%=stuDAO.checkStudy(u.getUserId(), m.getMaterialId()) ? "completedMaterial" : "material"%>" href="<%=request.getContextPath() + "/Learner/Course/Module/Material?CourseID=" + courseID + "&ModuleID=" + moduleID + "&MaterialID=" + m.getMaterialId()%>"><%=m.getMaterialName()%></a></li>
+                    <li>
+                        <a class="material" href="<%=request.getContextPath() + "/Learner/Course/Module/Material?CourseID=" + courseID + "&ModuleID=" + moduleID + "&MaterialID=" + m.getMaterialId()%>">
+                            <span class="check-icon"><%=stuDAO.checkStudy(u.getUserId(), m.getMaterialId()) ? "<i class=\"fa-solid fa-circle-check\"></i>" : ""%></span>                        
+                            <span><%=m.getMaterialName()%></span>
+                        </a>
+                    </li>
                     <%
-                            } else {
+                    } else {
                     %>
-                    <li><span class="<%=stuDAO.checkStudy(u.getUserId(), m.getMaterialId()) ? "completedMaterial" : "material"%>"><%=m.getMaterialName()%><span></li>
+                    <li>
+                        <span class="material">
+                            <span class="check-icon"><%=stuDAO.checkStudy(u.getUserId(), m.getMaterialId()) ? "<i class=\"fa-solid fa-circle-check\"></i>" : ""%></span>                        
+                            <span><%=m.getMaterialName()%></span>
+                        </span>
+                    </li>
                     <%
-                                }
+                            }
                         }
                     %>
                 </ul>
             </div>
             <div id="material-content" class="w-75">
+                <div id="listOfLink" class="ms-5">
+                    <a class="headlink link-primary"href="<%=request.getContextPath() + "/Learner/Course?CourseID=" + courseID%>">
+                        <%=cou.getCourseName()%>
+                    </a>
+                    <span class="arrow">></span>
+                    <a class="headlink link-primary"href="<%=request.getContextPath() + "/Learner/Course/Module/Material?CourseID=" + courseID + "&ModuleID=" + moduleID + "&MaterialID=" + mat.getMaterialId()%>">
+                        <%=mol.getModuleName()%>/<%=mat.getMaterialName()%>
+                    </a>
+                </div>
                 <p class="h1 text-center mt-5"><%=mat.getMaterialName()%></p>
-                <p class="h6 ms-5 mat-des"><%=mat.getMaterialDescription()%></p>
-                    <%
-                        if (matLocate.endsWith("docx")) {
-                    %>
+                <%
+                    if (matLocate.endsWith("docx")) {
+                %>
                 <p class="h6 ms-5 mt-5">Download Word Document:</p>
                 <a class="h6 ms-5 link-primary" href="<%=path%>" download><%=matLocate.replace("materialUpload/", "")%></a>
-                    <%
-                        } else {
-                    %>
+                <%
+                } else {
+                %>
                 <iframe class="mx-auto" src="<%=path%>"></iframe>
                     <%
                         }
-                        if (!stuDAO.checkStudy(u.getUserId(), mat.getMaterialId())){
                     %>
+                <p class="h6 ms-5 mat-des"><%=mat.getMaterialDescription()%></p>
+                <%
+                    if (!stuDAO.checkStudy(u.getUserId(), mat.getMaterialId())) {
+                %>
                 <form method="POST" action="<%= request.getContextPath()%>/Learner/Course/Module/Material">
                     <button type="submit" name="completeMaterial" value="1" id="completeButton" class="btn btn-primary">Complete</button>
                     <input type="hidden" name="courseID" value="<%=cou.getCourseID()%>">
                     <input type="hidden" name="moduleID" value="<%=mol.getModuleID()%>">
                     <input type="hidden" name="materialID" value="<%=mat.getMaterialId()%>">
                 </form>
-                    <%}%>
+                <%}%>
             </div>
         </div>
     </body>
