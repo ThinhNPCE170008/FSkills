@@ -56,7 +56,6 @@
     </head>
     <body>
         <div class="container-detail">
-            <%-- Lỗi 2: "Return to announcement list" thành button (đã sửa ở lần trước) --%>
             <a href="${pageContext.request.contextPath}/guest/announcements" 
                class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-full 
                       hover:bg-blue-700 transition-colors shadow-md mb-6 text-lg">
@@ -75,7 +74,6 @@
                         <span>Posted by: ${announcement.userId.displayName != null ? announcement.userId.displayName : announcement.userId.userName}</span>
                         <span>- <fmt:formatDate value="${announcement.createDate}" pattern="dd/MM/yyyy HH:mm"/></span>
                         
-                        <%-- Sửa lỗi 3: Icon bị vỡ và Lỗi 6: Dùng Font Awesome thay img --%>
                         <span class="icon-text">
                             <i class="fa-regular fa-comment text-base"></i> 0 comments
                         </span>
@@ -91,7 +89,6 @@
                 
 
                 <div class="announcement-content-detail">
-                    <%-- Sử dụng c:out với escapeXml="false" nếu nội dung có thể chứa HTML (từ trình soạn thảo WYSIWYG) --%>
                     <p class="text-gray-800"><c:out value="${announcement.announcementText}" escapeXml="false"/></p>
                 </div>
 

@@ -9,7 +9,7 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     overflow-y: auto;
-    transition: width 0.3s ease;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     padding: 15px 0;
 }
 
@@ -34,7 +34,7 @@
 .logo-img {
     max-width: 50px;
     height: auto;
-    transition: max-width 0.3s ease;
+    transition: max-width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar:hover .logo-img {
@@ -54,7 +54,7 @@
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid #e9ecef;
-    transition: width 0.3s ease, height 0.3s ease;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar:hover .avatar-img {
@@ -111,7 +111,7 @@
     color: #495057;
     text-decoration: none;
     border-radius: 6px;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     white-space: nowrap;
 }
 
@@ -129,7 +129,7 @@
 .sidebar-nav span {
     margin-left: 10px;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar:hover .sidebar-nav span {
@@ -143,9 +143,9 @@
 }
 
 /* Container adjustments for sidebar */
-.profile-edit-container, .header, main, .admin-content, .main {
-    margin-left: 80px; /* Initial distance from sidebar */
-    transition: margin-left 0.3s ease, max-width 0.3s ease;
+.profile-edit-container, .header, main, .admin-content, .main, .container, footer {
+    margin-left: 80px !important; /* Initial distance from sidebar */
+    transition: margin-left 0.5s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.5s cubic-bezier(0.4, 0, 0.2, 1), width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar:hover + .profile-edit-container,
@@ -154,14 +154,20 @@
 .sidebar:hover ~ .admin-content,
 .sidebar:hover ~ .main-content,
 .sidebar:hover ~ .main,
+.sidebar:hover ~ .container,
+.sidebar:hover ~ footer,
 .sidebar:hover + div .header,
 .sidebar:hover + div main,
 .sidebar:hover + div .admin-content,
 .sidebar:hover + div .main-content,
-.sidebar:hover + div .main {
-    margin-left: 250px; /* Move right when sidebar expands */
-    width: calc(100% - 250px); /* Use width instead of max-width to prevent scaling */
-    transition: margin-left 0.3s ease, width 0.3s ease; /* Smooth transition */
+.sidebar:hover + div .main,
+.sidebar:hover + div .container,
+.sidebar:hover + div footer,
+.sidebar:hover + header,
+.sidebar:hover ~ header {
+    margin-left: 250px !important; /* Move right when sidebar expands */
+    width: calc(100% - 250px) !important; /* Use width instead of max-width to prevent scaling */
+    transition: margin-left 0.5s cubic-bezier(0.4, 0, 0.2, 1), width 0.5s cubic-bezier(0.4, 0, 0.2, 1); /* Smooth transition */
 }
 
 /* Hide bell icon in admin header */
@@ -198,14 +204,14 @@
     overflow: hidden;
     text-overflow: ellipsis;
     opacity: 1;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     margin-left: 5px;
 }
 
 /* Responsive adjustments */
 @media (max-width: 992px) {
-    .profile-edit-container, .header, main, .admin-content, .main {
-        margin-left: 80px;
+    .profile-edit-container, .header, main, .admin-content, .main, .container, footer {
+        margin-left: 80px !important;
         max-width: calc(100% - 80px);
     }
 
@@ -214,12 +220,19 @@
     .sidebar:hover ~ main,
     .sidebar:hover ~ .admin-content,
     .sidebar:hover ~ .main,
+    .sidebar:hover ~ .container,
+    .sidebar:hover ~ footer,
     .sidebar:hover + div .header,
     .sidebar:hover + div main,
     .sidebar:hover + div .admin-content,
-    .sidebar:hover + div .main {
-        margin-left: 250px;
+    .sidebar:hover + div .main,
+    .sidebar:hover + div .container,
+    .sidebar:hover + div footer,
+    .sidebar:hover + header,
+    .sidebar:hover ~ header {
+        margin-left: 250px !important;
         max-width: calc(100% - 250px);
+        width: calc(100% - 250px) !important;
     }
 }
 
@@ -233,8 +246,8 @@
         width: 250px;
     }
 
-    .profile-edit-container, .header, main, .admin-content, .main {
-        margin-left: 0;
+    .profile-edit-container, .header, main, .admin-content, .main, .container, footer {
+        margin-left: 0 !important;
         max-width: 100%;
     }
 
@@ -243,11 +256,18 @@
     .sidebar:hover ~ main,
     .sidebar:hover ~ .admin-content,
     .sidebar:hover ~ .main,
+    .sidebar:hover ~ .container,
+    .sidebar:hover ~ footer,
     .sidebar:hover + div .header,
     .sidebar:hover + div main,
     .sidebar:hover + div .admin-content,
-    .sidebar:hover + div .main {
-        margin-left: 250px;
+    .sidebar:hover + div .main,
+    .sidebar:hover + div .container,
+    .sidebar:hover + div footer,
+    .sidebar:hover + header,
+    .sidebar:hover ~ header {
+        margin-left: 250px !important;
         max-width: calc(100% - 250px);
+        width: calc(100% - 250px) !important;
     }
 }
