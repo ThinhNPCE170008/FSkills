@@ -44,15 +44,23 @@ public class AddVoucherServlet extends HttpServlet {
 
         Map<String, String> errorMessages = new HashMap<>();
         String globalMessage = "";
-
+        String voucherName = request.getParameter("voucherName");
+        String voucherCode = request.getParameter("voucherCode");
         String expiredDateStr = request.getParameter("expiredDate");
         String saleType = request.getParameter("saleType");
         String saleAmountStr = request.getParameter("saleAmount");
         String minPriceStr = request.getParameter("minPrice");
-        String courseIDStr = request.getParameter("courseID");
         String amountStr = request.getParameter("amount");
 
         Timestamp expiredDate = null;
+        
+        if (voucherName == null || voucherName.trim().isEmpty()) {
+            errorMessages.put("voucherName", "Voucher name cannot be empty.");
+        }
+        
+        if (voucherCode == null || voucherCode.trim().isEmpty()) {
+            errorMessages.put("voucherCode", "Voucher code cannot be empty.");
+        }
 
         if (expiredDateStr == null || expiredDateStr.trim().isEmpty()) {
             errorMessages.put("expiredDate", "Expiration date cannot be empty.");
@@ -106,20 +114,6 @@ public class AddVoucherServlet extends HttpServlet {
             }
         }
 
-        int courseID = 0;
-        if (courseIDStr == null || courseIDStr.trim().isEmpty()) {
-            errorMessages.put("courseID", "Course ID cannot be empty.");
-        } else {
-            try {
-                courseID = Integer.parseInt(courseIDStr.trim());
-                if (courseID < 0) {
-                    errorMessages.put("courseID", "Course ID must be non-negative.");
-                }
-            } catch (NumberFormatException e) {
-                errorMessages.put("courseID", "Invalid Course ID (must be an integer).");
-            }
-        }
-
         int amount = 0;
         if (amountStr == null || amountStr.trim().isEmpty()) {
             errorMessages.put("amount", "Amount cannot be empty.");
@@ -141,11 +135,12 @@ public class AddVoucherServlet extends HttpServlet {
             
             // Giữ lại các giá trị đã nhập
             Voucher voucherForDisplay = new Voucher();
+            voucherForDisplay.setVoucherName(voucherName);
+            voucherForDisplay.setVoucherCode(voucherCode);
             voucherForDisplay.setExpiredDate(expiredDate);
             voucherForDisplay.setSaleType(saleType);
             voucherForDisplay.setSaleAmount(saleAmount);
             voucherForDisplay.setMinPrice(minPrice);
-            voucherForDisplay.setCourseID(courseID);
             voucherForDisplay.setAmount(amount);
             
             request.setAttribute("voucher", voucherForDisplay);
@@ -155,11 +150,12 @@ public class AddVoucherServlet extends HttpServlet {
         }
 
         Voucher newVoucher = new Voucher();
+        newVoucher.setVoucherName(voucherName.trim());
+        newVoucher.setVoucherCode(voucherCode.trim());
         newVoucher.setExpiredDate(expiredDate);
         newVoucher.setSaleType(saleType.trim());
         newVoucher.setSaleAmount(saleAmount);
         newVoucher.setMinPrice(minPrice);
-        newVoucher.setCourseID(courseID);
         newVoucher.setAmount(amount);
 
         VoucherDAO voucherDAO = new VoucherDAO();

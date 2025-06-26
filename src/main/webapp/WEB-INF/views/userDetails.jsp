@@ -17,6 +17,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -359,7 +360,7 @@
                                     <div class="detail-item">
                                         <span class="detail-label">Phone Number</span>
                                         <span class="detail-value" id="displayPhone">${user.phone}</span>
-                                        <input type="text" id="inputPhone" name="phone" class="detail-input" value="${param.phone != null ? param.phone : user.phone}">
+                                        <input type="text" id="inputPhone" name="phone" class="detail-input" value="${param.phone != null ? param.phone : user.phone}" required>
                                         <c:if test="${not empty errorMessages['phone']}">
                                             <span class="error-message">${errorMessages['phone']}</span>
                                         </c:if>
@@ -387,7 +388,7 @@
                     </c:otherwise>
                 </c:choose>
             </div>
-            <a href="alluser" class="return-link">Return to User List</a>
+            <a href="alluser?roleFilter=${requestScope.currentListRoleFilter != null ? requestScope.currentListRoleFilter : 'Learner'}" class="return-link">Return to User List</a>
         </div>
     </div>
 </body>

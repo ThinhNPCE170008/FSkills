@@ -6,7 +6,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Material Details | F-Skill</title>
-        <link rel="icon" type="image/png" href="img/favicon_io/favicon.ico">
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
@@ -62,6 +62,7 @@
     </head>
     <body>
         <jsp:include page="/layout/header_user.jsp"/>
+
 
         <div class="container py-5">
             <nav aria-label="breadcrumb">
@@ -153,6 +154,6 @@
                 </div>
             </div>
         </div>
-
+        <jsp:include page="/layout/footer.jsp"/>
     </body>
 </html>

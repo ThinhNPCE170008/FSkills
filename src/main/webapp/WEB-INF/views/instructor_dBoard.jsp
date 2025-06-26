@@ -1,4 +1,3 @@
-
 <%@page import="model.Notification" %>
 <%@page import="java.util.List" %>
 <%@page import="model.User" %>
@@ -21,7 +20,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Instructor Dashboard | F-Skill</title>
 
-        <link rel="icon" type="image/png" href="img/favicon_io/favicon.ico">
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -133,14 +132,6 @@
                     <p class="text-3xl font-bold text-gray-800">${totalRating}</p>
                 </div>
 
-                <!-- Card 4 -->
-                <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center justify-center text-center">
-                    <div class="bg-red-100 p-4 rounded-full mb-3">
-                        <i class="fas fa-comments text-2xl text-red-500"></i>
-                    </div>
-                    <p class="text-gray-500 text-sm">Pending Feedback</p>
-                    <p class="text-3xl font-bold text-gray-800">Coming Soon</p>
-                </div>
             </section>
 
             <section id="my-courses">

@@ -1,8 +1,3 @@
-<%-- 
-    Document   : materials
-    Created on : 20/06/2025, 2:36:00 PM
-    Author     : Hua Khanh Duy - CE180230 - SE1814
---%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -11,7 +6,7 @@
     <head>
         <title>List Module | F-Skill</title>
         <meta charset="UTF-8">
-        <link rel="icon" type="image/png" href="img/favicon_io/favicon.ico">
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
 
         <!-- Bootstrap 5 -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -94,7 +89,7 @@
 
                 <c:choose>
                     <c:when test="${empty listMaterial}">
-                        <div class="alert alert-warning text-center">No material available.</div>
+                        <div class="alert alert-warning text-center mt-6">No material available.</div>
                     </c:when>
                     <c:otherwise>
                         <div class="bg-white p-5 rounded-4 shadow-lg mx-auto mt-6" style="max-width: 1500px;" >
@@ -198,7 +193,7 @@
                 </c:choose>
             </div>
         </div>
-        <jsp:include page="/layout/footerInstructor.jsp"/>
+        <jsp:include page="/layout/footer.jsp"/>
         <!-- Delete Modal -->
         <c:forEach var="material" items="${listMaterial}">
             <div class="modal fade" id="deleteModal${material.materialId}" tabindex="-1" aria-labelledby="deleteModalLabel"

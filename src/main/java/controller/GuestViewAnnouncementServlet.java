@@ -7,7 +7,7 @@ package controller;
 import dao.AnnouncementDAO;
 import model.Announcement;
 import java.io.IOException;
-import java.sql.SQLException;
+// import java.sql.SQLException; // Không cần thiết nếu không ném SQLException trực tiếp
 import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -63,14 +63,16 @@ public class GuestViewAnnouncementServlet extends HttpServlet {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new ServletException("Application error occurred.", e);
+            e.printStackTrace(); // In lỗi ra console để debug
+            // Throw ServletException để thông báo lỗi rõ ràng hơn
+            throw new ServletException("An application error occurred while processing announcement requests.", e);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // Trong trường hợp này, POST cũng xử lý như GET
         doGet(request, response);
     }
 

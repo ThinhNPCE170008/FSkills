@@ -6,7 +6,8 @@
     <head>
         <title>Update Course | F-Skill</title>
         <meta charset="UTF-8">
-        <link rel="icon" type="image/png" href="img/favicon_io/favicon.ico">
+
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     </head>
 
@@ -28,7 +29,7 @@
                 <div class="mb-3">
                     <label class="form-label">Course Name</label>
                     <input type="text" name="courseName" id="updateCourseName${listCourse.courseID}"
-                           value="${listCourse.courseName}" class="form-control" maxlength="30" required>
+                           value="${listCourse.courseName}" class="form-control" required>
                 </div>
 
                 <div class="mb-3">
@@ -44,21 +45,33 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Original Price</label>
+                    <label class="form-label">Original Price (Thousand VND)</label>
                     <input type="number" name="originalPrice" id="updateOriginalPrice${listCourse.courseID}"
-                           value="${listCourse.originalPrice}" class="form-control" min="0" max="10000000" required>
+                           value="${listCourse.originalPrice}" class="form-control" min="0" max="10000" required>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Sale Price</label>
+                    <label class="form-label">Sale Price (Thousand VND)</label>
                     <input type="number" name="salePrice" id="updateSalePrice${listCourse.courseID}"
-                           value="${listCourse.salePrice}" class="form-control" min="0" max="10000000" required>
+                           value="${listCourse.salePrice}" class="form-control" min="0" max="10000" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Image URL</label>
                     <input type="url" name="courseImageLocation" value="${listCourse.courseImageLocation}"
                            class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="courseSummary" class="form-label">Summary</label>
+                    <input type="text" class="form-control" id="updateCourseSummary${listCourse.courseID}" name="courseSummary"
+                           value="${listCourse.courseSummary}" maxlength="255">
+                </div>
+
+                <div class="mb-3">
+                    <label for="courseHighlight" class="form-label">Highlight</label>
+                    <textarea class="form-control" id="updateCourseHighlight${listCourse.courseID}"
+                              name="courseHighlight" rows="4">${listCourse.courseHighlight}</textarea>
                 </div>
 
                 <div class="form-check mb-3">
@@ -71,13 +84,7 @@
             </form>
         </div>
 
-        <!-- Toast -->
-        <div id="jsToast" class="toast align-items-center text-white bg-danger border-0 position-fixed bottom-0 end-0 m-3 d-none" role="alert">
-            <div class="d-flex">
-                <div class="toast-body" id="jsToastMessage"></div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-            </div>
-        </div>
+        <jsp:include page="/layout/footer.jsp"/>
 
         <script>
             document.addEventListener("DOMContentLoaded", function () {
@@ -87,14 +94,19 @@
                 const categoryInput = document.getElementById("updateCourseCategory" + courseID);
                 const originalPriceInput = document.getElementById("updateOriginalPrice" + courseID);
                 const salePriceInput = document.getElementById("updateSalePrice" + courseID);
+                const summaryInput = document.getElementById("updateCourseSummary" + courseID);
+                const highlightInput = document.getElementById("updateCourseHighlight" + courseID);
 
                 const regexValid = /^(?!.*\d)(?!.* {2,}).+$/u;
+                const spaceOnlyRegex = /^(?!.* {2,}).+$/u;
 
                 form.addEventListener("submit", function (e) {
                     const name = nameInput.value.trim();
                     const category = categoryInput.value;
                     const originalPrice = parseInt(originalPriceInput.value);
                     const salePrice = parseInt(salePriceInput.value);
+                    const summary = summaryInput.value.trim();
+                    const highlight = highlightInput.value.trim();
 
                     if (!name) {
                         showJsToast("Course Name is required.");
@@ -102,8 +114,16 @@
                         e.preventDefault();
                         return;
                     }
-                    if (name.length > 30 || !regexValid.test(name)) {
-                        showJsToast("Invalid Course Name.");
+
+                    if (name.length > 30) {
+                        showJsToast("Course name cannot be longer than 30 characters.");
+                        nameInput.focus();
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if (!regexValid.test(name)) {
+                        showJsToast("Course name does not contain numbers or spaces.");
                         nameInput.focus();
                         e.preventDefault();
                         return;
@@ -116,7 +136,6 @@
                         return;
                     }
 
-                    // Check Prices
                     if (isNaN(originalPrice) || originalPrice < 0 || originalPrice > 10000000) {
                         showJsToast("Original Price must be between 0 and 10,000,000.");
                         originalPriceInput.focus();
@@ -138,57 +157,28 @@
                         return;
                     }
 
+                    if (summary && !spaceOnlyRegex.test(summary)) {
+                        showJsToast("Summary must not contain consecutive spaces.");
+                        summaryInput.focus();
+                        e.preventDefault();
+                        return;
+                    }
+
+                    if (highlight && !spaceOnlyRegex.test(highlight)) {
+                        showJsToast("Highlight must not contain consecutive spaces.");
+                        highlightInput.focus();
+                        e.preventDefault();
+                        return;
+                    }
+
                     nameInput.value = name;
+                    summaryInput.value = summary;
+                    highlightInput.value = highlight;
                 });
-
-                function showJsToast(message) {
-                    const toastEl = document.getElementById("jsToast");
-                    const toastMsg = document.getElementById("jsToastMessage");
-                    toastMsg.innerHTML = message;
-                    toastEl.classList.remove("d-none");
-                    new bootstrap.Toast(toastEl).show();
-                }
             });
         </script>
 
-        <!-- Message -->
-        <c:if test="${not empty success || not empty err}">
-            <c:choose>
-                <c:when test="${not empty success}">
-                    <c:set var="toastMessage" value="${success}"/>
-                    <c:set var="toastClass" value="text-bg-success"/>
-                </c:when>
-                <c:when test="${not empty err}">
-                    <c:set var="toastMessage" value="${err}"/>
-                    <c:set var="toastClass" value="text-bg-danger"/>
-                </c:when>
-            </c:choose>
-
-            <div class="toast-container position-fixed bottom-0 end-0 p-3">
-                <div id="serverToast" class="toast align-items-center ${toastClass} border-0" role="alert" aria-live="assertive"
-                     aria-atomic="true">
-                    <div class="d-flex">
-                        <div class="toast-body">
-                            ${toastMessage}
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                                aria-label="Close"></button>
-                    </div>
-                </div>
-            </div>
-        </c:if>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const toastEl = document.getElementById('serverToast');
-                if (toastEl) {
-                    const bsToast = new bootstrap.Toast(toastEl, {delay: 3000});
-                    bsToast.show();
-                }
-            });
-        </script>
-
-        <jsp:include page="/layout/footer.jsp"/>
+        <jsp:include page="/layout/toast.jsp"/>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

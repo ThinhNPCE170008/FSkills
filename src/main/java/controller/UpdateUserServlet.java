@@ -94,7 +94,7 @@ public class UpdateUserServlet extends HttpServlet {
         if (dob != null && ("INSTRUCTOR".equalsIgnoreCase(roleStr) || "ADMIN".equalsIgnoreCase(roleStr))) {
             int age = Period.between(dob, LocalDate.now()).getYears();
             if (age <= 18) {
-                errorMessages.put("dateOfBirth", "Instructor/Admin must be over 18 years old.");
+                errorMessages.put("dateOfBirth", "Instructor must be over 18 years old.");
             }
         }
 

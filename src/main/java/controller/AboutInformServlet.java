@@ -1,7 +1,7 @@
-///*
-// * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-// * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
-// */
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+ */
 package controller;
 
 import dao.UserDAO;
@@ -31,6 +31,8 @@ public class AboutInformServlet extends HttpServlet {
         String userName = request.getParameter("userInform");
         // Lấy tham số editMode từ request
         String editModeParam = request.getParameter("editMode");
+        // Lấy tham số currentListRoleFilter từ request
+        String currentListRoleFilter = request.getParameter("currentListRoleFilter");
 
         UserDAO userDAO = new UserDAO();
         try {
@@ -39,6 +41,8 @@ public class AboutInformServlet extends HttpServlet {
 
             boolean editMode = Boolean.parseBoolean(editModeParam);
             request.setAttribute("editMode", editMode);
+            // Truyền currentListRoleFilter như một attribute để JSP có thể sử dụng
+            request.setAttribute("currentListRoleFilter", currentListRoleFilter);
 
             if (userList == null || userList.isEmpty()) {
                 request.setAttribute("globalMessage", "Do not found any user with Username: " + userName);
