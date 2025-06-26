@@ -68,7 +68,7 @@
         </style>
     </head>
     <body>
-        <jsp:include page="/layout/headerInstructor.jsp"/>
+        <jsp:include page="/layout/header_user.jsp"/>
 <div class="container py-2 ps-3">
         <div class="container py-2 ps-3">
             <nav aria-label="breadcrumb">

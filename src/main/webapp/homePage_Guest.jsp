@@ -61,32 +61,36 @@
 </head>
 
 <body class="font-inter bg-white text-gray-800">
+    <jsp:include page="/layout/sidebar_user.jsp" />
 
     <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between h-20">
-                <div class="flex items-center space-x-2">
-                    <img src="img/logo.png" alt="F-SKILL Logo" class="w-20 h-auto" />
-                    <span class="text-2xl font-bold text-gray-800"></span>
-                </div>
+<%--                <div class="flex items-center space-x-2">--%>
+<%--                    <img src="img/logo.png" alt="F-SKILL Logo" class="w-20 h-auto" />--%>
+<%--                    <span class="text-2xl font-bold text-gray-800"></span>--%>
+<%--                </div>--%>
 
-                <nav class="hidden lg:flex items-center space-x-8">
-                    <a href="#home" class="text-gray-600 hover:text-primary font-medium transition-colors">Home</a>
-                    <a href="#subjects" class="text-gray-600 hover:text-primary font-medium transition-colors">Subjects</a>
-                    <a href="#courses" class="text-gray-600 hover:text-primary font-medium transition-colors">Courses</a>
-                    <a href="${pageContext.request.contextPath}/guest/announcements" class="text-gray-600 hover:text-primary font-medium transition-colors">Announcement</a>
-                </nav>
+<%--                <nav class="hidden lg:flex items-center space-x-8">--%>
+<%--                    <a href="#home" class="text-gray-600 hover:text-primary font-medium transition-colors">Home</a>--%>
+<%--                    <a href="#subjects" class="text-gray-600 hover:text-primary font-medium transition-colors">Subjects</a>--%>
+<%--                    <a href="#courses" class="text-gray-600 hover:text-primary font-medium transition-colors">Courses</a>--%>
+<%--                    <a href="${pageContext.request.contextPath}/guest/announcements" class="text-gray-600 hover:text-primary font-medium transition-colors">Announcement</a>--%>
+<%--                </nav>--%>
 
-                <div class="flex items-center space-x-4">
-                     <div class="hidden md:block relative">
-                         <input type="search" placeholder="Search for courses..." class="w-full sm:w-48 lg:w-64 pl-4 pr-10 py-2.5 border border-gray-200 rounded-full focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all duration-300 ease-in-out">
-                         <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                     </div>
-                    <a href="login" class="hidden sm:inline-block text-secondary hover:text-primary font-semibold transition-colors">Sign In</a>
-                    <a href="register.jsp" class="px-5 py-2.5 rounded-full font-semibold bg-primary text-white hover:bg-primary-dark transition-all duration-300 shadow-md hover:shadow-lg">
-                        Sign Up
-                    </a>
-                </div>
+    <div class="flex-grow flex justify-center">
+        <div class="relative w-full max-w-xl"> <input type="search" placeholder="Search for courses..."
+                                                      class="w-full pl-4 pr-10 py-2.5 border border-gray-200 rounded-full focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all duration-300 ease-in-out">
+            <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+        </div>
+    </div>
+
+    <div class="flex items-center space-x-4">
+        <a href="login" class="hidden sm:inline-block text-secondary hover:text-primary font-semibold transition-colors">Sign In</a>
+        <a href="register.jsp" class="px-5 py-2.5 rounded-full font-semibold bg-primary text-white hover:bg-primary-dark transition-all duration-300 shadow-md hover:shadow-lg">
+            Sign Up
+        </a>
+    </div>
             </div>
         </div>
     </header>

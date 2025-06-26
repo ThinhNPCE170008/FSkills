@@ -32,6 +32,14 @@
             body {
                 font-family: 'Inter', sans-serif;
                 background-color: #f8f9fa;
+                overflow-x: hidden; /* Prevent horizontal scrollbar */
+            }
+
+            /* Ensure content adapts to available space */
+            .main {
+                transition: margin-left 0.3s ease, width 0.3s ease;
+                max-width: 100%;
+                box-sizing: border-box;
             }
 
             .header-shadow {
@@ -89,8 +97,9 @@
 
     <body class="bg-gray-50">
         <jsp:include page="/layout/sidebar_user.jsp"/>
+        <jsp:include page="/layout/header_user.jsp"/>
         <!-- ======================= Main Content ======================= -->
-        <main class="container mx-auto px-4 py-8 md:py-12">
+        <main class="main container mx-auto px-4 py-8 md:py-12">
             <section id="dashboard" class="mb-12">
                 <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Welcome Back, ${user.displayName}</h1>
                 <p class="text-gray-500 text-lg">Here's your teaching dashboard for today.</p>
