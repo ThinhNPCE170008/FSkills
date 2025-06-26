@@ -59,7 +59,7 @@
             <a href="${pageContext.request.contextPath}/homePage_Guest.jsp" 
                class="inline-flex items-center px-6 py-3 bg-gray-600 text-white rounded-full 
                       hover:bg-gray-700 transition-colors shadow-md text-lg">
-                <i class="fa-solid fa-arrow-left mr-2"></i> Return to Homepage
+                <i class="fa-solid fa-arrow-left mr-2"></i> Return
             </a>
         </div>
         <div class="container mx-auto p-8">

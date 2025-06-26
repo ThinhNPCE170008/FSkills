@@ -415,7 +415,7 @@
                                     <div class="detail-item">
                                         <span class="detail-label">Phone Number</span>
                                         <span class="detail-value" id="displayPhone">${user.phone}</span>
-                                        <input type="text" id="inputPhone" name="phone" class="detail-input" value="${param.phone != null ? param.phone : user.phone}">
+                                        <input type="text" id="inputPhone" name="phone" class="detail-input" value="${param.phone != null ? param.phone : user.phone}" required>
                                         <c:if test="${not empty errorMessages['phone']}">
                                             <span class="error-message">${errorMessages['phone']}</span>
                                         </c:if>
