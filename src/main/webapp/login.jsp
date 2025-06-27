@@ -42,11 +42,17 @@
                 </div>
 
                 <div class="mt-3">
-                    <a href="https://accounts.google.com/o/oauth2/auth?scope=email profile openid&redirect_uri=http://localhost:8080/FSkills/login&response_type=code&client_id=918765723091-gobp8bur9jsd1d4rhkk2e9dkvvdm6eh2.apps.googleusercontent.com&approval_prompt=force" 
+                    <a href="https://accounts.google.com/o/oauth2/auth?scope=email profile openid&redirect_uri=https://fskills.onrender.com/login&response_type=code&client_id=918765723091-gobp8bur9jsd1d4rhkk2e9dkvvdm6eh2.apps.googleusercontent.com&approval_prompt=force"
                        class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center">
                         <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google Logo" class="me-2" />
                         Continue with Google
                     </a>
+
+<%--                    <a href="https://accounts.google.com/o/oauth2/auth?scope=email profile openid&redirect_uri=http://localhost:8080/FSkills/login&response_type=code&client_id=918765723091-gobp8bur9jsd1d4rhkk2e9dkvvdm6eh2.apps.googleusercontent.com&approval_prompt=force"--%>
+<%--                       class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center">--%>
+<%--                        <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google Logo" class="me-2" />--%>
+<%--                        Continue with Google--%>
+<%--                    </a>--%>
                 </div>
 
                 <div class="mt-3">
