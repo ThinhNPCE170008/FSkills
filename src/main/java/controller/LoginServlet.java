@@ -133,7 +133,11 @@ public class LoginServlet extends HttpServlet {
                 }
             }
 
+            String turnstileSiteKey = System.getenv("CLOUDFLARE_SITE_KEY");
+            request.setAttribute("turnstileSiteKey", turnstileSiteKey);
+
             request.setAttribute("usernameCookieSaved", usernameCookieSaved);
+            request.setAttribute("turnstileSiteKey", turnstileSiteKey);
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }
     }
@@ -156,7 +160,8 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        String secretKey = "0x4AAAAAABgts5yPhd0CjQlG-53ul9Og7Vw";
+        // String secretKey = "0x4AAAAAABgts4-8Q8nhLD8g5wGXEaXXDT4";
+        String secretKey = System.getenv("CLOUDFLARE_SECRET_KEY");
         URL url = new URL("https://challenges.cloudflare.com/turnstile/v0/siteverify");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
