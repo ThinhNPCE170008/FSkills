@@ -1,4 +1,10 @@
-<%@page import="java.util.List"%>
+<%--
+  Created by IntelliJ IDEA.
+  User: NgoThinh1902
+  Date: 6/18/2025
+  Time: 1:05 AM
+  To change this template use File | Settings | File Templates.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -17,13 +23,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Course Details | F-Skill</title>
-    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
+    <link rel="icon" href="img/favicon_io/favicon.ico">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 </head>
 <body class="bg-gray-50 font-sans">
 <!-- Header giống instructor_dBoard -->
-<jsp:include page="/layout/sidebar_user.jsp"/>
+<jsp:include page="../../header.jsp"/>
 
 <main class="container mx-auto px-4 py-10">
     <!-- Course Info -->
@@ -72,6 +78,6 @@
 </main>
 
 <!-- Footer -->
-<jsp:include page="/layout/footer.jsp"/>
+<jsp:include page="footer.jsp"/>
 </body>
 </html>

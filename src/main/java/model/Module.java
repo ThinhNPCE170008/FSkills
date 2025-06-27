@@ -69,7 +69,7 @@ public class Module {
     @Override
     public String toString() {
         return "Module{" +
-                "moduleID:" + moduleID +
+                "moduleID=" + moduleID +
                 ", moduleName='" + moduleName + '\'' +
                 ", course=" + course +
                 ", moduleLastUpdate=" + moduleLastUpdate +

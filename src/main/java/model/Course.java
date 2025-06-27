@@ -1,7 +1,6 @@
 package model;
 
 import java.sql.Timestamp;
-import util.ImageBase64;
 
 /**
  * @author Ngo Phuoc Thinh - CE170008 - SE1815
@@ -17,7 +16,7 @@ public class Course {
     private int salePrice;
     private int originalPrice;
     private int isSale;
-    private byte[] courseImageLocation;
+    private String courseImageLocation;
     private String courseSummary;
     private String courseHighlight;
     private int status;
@@ -31,7 +30,7 @@ public class Course {
         this.courseName = courseName;
     }
 
-    public Course(int courseID, String courseName, Category category, User user, int approveStatus, Timestamp publicDate, Timestamp courseLastUpdate, int salePrice, int originalPrice, int isSale, byte[] courseImageLocation, String courseSummary, String courseHighlight, int status, int totalEnrolled) {
+    public Course(int courseID, String courseName, Category category, User user, int approveStatus, Timestamp publicDate, Timestamp courseLastUpdate, int salePrice, int originalPrice, int isSale, String courseImageLocation, String courseSummary, String courseHighlight, int status, int totalEnrolled) {
         this.courseID = courseID;
         this.courseName = courseName;
         this.category = category;
@@ -49,7 +48,7 @@ public class Course {
         this.totalEnrolled = totalEnrolled;
     }
 
-    public Course(int courseID, String courseName, Category category, User user, int approveStatus, Timestamp publicDate, Timestamp courseLastUpdate, byte[] courseImageLocation) {
+    public Course(int courseID, String courseName, Category category, User user, int approveStatus, Timestamp publicDate, Timestamp courseLastUpdate, String courseImageLocation) {
         this.courseID = courseID;
         this.courseName = courseName;
         this.category = category;
@@ -140,11 +139,11 @@ public class Course {
         this.isSale = isSale;
     }
 
-    public byte[] getCourseImageLocation() {
+    public String getCourseImageLocation() {
         return courseImageLocation;
     }
 
-    public void setCourseImageLocation(byte[] courseImageLocation) {
+    public void setCourseImageLocation(String courseImageLocation) {
         this.courseImageLocation = courseImageLocation;
     }
 
@@ -183,7 +182,7 @@ public class Course {
     @Override
     public String toString() {
         return "Course{" +
-                "courseID:" + courseID +
+                "courseID=" + courseID +
                 ", courseName='" + courseName + '\'' +
                 ", category=" + category +
                 ", user=" + user +
@@ -199,9 +198,5 @@ public class Course {
                 ", status=" + status +
                 ", totalEnrolled=" + totalEnrolled +
                 '}';
-    }
-
-    public String getImageDataURI() {
-        return ImageBase64.toDataURI(courseImageLocation, "image/jpeg");
     }
 }

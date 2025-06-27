@@ -163,10 +163,10 @@ public class AnnouncementDAO extends DBContext {
     public List<Announcement> searchAnnouncements(String keyword) {
         List<Announcement> list = new ArrayList<>();
         String sql = "SELECT A.AnnoucementID, A.Title, A.AnnouncementText, A.CreateAt, "
-                    + "A.TakeDownDate, A.AnnouncementImage, U.UserID, U.UserName, U.DisplayName "
-                    + "FROM Announcement A JOIN Users U ON A.UserID = U.UserID "
-                    + "WHERE A.Title LIKE ? OR A.AnnouncementText LIKE ? "
-                    + "ORDER BY A.CreateAt DESC;";
+                   + "A.TakeDownDate, A.AnnouncementImage, U.UserID, U.UserName, U.DisplayName "
+                   + "FROM Announcement A JOIN Users U ON A.UserID = U.UserID "
+                   + "WHERE A.Title LIKE ? OR A.AnnouncementText LIKE ? "
+                   + "ORDER BY A.CreateAt DESC;";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             // Thêm '%' vào đầu và cuối keyword để tìm kiếm chuỗi con

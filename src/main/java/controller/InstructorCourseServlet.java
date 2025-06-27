@@ -14,9 +14,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import jakarta.servlet.http.Part;
-import java.io.InputStream;
-import jakarta.servlet.annotation.MultipartConfig;
 
 import java.util.List;
 
@@ -28,7 +25,6 @@ import model.User;
 /**
  * @author NgoThinh1902
  */
-@MultipartConfig
 @WebServlet(name = "InstructorCourseServlet", urlPatterns = {"/instructor/courses"})
 public class InstructorCourseServlet extends HttpServlet {
 
@@ -153,22 +149,15 @@ public class InstructorCourseServlet extends HttpServlet {
 
                 int originalPrice = Integer.parseInt(request.getParameter("originalPrice"));
                 int salePrice = Integer.parseInt(request.getParameter("salePrice"));
-
-                Part filePartInsert = request.getPart("courseImageLocation");
-                InputStream imageInputStream = null;
-
-                if(filePartInsert != null && filePartInsert.getSize() > 0) {
-                    imageInputStream = filePartInsert.getInputStream();
-                }
-
+                String courseImageLocation = request.getParameter("courseImageLocation");
                 int isSale = request.getParameter("isSale") != null ? 1 : 0;
+
                 String courseSummary = request.getParameter("courseSummary");
                 String courseHighlight = request.getParameter("courseHighlight");
 
                 if (courseName == null) {
                     courseName = "";
                 }
-
                 courseName = courseName.trim();
 
                 if (courseName.isEmpty()) {
@@ -221,7 +210,7 @@ public class InstructorCourseServlet extends HttpServlet {
                     return;
                 }
 
-                int insert = cDao.insertCourse(courseName, categoryId, userID, salePrice, originalPrice, isSale, imageInputStream, courseSummary, courseHighlight);
+                int insert = cDao.insertCourse(courseName, categoryId, userID, salePrice, originalPrice, isSale, courseImageLocation, courseSummary, courseHighlight);
 
                 if (insert > 0) {
                     User acc = uDao.getByUserID(userID);
@@ -243,13 +232,7 @@ public class InstructorCourseServlet extends HttpServlet {
                 int originalPrice = Integer.parseInt(request.getParameter("originalPrice"));
                 int salePrice = Integer.parseInt(request.getParameter("salePrice"));
 
-                Part filePartUpdate = request.getPart("courseImageLocation");
-                InputStream imageInputStream = null;
-
-                if(filePartUpdate != null && filePartUpdate.getSize() > 0) {
-                    imageInputStream = filePartUpdate.getInputStream();
-                }
-
+                String courseImageLocation = request.getParameter("courseImageLocation");
                 int isSale = request.getParameter("isSale") != null ? 1 : 0;
                 String courseSummary = request.getParameter("courseSummary");
                 String courseHighlight = request.getParameter("courseHighlight");
@@ -309,7 +292,7 @@ public class InstructorCourseServlet extends HttpServlet {
                     return;
                 }
 
-                int update = cDao.updateCourse(courseID, courseName, categoryId, salePrice, originalPrice, isSale, imageInputStream, courseSummary, courseHighlight);
+                int update = cDao.updateCourse(courseID, courseName, categoryId, salePrice, originalPrice, isSale, courseImageLocation, courseSummary, courseHighlight);
 
                 if (update > 0) {
                     User acc = uDao.getByUserID(userID);

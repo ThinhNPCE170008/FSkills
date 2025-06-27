@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Courses - F-Skill</title>
 
-    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
+    <link rel="icon" type="image/png" href="https://placehold.co/32x32/0284c7/ffffff?text=FS">
 
     <script src="https://cdn.tailwindcss.com"></script>
 

@@ -209,19 +209,15 @@ public class ModuleDAO extends DBContext {
 //        for (Module module : modules) {
 //            System.out.println(module);
 //        }
-
 //        Module m = dao.getModuleByID(1);
 //        System.out.println(m);
-
 //        Course course = new Course();
 //        course = courseDAO.getCourseByCourseID(2);
 //        Module module = new Module("Miền Bắc Tiến Lên", course);
 //        int result = dao.insertModule(module);
 //        System.out.println(result);
-
 //        int result = dao.updateModule(6,"Ba Cào Thắng");
 //        System.out.println(result);
-
 //        int result = dao.deleteModule(7);
 //        System.out.println(result);
 //    }

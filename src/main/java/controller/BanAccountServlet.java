@@ -85,8 +85,6 @@ public class BanAccountServlet extends HttpServlet {
         String characterName = request.getParameter("characterName");
         // Lấy lại tham số searchName từ hidden input
         String originalSearchName = request.getParameter("originalSearchName"); 
-        // Lấy tham số roleFilter từ hidden input của form
-        String currentListRoleFilter = request.getParameter("currentListRoleFilter"); 
 
         if (characterName != null && !characterName.isEmpty()) {
             UserDAO u = new UserDAO();
@@ -97,21 +95,12 @@ public class BanAccountServlet extends HttpServlet {
             if (originalSearchName != null && !originalSearchName.isEmpty()) {
                 redirectUrl += "?searchName=" + originalSearchName;
             }
-            
-            // Thêm roleFilter vào URL chuyển hướng, kiểm tra nếu đã có tham số khác
-            if (currentListRoleFilter != null && !currentListRoleFilter.isEmpty()) {
-                if (redirectUrl.contains("?")) {
-                    redirectUrl += "&roleFilter=" + currentListRoleFilter;
-                } else {
-                    redirectUrl += "?roleFilter=" + currentListRoleFilter;
-                }
-            }
 
             try {
                 success = u.banAccount(characterName);
                 if (success) {
-                    // Chuyển hướng thành công về trang danh sách user (có thể kèm search term và role filter)
-                    response.sendRedirect(redirectUrl); // Chuyển hướng với URL đã sửa đổi
+                    // Chuyển hướng thành công về trang danh sách user (có thể kèm search term)
+                    response.sendRedirect(redirectUrl);
                 } else {
                     // Nếu banAccount trả về false (có lỗi xử lý DB nhưng không ném exception)
                     request.setAttribute("errorMessage", "Thao tác thất bại. Không tìm thấy tài khoản hoặc lỗi xử lý.");

@@ -7,9 +7,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Profile - F-Skills</title>
-
-  <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="icon" type="image/png" href="img/favicon_io/favicon.ico">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/profile.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css">
@@ -123,7 +121,8 @@
       <div class="form-row">
         <div class="form-group email-group">
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" value="<c:out value="${profile.email}"/>" required>
+          <input type="email" id="email" name="email" value="<c:out value="${profile.email eq null ? 'example@gmail.com' : profile.email}"/>" required>
+          <div id="emailError" class="invalid-feedback" style="display: none;">Error: Email in vaild</div>
         </div>
       </div>
 
@@ -231,6 +230,58 @@
   const editBtn = document.querySelector('.edit-btn');
   const cancelBtn = document.querySelector('.cancel-btn');
   const changePasswordBtn = document.querySelector('.change-password');
+
+  // Email validation
+  const emailInput = document.getElementById('email');
+  const emailError = document.getElementById('emailError');
+
+  // Set default value if empty
+  if (!emailInput.value) {
+    emailInput.value = 'example@gmail.com';
+  }
+
+  // Email input event listener
+  emailInput.addEventListener('input', function() {
+    validateEmail();
+  });
+
+  function validateEmail() {
+    const email = emailInput.value.trim();
+
+    // Valid domains
+    const validDomains = [
+      '@gmail.com',
+      '@email.com',
+      '@fpt.edu.vn',
+      '@gmail.vn',
+      '@gmail.io',
+      '@gmail.net',
+      '@gmail.me',
+      '@email.vn',
+      '@email.io',
+      '@email.net',
+      '@email.me',
+    ];
+
+    // Check if email is empty
+    if (email === '') {
+      emailInput.value = 'example@gmail.com';
+      emailError.style.display = 'block';
+      emailInput.classList.add('is-invalid');
+      return false;
+    }
+
+    // Check if email is example@gmail.com or ends with one of the valid domains
+    if (email === 'example@gmail.com' || validDomains.some(domain => email.endsWith(domain))) {
+      emailError.style.display = 'none';
+      emailInput.classList.remove('is-invalid');
+      return true;
+    } else {
+      emailError.style.display = 'block';
+      emailInput.classList.add('is-invalid');
+      return false;
+    }
+  }
 
   // Toggle between view and edit mode
   editBtn.addEventListener('click', () => {
@@ -391,6 +442,15 @@
 <script>
   // Initialize toast notifications
   document.addEventListener('DOMContentLoaded', function() {
+    // Set max date for date of birth to current date
+    const dateOfBirthInput = document.getElementById('dateOfBirth');
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const currentDate = `${yyyy}-${mm}-${dd}`;
+    dateOfBirthInput.setAttribute('max', currentDate);
+
     // Check for error message  
     if ('${not empty err}' === 'true') {
       const toastEl = document.getElementById('serverToast');
@@ -444,6 +504,7 @@
     const phoneNumber = document.getElementById('phoneNumber').value;
     const dateOfBirth = document.getElementById('dateOfBirth').value;
     const info = document.getElementById('info').value;
+    const email = document.getElementById('email').value;
 
     // Check for consecutive spaces in displayName
     if (/\s{2,}/.test(displayName)) {
@@ -463,8 +524,16 @@
       return false;
     }
 
-    // Check phone number - required field check is handled by the required attribute in the HTML
+    // Validate email using our validateEmail function
+    if (!validateEmail()) {
+      event.preventDefault();
+      document.getElementById('customErrorMessage').textContent = "Error: Email in vaild";
+      const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 2000});
+      toast.show();
+      return false;
+    }
 
+    // Phone number validation
     // Check if phone number has exactly 10 digits
     if (phoneNumber.length !== 10) {
       event.preventDefault();
@@ -474,10 +543,10 @@
       return false;
     }
 
-    // Check if phone number is negative
-    if (parseInt(phoneNumber) <= 0) {
+    // Check if it contains only digits
+    if (!/^\d+$/.test(phoneNumber)) {
       event.preventDefault();
-      document.getElementById('customErrorMessage').textContent = "Error: Phone number must greater than 0";
+      document.getElementById('customErrorMessage').textContent = "Error: Phone number must contain only digits";
       const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 2000});
       toast.show();
       return false;
@@ -486,24 +555,79 @@
     // Check if phone number starts with 0
     if (phoneNumber.charAt(0) !== '0') {
       event.preventDefault();
-      document.getElementById('customErrorMessage').textContent = "Error: Phone number must begin by 0";
+      document.getElementById('customErrorMessage').textContent = "Error: Phone number must begin with 0";
       const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 2000});
       toast.show();
       return false;
     }
 
-    // Check if second digit is not 0
-    if (phoneNumber.charAt(1) === '0' || phoneNumber.charAt(1) === '1' || phoneNumber.charAt(1) === '4' || phoneNumber.charAt(1) ==='6' || phoneNumber.charAt(1) ==='7') {
+    // Check if second digit is valid (3, 5, 7, 8, 9)
+    const validSecondDigits = ['3', '5', '7', '8', '9'];
+    if (!validSecondDigits.includes(phoneNumber.charAt(1))) {
       event.preventDefault();
-      document.getElementById('customErrorMessage').textContent = "Error: Phone number not valid";
+      document.getElementById('customErrorMessage').textContent = "Error: Invalid phone number format. Vietnamese phone numbers should start with 03, 05, 07, 08, or 09";
       const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 2000});
       toast.show();
       return false;
     }
 
-    // Check date of birth year
+    // Check for 5 consecutive occurrences of the same digit
+    for (let i = 0; i <= phoneNumber.length - 5; i++) {
+      const currentDigit = phoneNumber.charAt(i);
+      let hasFiveConsecutive = true;
+
+      for (let j = 1; j < 5; j++) {
+        if (phoneNumber.charAt(i + j) !== currentDigit) {
+          hasFiveConsecutive = false;
+          break;
+        }
+      }
+
+      if (hasFiveConsecutive) {
+        event.preventDefault();
+        document.getElementById('customErrorMessage').textContent = "Error: Phone number not vaild";
+        const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 2000});
+        toast.show();
+        return false;
+      }
+    }
+
+    // Check for any digit appearing 6 or more times in total
+    const digitCount = Array(10).fill(0); // Count occurrences of each digit (0-9)
+
+    for (let i = 0; i < phoneNumber.length; i++) {
+      const digit = parseInt(phoneNumber.charAt(i));
+      digitCount[digit]++;
+
+      if (digitCount[digit] >= 6) {
+        event.preventDefault();
+        document.getElementById('customErrorMessage').textContent = "Error: Phone number cannot contain any digit that appears 6 or more times";
+        const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 2000});
+        toast.show();
+        return false;
+      }
+    }
+
+    // Check date of birth
     if (dateOfBirth) {
-      const year = new Date(dateOfBirth).getFullYear();
+      const selectedDate = new Date(dateOfBirth);
+      const today = new Date();
+
+      // Reset time part for accurate date comparison
+      today.setHours(0, 0, 0, 0);
+      selectedDate.setHours(0, 0, 0, 0);
+
+      // Check if date is in the future
+      if (selectedDate > today) {
+        event.preventDefault();
+        document.getElementById('customErrorMessage').textContent = "Error: Date of birth cannot be in the future";
+        const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 2000});
+        toast.show();
+        return false;
+      }
+
+      // Check if year is too far in the future (legacy check)
+      const year = selectedDate.getFullYear();
       if (year > 3000) {
         event.preventDefault();
         document.getElementById('customErrorMessage').textContent = "Error: Year of birth cannot exceed 3000";

@@ -26,7 +26,7 @@
         <a href="${pageContext.request.contextPath}/editProfile" class="user-profile">
           <c:choose>
             <c:when test="${not empty sessionScope.user.avatar}">
-              <img src="${sessionScope.user.avatar}" alt="Admin Avatar" class="avatar-img small-avatar">
+              <img src="${pageContext.request.contextPath}/${sessionScope.user.avatar}" alt="Admin Avatar" class="avatar-img small-avatar">
             </c:when>
             <c:otherwise>
               <img src="https://placehold.co/80x80/cccccc/333333?text=Admin" alt="Default Admin Avatar" class="avatar-img small-avatar">

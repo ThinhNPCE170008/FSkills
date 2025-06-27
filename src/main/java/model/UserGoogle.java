@@ -1,6 +1,11 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package model;
 
 /**
+ *
  * @author Ngo Phuoc Thinh - CE170008 - SE1815
  */
 public class UserGoogle {
@@ -10,7 +15,7 @@ public class UserGoogle {
 
     public UserGoogle() {
     }
-
+    
     public UserGoogle(String id, String email, String first_name, String given_name, String family_name, String name, String picture, boolean verified_email) {
         this.id = id;
         this.email = email;

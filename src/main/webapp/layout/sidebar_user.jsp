@@ -46,7 +46,7 @@
         <a href="${pageContext.request.contextPath}/instructor/profile" class="user-profile">
           <c:choose>
             <c:when test="${not empty sessionScope.user.avatar}">
-              <img src="${sessionScope.user.avatar}" alt="User Avatar" class="avatar-img small-avatar">
+              <img src="${pageContext.request.contextPath}/${sessionScope.user.avatar}" alt="User Avatar" class="avatar-img small-avatar">
             </c:when>
             <c:otherwise>
               <img src="https://placehold.co/80x80/cccccc/333333?text=User" alt="Default Avatar" class="avatar-img small-avatar">
@@ -60,7 +60,7 @@
       <c:if test="${empty sessionScope.user.role}">
         <a href="${pageContext.request.contextPath}/homePage_Guest.jsp"><i class="bi bi-house-door"></i> <span>Home</span></a>
         <a href="${pageContext.request.contextPath}/AllCourses.jsp"><i class="bi bi-book"></i> <span>All Courses</span></a>
-        <a href="notifications.jsp"><i class="bi bi-bell"></i> <span>Notifications</span></a>
+        <a href="announcement.jsp"><i class="bi bi-bell"></i> <span>Announcement</span></a>
         <div class="divider"></div>
         <a href="${pageContext.request.contextPath}/logout"><i class="bi bi-box-arrow-right"></i> <span>Logout</span></a>
       </c:if>

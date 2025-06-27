@@ -10,7 +10,6 @@
 <html>
 <head>
   <title>Error</title>
-  <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
 </head>
 <body>
 <h1>Error</h1>

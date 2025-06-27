@@ -52,26 +52,14 @@ public class DeleteAccountServlet extends HttpServlet {
 
         String deleteName = request.getParameter("deleteName");
         String originalSearchName = request.getParameter("originalSearchName");
-        // Lấy tham số roleFilter từ hidden input của form
-        String currentListRoleFilter = request.getParameter("currentListRoleFilter"); 
         
         UserDAO userDAO = new UserDAO();
         boolean success = false;
 
         String redirectUrl = request.getContextPath() + "/alluser";
 
-        // Xây dựng URL chuyển hướng, thêm searchName nếu có
         if (originalSearchName != null && !originalSearchName.isEmpty()) {
             redirectUrl += "?searchName=" + originalSearchName;
-        }
-
-        // Thêm roleFilter vào URL chuyển hướng, kiểm tra nếu đã có tham số khác
-        if (currentListRoleFilter != null && !currentListRoleFilter.isEmpty()) {
-            if (redirectUrl.contains("?")) {
-                redirectUrl += "&roleFilter=" + currentListRoleFilter;
-            } else {
-                redirectUrl += "?roleFilter=" + currentListRoleFilter;
-            }
         }
 
         if (deleteName != null && !deleteName.isEmpty()) {
@@ -79,7 +67,7 @@ public class DeleteAccountServlet extends HttpServlet {
                 success = userDAO.deleteAccount(deleteName);
                 if (success) {
                     request.getSession().setAttribute("deleteComplete", "Delete this account successful");
-                    response.sendRedirect(redirectUrl); // Chuyển hướng với URL đã sửa đổi
+                    response.sendRedirect(redirectUrl);
                 } else {
                     request.setAttribute("errorMessage", "Delete operation failed. Account not found or processing error.");
                     request.getRequestDispatcher("/errorPage.jsp").forward(request, response);

@@ -96,13 +96,97 @@ public class Profile {
 
     // Các phương thức validation (giữ nguyên từ Profile cũ vì chúng hữu ích)
     public boolean validateEmail() {
-        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
-        return email != null && Pattern.matches(emailRegex, email);
+
+        if (email == null) {
+            return false;
+        }
+
+        // Check if email starts with a letter or underscore
+        if (!email.matches("^[a-zA-Z_].*")) {
+            return false;
+        }
+
+        // Split email into local part and domain part
+        String[] parts = email.split("@");
+        if (parts.length != 2) {
+            return false;
+        }
+
+        String localPart = parts[0];
+        String domainPart = parts[1];
+
+        // Check if local part contains only allowed characters
+        if (!localPart.matches("^[a-zA-Z0-9_.-]*$")) {
+            return false;
+        }
+
+        // Check if email contains at least one letter
+        if (!email.matches(".*[a-zA-Z].*")) {
+            return false;
+        }
+
+        // Check domain part format and TLD length (2-4 characters)
+        if (!domainPart.matches(".*\\.[a-zA-Z]{2,4}$")) {
+            return false;
+        }
+
+        return true;
     }
 
     public boolean validatePhoneNumber() {
-        String phoneRegex = "^[0-9]{10}$";
-        return phoneNumber != null && Pattern.matches(phoneRegex, phoneNumber);
+        // Validate Vietnamese phone number format
+        // Must be 10 digits, start with 0, and second digit must be 3, 5, 7, 8, or 9
+        if (phoneNumber == null || phoneNumber.length() != 10) {
+            return false;
+        }
+
+        // Check if it's all digits
+        if (!phoneNumber.matches("^[0-9]{10}$")) {
+            return false;
+        }
+
+        // Check if it starts with 0
+        if (phoneNumber.charAt(0) != '0') {
+            return false;
+        }
+
+        // Check if second digit is valid (3, 5, 7, 8, 9)
+        char secondDigit = phoneNumber.charAt(1);
+        if (secondDigit != '3' && secondDigit != '5' && secondDigit != '7' && 
+            secondDigit != '8' && secondDigit != '9') {
+            return false;
+        }
+
+        // Check for 5 consecutive occurrences of the same digit
+        for (int i = 0; i <= phoneNumber.length() - 5; i++) {
+            char currentDigit = phoneNumber.charAt(i);
+            boolean hasFiveConsecutive = true;
+
+            for (int j = 1; j < 5; j++) {
+                if (phoneNumber.charAt(i + j) != currentDigit) {
+                    hasFiveConsecutive = false;
+                    break;
+                }
+            }
+
+            if (hasFiveConsecutive) {
+                return false;
+            }
+        }
+
+        // Check for any digit appearing 6 or more times in total
+        int[] digitCount = new int[10]; // Count occurrences of each digit (0-9)
+
+        for (int i = 0; i < phoneNumber.length(); i++) {
+            int digit = phoneNumber.charAt(i) - '0';
+            digitCount[digit]++;
+
+            if (digitCount[digit] >= 6) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public boolean validateDisplayName() {
