@@ -33,7 +33,7 @@
                         <input type="checkbox" class="form-check-input" name="rememberMe" id="rememberMe" />
                         <label style="margin-right: 70%;" class="form-check-label" for="rememberMe">Remember</label>
                     </div>
-                    <div class="cf-turnstile" data-sitekey="${turnstileSiteKey}"></div>
+<%--                    <div class="cf-turnstile" data-sitekey="${turnstileSiteKey}"></div>--%>
                     <button type="submit" class="btn btn-primary">Login</button>
                 </form>
 
@@ -70,21 +70,6 @@
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
         </div>
-
-<%--        <script>--%>
-<%--            function showJsToast(message, type = 'danger') {--%>
-<%--                const toastEl = document.getElementById('jsToast');--%>
-<%--                const toastMsg = document.getElementById('jsToastMessage');--%>
-
-<%--                toastMsg.innerHTML = message;--%>
-
-<%--                toastEl.classList.remove('d-none', 'bg-danger', 'bg-success', 'bg-warning', 'bg-info');--%>
-<%--                toastEl.classList.add('bg-' + type);--%>
-
-<%--                const bsToast = new bootstrap.Toast(toastEl, {delay: 4000});--%>
-<%--                bsToast.show();--%>
-<%--            }--%>
-<%--        </script>--%>
 
         <!-- Message -->
         <c:if test="${not empty success || not empty err}">
@@ -125,6 +110,6 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <!-- reCAPTCHA -->
-        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+        <%--<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>--%>
     </body>
 </html>
