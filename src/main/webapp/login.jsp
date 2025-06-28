@@ -1,5 +1,9 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<% 
+    String siteKey = (String) request.getAttribute("turnstileSiteKey");
+    out.println("<!-- Site key JSP: " + siteKey + " -->");
+%>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -33,7 +37,7 @@
                         <input type="checkbox" class="form-check-input" name="rememberMe" id="rememberMe" />
                         <label style="margin-right: 70%;" class="form-check-label" for="rememberMe">Remember</label>
                     </div>
-                    <div class="cf-turnstile" data-sitekey="0x4AAAAAABgts3i36HFv5My1"></div>
+                    <div class="cf-turnstile" data-sitekey="${turnstileSiteKey}"></div>
                     <button type="submit" class="btn btn-primary">Login</button>
                 </form>
 
@@ -42,7 +46,14 @@
                 </div>
 
                 <div class="mt-3">
-                    <a href="https://accounts.google.com/o/oauth2/auth?scope=email profile openid&redirect_uri=http://localhost:8080/FSkills/login&response_type=code&client_id=918765723091-gobp8bur9jsd1d4rhkk2e9dkvvdm6eh2.apps.googleusercontent.com&approval_prompt=force" 
+                    <%--Connect Google From Render--%>
+<%--                    <a href="https://accounts.google.com/o/oauth2/auth?scope=email profile openid&redirect_uri=https://fskills.onrender.com/login&response_type=code&client_id=918765723091-gobp8bur9jsd1d4rhkk2e9dkvvdm6eh2.apps.googleusercontent.com&approval_prompt=force"--%>
+<%--                       class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center">--%>
+<%--                        <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google Logo" class="me-2" />--%>
+<%--                        Continue with Google--%>
+<%--                    </a>--%>
+
+                    <a href="https://accounts.google.com/o/oauth2/auth?scope=email profile openid&redirect_uri=http://localhost:8080/FSkills/login&response_type=code&client_id=918765723091-gobp8bur9jsd1d4rhkk2e9dkvvdm6eh2.apps.googleusercontent.com&approval_prompt=force"
                        class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center">
                         <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google Logo" class="me-2" />
                         Continue with Google
@@ -64,21 +75,6 @@
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
         </div>
-
-<%--        <script>--%>
-<%--            function showJsToast(message, type = 'danger') {--%>
-<%--                const toastEl = document.getElementById('jsToast');--%>
-<%--                const toastMsg = document.getElementById('jsToastMessage');--%>
-
-<%--                toastMsg.innerHTML = message;--%>
-
-<%--                toastEl.classList.remove('d-none', 'bg-danger', 'bg-success', 'bg-warning', 'bg-info');--%>
-<%--                toastEl.classList.add('bg-' + type);--%>
-
-<%--                const bsToast = new bootstrap.Toast(toastEl, {delay: 4000});--%>
-<%--                bsToast.show();--%>
-<%--            }--%>
-<%--        </script>--%>
 
         <!-- Message -->
         <c:if test="${not empty success || not empty err}">
