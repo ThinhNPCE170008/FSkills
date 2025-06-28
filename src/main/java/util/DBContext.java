@@ -52,7 +52,7 @@ public class DBContext {
             String pass = System.getenv("DB_PASS");
 
             String dbURL = "jdbc:sqlserver://" + host + ":" + port + ";"
-                     + "database=" + dbName + ";"
+                     + "databaseName=" + dbName + ";"
                      + "encrypt=true;"
                      + "trustServerCertificate=false;"
                      + "loginTimeout=30;";
