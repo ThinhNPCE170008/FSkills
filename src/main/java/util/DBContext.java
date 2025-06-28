@@ -57,6 +57,13 @@ public class DBContext {
                      + "trustServerCertificate=false;"
                      + "loginTimeout=30;";
 
+            System.out.println("✅ DEBUG JDBC START");
+            System.out.println("🔸 DB_HOST = " + host);
+            System.out.println("🔸 DB_USER = " + user);
+            System.out.println("🔸 DB_NAME = " + dbName);
+            System.out.println("🔸 JDBC URL = " + dbURL);
+            System.out.println("✅ DEBUG JDBC END");
+
             conn = DriverManager.getConnection(dbURL, user, pass);
 
             if (conn != null) {
