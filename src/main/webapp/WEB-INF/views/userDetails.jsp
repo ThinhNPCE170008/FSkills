@@ -36,7 +36,7 @@
 
             /* Sidebar styles from sidebar_admin.jsp's original <style> block */
             .sidebar-container {
-                width: 100px;
+                width: 80px;
                 transition: width 0.3s ease-in-out;
                 overflow-x: hidden;
                 position: fixed; /* Keep it fixed */
@@ -76,7 +76,7 @@
 
             /* Apply margin-left to the main content area */
             .main-content {
-                margin-left: 100px; /* Initial margin for collapsed sidebar */
+                margin-left: 80px; /* Initial margin for collapsed sidebar */
                 flex-grow: 1; /* Allow main content to take remaining space */
                 transition: margin-left 0.3s ease-in-out;
                 padding: 20px; /* Consistent padding */
@@ -324,8 +324,8 @@
 
             <div class="flex flex-grow w-full">
 
-            <div style="margin-left: 0;" class="main-content px-5 py-5">
-                <div style="margin: 0;" class="container px-5">
+            <div class="main-content px-5 py-5">
+                <div class="container px-5">
                     <h2 class="flex items-center justify-between w-full gap-4 text-xl font-bold text-gray-800 mb-4">
                         <a href="alluser?roleFilter=${requestScope.currentListRoleFilter != null ? requestScope.currentListRoleFilter : 'Learner'}"
                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded">
@@ -360,7 +360,7 @@
                                             <span class="detail-label">Display Name:<span style="color:red">*</span></span>
                                             <span class="detail-value" id="displayDisplayName">${user.displayName}</span>
                                             <input type="text" id="inputDisplayName" name="displayName" class="detail-input" value="${param.displayName != null ? param.displayName : user.displayName}" required>
-                                            
+
                                         </div>
 
                                         <div class="detail-item">
@@ -447,7 +447,7 @@
         </div>
 
         <jsp:include page="/layout/toast.jsp" />
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+       <%-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> --%>
     </body>
 
 </html>

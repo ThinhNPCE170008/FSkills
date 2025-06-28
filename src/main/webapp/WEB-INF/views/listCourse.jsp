@@ -9,6 +9,7 @@
 
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
         body {
@@ -72,10 +73,20 @@
             color: #0d6efd;
             text-decoration: none;
         }
+
+        /* Ensure content adapts to available space */
+        .main {
+            transition: margin-left 0.3s ease, width 0.3s ease;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body>
+<jsp:include page="/layout/sidebar_user.jsp"/>
+<jsp:include page="/layout/header_user.jsp"/>
 
+<main class="main">
 <div class="px-5 py-6">
     <nav class="text-base text-gray-500 mb-6" aria-label="Breadcrumb">
         <ol class="list-none p-0 inline-flex space-x-2">
@@ -213,6 +224,7 @@
         </c:otherwise>
     </c:choose>
 </div>
+</main>
 <jsp:include page="/layout/footer.jsp"/>
 
 <c:forEach var="course" items="${listCourse}">
