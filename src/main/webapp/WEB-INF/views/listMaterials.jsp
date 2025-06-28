@@ -10,6 +10,7 @@
 
         <!-- Bootstrap 5 -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
         <style>
             body {
@@ -56,11 +57,20 @@
                 color: #343a40;
                 margin-bottom: 25px;
             }
+
+            /* Ensure content adapts to available space */
+            .main {
+                transition: margin-left 0.3s ease, width 0.3s ease;
+                max-width: 100%;
+                box-sizing: border-box;
+            }
         </style>
     </head>
     <body>
+        <jsp:include page="/layout/sidebar_user.jsp"/>
         <jsp:include page="/layout/header_user.jsp"/>
 
+        <main class="main">
         <div class="container py-2 ps-3">
             <div class="container py-2 ps-3">
                 <nav aria-label="breadcrumb">
@@ -193,6 +203,7 @@
                 </c:choose>
             </div>
         </div>
+        </main>
         <!-- Delete Modal -->
         <c:forEach var="material" items="${listMaterial}">
             <div class="modal fade" id="deleteModal${material.materialId}" tabindex="-1" aria-labelledby="deleteModalLabel"

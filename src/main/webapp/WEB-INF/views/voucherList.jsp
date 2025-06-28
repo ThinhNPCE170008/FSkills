@@ -220,12 +220,11 @@
         <button class="sidebar-toggle hidden md:hidden">
             <i class="bi bi-list text-lg"></i>
         </button>
-        
-        <jsp:include page="/layout/sidebar_admin.jsp" />
+
         <jsp:include page="/layout/header_admin.jsp" />
 
         <div class="flex flex-grow">
-
+            <jsp:include page="/layout/sidebar_admin.jsp" />
             <main class="flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
                 <div class="bg-white p-6 rounded shadow-sm w-full">
                     <div class="page-header flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
@@ -249,7 +248,7 @@
                         </p>
                     </c:if>
 
-                    <div class="search-add-section flex justify-between items-center mb-6 flex-wrap gap-4 pt-4">
+                    <div class="search-add-section flex justify-between items-center mb-6 pt-4" style="flex-wrap: nowrap;">
                         <div class="search-bar flex items-center gap-3 flex-grow">
                             <form action="voucherList" method="get" class="flex-grow flex gap-3">
                                 <input type="text" name="searchTerm" placeholder="Search Voucher..." value="${param.searchTerm}"
@@ -262,7 +261,7 @@
                                 </button>
                             </form>
                         </div>
-                        <div class="action-buttons flex gap-3">
+                        <div class="action-buttons flex gap-3 ml-3" style="flex-shrink: 0;">
                             <%-- Add a button to delete all expired vouchers --%>
                             <button id="deleteExpiredBtn" class="action-btn-delete-all flex items-center gap-2" title="Delete all expired vouchers">
                                 <i class="fas fa-trash-alt"></i> Delete Expired
