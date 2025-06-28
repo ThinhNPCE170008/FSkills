@@ -52,12 +52,12 @@ public class DBContext {
             String pass = System.getenv("DB_PASS");
 
             String dbURL = "jdbc:sqlserver://" + host + ":" + port + ";"
-                    + "databaseName=" + dbName + ";"
-                    + "user=" + user + ";"
-                    + "password=" + pass + ";"
-                    + "encrypt=true;trustServerCertificate=true;";
+                     + "database=" + dbName + ";"
+                     + "encrypt=true;"
+                     + "trustServerCertificate=false;"
+                     + "loginTimeout=30;";
 
-            conn = DriverManager.getConnection(dbURL);
+            conn = DriverManager.getConnection(dbURL, user, pass);
 
             if (conn != null) {
                 DatabaseMetaData dm = conn.getMetaData();
