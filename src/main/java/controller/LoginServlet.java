@@ -41,15 +41,15 @@ public class LoginServlet extends HttpServlet {
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
+        try ( PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -64,14 +64,13 @@ public class LoginServlet extends HttpServlet {
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -133,11 +132,11 @@ public class LoginServlet extends HttpServlet {
                 }
             }
 
-            // String turnstileSiteKey = System.getenv("CLOUDFLARE_SITE_KEY");
-            // request.setAttribute("turnstileSiteKey", turnstileSiteKey);
+            String turnstileSiteKey = System.getenv("CLOUDFLARE_SITE_KEY");
+            request.setAttribute("turnstileSiteKey", turnstileSiteKey);
 
             request.setAttribute("usernameCookieSaved", usernameCookieSaved);
-            // request.setAttribute("turnstileSiteKey", turnstileSiteKey);
+            request.setAttribute("turnstileSiteKey", turnstileSiteKey);
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }
     }
@@ -145,55 +144,55 @@ public class LoginServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        String turnstileToken = request.getParameter("cf-turnstile-response");
-//        if (turnstileToken == null || turnstileToken.isEmpty()) {
-//            request.setAttribute("err", "Login failed: Captcha verification failed!!!");
-//            request.getRequestDispatcher("login.jsp").forward(request, response);
-//            return;
-//        }
-//
-//        // String secretKey = "0x4AAAAAABgts4-8Q8nhLD8g5wGXEaXXDT4";
+        String turnstileToken = request.getParameter("cf-turnstile-response");
+        if (turnstileToken == null || turnstileToken.isEmpty()) {
+            request.setAttribute("err", "Login failed: Captcha verification failed!!!");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+            return;
+        }
+
+        String secretKey = "0x4AAAAAABgts4-8Q8nhLD8g5wGXEaXXDT4";
 //        String secretKey = System.getenv("CLOUDFLARE_SECRET_KEY");
-//        URL url = new URL("https://challenges.cloudflare.com/turnstile/v0/siteverify");
-//        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//        conn.setRequestMethod("POST");
-//        conn.setDoOutput(true);
-//
-//        String postData = "secret=" + URLEncoder.encode(secretKey, "UTF-8")
-//                + "&response=" + URLEncoder.encode(turnstileToken, "UTF-8");
-//
-//        try (OutputStream os = conn.getOutputStream()) {
-//            os.write(postData.getBytes());
-//        }
-//
-//        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//        String inputLine;
-//        StringBuilder responseStr = new StringBuilder();
-//        while ((inputLine = in.readLine()) != null) {
-//            responseStr.append(inputLine);
-//        }
-//        in.close();
-//
-//        JsonObject json = JsonParser.parseString(responseStr.toString()).getAsJsonObject();
-//
-//        boolean success = json.get("success").getAsBoolean();
-//        if (!success) {
-//            String errorMsg = "Captcha verification failed!!!";
-//            if (json.has("error-codes")) {
-//                errorMsg += " Error codes: " + json.get("error-codes").toString();
-//            }
-//            request.setAttribute("err", "Login failed: " + errorMsg);
-//            request.getRequestDispatcher("login.jsp").forward(request, response);
-//            return;
-//        }
+        URL url = new URL("https://challenges.cloudflare.com/turnstile/v0/siteverify");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setDoOutput(true);
+
+        String postData = "secret=" + URLEncoder.encode(secretKey, "UTF-8")
+                + "&response=" + URLEncoder.encode(turnstileToken, "UTF-8");
+
+        try ( OutputStream os = conn.getOutputStream()) {
+            os.write(postData.getBytes());
+        }
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String inputLine;
+        StringBuilder responseStr = new StringBuilder();
+        while ((inputLine = in.readLine()) != null) {
+            responseStr.append(inputLine);
+        }
+        in.close();
+
+        JsonObject json = JsonParser.parseString(responseStr.toString()).getAsJsonObject();
+
+        boolean success = json.get("success").getAsBoolean();
+        if (!success) {
+            String errorMsg = "Captcha verification failed!!!";
+            if (json.has("error-codes")) {
+                errorMsg += " Error codes: " + json.get("error-codes").toString();
+            }
+            request.setAttribute("err", "Login failed: " + errorMsg);
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+            return;
+        }
 
         if (request.getMethod().equalsIgnoreCase("POST")) {
             UserDAO dao = new UserDAO();

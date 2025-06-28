@@ -1,5 +1,9 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<% 
+    String siteKey = (String) request.getAttribute("turnstileSiteKey");
+    out.println("<!-- Site key JSP: " + siteKey + " -->");
+%>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -33,7 +37,7 @@
                         <input type="checkbox" class="form-check-input" name="rememberMe" id="rememberMe" />
                         <label style="margin-right: 70%;" class="form-check-label" for="rememberMe">Remember</label>
                     </div>
-<%--                    <div class="cf-turnstile" data-sitekey="${turnstileSiteKey}"></div>--%>
+                    <div class="cf-turnstile" data-sitekey="${turnstileSiteKey}"></div>
                     <button type="submit" class="btn btn-primary">Login</button>
                 </form>
 
@@ -42,17 +46,18 @@
                 </div>
 
                 <div class="mt-3">
-                    <a href="https://accounts.google.com/o/oauth2/auth?scope=email profile openid&redirect_uri=https://fskills.onrender.com/login&response_type=code&client_id=918765723091-gobp8bur9jsd1d4rhkk2e9dkvvdm6eh2.apps.googleusercontent.com&approval_prompt=force"
-                       class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center">
-                        <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google Logo" class="me-2" />
-                        Continue with Google
-                    </a>
-
-<%--                    <a href="https://accounts.google.com/o/oauth2/auth?scope=email profile openid&redirect_uri=http://localhost:8080/FSkills/login&response_type=code&client_id=918765723091-gobp8bur9jsd1d4rhkk2e9dkvvdm6eh2.apps.googleusercontent.com&approval_prompt=force"--%>
+                    <%--Connect Google From Render--%>
+<%--                    <a href="https://accounts.google.com/o/oauth2/auth?scope=email profile openid&redirect_uri=https://fskills.onrender.com/login&response_type=code&client_id=918765723091-gobp8bur9jsd1d4rhkk2e9dkvvdm6eh2.apps.googleusercontent.com&approval_prompt=force"--%>
 <%--                       class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center">--%>
 <%--                        <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google Logo" class="me-2" />--%>
 <%--                        Continue with Google--%>
 <%--                    </a>--%>
+
+                    <a href="https://accounts.google.com/o/oauth2/auth?scope=email profile openid&redirect_uri=http://localhost:8080/FSkills/login&response_type=code&client_id=918765723091-gobp8bur9jsd1d4rhkk2e9dkvvdm6eh2.apps.googleusercontent.com&approval_prompt=force"
+                       class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center">
+                        <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google Logo" class="me-2" />
+                        Continue with Google
+                    </a>
                 </div>
 
                 <div class="mt-3">
@@ -110,6 +115,6 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <!-- reCAPTCHA -->
-        <%--<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>--%>
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     </body>
 </html>
