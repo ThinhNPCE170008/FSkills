@@ -1,11 +1,7 @@
 package dao;
 
 import java.io.InputStream;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.sql.Types;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -974,5 +970,8 @@ public class CourseDAO extends DBContext {
 //        System.out.println("Site Key:" + turnstileSiteKey);
 //        System.out.println("Client Key:" + GOOGLE_CLIENT_ID);
 //        System.out.println("Secret Google Key:" + GOOGLE_CLIENT_SECRET);
+        
+//        String SENDGRID_API_KEY = System.getenv("SENDGRID_API_KEY");
+//        System.out.println(SENDGRID_API_KEY);
     }
 }
