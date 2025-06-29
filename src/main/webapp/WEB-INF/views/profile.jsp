@@ -503,13 +503,81 @@
 
     // Check date of birth year
     if (dateOfBirth) {
-      const year = new Date(dateOfBirth).getFullYear();
+      const selectedDate = new Date(dateOfBirth);
+      const currentDate = new Date();
+
+      // Check if date is in the future
+      if (selectedDate > currentDate) {
+        event.preventDefault();
+        document.getElementById('customErrorMessage').textContent = "Error: Date of birth cannot be in the future";
+        const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 2000});
+        toast.show();
+        return false;
+      }
+
+      // Also keep the original check for year > 3000
+      const year = selectedDate.getFullYear();
       if (year > 3000) {
         event.preventDefault();
         document.getElementById('customErrorMessage').textContent = "Error: Year of birth cannot exceed 3000";
         const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 2000});
         toast.show();
         return false;
+      }
+    }
+
+    // Check email format and domain
+    const email = document.getElementById('email').value;
+    if (email) {
+      // Split email into local part and domain
+      const parts = email.split('@');
+      if (parts.length === 2) {
+        const domain = parts[1].toLowerCase();
+        const localPart = parts[0].toLowerCase();
+
+        // Check if email provider is valid (gmail or email)
+        const validProviders = ['gmail.com', 'email.com'];
+        const validDomains = ['.vn', '.io', '.me'];
+
+        let isValidDomain = false;
+
+        // Check if it's a valid provider
+        if (validProviders.includes(domain)) {
+          isValidDomain = true;
+        }
+
+        // Check if it ends with one of the valid domains
+        for (const validDomain of validDomains) {
+          if (domain.endsWith(validDomain)) {
+            isValidDomain = true;
+            break;
+          }
+        }
+
+        // Check if it's a common domain (contains a dot)
+        if (domain.includes('.') && !isValidDomain) {
+          // Accept other common domains that contain a dot
+          isValidDomain = true;
+        }
+
+        if (!isValidDomain) {
+          event.preventDefault();
+          document.getElementById('customErrorMessage').textContent = "Error: Invalid email domain. Accepted domains include .vn, .io, .me, gmail.com, email.com, and other common domains.";
+          const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 3000});
+          toast.show();
+          return false;
+        }
+
+        // Check if email provider is gmail or email
+        if (domain === 'gmail.com' || domain === 'email.com') {
+          // Valid provider, continue
+        } else if (domain.startsWith('gmail.') || domain.startsWith('email.')) {
+          event.preventDefault();
+          document.getElementById('customErrorMessage').textContent = "Error: Invalid email provider. For gmail or email, use gmail.com or email.com";
+          const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 3000});
+          toast.show();
+          return false;
+        }
       }
     }
 
