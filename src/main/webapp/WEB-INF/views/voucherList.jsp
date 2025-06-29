@@ -1,9 +1,3 @@
-<%--
-    Document   : voucherList
-    Created on : Jun 1, 2025, 5:34:00 PM
-    Author     : DELL
---%>
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -221,6 +215,7 @@
             <i class="bi bi-list text-lg"></i>
         </button>
 
+        <jsp:include page="/layout/sidebar_admin.jsp" />
         <jsp:include page="/layout/header_admin.jsp" />
 
         <div class="flex flex-grow">
