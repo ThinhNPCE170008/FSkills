@@ -34,7 +34,7 @@ import util.RoleRedirect;
 /**
  * @author Ngo Phuoc Thinh - CE170008 - SE1815
  */
-@WebServlet(name = "Login", urlPatterns = {"/login"})
+@WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
 public class LoginServlet extends HttpServlet {
 
     /**
@@ -132,7 +132,7 @@ public class LoginServlet extends HttpServlet {
                 }
             }
 
-//            String turnstileSiteKey = "0x4AAAAAABgts3i36HFv5My10x4AAAAAABgts3i36HFv5My1";
+//            String turnstileSiteKey = System.getenv("CLOUDFLARE_SITE_KEY");
 //            request.setAttribute("turnstileSiteKey", turnstileSiteKey);
 
             request.setAttribute("usernameCookieSaved", usernameCookieSaved);
