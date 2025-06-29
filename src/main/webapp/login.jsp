@@ -37,7 +37,7 @@
                         <input type="checkbox" class="form-check-input" name="rememberMe" id="rememberMe" />
                         <label style="margin-right: 70%;" class="form-check-label" for="rememberMe">Remember</label>
                     </div>
-                    <div class="cf-turnstile" data-sitekey="${turnstileSiteKey}"></div>
+                    <div class="cf-turnstile" data-sitekey="0x4AAAAAABgts3i36HFv5My1"></div>
                     <button type="submit" class="btn btn-primary">Login</button>
                 </form>
 

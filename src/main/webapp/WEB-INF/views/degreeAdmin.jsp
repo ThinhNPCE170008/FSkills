@@ -104,13 +104,19 @@
                                                 </td>
 
                                                 <td>
-                                                    <img src="${pageContext.request.contextPath}/${deg.image}" 
-                                                         alt="Degree Image" 
-                                                         class="rounded shadow-sm"
-                                                         style="max-height: 80px; object-fit: cover; cursor: pointer;"
-                                                         data-bs-toggle="modal" 
-                                                         data-bs-target="#zoomImageModal${deg.degreeId}" 
-                                                         loading="lazy" />
+                                                    <c:choose>
+                                                        <c:when test="${empty deg.imageDataURI}">
+                                                            <span class="text-muted fst-italic">No Image</span>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <a href="#" data-bs-toggle="modal" data-bs-target="#zoomImageModal${deg.degreeId}">
+                                                                <img src="${deg.imageDataURI}"
+                                                                     class="rounded-3 shadow d-block mx-auto"
+                                                                     style="max-height: 80px; object-fit: cover; cursor: zoom-in;" />
+                                                            </a>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
                                                 </td>
 
                                                 <td class="py-3 px-4 border-b">
@@ -300,21 +306,23 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label fw-bold">Current Image</label><br>
-
+                            <!-- Image -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Current Image</label>
                                 <c:choose>
-                                    <c:when test="${not empty deg.image}">
-                                        <!-- Image with Zoom Modal Trigger -->
-                                        <img src="${pageContext.request.contextPath}/${deg.image}" alt="Image" class="img-fluid rounded shadow-sm"
-                                             style="max-width: 300px; max-height: 300px; object-fit: cover; cursor: pointer;"
-                                             data-bs-toggle="modal" data-bs-target="#zoomImageModal${deg.degreeId}"/>
+                                    <c:when test="${empty deg.imageDataURI}">
+                                        <div class="alert alert-warning text-center mt-2">No Image Available</div>
                                     </c:when>
                                     <c:otherwise>
-                                        <p>No image available</p>
+                                        <div class="text-center">
+                                            <img src="${deg.imageDataURI}" alt="Degree Image"
+                                                 class="img-fluid rounded shadow-sm d-block mx-auto"
+                                                 style="max-height: 350px; object-fit: contain;">
+                                        </div>
                                     </c:otherwise>
                                 </c:choose>
                             </div>
+
 
                         </div>
 
@@ -324,13 +332,15 @@
                     </div>
                 </div>
             </div>
-            <!-- Zoom Image Modal -->
-            <div class="modal fade" id="zoomImageModal${deg.degreeId}" tabindex="-1" aria-hidden="true">
+            <div class="modal fade" id="zoomImageModal${deg.degreeId}" tabindex="-1" aria-labelledby="zoomImageModalLabel${deg.degreeId}" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-lg">
-                    <div class="modal-content bg-transparent border-0">
-                        <div class="modal-body text-center">
-                            <img src="${pageContext.request.contextPath}/${deg.image}" alt="Zoomed Image" class="img-fluid rounded shadow"
-                                 style="max-height: 90vh;">
+                    <div class="modal-content border-0 shadow-lg rounded-4">
+                        <div class="modal-header border-0">
+                            <h5 class="modal-title" id="zoomImageModalLabel${deg.degreeId}">Image Preview</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body d-flex justify-content-center">
+                            <img src="${deg.imageDataURI}" alt="Zoomed Image" class="img-fluid rounded shadow" style="max-height: 600px; object-fit: contain;">
                         </div>
                     </div>
                 </div>

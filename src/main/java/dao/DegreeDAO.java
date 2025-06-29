@@ -4,13 +4,14 @@
  */
 package dao;
 
+import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
-import model.Announcement;
 import model.Degree;
 import model.User;
 import util.DBContext;
@@ -37,7 +38,7 @@ public class DegreeDAO extends DBContext {
                 int ApplicationStatus = rs.getInt("ApplicationStatus");
                 Timestamp ApplicationSubmitDate = rs.getTimestamp("ApplicationSubmitDate");
                 Timestamp ApprovalDate = rs.getTimestamp("ApprovalDate");
-                String CertificateImage = rs.getString("CertificateImage");
+                byte[] CertificateImage = rs.getBytes("CertificateImage");
                 String CertificateLink = rs.getString("CertificateLink");
                 int userId = rs.getInt("UserID");
                 String userName = rs.getString("UserName");
@@ -67,7 +68,7 @@ public class DegreeDAO extends DBContext {
                 int ApplicationStatus = rs.getInt("ApplicationStatus");
                 Timestamp ApplicationSubmitDate = rs.getTimestamp("ApplicationSubmitDate");
                 Timestamp ApprovalDate = rs.getTimestamp("ApprovalDate");
-                String CertificateImage = rs.getString("CertificateImage");
+                byte[] CertificateImage = rs.getBytes("CertificateImage");
                 String CertificateLink = rs.getString("CertificateLink");
                 int userId = rs.getInt("UserID");
                 String userName = rs.getString("UserName");
@@ -84,13 +85,17 @@ public class DegreeDAO extends DBContext {
         return list;
     }
 
-    public int insert(int userId, String Image, String link) {
+    public int insert(int userId, InputStream image, String link) {
         String sql = "INSERT INTO InstructorApplications(UserID,ApplicationStatus,ApplicationSubmitDate,"
                 + "CertificateImage,CertificateLink) VALUES (?, 0, GETDATE(), ?, ?);";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, userId);
-            ps.setString(2, Image);
+            if (image != null) {
+                ps.setBinaryStream(2, image, image.available());
+            } else {
+                ps.setNull(2, Types.VARBINARY);
+            }
             ps.setString(3, link);
             int row = ps.executeUpdate();
             if (row > 0) {
@@ -104,12 +109,24 @@ public class DegreeDAO extends DBContext {
         }
     }
 
-    public boolean update(String image, String link, String applicationId) {
-        String sql = "UPDATE InstructorApplications SET ApplicationSubmitDate = GETDATE(),"
+    public boolean update(InputStream image, String link, String applicationId, boolean updateImage) {
+        String sql;
+        if (updateImage) {
+            sql = "UPDATE InstructorApplications SET ApplicationSubmitDate = GETDATE(),"
                 + "CertificateImage = ?,CertificateLink = ? WHERE ApplicationID = ?;";
+        } else {
+            sql = "UPDATE InstructorApplications SET ApplicationSubmitDate = GETDATE(),"
+                + "CertificateLink = ? WHERE ApplicationID = ?;";
+        }
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, image);
+            if (updateImage) {
+                if (image != null) {
+                    ps.setBlob(1, image);
+                } else {
+                    ps.setNull(1, Types.BLOB);
+                }
+            }
             ps.setString(2, link);
             ps.setString(3, applicationId);
             int num = ps.executeUpdate();

@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.List;
 import model.Degree;
@@ -103,7 +104,7 @@ public class DegreeServlet extends HttpServlet {
                 int userId = Integer.parseInt(id);
                 String degreeLink = request.getParameter("degreeLink");
 
-                if (degreeLink == null || degreeLink.trim().isEmpty()|| degreeLink.matches(".*\\s{2,}.*")) {
+                if (degreeLink == null || degreeLink.trim().isEmpty() || degreeLink.matches(".*\\s{2,}.*")) {
                     request.setAttribute("err", "Degree link must not be empty and must not contain spaces.");
                     List<Degree> listDegree = (List<Degree>) degreeDAO.getDegreeById(user.getUserId());
                     request.setAttribute("listDegree", listDegree);
@@ -122,20 +123,11 @@ public class DegreeServlet extends HttpServlet {
 
                 // Nhận file
                 Part filePart = request.getPart("degreeImage");
-                String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-                String imagePath;
-                if (fileName == null || fileName.isEmpty()) {
-                    imagePath = "No Image";
-                } else {
-                    String uploadPath = getServletContext().getRealPath("") + File.separator + "imageUpload";
-                    File uploadDir = new File(uploadPath);
-                    if (!uploadDir.exists()) {
-                        uploadDir.mkdir();
-                    }
-                    filePart.write(uploadPath + File.separator + fileName);
-                    imagePath = "imageUpload/" + fileName;
+                InputStream imageInputStream = null;
+                if (filePart != null && filePart.getSize() > 0) {
+                    imageInputStream = filePart.getInputStream();  // Lấy dữ liệu nhị phân
                 }
-                int res = degreeDAO.insert(userId, imagePath, degreeLink);
+                int res = degreeDAO.insert(userId, imageInputStream, degreeLink);
 
                 if (res == 1) {
                     request.setAttribute("success", "Degree submitted successfully!");
@@ -188,7 +180,7 @@ public class DegreeServlet extends HttpServlet {
                     List<Degree> listDegree = (List<Degree>) degreeDAO.getDegreeById(user.getUserId());
                     request.setAttribute("listDegree", listDegree);
                     request.getRequestDispatcher("/WEB-INF/views/degree.jsp").forward(request, response);
-                return;
+                    return;
                 }
 
                 if (!degreeLink.startsWith("http://") && !degreeLink.startsWith("https://")) {
@@ -196,28 +188,31 @@ public class DegreeServlet extends HttpServlet {
                     List<Degree> listDegree = (List<Degree>) degreeDAO.getDegreeById(user.getUserId());
                     request.setAttribute("listDegree", listDegree);
                     request.getRequestDispatcher("/WEB-INF/views/degree.jsp").forward(request, response);
-                return;
+                    return;
                 }
-                Part filePart = request.getPart("degreeImage");
                 String degreeId = request.getParameter("degreeId");
-                String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-                String imagePath;
 
-                if (fileName != null && !fileName.isEmpty()) {
-                    // New image uploaded
-                    String uploadPath = getServletContext().getRealPath("") + File.separator + "imageUpload";
-                    File uploadDir = new File(uploadPath);
-                    if (!uploadDir.exists()) {
-                        uploadDir.mkdir();
-                    }
-                    filePart.write(uploadPath + File.separator + fileName);
-                    imagePath = "imageUpload/" + fileName;
+                String keepOldImage = request.getParameter("keepOldImage"); // "true" hoặc "false"
+                Part filePart = request.getPart("degreeImage");
+
+                InputStream imageInputStream = null;
+                boolean updateImage = false;
+
+                if (filePart != null && filePart.getSize() > 0) {
+                    // Có ảnh mới được upload
+                    imageInputStream = filePart.getInputStream();
+                    updateImage = true;
+                } else if ("false".equalsIgnoreCase(keepOldImage)) {
+                    // Người dùng xóa ảnh cũ
+                    updateImage = true;
+                    imageInputStream = null;
                 } else {
-                    // Use old image path
-                    imagePath = request.getParameter("oldImagePath");
+                    // Người dùng giữ ảnh cũ, không update ảnh
+                    updateImage = false;
+                    imageInputStream = null;
                 }
 
-                boolean res = degreeDAO.update(imagePath, degreeLink, degreeId);
+                boolean res = degreeDAO.update(imageInputStream, degreeLink, degreeId, updateImage);
 
                 if (res) {
                     request.setAttribute("success", "Degree edited successfully!");
@@ -230,14 +225,14 @@ public class DegreeServlet extends HttpServlet {
                     List<Degree> listDegree = (List<Degree>) degreeDAO.getDegreeById(user.getUserId());
                     request.setAttribute("listDegree", listDegree);
                     request.getRequestDispatcher("/WEB-INF/views/degree.jsp").forward(request, response);
-                return;
+                    return;
                 }
             } catch (Exception e) {
                 request.setAttribute("err", "Error failed to delete degree!");
                 List<Degree> listDegree = (List<Degree>) degreeDAO.getDegreeById(user.getUserId());
                 request.setAttribute("listDegree", listDegree);
                 request.getRequestDispatcher("/WEB-INF/views/degree.jsp").forward(request, response);
-            return;
+                return;
             }
         }
 

@@ -5,6 +5,7 @@
 package model;
 
 import java.sql.Timestamp;
+import util.ImageBase64;
 
 /**
  *
@@ -15,14 +16,14 @@ public class Degree {
     private int status;
     private Timestamp submitDate;
     private Timestamp ApprovalDate;
-    private String image;
+    private byte[] image;
     private String link;
     private User userId;
 
     public Degree() {
     }
 
-    public Degree(int degreeId, int status, Timestamp submitDate, Timestamp ApprovalDate, String image, String link, User userId) {
+    public Degree(int degreeId, int status, Timestamp submitDate, Timestamp ApprovalDate, byte[] image, String link, User userId) {
         this.degreeId = degreeId;
         this.status = status;
         this.submitDate = submitDate;
@@ -64,11 +65,11 @@ public class Degree {
         this.ApprovalDate = ApprovalDate;
     }
 
-    public String getImage() {
+    public byte[] getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+    public void setImage(byte[] image) {
         this.image = image;
     }
 
@@ -93,5 +94,7 @@ public class Degree {
         return "Degree{" + "degreeId=" + degreeId + ", status=" + status + ", submitDate=" + submitDate + ", ApprovalDate=" + ApprovalDate + ", image=" + image + ", link=" + link + ", userId=" + userId + '}';
     }
     
-    
+    public String getImageDataURI() {
+        return ImageBase64.toDataURI(image, "image/jpeg");
+    }
 }
