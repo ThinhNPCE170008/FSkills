@@ -318,11 +318,11 @@
             </style>
         </head>
         <body>
-            <jsp:include page="/layout/sidebar_admin.jsp" />
+        <jsp:include page="/layout/sidebar_admin.jsp" />
 
 
 
-            <div class="flex flex-grow w-full">
+        <div class="flex flex-grow w-full">
 
             <div class="main-content px-5 py-5">
                 <div class="container px-5">
@@ -334,11 +334,15 @@
 
                         <span class="flex-grow text-center">User Information Detail</span>
 
-                        <button type="button"
-                                class="text-white text-sm font-medium rounded" style="background-color: #fd7e14; padding: 8px 16px;" id="editButton"
-                                onclick="window.location.href = 'aboutInform?userInform=${requestScope.currentUsername != null ? requestScope.currentUsername : param.userInform}&editMode=true'">
-                            Edit
-                        </button>
+                        <c:if test="${editMode != true}">
+                            <button type="button"
+                                    class="text-white text-sm font-medium rounded"
+                                    style="background-color: #fd7e14; padding: 8px 16px;" id="editButton"
+                                    onclick="window.location.href = 'aboutInform?userInform=${requestScope.currentUsername != null ? requestScope.currentUsername : param.userInform}&editMode=true'">
+                                Edit
+                            </button>
+                        </c:if>
+
                     </h2>
                     <c:if test="${not empty globalMessage}">
                         <p class="global-message <c:if test="${not empty successMessage}">success-message</c:if> <c:if test="${not empty errorMessages}">error-global-message</c:if>">
@@ -447,7 +451,7 @@
         </div>
 
         <jsp:include page="/layout/toast.jsp" />
-       <%-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> --%>
+        <%-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> --%>
     </body>
 
 </html>

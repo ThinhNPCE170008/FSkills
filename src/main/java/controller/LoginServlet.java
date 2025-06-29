@@ -132,11 +132,11 @@ public class LoginServlet extends HttpServlet {
                 }
             }
 
-            String turnstileSiteKey = System.getenv("CLOUDFLARE_SITE_KEY");
-            request.setAttribute("turnstileSiteKey", turnstileSiteKey);
+//            String turnstileSiteKey = System.getenv("CLOUDFLARE_SITE_KEY");
+//            request.setAttribute("turnstileSiteKey", turnstileSiteKey);
 
             request.setAttribute("usernameCookieSaved", usernameCookieSaved);
-            request.setAttribute("turnstileSiteKey", turnstileSiteKey);
+//            request.setAttribute("turnstileSiteKey", turnstileSiteKey);
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }
     }

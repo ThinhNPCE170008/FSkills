@@ -11,7 +11,7 @@
                 <goal>package</goal>
             </goals>
             <properties>
-                <netbeans.deploy>true</netbeans.deploy>
+                
                 <netbeans.deploy.clientUrlPart>/login</netbeans.deploy.clientUrlPart>
             </properties>
         </action>
