@@ -59,7 +59,7 @@ public class CourseDAO extends DBContext {
                 }
                 user.setGender(rs.getInt("Gender"));
                 user.setDateOfBirth(rs.getTimestamp("DateOfBirth"));
-                user.setAvatar(rs.getString("Avatar"));
+                user.setAvatar(rs.getBytes("Avatar"));
                 user.setInfo(rs.getNString("Info"));
 
                 Category category = new Category();
@@ -137,7 +137,7 @@ public class CourseDAO extends DBContext {
                 }
                 user.setGender(rs.getInt("Gender"));
                 user.setDateOfBirth(rs.getTimestamp("DateOfBirth"));
-                user.setAvatar(rs.getString("Avatar"));
+                user.setAvatar(rs.getBytes("Avatar"));
                 user.setInfo(rs.getNString("Info"));
 
                 Category category = new Category();
@@ -882,7 +882,7 @@ public class CourseDAO extends DBContext {
         }
         user.setGender(rs.getInt("Gender"));
         user.setDateOfBirth(rs.getTimestamp("DateOfBirth"));
-        user.setAvatar(rs.getString("Avatar"));
+        user.setAvatar(rs.getBytes("Avatar"));
         user.setInfo(rs.getNString("Info"));
 
         Category category = new Category();
@@ -906,7 +906,6 @@ public class CourseDAO extends DBContext {
 
         return course;
     }
-//========
 
     public static void main(String[] args) {
         List<Course> list = new ArrayList<>();
@@ -917,17 +916,17 @@ public class CourseDAO extends DBContext {
             System.out.println(course);
         }
 
-//        String secretKey = System.getenv("CLOUDFLARE_SECRET_KEY");
-//        String GOOGLE_CLIENT_ID = System.getenv("GOOGLE_CLIENT_ID");
-//        String GOOGLE_CLIENT_SECRET = System.getenv("GOOGLE_CLIENT_SECRET");
-//        String turnstileSiteKey = System.getenv("CLOUDFLARE_SITE_KEY");
-//        
-//        System.out.println("Secret Key:" + secretKey);
-//        System.out.println("Site Key:" + turnstileSiteKey);
-//        System.out.println("Client Key:" + GOOGLE_CLIENT_ID);
-//        System.out.println("Secret Google Key:" + GOOGLE_CLIENT_SECRET);
-//        String SENDGRID_API_KEY = System.getenv("SENDGRID_API_KEY");
-//        System.out.println(SENDGRID_API_KEY);
+        String secretKey = System.getenv("CLOUDFLARE_SECRET_KEY");
+        String GOOGLE_CLIENT_ID = System.getenv("GOOGLE_CLIENT_ID");
+        String GOOGLE_CLIENT_SECRET = System.getenv("GOOGLE_CLIENT_SECRET");
+        String turnstileSiteKey = System.getenv("CLOUDFLARE_SITE_KEY");
+
+        System.out.println("Secret Key:" + secretKey);
+        System.out.println("Site Key:" + turnstileSiteKey);
+        System.out.println("Client Key:" + GOOGLE_CLIENT_ID);
+        System.out.println("Secret Google Key:" + GOOGLE_CLIENT_SECRET);
+        String SENDGRID_API_KEY = System.getenv("SENDGRID_API_KEY");
+        System.out.println(SENDGRID_API_KEY);
 
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
         System.out.println("UTC time: " + now);

@@ -390,7 +390,7 @@ public class UserDAO extends DBContext {
                 int gender = rs.getInt("Gender");
                 Timestamp BirthOfDay = rs.getTimestamp("DateOfBirth");
                 Timestamp TimeCreate = rs.getTimestamp("UserCreateDate");
-                String Avatar = rs.getString("Avatar");
+                byte[] Avatar = rs.getBytes("Avatar");
                 String info = rs.getString("info");
                 int banInt = rs.getInt("BanStatus");
                 Ban Ban = null;
@@ -467,7 +467,7 @@ public class UserDAO extends DBContext {
                 user.setGender(rs.getInt("Gender"));
                 user.setDateOfBirth(rs.getTimestamp("DateOfBirth"));
                 user.setUserCreateDate(rs.getTimestamp("UserCreateDate"));
-                user.setAvatar(rs.getString("Avatar"));
+                user.setAvatar(rs.getBytes("Avatar"));
                 user.setInfo(rs.getNString("Info"));
                 user.setReports(rs.getInt("ReportAmount"));
                 user.setPhone(rs.getString("PhoneNumber"));
@@ -521,7 +521,7 @@ public class UserDAO extends DBContext {
                 int gender = rs.getInt("Gender");
                 Timestamp birthOfDay = rs.getTimestamp("DateOfBirth");
                 Timestamp timeCreate = rs.getTimestamp("UserCreateDate");
-                String avatar = rs.getString("Avatar");
+                byte[] avatar = rs.getBytes("Avatar");
                 String info = rs.getString("info");
                 int banInt = rs.getInt("BanStatus");
                 Ban Ban = null;
@@ -581,7 +581,7 @@ public class UserDAO extends DBContext {
                 int gender = rs.getInt("Gender");
                 Timestamp BirthOfDay = rs.getTimestamp("DateOfBirth");
                 Timestamp TimeCreate = rs.getTimestamp("UserCreateDate");
-                String Avatar = rs.getString("Avatar");
+                byte[] Avatar = rs.getBytes("Avatar");
                 String info = rs.getString("info");
                 int banInt = rs.getInt("BanStatus");
                 Ban Ban = null;
@@ -639,7 +639,7 @@ public class UserDAO extends DBContext {
                 int gender = rs.getInt("Gender");
                 Timestamp BirthOfDay = rs.getTimestamp("DateOfBirth");
                 Timestamp TimeCreate = rs.getTimestamp("UserCreateDate");
-                String Avatar = rs.getString("Avatar");
+                byte[] Avatar = rs.getBytes("Avatar");
                 String info = rs.getString("info");
                 int banInt = rs.getInt("BanStatus");
                 Ban Ban = null;
@@ -685,7 +685,7 @@ public class UserDAO extends DBContext {
     }
 
     public int insertGoogle(UserGoogle user) {
-        String sql = "INSERT INTO Users (UserName, DisplayName, Email, Password, Role, Avatar, GoogleID, IsVerified) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Users (UserName, DisplayName, Email, Password, Role, AvatarGoogle, GoogleID, IsVerified) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             String email = user.getEmail();
@@ -694,7 +694,7 @@ public class UserDAO extends DBContext {
             String googleID = user.getId();
 
             String username = email.split("@")[0];
-            String password = generateRandomPassword(10); // tạo password ngẫu nhiên
+            String password = generateRandomPassword(10);
 
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, username);
@@ -704,7 +704,7 @@ public class UserDAO extends DBContext {
             ps.setInt(5, 0);
             ps.setString(6, picture);
             ps.setString(7, googleID);
-            ps.setBoolean(8, true); // IsVerified
+            ps.setBoolean(8, true);
 
             int result = ps.executeUpdate();
             return result > 0 ? 1 : 0;
@@ -840,7 +840,7 @@ public class UserDAO extends DBContext {
                 int gender = rs.getInt("Gender");
                 Timestamp BirthOfDay = rs.getTimestamp("DateOfBirth");
                 Timestamp TimeCreate = rs.getTimestamp("UserCreateDate");
-                String Avatar = rs.getString("Avatar");
+                byte[] Avatar = rs.getBytes("Avatar");
                 String info = rs.getString("info");
                 int banInt = rs.getInt("BanStatus");
                 Ban Ban = null;
@@ -933,5 +933,18 @@ public class UserDAO extends DBContext {
 //        UserDAO dao = new UserDAO();
 //        PasswordResetToken pass = dao.findValidTokenForgotPassword("60b9f904-4887-41ab-bf7d-8cf2f3e8f499");
 //        System.out.println(pass);
+
+//        String googleID = "123123123";
+//        String  email = "abc@gmail.com";
+//
+//        UserDAO userDao = new UserDAO();
+//        UserGoogle user = new UserGoogle();
+//        user.setName("heroic");
+//        user.setEmail(email);
+//        user.setPicture("https://www.facebook.com/");
+//        user.setId(googleID);
+//
+//        int insert = userDao.insertGoogle(user);
+//        System.out.println(insert);
     }
 }

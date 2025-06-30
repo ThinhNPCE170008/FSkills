@@ -43,7 +43,7 @@ public class NotificationDAO extends DBContext {
                 int userId = rs.getInt("UserID");
                 String username = rs.getString("UserName");
                 String displayName = rs.getString("DisplayName");
-                String avatar = rs.getString("Avatar");
+                byte[] avatar = rs.getBytes("Avatar");
                 Notification noti = new Notification(notificationId, new User(userId, username, displayName, avatar),
                         link, message, status, date );
                 list.add(noti);
