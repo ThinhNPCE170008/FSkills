@@ -41,6 +41,17 @@ public class UpdateUserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        User user = (User) request.getSession().getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
+
+        Role role = user.getRole();
+        if (role != Role.ADMIN) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
+            return;
+        }
         request.setCharacterEncoding("UTF-8");
 
         String userNameFromParam = request.getParameter("userName");
