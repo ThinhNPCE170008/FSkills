@@ -1,5 +1,7 @@
 package model;
 
+import util.ImageBase64;
+
 import java.sql.Timestamp;
 
 /**
@@ -16,7 +18,7 @@ public class User {
     private int gender;
     private Timestamp dateOfBirth;
     private Timestamp userCreateDate;
-    private String avatar;
+    private byte[] avatar;
     private String info;
     private Ban ban;
     private int reports;
@@ -28,7 +30,7 @@ public class User {
 
     }
 
-    public User(int userId, String userName, String displayName, String email, String password, Role role, int gender, Timestamp dateOfBirth, Timestamp userCreateDate, String avatar, String info, Ban ban, int reports, String phone, boolean isVerified, String googleID) {
+    public User(int userId, String userName, String displayName, String email, String password, Role role, int gender, Timestamp dateOfBirth, Timestamp userCreateDate, byte[] avatar, String info, Ban ban, int reports, String phone, boolean isVerified, String googleID) {
         this.userId = userId;
         this.userName = userName;
         this.displayName = displayName;
@@ -48,7 +50,7 @@ public class User {
     }
 
 
-    public User(String userName, String displayName, String email, String password, Role role, String avatar, boolean isVerified, String googleID) {
+    public User(String userName, String displayName, String email, String password, Role role, byte[] avatar, boolean isVerified, String googleID) {
         this.userName = userName;
         this.displayName = displayName;
         this.email = email;
@@ -59,7 +61,7 @@ public class User {
         this.googleID = googleID;
     }
 
-    public User(int userId, String userName, String displayName, String avatar) {
+    public User(int userId, String userName, String displayName, byte[] avatar) {
         this.userId = userId;
         this.userName = userName;
         this.displayName = displayName;
@@ -93,7 +95,7 @@ public class User {
         this.phone = "0999111111";
     }
 
-    public User(int userId, String displayName, String email, int gender, Timestamp dateOfBirth, String avatar, String info) {
+    public User(int userId, String displayName, String email, int gender, Timestamp dateOfBirth, byte[] avatar, String info) {
         this.userId = userId;
         this.displayName = displayName;
         this.email = email;
@@ -183,11 +185,11 @@ public class User {
         this.userCreateDate = userCreateDate;
     }
 
-    public String getAvatar() {
+    public byte[] getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(String avatar) {
+    public void setAvatar(byte[] avatar) {
         this.avatar = avatar;
     }
 
@@ -244,4 +246,7 @@ public class User {
         return "User{" + "userId=" + userId + ", userName=" + userName + ", displayName=" + displayName + ", email=" + email + ", password=" + password + ", role=" + role + ", gender=" + gender + ", dateOfBirth=" + dateOfBirth + ", userCreateDate=" + userCreateDate + ", avatar=" + avatar + ", info=" + info + ", ban=" + ban + ", reports=" + reports + ", phone=" + phone + ", isVerified=" + isVerified + ", googleID=" + googleID + '}';
     }
 
+    public String getImageDataURI() {
+        return ImageBase64.toDataURI(avatar, "image/jpeg");
+    }
 }
