@@ -1,7 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<!-- Toast phần tử -->
 <div id="jsToast"
      class="toast align-items-center text-white bg-danger border-0 position-fixed bottom-0 end-0 m-3 d-none"
      role="alert">
@@ -11,7 +10,6 @@
     </div>
 </div>
 
-<!-- Hàm hiển thị toast -->
 <script>
     function showJsToast(message, type = 'danger') {
         const toastEl = document.getElementById('jsToast');
@@ -27,7 +25,6 @@
     }
 </script>
 
-<!-- Gọi toast nếu có lỗi hoặc thành công -->
 <c:if test="${not empty err}">
     <script>
         document.addEventListener('DOMContentLoaded', function () {

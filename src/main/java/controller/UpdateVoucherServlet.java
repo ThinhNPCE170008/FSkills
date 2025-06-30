@@ -17,10 +17,14 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Role;
+import model.User;
 
 @WebServlet(name = "UpdateVoucherServlet", urlPatterns = {"/updateVoucher"})
 public class UpdateVoucherServlet extends HttpServlet {
@@ -30,10 +34,21 @@ public class UpdateVoucherServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        User user = (User) request.getSession().getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
+
+        Role role = user.getRole();
+        if (role != Role.ADMIN) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
+            return;
+        }
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
 
-        Map<String, String> errorMessages = new HashMap<>();
+        List<String> errorMessages = new ArrayList();
         String globalMessage = "";
 
         String voucherIDStr = request.getParameter("voucherID");
@@ -52,90 +67,90 @@ public class UpdateVoucherServlet extends HttpServlet {
         int amount = 0;
 
         if (voucherIDStr == null || voucherIDStr.trim().isEmpty()) {
-            errorMessages.put("voucherID", "Voucher ID can not be null.");
+            errorMessages.add("Updated Failed: Voucher ID can not be null.");
         } else {
             try {
                 voucherID = Integer.parseInt(voucherIDStr.trim());
             } catch (NumberFormatException e) {
-                errorMessages.put("voucherID", "Voucher ID must be an integer.");
+                errorMessages.add("Updated Failed: Voucher ID must be an integer.");
             }
         }
         
         if (voucherName == null || voucherName.trim().isEmpty()) {
-            errorMessages.put("voucherName", "Voucher name cannot be empty.");
+            errorMessages.add("Updated Failed: Voucher name cannot be empty.");
         }
         
         if (voucherCode == null || voucherCode.trim().isEmpty()) {
-            errorMessages.put("voucherCode", "Voucher code cannot be empty.");
+            errorMessages.add("Updated Failed: Voucher code cannot be empty.");
         }
 
         if (expiredDateStr == null || expiredDateStr.trim().isEmpty()) {
-            errorMessages.put("expiredDate", "Please enter this value.");
+            errorMessages.add("Updated Failed: Please enter this value.");
         } else {
             try {
-                LocalDateTime inputDateTime = LocalDateTime.parse(expiredDateStr);
-                expiredDate = Timestamp.valueOf(inputDateTime); 
-                if (inputDateTime.isBefore(LocalDateTime.now())) {
-                    errorMessages.put("expiredDate", "The expired day must be in the future.");
+                LocalDateTime inaddDateTime = LocalDateTime.parse(expiredDateStr);
+                expiredDate = Timestamp.valueOf(inaddDateTime); 
+                if (inaddDateTime.isBefore(LocalDateTime.now())) {
+                    errorMessages.add("Updated Failed: The expired day must be in the future.");
                 }
             } catch (DateTimeParseException e) {
                 LOGGER.log(Level.WARNING, "Invalid Expiration Date format: " + expiredDateStr, e);
-                errorMessages.put("expiredDate", "Invalid format. Use YYYY-MM-DDTHH:MM (e.g., 2025-06-23T14:30).");
+                errorMessages.add("Updated Failed: Invalid format. Use YYYY-MM-DDTHH:MM (e.g., 2025-06-23T14:30).");
             }
         }
 
         if (saleType == null || saleType.trim().isEmpty()) {
-            errorMessages.put("saleType", "Please enter for this value.");
+            errorMessages.add("Updated Failed: Please enter for this value.");
         } else if (!saleType.equals("PERCENT") && !saleType.equals("FIXED")) {
-            errorMessages.put("saleType", "Not valid sale.");
+            errorMessages.add("Updated Failed: Not valid sale.");
         }
 
         if (saleAmountStr == null || saleAmountStr.trim().isEmpty()) {
-            errorMessages.put("saleAmount", "Not null here.");
+            errorMessages.add("Updated Failed: Not null here.");
         } else {
             try {
                 saleAmount = Integer.parseInt(saleAmountStr.trim());
                 if (saleAmount <= 0) {
-                    errorMessages.put("saleAmount", "Must be >0.");
+                    errorMessages.add("Updated Failed: Must be >0.");
                 }
                 if (saleType != null && saleType.equals("PERCENT") && (saleAmount > 100 || saleAmount < 0)) {
-                    errorMessages.put("saleAmount", "Please input 1-100.");
+                    errorMessages.add("Updated Failed: Please input 1-100.");
                 }
             } catch (NumberFormatException e) {
-                errorMessages.put("saleAmount", "Must be an integer.");
+                errorMessages.add("Updated Failed: Must be an integer.");
             }
         }
 
         if (minPriceStr == null || minPriceStr.trim().isEmpty()) {
-            errorMessages.put("minPrice", "Minimum price cannot be empty.");
+            errorMessages.add("Updated Failed: Minimum price cannot be empty.");
         } else {
             try {
                 minPrice = Integer.parseInt(minPriceStr.trim());
                 if (minPrice < 0) {
-                    errorMessages.put("minPrice", "Minimum price must be non-negative.");
+                    errorMessages.add("Updated Failed: Minimum price must be non-negative.");
                 }
             } catch (NumberFormatException e) {
-                errorMessages.put("minPrice", "Invalid minimum price (must be an integer).");
+                errorMessages.add("Updated Failed: Invalid minimum price (must be an integer).");
             }
         }
        
         if (amountStr == null || amountStr.trim().isEmpty()) {
-            errorMessages.put("amount", "Amount cannot be empty.");
+            errorMessages.add("Updated Failed: Amount cannot be empty.");
         } else {
             try {
                 amount = Integer.parseInt(amountStr.trim());
                 if (amount <= 0) {
-                    errorMessages.put("amount", "Amount must be greater than 0.");
+                    errorMessages.add("Updated Failed: Amount must be greater than 0.");
                 }
             } catch (NumberFormatException e) {
-                errorMessages.put("amount", "Invalid amount (must be an integer).");
+                errorMessages.add("Updated Failed: Invalid amount (must be an integer).");
             }
         }
 
         if (!errorMessages.isEmpty()) {
-            globalMessage = "Voucher update failed. Please check for errors.";
-            request.setAttribute("globalMessage", globalMessage);
-            request.setAttribute("errorMessages", errorMessages);
+            globalMessage = "Updated Failed: Voucher update failed. Please check for errors.";
+            request.setAttribute("err", globalMessage);
+            request.setAttribute("err", errorMessages);
 
             Voucher voucherForDisplay = new Voucher();
             voucherForDisplay.setVoucherID(voucherID);
@@ -167,21 +182,21 @@ public class UpdateVoucherServlet extends HttpServlet {
         try {
             boolean success = voucherDAO.updateVoucher(updatedVoucher);
             if (success) {
-                request.setAttribute("globalMessage", "Voucher updated successfully!");
+                request.setAttribute("success", "Voucher updated successfully!");
                 request.setAttribute("successMessage", true);
                 response.sendRedirect(request.getContextPath() + "/voucherList");
             } else {
                 globalMessage = "Voucher update failed. Voucher not found or no changes made.";
-                request.setAttribute("globalMessage", globalMessage);
-                request.setAttribute("errorGlobalMessage", true);
+                request.setAttribute("err", globalMessage);
+                request.setAttribute("err", true);
                 request.setAttribute("voucher", updatedVoucher);
                 request.getRequestDispatcher("/WEB-INF/views/voucherDetails.jsp").forward(request, response);
             }
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Database error updating voucher", ex);
             globalMessage = "Database error: " + ex.getMessage();
-            request.setAttribute("globalMessage", globalMessage);
-            request.setAttribute("errorGlobalMessage", true);
+            request.setAttribute("err", globalMessage);
+            request.setAttribute("err", true);
 
             request.setAttribute("voucher", updatedVoucher);
             request.getRequestDispatcher("/WEB-INF/views/voucherDetails.jsp").forward(request, response);
@@ -191,6 +206,17 @@ public class UpdateVoucherServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        User user = (User) request.getSession().getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
+
+        Role role = user.getRole();
+        if (role != Role.ADMIN) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
+            return;
+        }
         String voucherIDParam = request.getParameter("voucherID");
         VoucherDAO voucherDAO = new VoucherDAO();
         Voucher voucher = null;

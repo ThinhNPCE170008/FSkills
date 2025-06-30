@@ -236,8 +236,8 @@
         </button>
         <jsp:include page="/layout/header_admin.jsp" />
 
-                 
-               
+
+
         <div class="flex flex-grow">
             <jsp:include page="/layout/sidebar_admin.jsp" />
             <main class="flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
@@ -245,9 +245,11 @@
                     <div class="page-header flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
                         <h2 class="text-2xl font-bold text-gray-800 m-0">Account List</h2>
                         <div class="header-actions flex gap-3">
-                            <a href="${pageContext.request.contextPath}/admin" class="text-gray-600 font-medium py-2 px-3 rounded-md hover:bg-gray-100 transition duration-200">
-                                Return to Dashboard
-                            </a>
+                            <form action="${pageContext.request.contextPath}/admin" method="get" class="inline">
+                                <button type="submit" class="bg-primary text-white py-3 px-5 rounded-lg hover:bg-primary-dark transition duration-200 font-medium">
+                                    <i class="bi bi-arrow-left mr-2"></i>Return to Dashboard
+                                </button>
+                            </form>
                         </div>
                     </div>
                     <c:if test="${not empty sessionScope.deleteComplete}">
@@ -301,7 +303,7 @@
                                 </c:if>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
-                                <c:forEach var="u" items="${listLearners}"> <%-- Iterate over Learner list --%>
+                                <c:forEach var="u" items="${listLearners}"> 
                                     <tr class="hover:bg-gray-50">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${u.userId}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><strong>${u.userName}</strong></td>
@@ -343,18 +345,23 @@
                                                     </c:when>
                                                 </c:choose>
                                             </form>
-                                            <form action="deleteAcc" method="post" onsubmit="return confirm('Are you sure you want to delete this account? This action cannot be undone.');" class="inline-block mx-1">
-                                                <input type="hidden" name="deleteName" value="${u.userName}">
-                                                <input type="hidden" name="originalSearchName" value="${param.searchName}">
-                                                <input type="hidden" name="currentListRoleFilter" value="${param.roleFilter != null ? param.roleFilter : 'Learner'}">
-                                                <button type="submit" class="action-btn text-red-600 hover:bg-red-100" title="Delete User">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </button>
-                                            </form>
+                                            <c:if test="${u.ban == 'BANNED'}">
+                                                <form action="deleteAcc" method="post" 
+                                                      onsubmit="return confirm('This user is banned. Are you sure you want to delete this account? This action cannot be undone.');" 
+                                                      class="inline-block mx-1">
+                                                    <input type="hidden" name="deleteName" value="${u.userName}">
+                                                    <input type="hidden" name="originalSearchName" value="${param.searchName}">
+                                                    <input type="hidden" name="currentListRoleFilter" value="${param.roleFilter != null ? param.roleFilter : 'Learner'}">
+                                                    <button type="submit" class="action-btn text-red-600 hover:bg-red-100" title="Delete User">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            </c:if>
+
                                         </td>
                                     </tr>
                                 </c:forEach>
-                                <c:if test="${empty listLearners}"> <%-- Check if Learner list is empty --%>
+                                <c:if test="${empty listLearners}">
                                     <tr>
                                         <td colspan="7" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                                             <c:choose>
@@ -371,12 +378,11 @@
                             </tbody>
                         </table>
                     </div>
-                    <%-- Instructor List Section (Hidden by Default) --%>
                     <div id="instructorTable" class="table-wrapper instructor-table-wrapper overflow-x-auto bg-white rounded-lg shadow-sm">
                         <h3 class="text-xl font-semibold text-gray-800 p-4 border-b border-gray-200">Instructor Accounts</h3>
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
-                                <c:if test="${not empty listInstructors}"> <%-- Use listInstructors for Instructor data --%>
+                                <c:if test="${not empty listInstructors}">
                                     <tr>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">UserName</th>
@@ -389,7 +395,7 @@
                                 </c:if>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
-                                <c:forEach var="u" items="${listInstructors}"> <%-- Iterate over Instructor list --%>
+                                <c:forEach var="u" items="${listInstructors}">
                                     <tr class="hover:bg-gray-50">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${u.userId}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"><strong>${u.userName}</strong></td>
@@ -431,14 +437,19 @@
                                                     </c:when>
                                                 </c:choose>
                                             </form>
-                                            <form action="deleteAcc" method="post" onsubmit="return confirm('Are you sure you want to delete this account? This action cannot be undone.');" class="inline-block mx-1">
-                                                <input type="hidden" name="deleteName" value="${u.userName}">
-                                                <input type="hidden" name="originalSearchName" value="${param.searchName}">
-                                                <input type="hidden" name="currentListRoleFilter" value="${param.roleFilter != null ? param.roleFilter : 'Learner'}">
-                                                <button type="submit" class="action-btn text-red-600 hover:bg-red-100" title="Delete User">
-                                                    <i class="fas fa-trash-alt"></i>
-                                                </button>
-                                            </form>
+                                            <c:if test="${u.ban == 'BANNED'}"> <%-- chi duoc xoa khi bi ban :) --%>
+                                                <form action="deleteAcc" method="post" 
+                                                      onsubmit="return confirm('This user is banned. Are you sure you want to delete this account? This action cannot be undone.');" 
+                                                      class="inline-block mx-1">
+                                                    <input type="hidden" name="deleteName" value="${u.userName}">
+                                                    <input type="hidden" name="originalSearchName" value="${param.searchName}">
+                                                    <input type="hidden" name="currentListRoleFilter" value="${param.roleFilter != null ? param.roleFilter : 'Instructor'}">
+                                                    <button type="submit" class="action-btn text-red-600 hover:bg-red-100" title="Delete User">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            </c:if>
+
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -477,56 +488,56 @@
                 integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
         <script>
-            const notificationBell = document.getElementById('notification-bell');
-            const notificationPopup = document.getElementById('notification-popup');
-            notificationBell.addEventListener('click', (event) => {
-                event.stopPropagation();
-                notificationPopup.classList.toggle('hidden');
-            });
-            document.addEventListener('click', (event) => {
-                if (!notificationBell.contains(event.target) && !notificationPopup.contains(event.target)) {
-                    notificationPopup.classList.add('hidden');
-                }
-            });
-            document.querySelector('.sidebar-toggle').addEventListener('click', () => {
-                document.querySelector('.sidebar-container').classList.toggle('active');
-            });
-        // --- JavaScript for Role Filtering ---
-            function toggleUserLists() {
-                const learnerRadio = document.getElementById('filterLearner');
-                const instructorRadio = document.getElementById('filterInstructor');
-                const searchForm = document.getElementById('searchForm');
-                const currentRoleFilterInput = document.getElementById('currentRoleFilter');
-                let selectedRole = '';
-                if (learnerRadio.checked) {
-                    selectedRole = 'Learner';
-                } else if (instructorRadio.checked) {
-                    selectedRole = 'Instructor';
-                }
-        // Cập nhật giá trị của input hidden roleFilter trong form
-                currentRoleFilterInput.value = selectedRole;
-        // Gửi form để tải lại dữ liệu với cả searchName và roleFilter
-                searchForm.submit();
-            }
-        // Gọi hàm này khi trang tải để đảm bảo hiển thị đúng bảng ban đầu dựa trên tham số URL
-            document.addEventListener('DOMContentLoaded', () => {
-                const urlParams = new URLSearchParams(window.location.search);
-                const roleFilter = urlParams.get('roleFilter');
-                const searchName = urlParams.get('searchName'); // Lấy searchName từ URL
-                if (roleFilter === 'Instructor') {
-                    document.getElementById('filterInstructor').checked = true;
-                    document.getElementById('learnerTable').style.display = 'none'; // Giữ lại logic ẩn/hiện ban đầu
-                    document.getElementById('instructorTable').style.display = 'block';
-                } else { // Mặc định hoặc Learner
-                    document.getElementById('filterLearner').checked = true;
-                    document.getElementById('learnerTable').style.display = 'block'; // Giữ lại logic ẩn/hiện ban đầu
-                    document.getElementById('instructorTable').style.display = 'none';
-                }
-        // Đặt giá trị searchName vào input nếu có
-                if (searchName) {
-                    document.getElementById('searchName').value = searchName;
-                }
-            });
+                                                          const notificationBell = document.getElementById('notification-bell');
+                                                          const notificationPopup = document.getElementById('notification-popup');
+                                                          notificationBell.addEventListener('click', (event) => {
+                                                              event.stopPropagation();
+                                                              notificationPopup.classList.toggle('hidden');
+                                                          });
+                                                          document.addEventListener('click', (event) => {
+                                                              if (!notificationBell.contains(event.target) && !notificationPopup.contains(event.target)) {
+                                                                  notificationPopup.classList.add('hidden');
+                                                              }
+                                                          });
+                                                          document.querySelector('.sidebar-toggle').addEventListener('click', () => {
+                                                              document.querySelector('.sidebar-container').classList.toggle('active');
+                                                          });
+                                                          // --- JavaScript for Role Filtering ---
+                                                          function toggleUserLists() {
+                                                              const learnerRadio = document.getElementById('filterLearner');
+                                                              const instructorRadio = document.getElementById('filterInstructor');
+                                                              const searchForm = document.getElementById('searchForm');
+                                                              const currentRoleFilterInput = document.getElementById('currentRoleFilter');
+                                                              let selectedRole = '';
+                                                              if (learnerRadio.checked) {
+                                                                  selectedRole = 'Learner';
+                                                              } else if (instructorRadio.checked) {
+                                                                  selectedRole = 'Instructor';
+                                                              }
+                                                              // Cập nhật giá trị của input hidden roleFilter trong form
+                                                              currentRoleFilterInput.value = selectedRole;
+                                                              // Gửi form để tải lại dữ liệu với cả searchName và roleFilter
+                                                              searchForm.submit();
+                                                          }
+                                                          // Gọi hàm này khi trang tải để đảm bảo hiển thị đúng bảng ban đầu dựa trên tham số URL
+                                                          document.addEventListener('DOMContentLoaded', () => {
+                                                              const urlParams = new URLSearchParams(window.location.search);
+                                                              const roleFilter = urlParams.get('roleFilter');
+                                                              const searchName = urlParams.get('searchName'); // Lấy searchName từ URL
+                                                              if (roleFilter === 'Instructor') {
+                                                                  document.getElementById('filterInstructor').checked = true;
+                                                                  document.getElementById('learnerTable').style.display = 'none'; // Giữ lại logic ẩn/hiện ban đầu
+                                                                  document.getElementById('instructorTable').style.display = 'block';
+                                                              } else { // Mặc định hoặc Learner
+                                                                  document.getElementById('filterLearner').checked = true;
+                                                                  document.getElementById('learnerTable').style.display = 'block'; // Giữ lại logic ẩn/hiện ban đầu
+                                                                  document.getElementById('instructorTable').style.display = 'none';
+                                                              }
+                                                              // Đặt giá trị searchName vào input nếu có
+                                                              if (searchName) {
+                                                                  document.getElementById('searchName').value = searchName;
+                                                              }
+                                                          });
         </script>
     </body>
 </html>

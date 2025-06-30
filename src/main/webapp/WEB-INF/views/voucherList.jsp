@@ -1,9 +1,3 @@
-<%--
-    Document   : voucherList
-    Created on : Jun 1, 2025, 5:34:00 PM
-    Author     : DELL
---%>
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -22,6 +16,7 @@
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -220,20 +215,21 @@
             <i class="bi bi-list text-lg"></i>
         </button>
 
+        <jsp:include page="/layout/sidebar_admin.jsp" />
         <jsp:include page="/layout/header_admin.jsp" />
 
-
         <div class="flex flex-grow">
-            <jsp:include page="/layout/sidebar_admin.jsp"/>
-
+            <jsp:include page="/layout/sidebar_admin.jsp" />
             <main class="flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
-                <div class="bg-white p-6 rounded shadow-sm max-w-6xl mx-auto">
+                <div class="bg-white p-6 rounded shadow-sm w-full">
                     <div class="page-header flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
                         <h2 class="text-2xl font-bold text-gray-800 m-0">List of Vouchers</h2>
                         <div class="header-actions flex gap-3">
-                            <a href="${pageContext.request.contextPath}/admin" class="text-gray-600 font-medium py-2 px-3 rounded-md hover:bg-gray-100 transition duration-200">
-                                Return to Dashboard
-                            </a>
+                            <form action="${pageContext.request.contextPath}/admin" method="get" class="inline">
+                                <button type="submit" class="bg-primary text-white py-3 px-5 rounded-lg hover:bg-primary-dark transition duration-200 font-medium">
+                                    <i class="bi bi-arrow-left mr-2"></i>Return to Dashboard
+                                </button>
+                            </form>
                         </div>
                     </div>
 
@@ -249,7 +245,7 @@
                         </p>
                     </c:if>
 
-                    <div class="search-add-section flex justify-between items-center mb-6 flex-wrap gap-4 pt-4">
+                    <div class="search-add-section flex justify-between items-center mb-6 pt-4" style="flex-wrap: nowrap;">
                         <div class="search-bar flex items-center gap-3 flex-grow">
                             <form action="voucherList" method="get" class="flex-grow flex gap-3">
                                 <input type="text" name="searchTerm" placeholder="Search Voucher..." value="${param.searchTerm}"
@@ -262,7 +258,7 @@
                                 </button>
                             </form>
                         </div>
-                        <div class="action-buttons flex gap-3">
+                        <div class="action-buttons flex gap-3 ml-3" style="flex-shrink: 0;">
                             <%-- Add a button to delete all expired vouchers --%>
                             <button id="deleteExpiredBtn" class="action-btn-delete-all flex items-center gap-2" title="Delete all expired vouchers">
                                 <i class="fas fa-trash-alt"></i> Delete Expired
@@ -346,50 +342,52 @@
                 integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
         <script>
-            const notificationBell = document.getElementById('notification-bell');
-            const notificationPopup = document.getElementById('notification-popup');
-            const deleteExpiredBtn = document.getElementById('deleteExpiredBtn');
+                                    const notificationBell = document.getElementById('notification-bell');
+                                    const notificationPopup = document.getElementById('notification-popup');
+                                    const deleteExpiredBtn = document.getElementById('deleteExpiredBtn');
 
-            // Toggle notification popup
-            if (notificationBell && notificationPopup) {
-                notificationBell.addEventListener('click', (event) => {
-                    event.stopPropagation();
-                    notificationPopup.classList.toggle('hidden');
-                });
-            }
+                                    // Toggle notification popup
+                                    if (notificationBell && notificationPopup) {
+                                        notificationBell.addEventListener('click', (event) => {
+                                            event.stopPropagation();
+                                            notificationPopup.classList.toggle('hidden');
+                                        });
+                                    }
 
-            // Hide notification popup when clicking outside
-            document.addEventListener('click', (event) => {
-                if (notificationPopup && !notificationPopup.contains(event.target) && !notificationBell.contains(event.target)) {
-                    notificationPopup.classList.add('hidden');
-                }
-            });
+                                    // Hide notification popup when clicking outside
+                                    document.addEventListener('click', (event) => {
+                                        if (notificationPopup && !notificationPopup.contains(event.target) && !notificationBell.contains(event.target)) {
+                                            notificationPopup.classList.add('hidden');
+                                        }
+                                    });
 
-            // Sidebar toggle for mobile
-            document.querySelector('.sidebar-toggle').addEventListener('click', () => {
-                document.querySelector('.sidebar-container').classList.toggle('active');
-            });
+                                    // Sidebar toggle for mobile
+                                    document.querySelector('.sidebar-toggle').addEventListener('click', () => {
+                                        document.querySelector('.sidebar-container').classList.toggle('active');
+                                    });
 
-            // Confirm and submit delete expired vouchers form
-            if (deleteExpiredBtn) {
-                deleteExpiredBtn.addEventListener('click', () => {
-                    if (confirm('Are you sure you want to delete ALL expired vouchers? This action cannot be undone.')) {
-                        // Create a form dynamically to send a POST request
-                        const form = document.createElement('form');
-                        form.method = 'POST';
-                        form.action = 'deleteVoucher'; // The servlet URL
+                                    // Confirm and submit delete expired vouchers form
+                                    if (deleteExpiredBtn) {
+                                        deleteExpiredBtn.addEventListener('click', () => {
+                                            if (confirm('Are you sure you want to delete ALL expired vouchers? This action cannot be undone.')) {
+                                                // Create a form dynamically to send a POST request
+                                                const form = document.createElement('form');
+                                                form.method = 'POST';
+                                                form.action = 'deleteVoucher'; // The servlet URL
 
-                        const actionInput = document.createElement('input');
-                        actionInput.type = 'hidden';
-                        actionInput.name = 'action';
-                        actionInput.value = 'deleteExpired';
+                                                const actionInput = document.createElement('input');
+                                                actionInput.type = 'hidden';
+                                                actionInput.name = 'action';
+                                                actionInput.value = 'deleteExpired';
 
-                        form.appendChild(actionInput);
-                        document.body.appendChild(form);
-                        form.submit();
-                    }
-                });
-            }
+                                                form.appendChild(actionInput);
+                                                document.body.appendChild(form);
+                                                form.submit();
+                                            }
+                                        });
+                                    }
         </script>
+        <jsp:include page="/layout/toast.jsp" />
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

@@ -3,239 +3,256 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>List Course | F-Skill</title>
-        <meta charset="UTF-8">
+<head>
+    <title>List Course | F-Skill</title>
+    <meta charset="UTF-8">
 
-        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-        <style>
-            body {
-                background-color: #f8f9fa;
-                font-family: 'Segoe UI', sans-serif;
-            }
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+            overflow-x: hidden; /* Prevent horizontal scrollbar */
+        }
 
-            .table th, .table td {
-                vertical-align: middle;
-                text-align: center;
-            }
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', sans-serif;
+        }
 
-            .course-image {
-                width: 80px;
-                height: 60px;
-                object-fit: cover;
-                border-radius: 5px;
-            }
+        .table th, .table td {
+            vertical-align: middle;
+            text-align: center;
+        }
 
-            .table thead {
-                background-color: #4f46e5;
-                color: white;
-            }
+        .course-image {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
 
-            .badge-pending {
-                background-color: #ffc107;
-            }
+        .table thead {
+            background-color: #4f46e5;
+            color: white;
+        }
 
-            .badge-approved {
-                background-color: #198754;
-            }
+        .badge-pending {
+            background-color: #ffc107;
+        }
 
-            .price-original {
-                color: #999;
-                text-decoration: line-through;
-            }
+        .badge-approved {
+            background-color: #198754;
+        }
 
-            .price-sale {
-                color: #dc3545;
-                font-weight: bold;
-            }
+        .price-original {
+            color: #999;
+            text-decoration: line-through;
+        }
 
-            h2 {
-                color: #343a40;
-                margin-bottom: 25px;
-            }
+        .price-sale {
+            color: #dc3545;
+            font-weight: bold;
+        }
 
-            .link-hover {
-                color: inherit;
-                text-decoration: none;
-                transition: color 0.2s ease;
-            }
+        h2 {
+            color: #343a40;
+            margin-bottom: 25px;
+        }
 
-            .link-hover:hover {
-                color: #0d6efd;
-                text-decoration: none;
-            }
-        </style>
-    </head>
-    <body>
-        <jsp:include page="/layout/sidebar_user.jsp"/>
+        .link-hover {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
 
-        <div class="px-5 py-6">
-            <nav class="text-base text-gray-500 mb-6" aria-label="Breadcrumb">
-                <ol class="list-none p-0 inline-flex space-x-2">
-                    <li class="inline-flex items-center">
-                        <a href="${pageContext.request.contextPath}/instructor"
-                           class="text-indigo-600 hover:text-indigo-700 font-medium no-underline">Dashboard</a>
-                    </li>
-                    <li class="inline-flex items-center">
-                        <span class="mx-2 text-gray-400">/</span>
-                    </li>
-                    <li class="inline-flex items-center">
-                        <span class="text-gray-800 font-semibold">Manage Course</span>
-                    </li>
-                </ol>
-            </nav>
+        .link-hover:hover {
+            color: #0d6efd;
+            text-decoration: none;
+        }
 
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <a href="${pageContext.request.contextPath}/instructor" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i> Back
-                </a>
+        /* Ensure content adapts to available space */
+        .main {
+            transition: margin-left 0.3s ease, width 0.3s ease;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+<jsp:include page="/layout/sidebar_user.jsp"/>
+<jsp:include page="/layout/header_user.jsp"/>
 
-                <a href="${pageContext.request.contextPath}/instructor/courses?action=create" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Create New Course
-                </a>
-            </div>
+<main class="main">
+<div class="px-5 py-6">
+    <nav class="text-base text-gray-500 mb-6" aria-label="Breadcrumb">
+        <ol class="list-none p-0 inline-flex space-x-2">
+            <li class="inline-flex items-center">
+                <a href="${pageContext.request.contextPath}/instructor"
+                   class="text-indigo-600 hover:text-indigo-700 font-medium no-underline">Dashboard</a>
+            </li>
+            <li class="inline-flex items-center">
+                <span class="mx-2 text-gray-400">/</span>
+            </li>
+            <li class="inline-flex items-center">
+                <span class="text-gray-800 font-semibold">Manage Course</span>
+            </li>
+        </ol>
+    </nav>
 
-            <c:choose>
-                <c:when test="${empty listCourse}">
-                    <div class="alert alert-warning text-center">No courses available.</div>
-                </c:when>
-                <c:otherwise>
-                    <table class="table table-bordered table-hover shadow-sm bg-white rounded">
-                        <thead>
-                            <tr>
-                                <th>Image</th>
-                                <th>Title</th>
-                                <th>Category</th>
-                                <th>Instructor</th>
-                                <th>Status</th>
-                                <th>Published</th>
-                                <th>Last Update</th>
-                                <th>Price</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="${pageContext.request.contextPath}/instructor" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
 
-                        <tbody>
-                            <c:forEach var="c" items="${listCourse}">
-                                <tr>
-                                    <td>
-                                        <img src="${c.courseImageLocation}" class="course-image" alt="Course Image">
-                                    </td>
-                                    <td>
-                                        <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${c.courseID}"
-                                           class="link-hover">
-                                            ${c.courseName}
-                                        </a>
-                                    </td>
-                                    <td>${c.category.name}</td>
-                                    <td>${c.user.displayName}</td>
-                                    <td>
-                                        <span class="badge
-                                              ${c.approveStatus == 1 ? 'badge-approved' : 'badge-pending'}">
-                                            ${c.approveStatus == 1 ? 'Approved' : 'Pending'}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <c:choose>
-                                            <c:when test="${not empty c.publicDate}">
-                                                <fmt:formatDate value="${c.publicDate}" pattern="HH:mm dd/MM/yyyy"/>
-                                            </c:when>
-                                            <c:otherwise>N/A</c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                    <td>
-                                        <c:choose>
-                                            <c:when test="${not empty c.courseLastUpdate}">
-                                                <fmt:formatDate value="${c.courseLastUpdate}" pattern="HH:mm dd/MM/yyyy"/>
-                                            </c:when>
-                                            <c:otherwise>N/A</c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                    <td>
-                                        <c:choose>
-                                            <c:when test="${c.isSale == 1}">
-                                                <c:choose>
-                                                    <c:when test="${c.salePrice == 0}">
-                                                        <span class="price-sale text-success fw-bold">Free</span><br>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <span class="price-sale">
-                                                            <fmt:formatNumber value="${c.salePrice * 1000}" pattern="#,##0"/> VND
-                                                        </span><br>
-                                                    </c:otherwise>
-                                                </c:choose>
+        <a href="${pageContext.request.contextPath}/instructor/courses?action=create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Create New Course
+        </a>
+    </div>
 
-                                                <span class="price-original text-decoration-line-through text-muted fw-semibold fs-6">
-                                                    <fmt:formatNumber value="${c.originalPrice * 1000}" pattern="#,##0"/> VND
-                                                </span>
-                                            </c:when>
+    <c:choose>
+        <c:when test="${empty listCourse}">
+            <div class="alert alert-warning text-center">No courses available.</div>
+        </c:when>
+        <c:otherwise>
+            <table class="table table-bordered table-hover shadow-sm bg-white rounded">
+                <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Instructor</th>
+                    <th>Status</th>
+                    <th>Published</th>
+                    <th>Last Update</th>
+                    <th>Price</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
 
-                                            <c:otherwise>
-                                                <c:choose>
-                                                    <c:when test="${c.originalPrice == 0}">
-                                                        <span class="text-success fw-bold">Free</span>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <span class="fw-bold fs-6">
-                                                            <fmt:formatNumber value="${c.originalPrice * 1000}" pattern="#,##0"/> VND
-                                                        </span>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                    <td class="d-flex flex-column gap-1">
-                                        <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${c.courseID}"
-                                           class="btn btn-sm btn-info text-white">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
+                <tbody>
+                <c:forEach var="c" items="${listCourse}">
+                    <tr>
+                        <td>
+                            <img src="${c.imageDataURI}" class="course-image mx-auto d-block" alt="Course Image">
+                        </td>
+                        <td>
+                            <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${c.courseID}"
+                               class="link-hover">
+                                    ${c.courseName}
+                            </a>
+                        </td>
+                        <td>${c.category.name}</td>
+                        <td>${c.user.displayName}</td>
+                        <td>
+                            <span class="badge
+                                ${c.approveStatus == 1 ? 'badge-approved' : 'badge-pending'}">
+                                ${c.approveStatus == 1 ? 'Approved' : 'Pending'}
+                            </span>
+                        </td>
+                        <td>
+                            <c:choose>
+                                <c:when test="${not empty c.publicDate}">
+                                    <fmt:formatDate value="${c.publicDate}" pattern="HH:mm dd/MM/yyyy"/>
+                                </c:when>
+                                <c:otherwise>N/A</c:otherwise>
+                            </c:choose>
+                        </td>
+                        <td>
+                            <c:choose>
+                                <c:when test="${not empty c.courseLastUpdate}">
+                                    <fmt:formatDate value="${c.courseLastUpdate}" pattern="HH:mm dd/MM/yyyy"/>
+                                </c:when>
+                                <c:otherwise>N/A</c:otherwise>
+                            </c:choose>
+                        </td>
+                        <td>
+                            <c:choose>
+                                <c:when test="${c.isSale == 1}">
+                                    <c:choose>
+                                        <c:when test="${c.salePrice == 0}">
+                                            <span class="price-sale text-success fw-bold">Free</span><br>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="price-sale">
+                                                <fmt:formatNumber value="${c.salePrice * 1000}" pattern="#,##0"/> VND
+                                            </span><br>
+                                        </c:otherwise>
+                                    </c:choose>
 
-                                        <a href="${pageContext.request.contextPath}/instructor/courses?action=update&courseID=${c.courseID}" class="btn btn-warning btn-sm">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
+                                    <span class="price-original text-decoration-line-through text-muted fw-semibold fs-6">
+                                        <fmt:formatNumber value="${c.originalPrice * 1000}" pattern="#,##0"/> VND
+                                    </span>
+                                </c:when>
 
-                                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                                data-bs-target="#deleteModal${c.courseID}">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                        </tbody>
-                    </table>
-                </c:otherwise>
-            </c:choose>
-        </div>
-        <jsp:include page="/layout/footer.jsp"/>
+                                <c:otherwise>
+                                    <c:choose>
+                                        <c:when test="${c.originalPrice == 0}">
+                                            <span class="text-success fw-bold">Free</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="fw-bold fs-6">
+                                                <fmt:formatNumber value="${c.originalPrice * 1000}" pattern="#,##0"/> VND
+                                            </span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
+                        <td class="d-flex flex-column gap-1">
+                            <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${c.courseID}"
+                               class="btn btn-sm btn-info text-white">
+                                <i class="fas fa-eye"></i>
+                            </a>
 
-        <c:forEach var="course" items="${listCourse}">
-            <!-- Delete Modal -->
-            <div class="modal fade" id="deleteModal${course.courseID}" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <form action="${pageContext.request.contextPath}/instructor/courses?action=delete" method="POST" class="modal-content bg-white">
-                        <div class="modal-header">
-                            <h5 class="modal-title text-danger">Delete Course</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <input type="hidden" name="userID" value="${user.userId}"/>
-                            <input type="hidden" name="courseID" value="${course.courseID}"/>
-                            <p>Are you sure you want to delete <strong>${course.courseName}</strong>?</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-danger">Yes, Delete</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        </div>
-                    </form>
+                            <a href="${pageContext.request.contextPath}/instructor/courses?action=update&courseID=${c.courseID}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit"></i>
+                            </a>
+
+                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal${c.courseID}">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+        </c:otherwise>
+    </c:choose>
+</div>
+</main>
+<jsp:include page="/layout/footer.jsp"/>
+
+<c:forEach var="course" items="${listCourse}">
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal${course.courseID}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form action="${pageContext.request.contextPath}/instructor/courses?action=delete" method="POST" class="modal-content bg-white">
+                <div class="modal-header">
+                    <h5 class="modal-title text-danger">Delete Course</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-            </div>
-        </c:forEach>
+                <div class="modal-body">
+                    <input type="hidden" name="userID" value="${user.userId}"/>
+                    <input type="hidden" name="courseID" value="${course.courseID}"/>
+                    <p>Are you sure you want to delete <strong>${course.courseName}</strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</c:forEach>
 
-        <jsp:include page="/layout/toast.jsp" />
-        <!-- Bootstrap JS -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<jsp:include page="/layout/toast.jsp" />
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    </body>
+</body>
 </html>

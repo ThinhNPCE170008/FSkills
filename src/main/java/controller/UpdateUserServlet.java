@@ -22,7 +22,9 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,11 +41,22 @@ public class UpdateUserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        User user = (User) request.getSession().getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
+
+        Role role = user.getRole();
+        if (role != Role.ADMIN) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
+            return;
+        }
         request.setCharacterEncoding("UTF-8");
 
         String userNameFromParam = request.getParameter("userName");
 
-        Map<String, String> errorMessages = new HashMap<>();
+        List<String> errorMessages = new ArrayList();
 
         String userName = request.getParameter("userName");
         String displayName = request.getParameter("displayName");
@@ -57,19 +70,19 @@ public class UpdateUserServlet extends HttpServlet {
         String globalMessage = "";
 
         if (displayName == null || displayName.trim().isEmpty()) {
-            errorMessages.put("displayName", "Display Name cannot be empty.");
+            errorMessages.add("Display Name cannot be empty.");
         } else if (!DISPLAY_NAME_PATTERN.matcher(displayName.trim()).matches()) {
-            errorMessages.put("displayName", "Display Name must contain only letters A–Z, a–z and no more than 1 space between characters.");
+            errorMessages.add("Display Name must contain only letters A–Z, a–z and no more than 1 space between characters.");
         }
 
         if (email == null || email.trim().isEmpty()) {
-            errorMessages.put("email", "Email cannot be empty.");
+            errorMessages.add("Email cannot be empty.");
         } else if (!EMAIL_PATTERN.matcher(email.trim()).matches()) {
-            errorMessages.put("email", "Invalid email format. E.g., user@example.com");
+            errorMessages.add("Invalid email format. E.g., user@example.com");
         }
         if (phone != null && !phone.trim().isEmpty()) {
             if (!PHONE_NUMBER_PATTERN.matcher(phone.trim()).matches()) {
-                errorMessages.put("phone", "Invalid phone format");
+                errorMessages.add("Invalid phone format");
             }
         }
 
@@ -82,15 +95,15 @@ public class UpdateUserServlet extends HttpServlet {
                 dateOfBirthTimestamp = Timestamp.valueOf(dob.atStartOfDay());
 
                 if (dob.isAfter(LocalDate.now())) {
-                    errorMessages.put("dateOfBirth", "Date of Birth cannot be in the future.");
+                    errorMessages.add("Date of Birth cannot be in the future.");
                 }
             } catch (DateTimeParseException e) {
                 LOGGER.log(Level.WARNING, "Invalid DateOfBirth format: " + dateOfBirthStr, e);
-                errorMessages.put("dateOfBirth", "Invalid Date Of Birth format. Use YYYY-MM-DD.");
+                errorMessages.add("Invalid Date Of Birth format. Use YYYY-MM-DD.");
             }
         } else {
             if ("INSTRUCTOR".equalsIgnoreCase(roleStr) || "ADMIN".equalsIgnoreCase(roleStr)) {
-                errorMessages.put("dateOfBirth", "Date of Birth is required for Instructors and Admins.");
+                errorMessages.add("Date of Birth is required for Instructors and Admins.");
             }
         }
 
@@ -100,12 +113,12 @@ public class UpdateUserServlet extends HttpServlet {
             switch (roleStr.toUpperCase()) {
                 case "LEARNER":
                     if (age <= 6 || age >= 100) {
-                        errorMessages.put("dateOfBirth", "Learner must be older than 6 and younger than 100 years old.");
+                        errorMessages.add("Learner must be older than 6 and younger than 100 years old.");
                     }
                     break;
                 case "INSTRUCTOR":
                     if (age <= 18 || age >= 100) {
-                        errorMessages.put("dateOfBirth", roleStr + " must be older than 18 and younger than 100 years old.");
+                        errorMessages.add(roleStr + " must be older than 18 and younger than 100 years old.");
                     }
                     break;
                 default:
@@ -116,10 +129,10 @@ public class UpdateUserServlet extends HttpServlet {
         if (!errorMessages.isEmpty()) {
             globalMessage = "Update failed. Please check the errors below.";
 
-            request.setAttribute("param", request.getParameterMap());
+            request.setAttribute("err", request.getParameterMap());
 
-            request.setAttribute("globalMessage", globalMessage);
-            request.setAttribute("errorMessages", errorMessages);
+            request.setAttribute("err", globalMessage);
+            request.setAttribute("err", errorMessages);
             request.setAttribute("editMode", true);
             UserDAO userDAO = new UserDAO();
             try {
@@ -151,8 +164,8 @@ public class UpdateUserServlet extends HttpServlet {
         } catch (IllegalArgumentException e) {
             LOGGER.log(Level.WARNING, "Invalid Role or Ban value.", e);
             globalMessage = "Ban has some errors.";
-            request.setAttribute("globalMessage", globalMessage);
-            request.setAttribute("errorMessages", errorMessages);
+            request.setAttribute("err", globalMessage);
+            request.setAttribute("err", errorMessages);
             request.setAttribute("editMode", true);
             try {
                 UserDAO userDAO = new UserDAO();
@@ -169,8 +182,8 @@ public class UpdateUserServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             LOGGER.log(Level.WARNING, "Invalid Reports format: " + reportsStr, e);
             globalMessage = "We has some errors.";
-            request.setAttribute("globalMessage", globalMessage);
-            request.setAttribute("errorMessages", errorMessages);
+            request.setAttribute("err", globalMessage);
+            request.setAttribute("err", errorMessages);
             request.setAttribute("editMode", true);
             try {
                 UserDAO userDAO = new UserDAO();
@@ -188,7 +201,7 @@ public class UpdateUserServlet extends HttpServlet {
 
             if (success) {
                 globalMessage = "Update Succeed!";
-                request.setAttribute("globalMessage", globalMessage);
+                request.setAttribute("success", globalMessage);
                 request.setAttribute("editMode", false);
 
                 request.setAttribute("allInform", userDAO.showAllInform(userNameFromParam));

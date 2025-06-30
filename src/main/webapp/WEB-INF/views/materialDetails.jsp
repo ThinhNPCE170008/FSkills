@@ -155,5 +155,6 @@
             </div>
         </div>
         <jsp:include page="/layout/footer.jsp"/>
+        <jsp:include page="/layout/toast.jsp"/>
     </body>
 </html>
