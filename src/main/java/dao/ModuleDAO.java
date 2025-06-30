@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,7 @@ public class ModuleDAO extends DBContext {
                 + "FROM Modules m "
                 + "JOIN Courses c ON m.CourseID = c.CourseID "
                 + "JOIN Category cat ON c.category_id = cat.category_id "
-                + "WHERE c.CourseID = ?";
+                + "WHERE m.CourseID = ? AND m.Status = 0";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -103,15 +104,19 @@ public class ModuleDAO extends DBContext {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setNString(1, module.getModuleName());
             ps.setInt(2, module.getCourse().getCourseID());
-            ps.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
-
-            String updateCourseSql = "UPDATE Courses SET CourseLastUpdate = GETDATE() WHERE CourseID = ?";
-            PreparedStatement ps3 = conn.prepareStatement(updateCourseSql);
-            ps3.setInt(1, module.getCourse().getCourseID());
-            ps3.executeUpdate();
+            ps.setTimestamp(3, Timestamp.from(Instant.now()));
 
             int insert = ps.executeUpdate();
-            return insert > 0 ? 1 : 0;
+            if (insert > 0) {
+                String updateCourseSql = "UPDATE Courses SET CourseLastUpdate = SYSUTCDATETIME() WHERE CourseID = ?";
+                PreparedStatement ps3 = conn.prepareStatement(updateCourseSql);
+                ps3.setInt(1, module.getCourse().getCourseID());
+                ps3.executeUpdate();
+
+                return 1;
+            } else {
+                return 0;
+            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -126,25 +131,30 @@ public class ModuleDAO extends DBContext {
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, moduleName);
-            ps.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+            ps.setTimestamp(2, Timestamp.from(Instant.now()));
             ps.setInt(3, moduleID);
 
-            String getCourseSql = "SELECT CourseID FROM Modules WHERE ModuleID = ?";
-            PreparedStatement ps2 = conn.prepareStatement(getCourseSql);
-            ps2.setInt(1, moduleID);
-            ResultSet rs = ps2.executeQuery();
-            int courseID = 0;
-            if (rs.next()) {
-                courseID = rs.getInt("CourseID");
-            }
-
-            String updateCourseSql = "UPDATE Courses SET CourseLastUpdate = GETDATE() WHERE CourseID = ?";
-            PreparedStatement ps3 = conn.prepareStatement(updateCourseSql);
-            ps3.setInt(1, courseID);
-            ps3.executeUpdate();
-
             int update = ps.executeUpdate();
-            return update > 0 ? 1 : 0;
+
+            if (update > 0) {
+                String getCourseSql = "SELECT CourseID FROM Modules WHERE ModuleID = ?";
+                PreparedStatement ps2 = conn.prepareStatement(getCourseSql);
+                ps2.setInt(1, moduleID);
+                ResultSet rs = ps2.executeQuery();
+                int courseID = 0;
+                if (rs.next()) {
+                    courseID = rs.getInt("CourseID");
+                }
+
+                String updateCourseSql = "UPDATE Courses SET CourseLastUpdate = SYSUTCDATETIME() WHERE CourseID = ?";
+                PreparedStatement ps3 = conn.prepareStatement(updateCourseSql);
+                ps3.setInt(1, courseID);
+                ps3.executeUpdate();
+
+                return 1;
+            } else {
+                return 0;
+            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -159,22 +169,61 @@ public class ModuleDAO extends DBContext {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, moduleID);
 
-            String getCourseSql = "SELECT CourseID FROM Modules WHERE ModuleID = ?";
-            PreparedStatement ps2 = conn.prepareStatement(getCourseSql);
-            ps2.setInt(1, moduleID);
-            ResultSet rs = ps2.executeQuery();
-            int courseID = 0;
-            if (rs.next()) {
-                courseID = rs.getInt("CourseID");
-            }
+            int update = ps.executeUpdate();
 
-            String updateCourseSql = "UPDATE Courses SET CourseLastUpdate = GETDATE() WHERE CourseID = ?";
-            PreparedStatement ps3 = conn.prepareStatement(updateCourseSql);
-            ps3.setInt(1, courseID);
-            ps3.executeUpdate();
+            if (update > 0) {
+                String getCourseSql = "SELECT CourseID FROM Modules WHERE ModuleID = ?";
+                PreparedStatement ps2 = conn.prepareStatement(getCourseSql);
+                ps2.setInt(1, moduleID);
+                ResultSet rs = ps2.executeQuery();
+                int courseID = 0;
+                if (rs.next()) {
+                    courseID = rs.getInt("CourseID");
+                }
+
+                String updateCourseSql = "UPDATE Courses SET CourseLastUpdate = SYSUTCDATETIME() WHERE CourseID = ?";
+                PreparedStatement ps3 = conn.prepareStatement(updateCourseSql);
+                ps3.setInt(1, courseID);
+                ps3.executeUpdate();
+
+                return 1;
+            } else {
+                return 0;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
+
+    public int updateStatusModule(int moduleID) {
+        String sql = "UPDATE Modules SET Status = 1, ModuleLastUpdate = SYSUTCDATETIME() WHERE ModuleID = ?";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, moduleID);
 
             int update = ps.executeUpdate();
-            return update > 0 ? 1 : 0;
+
+            if (update > 0) {
+                String getCourseSql = "SELECT CourseID FROM Modules WHERE ModuleID = ?";
+                PreparedStatement ps2 = conn.prepareStatement(getCourseSql);
+                ps2.setInt(1, moduleID);
+                ResultSet rs = ps2.executeQuery();
+                int courseID = 0;
+                if (rs.next()) {
+                    courseID = rs.getInt("CourseID");
+                }
+
+                String updateCourseSql = "UPDATE Courses SET CourseLastUpdate = SYSUTCDATETIME() WHERE CourseID = ?";
+                PreparedStatement ps3 = conn.prepareStatement(updateCourseSql);
+                ps3.setInt(1, courseID);
+                ps3.executeUpdate();
+
+                return 1;
+            } else {
+                return 0;
+            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -183,7 +232,7 @@ public class ModuleDAO extends DBContext {
 
     // Created by DuyHKCE180230
     public int moduleUpdateTime(int id) {
-        String updateSql = "UPDATE [dbo].[Modules] SET [ModuleLastUpdate] = GETDATE() WHERE [ModuleID] = ?;";
+        String updateSql = "UPDATE [dbo].[Modules] SET [ModuleLastUpdate] = SYSUTCDATETIME() WHERE [ModuleID] = ?;";
         try {
             PreparedStatement ps = conn.prepareStatement(updateSql);
             ps.setInt(1, id);
