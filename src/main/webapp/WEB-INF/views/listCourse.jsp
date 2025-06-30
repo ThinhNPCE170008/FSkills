@@ -134,68 +134,68 @@
                 </thead>
 
                 <tbody>
-                <c:forEach var="c" items="${listCourse}">
+                <c:forEach var="course" items="${listCourse}">
                     <tr>
                         <td>
-                            <img src="${c.imageDataURI}" class="course-image mx-auto d-block" alt="Course Image">
+                            <img src="${course.imageDataURI}" class="course-image mx-auto d-block" alt="Course Image">
                         </td>
                         <td>
-                            <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${c.courseID}"
+                            <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${course.courseID}"
                                class="link-hover">
-                                    ${c.courseName}
+                                    ${course.courseName}
                             </a>
                         </td>
-                        <td>${c.category.name}</td>
-                        <td>${c.user.displayName}</td>
+                        <td>${course.category.name}</td>
+                        <td>${course.user.displayName}</td>
                         <td>
                             <span class="badge
-                                ${c.approveStatus == 1 ? 'badge-approved' : 'badge-pending'}">
-                                ${c.approveStatus == 1 ? 'Approved' : 'Pending'}
+                                ${course.approveStatus == 1 ? 'badge-approved' : 'badge-pending'}">
+                                ${course.approveStatus == 1 ? 'Approved' : 'Pending'}
                             </span>
                         </td>
                         <td>
                             <c:choose>
-                                <c:when test="${not empty c.publicDate}">
-                                    <fmt:formatDate value="${c.publicDate}" pattern="HH:mm dd/MM/yyyy"/>
+                                <c:when test="${not empty course.publicDate}">
+                                    <span class="datetime" data-utc="${course.publicDate}Z"></span>
                                 </c:when>
                                 <c:otherwise>N/A</c:otherwise>
                             </c:choose>
                         </td>
                         <td>
                             <c:choose>
-                                <c:when test="${not empty c.courseLastUpdate}">
-                                    <fmt:formatDate value="${c.courseLastUpdate}" pattern="HH:mm dd/MM/yyyy"/>
+                                <c:when test="${not empty course.courseLastUpdate}">
+                                    <span class="datetime" data-utc="${course.courseLastUpdate}Z"></span>
                                 </c:when>
                                 <c:otherwise>N/A</c:otherwise>
                             </c:choose>
                         </td>
                         <td>
                             <c:choose>
-                                <c:when test="${c.isSale == 1}">
+                                <c:when test="${course.isSale == 1}">
                                     <c:choose>
-                                        <c:when test="${c.salePrice == 0}">
+                                        <c:when test="${course.salePrice == 0}">
                                             <span class="price-sale text-success fw-bold">Free</span><br>
                                         </c:when>
                                         <c:otherwise>
                                             <span class="price-sale">
-                                                <fmt:formatNumber value="${c.salePrice * 1000}" pattern="#,##0"/> VND
+                                                <fmt:formatNumber value="${course.salePrice * 1000}" pattern="#,##0"/> VND
                                             </span><br>
                                         </c:otherwise>
                                     </c:choose>
 
                                     <span class="price-original text-decoration-line-through text-muted fw-semibold fs-6">
-                                        <fmt:formatNumber value="${c.originalPrice * 1000}" pattern="#,##0"/> VND
+                                        <fmt:formatNumber value="${course.originalPrice * 1000}" pattern="#,##0"/> VND
                                     </span>
                                 </c:when>
 
                                 <c:otherwise>
                                     <c:choose>
-                                        <c:when test="${c.originalPrice == 0}">
+                                        <c:when test="${course.originalPrice == 0}">
                                             <span class="text-success fw-bold">Free</span>
                                         </c:when>
                                         <c:otherwise>
                                             <span class="fw-bold fs-6">
-                                                <fmt:formatNumber value="${c.originalPrice * 1000}" pattern="#,##0"/> VND
+                                                <fmt:formatNumber value="${course.originalPrice * 1000}" pattern="#,##0"/> VND
                                             </span>
                                         </c:otherwise>
                                     </c:choose>
@@ -203,17 +203,17 @@
                             </c:choose>
                         </td>
                         <td class="d-flex flex-column gap-1">
-                            <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${c.courseID}"
+                            <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${course.courseID}"
                                class="btn btn-sm btn-info text-white">
                                 <i class="fas fa-eye"></i>
                             </a>
 
-                            <a href="${pageContext.request.contextPath}/instructor/courses?action=update&courseID=${c.courseID}" class="btn btn-warning btn-sm">
+                            <a href="${pageContext.request.contextPath}/instructor/courses?action=update&courseID=${course.courseID}" class="btn btn-warning btn-sm">
                                 <i class="fas fa-edit"></i>
                             </a>
 
                             <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#deleteModal${c.courseID}">
+                                    data-bs-target="#deleteModal${course.courseID}">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
                         </td>
@@ -250,7 +250,14 @@
     </div>
 </c:forEach>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        formatUtcToVietnamese(".datetime");
+    });
+</script>
+
 <jsp:include page="/layout/toast.jsp" />
+<script src="${pageContext.request.contextPath}/layout/formatUtcToVietnamese.js"></script>
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 

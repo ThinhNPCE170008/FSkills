@@ -2,7 +2,9 @@ package dao;
 
 import java.io.InputStream;
 import java.sql.*;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -225,7 +227,7 @@ public class CourseDAO extends DBContext {
             ps.setInt(2, categoryId);
             ps.setInt(3, userID);
             ps.setInt(4, 0);
-            ps.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+            ps.setTimestamp(5, Timestamp.from(Instant.now()));
             ps.setInt(6, salePrice);
             ps.setInt(7, originalPrice);
             ps.setInt(8, isSale);
@@ -255,7 +257,7 @@ public class CourseDAO extends DBContext {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setNString(1, courseName);
             ps.setInt(2, categoryId);
-            ps.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
+            ps.setTimestamp(3, Timestamp.from(Instant.now()));
             ps.setInt(4, salePrice);
             ps.setInt(5, originalPrice);
             ps.setInt(6, isSale);
@@ -293,7 +295,7 @@ public class CourseDAO extends DBContext {
     }
 
     public int checkStatus(int courseID) {
-        String sql = "UPDATE Courses SET [Status] = 1 WHERE CourseID = ?";
+        String sql = "UPDATE Courses SET [Status] = 1, CourseLastUpdate = SYSUTCDATETIME() WHERE CourseID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -647,7 +649,6 @@ public class CourseDAO extends DBContext {
     }
 
     /*============*/
-
     // Methods for AllCoursesServlet
     public List<Course> getAllCourses(int page, int pageSize) {
         List<Course> list = new ArrayList<>();
@@ -911,55 +912,10 @@ public class CourseDAO extends DBContext {
         List<Course> list = new ArrayList<>();
         CourseDAO dao = new CourseDAO();
 
-//        // Test getAllCourses
-//        List<Course> courses = dao.getAllCourses();
-//        System.out.println("Total courses: " + courses.size());
-
-//        // Test getAllCategories
-//        List<String> categories = dao.getAllCategories();
-//        System.out.println("Categories: " + categories);
-
-//        list = dao.getCourseByUserID(3);
-//        for (Course course : list) {
-//            System.out.println(course);
-//        }
-
-//        list = dao.get3CourseByUserID(3);
-//        for (Course course : list) {
-//            System.out.println(course);
-//        }
-
-//        Course course = dao.getCourseByCourseID(1);
-//        System.out.println(course);
-
-//        List<Category> cat = new ArrayList<>();
-//        cat = dao.getAllCategory();
-//        for (Category category : cat) {
-//            System.out.println(category);
-//        }
-
-//        UserDAO udao = new UserDAO();
-//        User user = udao.getByUserID(3);
-//        int result = dao.insertCourse("C Sharf 123", "Dot Net Programming", 3, 9999, 999999, 0, "https://www.youtube.com/watch?v=de6UvFKbuZQ");
-//        System.out.println(result);
-
-//        int result = dao.updateCourse(8, "Bootstrap 5", "Web Develop", 1234, 123456789, 0, "https://www.youtube.com/watch?v=de6UvFKbuZQ");
-//        System.out.println(result);
-
-//        int result = dao.deleteCourse(9);
-//        System.out.println(result);
-
-//        int result = dao.countCoursesByUserID(2);
-//        System.out.println(result);
-
-//        int result = dao.onGoingLearner(16);
-//        System.out.println(result);
-
-//        int result = dao.countLearnersByUserID(3);
-//        System.out.println(result);
-
-//        Course course = dao.getCourseByCourseID(6);
-//        System.out.println(course);
+        list = dao.getCourseByUserID(3);
+        for (Course course : list) {
+            System.out.println(course);
+        }
 
 //        String secretKey = System.getenv("CLOUDFLARE_SECRET_KEY");
 //        String GOOGLE_CLIENT_ID = System.getenv("GOOGLE_CLIENT_ID");
@@ -970,8 +926,18 @@ public class CourseDAO extends DBContext {
 //        System.out.println("Site Key:" + turnstileSiteKey);
 //        System.out.println("Client Key:" + GOOGLE_CLIENT_ID);
 //        System.out.println("Secret Google Key:" + GOOGLE_CLIENT_SECRET);
-        
 //        String SENDGRID_API_KEY = System.getenv("SENDGRID_API_KEY");
 //        System.out.println(SENDGRID_API_KEY);
+
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
+        System.out.println("UTC time: " + now);
+
+        ZonedDateTime vn = ZonedDateTime.now(ZoneId.of("Asia/Saigon"));
+        System.out.println("VN time: " + vn);
+
+        System.out.println("Local JVM time: " + ZonedDateTime.now());
+        
+        Instant nowInstant = Instant.now();
+        System.out.println("Instant.now(): " + now);
     }
 }

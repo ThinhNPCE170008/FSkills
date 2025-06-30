@@ -87,7 +87,7 @@
 
             <li class="inline-flex items-center">
                 <a href="${pageContext.request.contextPath}/instructor/courses?action=list"
-                   class="text-indigo-600 hover:text-indigo-700 font-medium no-underline">Dashboard</a>
+                   class="text-indigo-600 hover:text-indigo-700 font-medium no-underline">Manage Course</a>
             </li>
             <li class="inline-flex items-center">
                 <span class="mx-2 text-gray-400">/</span>
@@ -163,7 +163,7 @@
                         <td>
                             <c:choose>
                                 <c:when test="${not empty module.moduleLastUpdate}">
-                                    <fmt:formatDate value="${module.moduleLastUpdate}" pattern="HH:mm dd/MM/yyyy"/>
+                                    <span class="datetime" data-utc="${module.moduleLastUpdate}Z"></span>
                                 </c:when>
                                 <c:otherwise>N/A</c:otherwise>
                             </c:choose>
@@ -349,7 +349,15 @@
     });
 </script>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        formatUtcToVietnamese(".datetime");
+    });
+</script>
+
 <jsp:include page="/layout/toast.jsp" />
+<script src="${pageContext.request.contextPath}/layout/formatUtcToVietnamese.js"></script>
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

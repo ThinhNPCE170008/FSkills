@@ -174,7 +174,7 @@ public class ForgotPassword extends HttpServlet {
                     + "    <h2>Reset your FSkills account password</h2>"
                     + "    <p>We received a request to reset the password for your account associated with this email.</p>"
                     + "    <p>Click the button below to reset your password:</p>"
-                    + "    <p><a class='btn' href='" + resetLink + "'>Reset Password</a></p>"
+                    + "    <p><a style=\"color: #ffffff\" class='btn' href='" + resetLink + "'>Reset Password</a></p>"
                     + "    <p>If you didn’t request this, just ignore this email.</p>"
                     + "    <p style='margin-top: 20px; font-size: 0.9em;'>This link will expire in 30 minutes for security reasons.</p>"
                     + "    <hr/>"
