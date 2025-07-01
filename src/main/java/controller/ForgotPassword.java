@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
 import dao.UserDAO;
@@ -14,7 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
@@ -24,7 +19,7 @@ import util.SendEmail;
 
 /**
  *
- * @author NgoThinh1902
+ * @author Ngo Phuoc Thinh - CE170008 - SE1815
  */
 @WebServlet(name = "ForgotPassword", urlPatterns = {"/forgotpassword"})
 public class ForgotPassword extends HttpServlet {
@@ -83,7 +78,6 @@ public class ForgotPassword extends HttpServlet {
             throws ServletException, IOException {
         if (request.getMethod().equalsIgnoreCase("POST")) {
             String email = request.getParameter("forgotEmail");
-            String contextPath = request.getContextPath();
 
             if (email == null || email.trim().isEmpty()) {
                 request.setAttribute("err", "Email cannot be empty.");

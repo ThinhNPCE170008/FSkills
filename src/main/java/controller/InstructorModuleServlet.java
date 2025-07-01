@@ -26,17 +26,18 @@ import model.User;
 public class InstructorModuleServlet extends HttpServlet {
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
+        try ( PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -51,14 +52,13 @@ public class InstructorModuleServlet extends HttpServlet {
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet requestF
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -119,10 +119,10 @@ public class InstructorModuleServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -134,7 +134,6 @@ public class InstructorModuleServlet extends HttpServlet {
         Module module = null;
 
         int courseID = Integer.parseInt(request.getParameter("courseID"));
-        course = cDao.getCourseByCourseID(courseID);
 
         if (request.getMethod().equalsIgnoreCase("POST")) {
             String action = request.getParameter("action");
@@ -143,6 +142,30 @@ public class InstructorModuleServlet extends HttpServlet {
                 course = cDao.getCourseByCourseID(courseID);
 
                 String moduleName = request.getParameter("moduleName");
+
+                if (moduleName == null) {
+                    moduleName = "";
+                }
+                moduleName = moduleName.trim();
+
+                if (moduleName.isEmpty()) {
+                    List<Module> list = mDao.getAllModuleByCourseID(courseID);
+
+                    request.setAttribute("listModule", list);
+                    request.setAttribute("err", "Create failed: Module Name is required.");
+                    request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
+                    return;
+                }
+
+                if (moduleName.contains("  ")) {
+                    List<Module> list = mDao.getAllModuleByCourseID(courseID);
+
+                    request.setAttribute("listModule", list);
+                    request.setAttribute("err", "Create failed: Module Name must not contain consecutive spaces.");
+                    request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
+                    return;
+                }
+
                 module = new Module(moduleName, course);
 
                 int insert = mDao.insertModule(module);
@@ -160,6 +183,29 @@ public class InstructorModuleServlet extends HttpServlet {
             } else if (action.equalsIgnoreCase("update")) {
                 int moduleID = Integer.parseInt(request.getParameter("moduleID"));
                 String moduleName = request.getParameter("moduleName");
+
+                if (moduleName == null) {
+                    moduleName = "";
+                }
+                moduleName = moduleName.trim();
+
+                if (moduleName.isEmpty()) {
+                    List<Module> list = mDao.getAllModuleByCourseID(courseID);
+
+                    request.setAttribute("listModule", list);
+                    request.setAttribute("err", "Create failed: Module Name is required.");
+                    request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
+                    return;
+                }
+
+                if (moduleName.contains("  ")) {
+                    List<Module> list = mDao.getAllModuleByCourseID(courseID);
+
+                    request.setAttribute("listModule", list);
+                    request.setAttribute("err", "Create failed: Module Name must not contain consecutive spaces.");
+                    request.getRequestDispatcher("/WEB-INF/views/listModule.jsp").forward(request, response);
+                    return;
+                }
 
                 int update = mDao.updateModule(moduleID, moduleName);
 

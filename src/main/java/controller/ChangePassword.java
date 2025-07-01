@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
 import dao.UserDAO;
@@ -16,7 +12,7 @@ import model.PasswordResetToken;
 
 /**
  *
- * @author NgoThinh1902
+ * @author Ngo Phuoc Thinh - CE170008 - SE1815
  */
 @WebServlet(name = "ChangePassword", urlPatterns = {"/changepassword"})
 public class ChangePassword extends HttpServlet {
@@ -62,7 +58,7 @@ public class ChangePassword extends HttpServlet {
         String token = request.getParameter("token");
 
         if (token == null || token.trim().isEmpty()) {
-            request.setAttribute("error", "Token does not exist.");
+            request.setAttribute("err", "Token does not exist.");
             request.getRequestDispatcher("login.jsp").forward(request, response);
             return;
         }
@@ -76,7 +72,6 @@ public class ChangePassword extends HttpServlet {
             return;
         }
 
-        // Token hợp lệ → hiển thị form đổi mật khẩu
         request.setAttribute("token", token);
         request.getRequestDispatcher("/WEB-INF/views/changePassword.jsp").forward(request, response);
     }
