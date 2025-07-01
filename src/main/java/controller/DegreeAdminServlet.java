@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
 import dao.DegreeDAO;
@@ -17,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.List;
 import model.Degree;
@@ -70,14 +67,14 @@ public class DegreeAdminServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         String action = request.getParameter("action");
-        User user= (User) session.getAttribute("user");
+        User user = (User) session.getAttribute("user");
         DegreeDAO degreeDAO = new DegreeDAO();
         if (action == null) {
             action = "listDegree";
         }
         if (action.equalsIgnoreCase("listDegree")) {
             List<Degree> listDegree = degreeDAO.getAll();
-            request.setAttribute("AccountInfo", user);
+            request.setAttribute("user", user);
             request.setAttribute("listDegree", listDegree);
             request.getRequestDispatcher("/WEB-INF/views/degreeAdmin.jsp").forward(request, response);
         }
@@ -114,22 +111,25 @@ public class DegreeAdminServlet extends HttpServlet {
         } else if (action.equalsIgnoreCase("approve")) {
             try {
                 String statusParam = request.getParameter("status");
-                String id = request.getParameter("userId");
-                String avatar = request.getParameter("userAvatar");
-                int userId = Integer.parseInt(id);
+                int status = Integer.parseInt(statusParam);
                 String degree = request.getParameter("degreeId");
                 int degreeId = Integer.parseInt(degree);
-                int status = Integer.parseInt(statusParam);
-                String link = "http://localhost:9999/FSkills/Degree";
+
+                String id = request.getParameter("senderId");
+                int userId = Integer.parseInt(id);
+                String sender = request.getParameter("sender");
+                String type = "toUser";
+                String link = request.getParameter("link");
                 String accept = "Your degree has been approved.";
                 String reject = "Your degree has been rejected.";
+
                 String notiMess = "";
                 if (status == 1) {
                     notiMess = accept;
                 } else if (status == 2) {
                     notiMess = reject;
                 }
-                int res = notiDAO.sendNofication(userId, link, notiMess);
+                int res = notiDAO.sendNofication(userId, sender, link, notiMess, type);
                 boolean r = degreeDAO.approve(status, degreeId);
                 if (r == true) {
                     response.sendRedirect("degree");
