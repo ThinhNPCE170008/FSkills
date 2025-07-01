@@ -23,10 +23,10 @@
         <a href="${pageContext.request.contextPath}/alluser"><i class="bi bi-people"></i> <span>Manage Accounts</span></a>
         <a href="${pageContext.request.contextPath}/report"><i class="bi bi-bar-chart"></i> <span>Report</span></a>
         <div class="divider"></div>
-        <a href="${pageContext.request.contextPath}/editProfile" class="user-profile">
+        <a href="${pageContext.request.contextPath}/admin/profile" class="user-profile">
           <c:choose>
             <c:when test="${not empty sessionScope.user.avatar}">
-              <img src="${sessionScope.user.avatar}" alt="Admin Avatar" class="avatar-img small-avatar">
+              <img src="${sessionScope.user.imageDataURI}" alt="Admin Avatar" class="avatar-img small-avatar">
             </c:when>
             <c:otherwise>
               <img src="https://placehold.co/80x80/cccccc/333333?text=Admin" alt="Default Admin Avatar" class="avatar-img small-avatar">

@@ -46,7 +46,7 @@
                     <%-- Display user avatar if available --%>
                     <c:choose>
                         <c:when test="${not empty sessionScope.user.avatar}">
-                            <img src="${sessionScope.user.avatar}" alt="User Avatar" class="w-8 h-8 rounded-full">
+                            <img src="${sessionScope.user.imageDataURI}" alt="User Avatar" class="w-8 h-8 rounded-full">
                         </c:when>
                         <c:otherwise>
                             <i class="fas fa-user"></i>
