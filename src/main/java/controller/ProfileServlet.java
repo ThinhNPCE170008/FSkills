@@ -196,6 +196,15 @@ public class ProfileServlet extends HttpServlet {
 
             if (updateSuccess) {
                 System.out.println("Profile updated successfully.");
+
+                // Update the session with the latest user data
+                UserDAO userDAO = new UserDAO();
+                User updatedUser = userDAO.getByUserID(user.getUserId());
+                if (updatedUser != null) {
+                    HttpSession session = request.getSession();
+                    session.setAttribute("user", updatedUser);
+                }
+
                 // Redirect based on user role
                 if ("INSTRUCTOR".equalsIgnoreCase(user.getRole().toString())) {
                     response.sendRedirect(request.getContextPath() + "/instructor/profile?action=edit&success=true");
