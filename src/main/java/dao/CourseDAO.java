@@ -934,6 +934,15 @@ public class CourseDAO extends DBContext {
         ZonedDateTime vn = ZonedDateTime.now(ZoneId.of("Asia/Saigon"));
         System.out.println("VN time: " + vn);
 
+        String secretKey = System.getenv("CLOUDFLARE_SECRET_KEY");
+        String GOOGLE_CLIENT_ID = System.getenv("GOOGLE_CLIENT_ID");
+        String GOOGLE_CLIENT_SECRET = System.getenv("GOOGLE_CLIENT_SECRET");
+        String turnstileSiteKey = System.getenv("CLOUDFLARE_SITE_KEY");
+
+        System.out.println("Secret Key:" + secretKey);
+        System.out.println("Site Key:" + turnstileSiteKey);
+        System.out.println("Client Key:" + GOOGLE_CLIENT_ID);
+        System.out.println("Secret Google Key:" + GOOGLE_CLIENT_SECRET);
         System.out.println("Local JVM time: " + ZonedDateTime.now());
         
         Instant nowInstant = Instant.now();

@@ -19,7 +19,9 @@
         <a href="${pageContext.request.contextPath}/AllCourses.jsp"><i class="bi bi-book"></i> <span>All Courses</span></a>
         <a href="#"><i class="bi bi-mortarboard"></i> <span>My Courses</span></a>
         <a href="#"><i class="bi bi-cart"></i> <span>Cart</span></a>
+
         <a href="${pageContext.request.contextPath}/announcements"><i class="bi bi-megaphone"></i> <span>Announcements</span></a>
+
         <div class="divider"></div>
         <a href="${pageContext.request.contextPath}/learner/profile" class="user-profile">
           <c:choose>
@@ -32,7 +34,7 @@
           </c:choose>
           <span class="user-profile-name">${sessionScope.user.displayName}</span>
         </a>
-        <a href="feedback.jsp"><i class="bi bi-chat-dots"></i> <span>Feedback</span></a>
+        <a href="${pageContext.request.contextPath}/feedback"><i class="bi bi-chat-dots"></i> <span>Feedback</span></a>
         <a href="${pageContext.request.contextPath}/logout"><i class="bi bi-box-arrow-right"></i> <span>Logout</span></a>
       </c:if>
 
@@ -42,6 +44,7 @@
         <a href="analytics.jsp"><i class="bi bi-graph-up"></i> <span>Analytics</span></a>
         <a href="feedback.jsp"><i class="bi bi-chat-dots"></i> <span>Feedback</span></a>
         <a href="${pageContext.request.contextPath}/announcements"><i class="bi bi-megaphone"></i> <span>Announcements</span></a>
+
         <div class="divider"></div>
         <a href="${pageContext.request.contextPath}/instructor/profile" class="user-profile">
           <c:choose>
@@ -60,7 +63,9 @@
       <c:if test="${empty sessionScope.user.role}">
         <a href="${pageContext.request.contextPath}/homePage_Guest.jsp"><i class="bi bi-house-door"></i> <span>Home</span></a>
         <a href="${pageContext.request.contextPath}/AllCourses.jsp"><i class="bi bi-book"></i> <span>All Courses</span></a>
+
         <a href="${pageContext.request.contextPath}/announcements"><i class="bi bi-megaphone"></i> <span>Announcements</span></a>
+
         <div class="divider"></div>
         <a href="${pageContext.request.contextPath}/logout"><i class="bi bi-box-arrow-right"></i> <span>Logout</span></a>
       </c:if>
