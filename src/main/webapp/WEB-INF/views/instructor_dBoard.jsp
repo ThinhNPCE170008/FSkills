@@ -176,13 +176,6 @@
     });
 </script>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        formatUtcToVietnamese(".datetime");
-    });
-</script>
-
 <jsp:include page="/layout/footer.jsp"/>
-<script src="${pageContext.request.contextPath}/layout/formatUtcToVietnamese.js"></script>
 </body>
 </html>

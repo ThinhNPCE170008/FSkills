@@ -57,21 +57,18 @@
         </div>
 
         <div class="mb-3">
-            <label for="courseImageLocation" class="form-label">Course Image</label>
-
+            <label for="courseImageLocation" class="form-label">Select Image</label>
             <input type="file"
                    class="form-control"
                    id="courseImageLocation"
                    name="courseImageLocation"
                    accept="image/*"
-                   onchange="previewImage(event, ${listCourse.courseID})">
-
-            <div class="mt-2">
-                <img id="imagePreview${listCourse.courseID}"
-                     class="img-thumbnail"
-                     style="max-width: 300px;"
-                     src="${listCourse.imageDataURI}" />
-            </div>
+                   onchange="previewImage(event)"
+                   oninvalid="this.setCustomValidity('Please select a image')"
+                   oninput="this.setCustomValidity('')"
+                   onblur="setNoImageIfEmpty(this)"
+                   required>
+            <img id="imagePreview" class="img-thumbnail mt-2" style="max-width: 300px; display: none;" />
         </div>
 
         <div class="mb-3">
@@ -99,16 +96,27 @@
 <jsp:include page="/layout/footer.jsp"/>
 
 <script>
-    function previewImage(event, courseID) {
-        const input = event.target;
-        const preview = document.getElementById("imagePreview" + courseID);
+    function previewImage(event) {
+        const fileInput = event.target;
+        const preview = document.getElementById("imagePreview");
 
-        if (input.files && input.files[0]) {
+        if (fileInput.files && fileInput.files[0]) {
             const reader = new FileReader();
+
             reader.onload = function (e) {
                 preview.src = e.target.result;
+                preview.style.display = "block";
             };
-            reader.readAsDataURL(input.files[0]);
+
+            reader.readAsDataURL(fileInput.files[0]);
+        } else {
+            preview.style.display = "none";
+        }
+    }
+
+    function setNoImageIfEmpty(input) {
+        if (!input.value) {
+            document.getElementById("imagePreview").style.display = "none";
         }
     }
 </script>
@@ -184,23 +192,9 @@
                 return;
             }
 
-            if (!summary) {
-                showJsToast("Summary is required.");
-                summaryInput.focus();
-                e.preventDefault();
-                return;
-            }
-
             if (summary && !spaceOnlyRegex.test(summary)) {
                 showJsToast("Summary must not contain consecutive spaces.");
                 summaryInput.focus();
-                e.preventDefault();
-                return;
-            }
-
-            if (!highlight) {
-                showJsToast("Highlight is required.");
-                highlightInput.focus();
                 e.preventDefault();
                 return;
             }

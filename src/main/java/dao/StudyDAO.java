@@ -68,36 +68,4 @@ public class StudyDAO extends DBContext {
         }
         return 0;
     }
-
-    public int returnStudyProgress(int UserID, int CourseID) {
-        String sql
-                = "SELECT \n"
-                + "ROUND(\n"
-                + "COUNT(DISTINCT s.MaterialID) * 100.0 / COUNT(DISTINCT mat.MaterialID),\n"
-                + "2\n"
-                + " ) AS StudyPercentage\n"
-                + "FROM \n"
-                + "Courses c\n"
-                + "JOIN \n"
-                + "Modules mo ON c.CourseID = mo.CourseID\n"
-                + "JOIN \n"
-                + "Materials mat ON mo.ModuleID = mat.ModuleID\n"
-                + "LEFT JOIN \n"
-                + "Study s ON mat.MaterialID = s.MaterialID AND s.UserID = ?\n"
-                + "WHERE \n"
-                + "c.CourseID = ?;";
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, UserID);
-            ps.setInt(2, CourseID);
-            try ( ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1);
-                }
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        return 0;
-    }
 }

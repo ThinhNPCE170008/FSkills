@@ -14,7 +14,7 @@
         <link rel="stylesheet" href="css/sign.css">
     </head>
     <body>
-        <a href="${pageContext.request.contextPath}/login" class="login-signup-back-btn btn btn-secondary position-fixed top-0 end-0 m-3" title="Back to Homepage">
+        <a href="login.jsp" class="login-signup-back-btn btn btn-secondary position-fixed top-0 end-0 m-3" title="Back to Homepage">
             <i class="bi bi-arrow-left"></i>
         </a>
 
@@ -51,7 +51,7 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const form = document.querySelector("form");
+            const form = document.querySelector("form"); // hoặc gắn ID cụ thể
             form.addEventListener("submit", function (e) {
                 const username = form.username.value.trim();
                 const password = form.password.value.trim();
@@ -114,31 +114,9 @@
                     return;
                 }
 
-                const domain = email.split('@')[1]?.toLowerCase();
-                const acceptedDomains = ['gmail.com', 'email.com'];
-                const acceptedTLDs = ['.vn', '.io', '.me'];
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
+                const emailRegex = /^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
                 if (!emailRegex.test(email)) {
-                    showJsToast('Invalid email format.');
-                    e.preventDefault();
-                    return;
-                }
-
-                if (
-                    !acceptedDomains.includes(domain) &&
-                    !acceptedTLDs.some(tld => domain.endsWith(tld))
-                ) {
-                    showJsToast('Only accept gmail.com, email.com, or domains ending in .vn, .io, .me');
-                    e.preventDefault();
-                    return;
-                }
-
-                if (
-                    (domain.startsWith('gmail.') && domain !== 'gmail.com') ||
-                    (domain.startsWith('email.') && domain !== 'email.com')
-                ) {
-                    showJsToast('Invalid gmail/email domain. Only gmail.com or email.com are accepted.');
+                    showJsToast("Invalid email format.");
                     e.preventDefault();
                     return;
                 }
@@ -154,6 +132,7 @@
             });
         });
     </script>
+
 
     <jsp:include page="/layout/toast.jsp" />
     <!-- Bootstrap JS -->

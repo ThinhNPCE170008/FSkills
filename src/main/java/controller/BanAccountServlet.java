@@ -15,9 +15,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.Role;
-import model.User;
 
+/**
+ * Servlet này xử lý việc cấm hoặc bỏ cấm tài khoản người dùng.
+ */
 @WebServlet(name = "BanAccountServlet", urlPatterns = {"/banAccountServlet"})
 public class BanAccountServlet extends HttpServlet {
 
@@ -36,6 +37,8 @@ public class BanAccountServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
+            // Đây là một template lỗi, không nên được gọi trực tiếp.
+            // Thay vào đó, chúng ta sẽ chuyển hướng hoặc forward đến trang JSP thích hợp.
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -60,17 +63,8 @@ public class BanAccountServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        User user = (User) request.getSession().getAttribute("user");
-        if (user == null) {
-            response.sendRedirect("login");
-            return;
-        }
-
-        Role role = user.getRole();
-        if (role != Role.ADMIN) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
-            return;
-        }
+        // Thông thường, thao tác Ban/Unban nên là POST để an toàn.
+        // Chuyển hướng về trang danh sách user.
         response.sendRedirect(request.getContextPath() + "/alluser");
     }
 
@@ -85,32 +79,26 @@ public class BanAccountServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        User user = (User) request.getSession().getAttribute("user");
-        if (user == null) {
-            response.sendRedirect("login");
-            return;
-        }
-
-        Role role = user.getRole();
-        if (role != Role.ADMIN) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
-            return;
-        }
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
 
         String characterName = request.getParameter("characterName");
+        // Lấy lại tham số searchName từ hidden input
         String originalSearchName = request.getParameter("originalSearchName"); 
+        // Lấy tham số roleFilter từ hidden input của form
         String currentListRoleFilter = request.getParameter("currentListRoleFilter"); 
 
         if (characterName != null && !characterName.isEmpty()) {
             UserDAO u = new UserDAO();
             boolean success = false;
-            String redirectUrl = request.getContextPath() + "/alluser";
+            String redirectUrl = request.getContextPath() + "/alluser"; // Mặc định
+
+            // Nếu có originalSearchName, thêm nó vào URL chuyển hướng
             if (originalSearchName != null && !originalSearchName.isEmpty()) {
                 redirectUrl += "?searchName=" + originalSearchName;
             }
             
+            // Thêm roleFilter vào URL chuyển hướng, kiểm tra nếu đã có tham số khác
             if (currentListRoleFilter != null && !currentListRoleFilter.isEmpty()) {
                 if (redirectUrl.contains("?")) {
                     redirectUrl += "&roleFilter=" + currentListRoleFilter;
@@ -122,28 +110,35 @@ public class BanAccountServlet extends HttpServlet {
             try {
                 success = u.banAccount(characterName);
                 if (success) {
-                    response.sendRedirect(redirectUrl); 
+                    // Chuyển hướng thành công về trang danh sách user (có thể kèm search term và role filter)
+                    response.sendRedirect(redirectUrl); // Chuyển hướng với URL đã sửa đổi
                 } else {
-                    request.setAttribute("errorMessage", "Error.");
-                    request.getRequestDispatcher("/errorPage.jsp").forward(request, response); 
+                    // Nếu banAccount trả về false (có lỗi xử lý DB nhưng không ném exception)
+                    request.setAttribute("errorMessage", "Thao tác thất bại. Không tìm thấy tài khoản hoặc lỗi xử lý.");
+                    request.getRequestDispatcher("/errorPage.jsp").forward(request, response); // Chuyển hướng tới trang lỗi
                 }
             } catch (SQLException ex) {
                 LOGGER.log(Level.SEVERE, "Database error in BanAccountServlet for user: " + characterName, ex);
-                request.setAttribute("errorMessage", "Error" + ex.getMessage());
-                request.getRequestDispatcher("/errorPage.jsp").forward(request, response);
+                request.setAttribute("errorMessage", "Lỗi cơ sở dữ liệu: " + ex.getMessage());
+                request.getRequestDispatcher("/errorPage.jsp").forward(request, response); // Chuyển hướng tới trang lỗi
             } catch (Exception ex) {
                 LOGGER.log(Level.SEVERE, "Unexpected error in BanAccountServlet for user: " + characterName, ex);
-                request.setAttribute("errorMessage", "Error.");
-                request.getRequestDispatcher("/errorPage.jsp").forward(request, response);
+                request.setAttribute("errorMessage", "Đã xảy ra lỗi không mong muốn.");
+                request.getRequestDispatcher("/errorPage.jsp").forward(request, response); // Chuyển hướng tới trang lỗi
             }
         } else {
-            request.setAttribute("errorMessage", "Error");
+            request.setAttribute("errorMessage", "Tên tài khoản không được cung cấp.");
             request.getRequestDispatcher("/errorPage.jsp").forward(request, response);
         }
     }
 
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
     @Override
     public String getServletInfo() {
-        return "Servlet for ban/unban.";
+        return "Servlet để cấm/bỏ cấm tài khoản người dùng.";
     }// </editor-fold>
 }

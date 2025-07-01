@@ -25,24 +25,18 @@
             }
             #main-body{
                 min-height: 70vh;
-                padding: 0 3vw;
-                min-height: 100vh;
-                box-sizing: border-box;
+                width: 90vw;
             }
             .courseImg{
                 max-height: 250px;
                 max-width: 250px;
             }
-            #content{
-                width: 90%;
-            }
         </style>
     </head>
     <body>
-        <%@include file="../../layout/header_user.jsp" %>
         <%@include file="../../layout/sidebar_user.jsp" %>
-        <main id="main-body" class="main">
-            <%  CourseDAO courseDAO = new CourseDAO();
+        <div id="main-body" class="mx-auto">
+            <%            CourseDAO courseDAO = new CourseDAO();
                 UserDAO userDAO = new UserDAO();
                 ArrayList<Cart> list = (ArrayList) request.getAttribute("list");
                 Course tempCourse = new Course();
@@ -59,7 +53,7 @@
                 int i = 0;
             %>
             <form method="POST" action="<%= request.getContextPath()%>/Cart">
-                <div id="content" class="mx-auto text-center">
+                <div class="w-75 mx-auto text-center">
                     <table class="table .table-bordered table-hover mt-5">
                         <thead>
                             <tr>
@@ -93,7 +87,7 @@
                                 </td>
                                 <td class="align-middle"><%=tempCourse.getCourseName()%></td>
                                 <td class="align-middle"><%=tempCourse.getUser().getDisplayName()%></td>
-                                <td class="align-middle"><%=String.format("%,.0f", price)%> VND</td>
+                                <td class="align-middle"><%=String.format("%,.0f", price)%>VND</td>
                                 <td class="align-middle"><button type="submit" name="remove-from-cart" value="<%=c.getCartID()%>" class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button></td>
                             </tr>
                             <%}%>
@@ -111,7 +105,7 @@
                                     <td>
                                         <div class="d-flex justify-content-between ps-3 pe-3">
                                             <span class="text ">Total:</span>
-                                            <span><span id="total">0</span> VND</span>
+                                            <span><span id="total">0</span>VND</span>
                                         </div>
                                         <div><button type="submit" class="btn btn-primary text mt-3">To Checkout</button></div>
                                     </td>
@@ -123,7 +117,7 @@
                 </div>
             </form>
             <%}%>
-        </main>
+        </div>
         <script>
             const coursePrice = [
             <% for (Cart c : list) {

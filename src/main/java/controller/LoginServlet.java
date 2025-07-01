@@ -92,7 +92,7 @@ public class LoginServlet extends HttpServlet {
                 user = dao.findByEmail(userGoogle.getEmail());
                 if (user == null) {
                     dao.insertGoogle(userGoogle);
-                    user = dao.findByGoogleID(userGoogle.getId());
+                    user = dao.findByGoogleID(userGoogle.getId()); // Lấy lại user đã insert để lưu vào session
                 } else {
                     user.setGoogleID(userGoogle.getId());
                     dao.updateGoogleID(user);

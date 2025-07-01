@@ -18,7 +18,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.Role;
 
 import model.User;
 
@@ -28,28 +27,16 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        User user = (User) request.getSession().getAttribute("user");
-        if (user == null) {
-            response.sendRedirect("login");
-            return;
-        }
-
-        Role role = user.getRole();
-        if (role != Role.ADMIN) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
-            return;
-        }
-
+        
         List<User> userList = null;
-        String searchName = request.getParameter("searchName");
-        String roleFilter = request.getParameter("roleFilter");
+        String searchName = request.getParameter("searchName"); 
+        String roleFilter = request.getParameter("roleFilter"); 
 
         UserDAO u = new UserDAO();
 
         try {
             if (roleFilter == null || (!"Learner".equals(roleFilter) && !"Instructor".equals(roleFilter))) {
-                roleFilter = "Learner";
+                roleFilter = "Learner"; 
             }
 
             if ("Instructor".equals(roleFilter)) {
@@ -67,9 +54,9 @@ public class UserServlet extends HttpServlet {
                     userList = u.getAllLearners();
                 }
                 request.setAttribute("listLearners", userList);
-                request.setAttribute("listInstructors", null);
+                request.setAttribute("listInstructors", null); 
             }
-
+            
             request.setAttribute("paramSearchName", searchName);
             request.setAttribute("paramRoleFilter", roleFilter);
 
@@ -84,26 +71,15 @@ public class UserServlet extends HttpServlet {
             request.getRequestDispatcher("/errorPage.jsp").forward(request, response);
         }
     }
-
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        User user = (User) request.getSession().getAttribute("user");
-        if (user == null) {
-            response.sendRedirect("login");
-            return;
-        }
-
-        Role role = user.getRole();
-        if (role != Role.ADMIN) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
-            return;
-        }
-        doGet(request, response);
+        doGet(request, response); 
     }
 
-//    @Override
-//    public String getServletInfo() {
-//        return "User Management Servlet";
-//    }
+    @Override
+    public String getServletInfo() {
+        return "User Management Servlet";
+    }
 }

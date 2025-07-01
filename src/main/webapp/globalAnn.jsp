@@ -25,7 +25,7 @@
                 height: 200px; /* Chiều cao cố định */
                 object-fit: cover; /* Cắt ảnh để vừa với khung mà không bị méo */
                 /* Loại bỏ border nếu có */
-                border: none;
+                border: none; 
             }
             .no-image-placeholder-card {
                 display: flex;
@@ -39,14 +39,14 @@
                 text-align: center;
                 border-bottom: 1px solid #cbd5e0; /* border-gray-300 */
             }
-            /* Giữ chiều cao cố định cho card body để các card bằng nhau */
+             /* Giữ chiều cao cố định cho card body để các card bằng nhau */
             .card-body-fixed-height {
                 min-height: 220px; /* Điều chỉnh nếu cần để đủ chỗ cho tiêu đề, mô tả ngắn, và nút */
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
             }
-            .line-clamp-3 {
+             .line-clamp-3 {
                 display: -webkit-box;
                 -webkit-line-clamp: 3;
                 -webkit-box-orient: vertical;
@@ -57,8 +57,8 @@
     <body class="font-sans bg-gray-100">
         <div class="p-4">
             <a href="${pageContext.request.contextPath}/homePage_Guest.jsp" 
-               class="inline-flex items-center px-6 py-3 bg-gray-600 text-white rounded-full
-               hover:bg-gray-700 transition-colors shadow-md text-lg">
+               class="inline-flex items-center px-6 py-3 bg-gray-600 text-white rounded-full 
+                      hover:bg-gray-700 transition-colors shadow-md text-lg">
                 <i class="fa-solid fa-arrow-left mr-2"></i> Return
             </a>
         </div>
@@ -86,14 +86,10 @@
                 </c:if>
                 <c:forEach var="ann" items="${announcements}">
                     <div class="card-hover bg-white rounded-xl shadow-lg overflow-hidden flex flex-col">
-                        <c:if test="${ann.announcementImage != null}">
-                            <img src="${ann.imageDataURI}" alt="${ann.title}" class="card-image-fixed">
-                        </c:if>
-                        <c:if test="${ann.announcementImage == null}">
-                            <div class="no-image-placeholder-card">No Image</div>
-                        </c:if>
-
-
+                        <c:if test="${ann.announcementImage != null && ann.announcementImage != '' && ann.announcementImage != 'No Image'}">
+                           <img src="${pageContext.request.contextPath}/${ann.announcementImage}" alt="${ann.title}" class="card-image-fixed">
+                       </c:if>
+                        
                         <div class="p-6 flex-grow flex flex-col justify-between card-body-fixed-height">
                             <div>
                                 <h2 class="text-xl font-semibold text-gray-900 mb-3">${ann.title}</h2>

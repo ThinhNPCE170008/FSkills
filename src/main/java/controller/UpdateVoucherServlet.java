@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.Role;
-import model.User;
 
 @WebServlet(name = "UpdateVoucherServlet", urlPatterns = {"/updateVoucher"})
 public class UpdateVoucherServlet extends HttpServlet {
@@ -34,17 +32,6 @@ public class UpdateVoucherServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        User user = (User) request.getSession().getAttribute("user");
-        if (user == null) {
-            response.sendRedirect("login");
-            return;
-        }
-
-        Role role = user.getRole();
-        if (role != Role.ADMIN) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
-            return;
-        }
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
 
@@ -206,17 +193,6 @@ public class UpdateVoucherServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        User user = (User) request.getSession().getAttribute("user");
-        if (user == null) {
-            response.sendRedirect("login");
-            return;
-        }
-
-        Role role = user.getRole();
-        if (role != Role.ADMIN) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
-            return;
-        }
         String voucherIDParam = request.getParameter("voucherID");
         VoucherDAO voucherDAO = new VoucherDAO();
         Voucher voucher = null;

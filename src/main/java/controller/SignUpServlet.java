@@ -2,8 +2,6 @@ package controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
-import java.util.Set;
 
 import dao.UserDAO;
 import jakarta.servlet.ServletException;
@@ -13,71 +11,69 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.User;
+import util.MyLibrary;
 
 /**
+ *
  * @author NgoThinh1902
  */
-@WebServlet(name = "SignUpServlet", urlPatterns = {"/signup"})
+@WebServlet(name="SignUpServlet", urlPatterns={"/signup"})
 public class SignUpServlet extends HttpServlet {
-
-    /**
+   
+    /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet SignUpServlet</title>");
+            out.println("<title>Servlet SignUpServlet</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet SignUpServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet SignUpServlet at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    }
+    } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-
-    /**
+    /** 
      * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
         request.getRequestDispatcher("signup.jsp").forward(request, response);
-    }
+    } 
 
-    /**
+    /** 
      * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    throws ServletException, IOException {
         HttpSession session = request.getSession();
 
         UserDAO userDAO = new UserDAO();
         User newUser = null;
 
-        if (request.getMethod().equalsIgnoreCase("POST")) {
+        if(request.getMethod().equalsIgnoreCase("POST")){
             String username = request.getParameter("username");
             String password = request.getParameter("password");
             String confirmPassword = request.getParameter("confirmPassword");
@@ -133,52 +129,8 @@ public class SignUpServlet extends HttpServlet {
                 return;
             }
 
-            if (email == null || email.trim().isEmpty()) {
-                request.setAttribute("err", "Email cannot be empty.");
-                request.getRequestDispatcher("signup.jsp").forward(request, response);
-                return;
-            }
-
-            email = email.trim().toLowerCase();
-
-            String emailRegex = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
-            if (!email.matches(emailRegex)) {
-                request.setAttribute("err", "Email is not in correct format.");
-                request.getRequestDispatcher("signup.jsp").forward(request, response);
-                return;
-            }
-
-            String[] parts = email.split("@");
-            if (parts.length != 2) {
-                request.setAttribute("err", "Invalid email.");
-                request.getRequestDispatcher("signup.jsp").forward(request, response);
-                return;
-            }
-
-            String domain = parts[1];
-            Set<String> acceptedDomains = Set.of("gmail.com", "email.com");
-            List<String> acceptedTLDs = List.of(".vn", ".io", ".me");
-
-            boolean isValid = false;
-
-            if (acceptedDomains.contains(domain)) {
-                isValid = true;
-            }
-
-            for (String tld : acceptedTLDs) {
-                if (domain.endsWith(tld)) {
-                    isValid = true;
-                    break;
-                }
-            }
-
-            if ((domain.startsWith("gmail.") && !domain.equals("gmail.com"))
-                    || (domain.startsWith("email.") && !domain.equals("email.com"))) {
-                isValid = false;
-            }
-
-            if (!isValid) {
-                request.setAttribute("err", "Emails from non-domains are accepted.");
+            if (!MyLibrary.validateEmail(email)) {
+                request.setAttribute("err", "Invalid email format.");
                 request.getRequestDispatcher("signup.jsp").forward(request, response);
                 return;
             }
@@ -219,9 +171,8 @@ public class SignUpServlet extends HttpServlet {
         }
     }
 
-    /**
+    /** 
      * Returns a short description of the servlet.
-     *
      * @return a String containing servlet description
      */
     @Override

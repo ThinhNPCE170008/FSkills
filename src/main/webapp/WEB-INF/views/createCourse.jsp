@@ -234,23 +234,9 @@
                 return;
             }
 
-            if (!summary) {
-                showJsToast("Summary is required.");
-                summaryInput.focus();
-                e.preventDefault();
-                return;
-            }
-
             if (summary && !spaceOnlyRegex.test(summary)) {
                 showJsToast("Summary must not contain consecutive spaces.");
                 summaryInput.focus();
-                e.preventDefault();
-                return;
-            }
-
-            if (!highlight) {
-                showJsToast("Highlight is required.");
-                highlightInput.focus();
                 e.preventDefault();
                 return;
             }

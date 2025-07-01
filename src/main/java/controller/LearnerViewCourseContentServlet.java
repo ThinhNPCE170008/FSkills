@@ -16,7 +16,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import model.Course;
 import model.User;
 
 /**
@@ -69,7 +68,6 @@ public class LearnerViewCourseContentServlet extends HttpServlet {
         EnrollDAO eDAO = new EnrollDAO();
         CourseDAO couDAO = new CourseDAO();
         ModuleDAO modDAO = new ModuleDAO();
-        Course cou = new Course();
         if (user == null) {
             response.sendRedirect(request.getContextPath() + "/login");
         } else {
@@ -77,8 +75,7 @@ public class LearnerViewCourseContentServlet extends HttpServlet {
             try {
                 int courseID = Integer.parseInt(courseParam);
                 if (eDAO.checkEnrollment(user.getUserId(), courseID)) {
-                    cou = couDAO.getCourseByCourseID(courseID);
-                    request.setAttribute("Course", cou);
+                    request.setAttribute("Course", couDAO.getCourseByCourseID(courseID));
                     request.setAttribute("ModuleList", modDAO.getAllModuleByCourseID(courseID));
                     request.setAttribute("User", user);
                     request.getRequestDispatcher("/WEB-INF/views/learnerCourseContentView.jsp").forward(request, response);
