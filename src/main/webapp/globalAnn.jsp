@@ -66,7 +66,7 @@
             <h1 class="text-4xl font-bold text-center text-gray-800 mb-10">Global Announcements</h1>
 
             <div class="mb-8 p-6 bg-white rounded-lg shadow-md flex flex-col md:flex-row items-center justify-between">
-                <form action="${pageContext.request.contextPath}/guest/announcements" method="get" class="w-full md:w-auto flex-grow flex items-center space-x-4">
+                <form action="${pageContext.request.contextPath}/announcements" method="get" class="w-full md:w-auto flex-grow flex items-center space-x-4">
                     <div class="relative flex-grow">
                         <input type="text" name="search" placeholder="Search by title or content..." 
                                class="w-full pl-4 pr-10 py-2.5 border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-300 ease-in-out"
@@ -76,7 +76,7 @@
                     <button type="submit" class="px-6 py-2.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors">Search</button>
                 </form>
                 <div class="md:ml-4 mt-4 md:mt-0">
-                    <a href="${pageContext.request.contextPath}/guest/announcements" class="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors">View All</a>
+                    <a href="${pageContext.request.contextPath}/announcements" class="px-6 py-2.5 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors">View All</a>
                 </div>
             </div>
 
@@ -104,7 +104,7 @@
                                 <span>Date: <fmt:formatDate value="${ann.createDate}" pattern="dd/MM/yyyy"/></span>
                             </div>
                             <div class="mt-4 text-center">
-                                <a href="${pageContext.request.contextPath}/guest/announcement-detail?id=${ann.annoucementID}" 
+                                <a href="${pageContext.request.contextPath}/announcement-detail?id=${ann.annoucementID}" 
                                    class="inline-block px-5 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors">
                                     Read More
                                 </a>

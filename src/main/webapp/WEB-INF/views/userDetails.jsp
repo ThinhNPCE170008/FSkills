@@ -425,13 +425,13 @@
                                         </div>
                                         <div class="detail-item">
                                             <span class="detail-label">Info:</span>
-                                            <span class="detail-value" id="displayInfo">${user.info}</span>
-                                            <textarea id="inputInfo" name="info" class="detail-input" rows="3">${param.info != null ? param.info : user.info}</textarea>
+                                            <span class="detail-value" id="displayInfo">${user.info != null ? user.info : "No information here !"}</span>
+                                            <textarea id="inputInfo" name="info" class="detail-input" rows="3">${param.info != null ? param.info : (user.info != null ? user.info : "No information here !")}</textarea>
                                             <c:if test="${not empty errorMessages['info']}">
                                                 <span class="error-message">${errorMessages['info']}</span>
                                             </c:if>
                                         </div>
-                                    </div> <%-- End detail-grid --%>
+                                    </div>
 
                                     <div class="button-group" id="editButtonGroup">
                                         <button type="submit" class="save-button">Save</button>
