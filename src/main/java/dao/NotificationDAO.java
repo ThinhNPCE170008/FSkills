@@ -44,7 +44,7 @@ public class NotificationDAO extends DBContext {
                 //Sender
                 String senderUserName = rs.getString("SenderUserName");
                 String senderDisplayName = rs.getString("senderDisplayName");
-                String senderAvatar = rs.getString("senderAvatar");
+                byte[] senderAvatar = rs.getBytes("senderAvatar");
                 User receiver = new User(receiverID, receiverUserName);
                 User sender = new User(senderUserName, senderDisplayName, senderAvatar);
                 Notification noti = new Notification(notificationId, receiver, sender,
@@ -114,7 +114,7 @@ public class NotificationDAO extends DBContext {
                 //Sender
                 String senderUserName = rs.getString("SenderUserName");
                 String senderDisplayName = rs.getString("senderDisplayName");
-                String senderAvatar = rs.getString("senderAvatar");
+                byte[] senderAvatar = rs.getBytes("senderAvatar");
                 User receiver = new User(receiverID, receiverUserName);
                 User sender = new User(senderUserName, senderDisplayName, senderAvatar);
                 Notification noti = new Notification(notificationId, receiver, sender,
