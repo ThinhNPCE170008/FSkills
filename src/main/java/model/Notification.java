@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
 import java.sql.Timestamp;
@@ -13,21 +9,25 @@ import java.sql.Timestamp;
 public class Notification {
     private int notificationId;
     private User userId;
+    private User userName;
     private String link;
     private String notificationMessage;
     private Boolean status;
     private Timestamp notificationDate;
+    private String type;
 
     public Notification() {
     }
 
-    public Notification(int notificationId, User userId, String link, String notificationMessage, Boolean status, Timestamp notificationDate) {
+    public Notification(int notificationId, User userId, User userName, String link, String notificationMessage, Boolean status, Timestamp notificationDate, String type) {
         this.notificationId = notificationId;
         this.userId = userId;
+        this.userName = userName;
         this.link = link;
         this.notificationMessage = notificationMessage;
         this.status = status;
         this.notificationDate = notificationDate;
+        this.type = type;
     }
 
     public int getNotificationId() {
@@ -44,6 +44,14 @@ public class Notification {
 
     public void setUserId(User userId) {
         this.userId = userId;
+    }
+
+    public User getUserName() {
+        return userName;
+    }
+
+    public void setUserName(User userName) {
+        this.userName = userName;
     }
 
     public String getLink() {
@@ -78,10 +86,17 @@ public class Notification {
         this.notificationDate = notificationDate;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
-        return "Notification{" + "notificationId=" + notificationId + ", userId=" + userId + ", link=" + link + ", notificationMessage=" + notificationMessage + ", status=" + status + ", notificationDate=" + notificationDate + '}';
+        return "Notification{" + "notificationId=" + notificationId + ", userId=" + userId + ", userName=" + userName + ", link=" + link + ", notificationMessage=" + notificationMessage + ", status=" + status + ", notificationDate=" + notificationDate + ", type=" + type + '}';
     }
-    
-    
+
 }
