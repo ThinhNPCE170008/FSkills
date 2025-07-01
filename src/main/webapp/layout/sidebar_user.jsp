@@ -42,9 +42,9 @@
         <a href="${pageContext.request.contextPath}/instructor"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
         <a href="${pageContext.request.contextPath}/instructor/courses?action=list"><i class="bi bi-laptop"></i> <span>Manage Courses</span></a>
         <a href="analytics.jsp"><i class="bi bi-graph-up"></i> <span>Analytics</span></a>
-        <a href="${pageContext.request.contextPath}/feedback"><i class="bi bi-chat-dots"></i> <span>Feedback</span></a>
-        <a href="notifications.jsp"><i class="bi bi-megaphone"></i> <span>Announcement</span></a>
-        <a href="${pageContext.request.contextPath}/instructor/profile/degree"><i class="bi bi-award"></i> <span>Degree</span></a>
+        <a href="feedback.jsp"><i class="bi bi-chat-dots"></i> <span>Feedback</span></a>
+        <a href="${pageContext.request.contextPath}/announcements"><i class="bi bi-megaphone"></i> <span>Announcements</span></a>
+
         <div class="divider"></div>
         <a href="${pageContext.request.contextPath}/instructor/profile" class="user-profile">
           <c:choose>
