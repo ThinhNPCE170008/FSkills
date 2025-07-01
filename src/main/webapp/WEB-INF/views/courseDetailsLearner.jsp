@@ -178,9 +178,12 @@
                                     <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
                                         Enroll Now
                                     </button>
-                                    <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg transition-colors">
-                                        Add to Cart
-                                    </button>
+                                    <form method="POST" action="<%= request.getContextPath()%>/cart">
+                                        <input type="hidden" name="CourseID" value="${course.courseID}">
+                                        <button type="submit" name="CartAction" value="Add" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg transition-colors">
+                                            Add to Cart
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>

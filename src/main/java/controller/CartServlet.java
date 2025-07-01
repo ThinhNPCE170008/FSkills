@@ -5,6 +5,7 @@
 package controller;
 
 import dao.CartDAO;
+import dao.CourseDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -14,14 +15,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.HashMap;
 import model.Cart;
+import model.Course;
 import model.User;
 
 /**
  *
  * @author CE191059 Phuong Gia Lac
  */
-@WebServlet(name = "CartServlet", urlPatterns = {"/Cart"})
+@WebServlet(name = "CartServlet", urlPatterns = {"/cart"})
 public class CartServlet extends HttpServlet {
 
     /**
@@ -64,13 +67,19 @@ public class CartServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
+        CourseDAO courseDAO = new CourseDAO();
         if (user == null) {
             response.sendRedirect(request.getContextPath() + "/login");
         } else {
             CartDAO cDAO = new CartDAO();
             ArrayList<Cart> cartList = cDAO.getLearnerCart(user.getUserId());
-            System.out.println(cartList);
+            HashMap<Integer, Course> courseMap = new HashMap<>();
+            for (Cart c : cartList) {
+                Course course = courseDAO.getCourseByCourseID(c.getCourseID());
+                courseMap.put(c.getCartID(), course);
+            }
             request.setAttribute("list", cartList);
+            request.setAttribute("courseMap", courseMap);
             request.getRequestDispatcher("/WEB-INF/views/cart.jsp").forward(request, response);
         }
     }
@@ -96,8 +105,6 @@ public class CartServlet extends HttpServlet {
             switch (action) {
                 case "Add":
                     courseID = Integer.parseInt(request.getParameter("CourseID"));
-                    System.out.println("CourseID: " + courseID);
-                    System.out.println("UserID: " + user.getUserId());
                     if (cDAO.addToCart(user.getUserId(), courseID) != 0) {
                         response.sendRedirect(request.getContextPath() + "/courseDetail?id=" + courseID);
                     }
