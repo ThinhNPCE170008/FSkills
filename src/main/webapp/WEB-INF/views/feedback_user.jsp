@@ -148,7 +148,7 @@
 <jsp:include page="/layout/sidebar_user.jsp" />
 
 <div class="main-content">
-  <jsp:include page="/layout/header_user.jsp" />
+<%--  <jsp:include page="/layout/header_user.jsp" />--%>
 
   <div class="feedback-container">
     <c:if test="${not empty success}">
