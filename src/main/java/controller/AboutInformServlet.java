@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Role;
 
 @WebServlet(name = "AboutInformServlet", urlPatterns = {"/aboutInform"})
 public class AboutInformServlet extends HttpServlet {
@@ -26,12 +27,21 @@ public class AboutInformServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        User user = (User) request.getSession().getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
+
+        Role role = user.getRole();
+        if (role != Role.ADMIN) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
+            return;
+        }
         request.setCharacterEncoding("UTF-8");
 
         String userName = request.getParameter("userInform");
-        // Lấy tham số editMode từ request
         String editModeParam = request.getParameter("editMode");
-        // Lấy tham số currentListRoleFilter từ request
         String currentListRoleFilter = request.getParameter("currentListRoleFilter");
 
         UserDAO userDAO = new UserDAO();
@@ -41,7 +51,6 @@ public class AboutInformServlet extends HttpServlet {
 
             boolean editMode = Boolean.parseBoolean(editModeParam);
             request.setAttribute("editMode", editMode);
-            // Truyền currentListRoleFilter như một attribute để JSP có thể sử dụng
             request.setAttribute("currentListRoleFilter", currentListRoleFilter);
 
             if (userList == null || userList.isEmpty()) {
@@ -64,6 +73,17 @@ public class AboutInformServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        User user = (User) request.getSession().getAttribute("user");
+        if (user == null) {
+            response.sendRedirect("login");
+            return;
+        }
+
+        Role role = user.getRole();
+        if (role != Role.ADMIN) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
+            return;
+        }
         doGet(request, response);
     }
 

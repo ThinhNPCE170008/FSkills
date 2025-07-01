@@ -176,7 +176,7 @@ public class InstructorModuleServlet extends HttpServlet {
             } else if (action.equalsIgnoreCase("delete")) {
                 int moduleID = Integer.parseInt(request.getParameter("moduleID"));
 
-                int delete = mDao.deleteModule(moduleID);
+                int delete = mDao.updateStatusModule(moduleID);
 
                 if (delete > 0) {
                     List<Module> list = mDao.getAllModuleByCourseID(courseID);

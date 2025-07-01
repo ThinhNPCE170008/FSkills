@@ -84,18 +84,15 @@
                                             </td>
                                             <td style="text-align: center; vertical-align: middle;">
                                                 <c:choose>
-                                                    <c:when test="${deg.image == 'No Image'}">
+                                                    <c:when test="${empty deg.imageDataURI}">
                                                         <span class="text-muted fst-italic">No Image</span>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <div class="d-flex justify-content-center align-items-center"
-                                                             style="height: 100%;">
-                                                            <a href="#" data-bs-toggle="modal"
-                                                               data-bs-target="#zoomImageModal${deg.degreeId}">
-                                                                <img src="${pageContext.request.contextPath}/${deg.image}" class="rounded-3 shadow"
-                                                                     style="max-height: 80px; object-fit: cover; cursor: zoom-in;"/>
-                                                            </a>
-                                                        </div>
+                                                        <a href="#" data-bs-toggle="modal" data-bs-target="#zoomImageModal${deg.degreeId}">
+                                                            <img src="${deg.imageDataURI}"
+                                                                 class="rounded-3 shadow d-block mx-auto"
+                                                                 style="max-height: 80px; object-fit: cover; cursor: zoom-in;" />
+                                                        </a>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>
@@ -187,15 +184,18 @@
                                        oninput="this.setCustomValidity('')">
                             </div>
 
-                            <div class="mb-3">
-                                <label for="degreeImage" class="form-label fw-bold">Image</label>
-                                <input type="file" class="form-control" id="degreeImage" name="degreeImage"
-                                       accept="image/*" onchange="previewImage(event)" required
-                                       oninvalid="this.setCustomValidity('')"
-                                       oninput="this.setCustomValidity('')"
-                                       onblur="setNoImageIfEmpty(this)">
-                                <!-- Ảnh preview -->
-                                <img id="imagePreview" class="img-thumbnail mt-2" style="max-width: 300px; display: none;"/>
+                            <div class="row">
+                                <div class="mb-3">
+                                    <label for="degreeImage" class="form-label fw-bold">Image</label>
+                                    <input type="file"
+                                           class="form-control"
+                                           id="degreeImage"
+                                           name="degreeImage"
+                                           accept="image/*"
+                                           onchange="previewImg(event)">
+                                    <img id="imgPreview" class="mt-2 rounded shadow" style="max-height: 200px; display: none;" alt="Preview">
+                                </div>
+
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -210,40 +210,37 @@
     </div>
     <img id="previewImage" class="img-thumbnail mt-2" style="max-height: 200px;"/>
     <script>
-        function previewImage(event) {
-            const input = event.target;
-            const preview = document.getElementById('imagePreview');
-            const file = input.files[0];
+        function previewImg(event) {
+            const preview = document.getElementById('imgPreview');
+            const file = event.target.files[0];
 
-            if (file) {
+            if (file && preview) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     preview.src = e.target.result;
                     preview.style.display = 'block';
                 };
                 reader.readAsDataURL(file);
-            } else {
-                preview.src = '';
-                preview.style.display = 'none';
             }
         }
     </script>
     <!-- Edit Modal -->
     <c:forEach var="deg" items="${listDegree}">
-        <div class="modal fade" id="editModal${deg.degreeId}" tabindex="-1" aria-labelledby="editModalLabel"
-             aria-hidden="true">
-            <div class="modal-dialog modal-lg">
+        <div class="modal fade" id="editModal${deg.degreeId}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content shadow-lg rounded-4">
-                    <div class="modal-header bg-primary text-white text-center">
-                        <h5 class="modal-title" id="editModalLabel">Edit Announcement - ID: ${deg.degreeId} </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
+                    <!-- Modal Header -->
+                    <div class="modal-header bg-primary text-white rounded-top-4">
+                        <h5 class="modal-title w-100 text-center" id="editModalLabel">Edit Degree - ID: ${deg.degreeId}</h5>
+                        <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
+                    <!-- Form -->
                     <form method="POST" action="${pageContext.request.contextPath}/instructor/profile/degree?action=edit" enctype="multipart/form-data">
                         <input type="hidden" name="action" value="edit">
 
-                        <div class="modal-body">
+                        <div class="modal-body px-4 py-3">
+                            <!-- Degree ID and Link -->
                             <div class="mb-3 row">
                                 <div class="col-md-2">
                                     <label for="degreeId" class="form-label fw-bold">ID</label>
@@ -257,115 +254,153 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-12 mb-3">
-                                <label for="degreeImage" class="form-label fw-bold">Image</label>
-                                <!-- Display existing image -->
+                            <!-- Image Upload -->
+                            <input type="hidden" name="deleteImage" id="deleteImage${deg.degreeId}" value="false" />
+                            <input type="hidden" name="keepOldImage" id="keepOldImage${deg.degreeId}" value="true" />
 
-                                <input type="file" class="form-control" id="announcementImage${deg.degreeId}"
-                                       name="degreeImage" accept="image/*">
-                                <input type="hidden" name="oldImagePath" value="${deg.image != null ? deg.image : ''}">
+                            <div class="mb-4">
+                                <label for="degreeImage" class="form-label fw-bold">Upload New Image</label>
+                                <input type="file"
+                                       class="form-control"
+                                       id="degreeImage${deg.degreeId}"
+                                       name="degreeImage"
+                                       accept="image/*"
+                                       onchange="previewImage(event, '${deg.degreeId}')" />
+                            </div>
 
-
-                                <div class="mt-2" id="currentImageDiv${deg.degreeId}">
+                            <!-- Current Image -->
+                            <c:if test="${not empty deg.imageDataURI}">
+                                <div class="mb-4 text-center" id="currentImageDiv${deg.degreeId}">
                                     <label class="form-label fw-bold">Current Image</label><br>
-                                    <c:choose>
-                                        <c:when test="${not empty deg.image}">
-                                            <a href="#" data-bs-toggle="modal"
-                                               data-bs-target="#zoomImageModal${deg.degreeId}">
-                                                <img src="${pageContext.request.contextPath}/${deg.image}" alt="Current Image" class="img-fluid rounded"
-                                                     style="max-width: 200px; max-height: 200px; object-fit: cover;">
-                                            </a>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <p>No image available</p>
-                                        </c:otherwise>
-                                    </c:choose>
+                                    <img src="${deg.imageDataURI}" alt="Current Image"
+                                         class="img-fluid rounded shadow"
+                                         style="max-height: 500px; object-fit: contain;" />
                                 </div>
-                                <div class="mt-2">
-                                    <label class="form-label fw-bold">Image Preview</label><br>
-                                    <img id="imagePreview${deg.degreeId}" class="img-fluid rounded"
-                                         style="max-width: 200px; max-height: 200px; object-fit: cover; display: none;">
-                                </div>
+                            </c:if>
+
+                            <!-- Image Preview -->
+                            <div class="mb-3 text-center">
+                                <label class="form-label fw-bold">Image Preview</label><br>
+                                <img id="imagePreview${deg.degreeId}" class="img-fluid rounded shadow"
+                                     style="max-height: 500px; object-fit: contain; display: none;" />
                             </div>
                         </div>
 
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Edit</button>
+                        <!-- Modal Footer -->
+                        <div class="modal-footer bg-light rounded-bottom-4">
+                            <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary px-4">Edit</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
 
+
+
         <!-- View Detail Modal -->
-        <div class="modal fade" id="viewModal${deg.degreeId}" tabindex="-1" aria-labelledby="viewModalLabel"
-             aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content shadow-lg rounded-4">
-                    <div class="modal-header bg-info text-white text-center">
-                        <h5 class="modal-title" id="viewModalLabel">View Detail - ID: ${deg.degreeId}</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                    </div>
-
-                    <div class="modal-body">
-                        <div class="mb-3 row">
-                            <div class="col-md-2">
-                                <label class="form-label fw-bold">ID</label>
-                                <input type="text" class="form-control" value="${deg.degreeId}" readonly>
-                            </div>
-                            <div class="col-md-10">
-                                <label class="form-label fw-bold">Link of Degree</label>
-                                <input type="text" class="form-control" value="${deg.link}" readonly>
-                            </div>
-                        </div>
-
-                        <div class="col-md-12 mb-3">
-                            <label class="form-label fw-bold">Current Image</label><br>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${deg.image == 'No Image'}">
-                                        <span class="text-muted fst-italic">No Image</span>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <!-- Click vào ảnh để mở modal -->
-                                        <a href="#"
-                                           data-bs-toggle="modal"
-                                           data-bs-target="#zoomImageModal${deg.degreeId}">
-                                            <img src="${pageContext.request.contextPath}/${deg.image}"
-                                                 class="rounded shadow-sm"
-                                                 style="max-height: 80px; object-fit: cover; cursor: zoom-in;"/>
-                                        </a>
-                                    </c:otherwise>
-                                </c:choose>
-                            </td>
-                        </div>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Zoom Image Modal -->
-        <div class="modal fade" id="zoomImageModal${deg.degreeId}" tabindex="-1" aria-hidden="true">
+        <div class="modal fade" id="viewModal${deg.degreeId}" tabindex="-1" aria-labelledby="viewModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg">
-                <div class="modal-content bg-transparent border-0 d-flex justify-content-center align-items-center">
-                    <div class="modal-body p-0 text-center">
-                        <img src="${pageContext.request.contextPath}/${deg.image}" alt="Zoomed Image" class="img-fluid rounded shadow"
-                             style="max-height: 90vh; max-width: 90vw; object-fit: contain;">
+                <div class="modal-content shadow rounded-4">
+                    <!-- Modal Header -->
+                    <div class="modal-header bg-info text-white rounded-top-4">
+                        <h5 class="modal-title w-100 text-center" id="viewModalLabel">
+                            View Detail - ID: ${deg.degreeId}
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="modal-body px-4 py-3">
+                        <!-- ID and Link -->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">ID</label>
+                                <input type="text" class="form-control-plaintext border rounded px-2" value="${deg.degreeId}" readonly>
+                            </div>
+                            <div class="col-md-9">
+                                <label class="form-label fw-bold">Link of Degree</label>
+                                <input type="text" class="form-control-plaintext border rounded px-2" value="${deg.link}" readonly>
+                            </div>
+                        </div>
+
+                        <!-- Image -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Current Image</label>
+                            <c:choose>
+                                <c:when test="${empty deg.imageDataURI}">
+                                    <div class="alert alert-warning text-center mt-2">No Image Available</div>
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="text-center">
+                                        <img src="${deg.imageDataURI}" alt="Degree Image" class="img-fluid rounded shadow-sm" style="max-height: 300px;">
+                                    </div>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="modal-footer bg-light rounded-bottom-4">
+                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
         </div>
+
+
+        <div class="modal fade" id="zoomImageModal${deg.degreeId}" tabindex="-1" aria-labelledby="zoomImageModalLabel${deg.degreeId}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content border-0 shadow-lg rounded-4">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title" id="zoomImageModalLabel${deg.degreeId}">Image Preview</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex justify-content-center">
+                        <img src="${deg.imageDataURI}" alt="Zoomed Image" class="img-fluid rounded shadow" style="max-height: 600px; object-fit: contain;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
 
         <!-- JavaScript for image preview -->
         <script>
-            document.getElementById("announcementImage${deg.degreeId}").addEventListener("change", function (event) {
+            function removeCurrentImage(id) {
+                const div = document.getElementById("currentImageDiv" + id);
+                const inputDelete = document.getElementById("deleteImage" + id);
+                const inputKeep = document.getElementById("keepOldImage" + id); // Thêm dòng này
+
+                if (div)
+                    div.style.display = "none";
+                if (inputDelete)
+                    inputDelete.value = "true";
+                if (inputKeep)
+                    inputKeep.value = "false"; // Cực kỳ quan trọng: cho servlet biết là không giữ ảnh
+            }
+
+            function previewImage(event, id) {
+                const input = event.target;
+                const preview = document.getElementById("imagePreview" + id);
+                const currentImageDiv = document.getElementById("currentImageDiv" + id);
+
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        preview.src = e.target.result;
+                        preview.style.display = "block";
+                        if (currentImageDiv)
+                            currentImageDiv.style.display = "none";
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                } else {
+                    preview.style.display = "none";
+                    if (currentImageDiv)
+                        currentImageDiv.style.display = "block";
+                }
+            }
+            document.getElementById("degreeImage${deg.degreeId}").addEventListener("change", function (event) {
                 const preview = document.getElementById("imagePreview${deg.degreeId}");
                 const currentImageDiv = document.getElementById("currentImageDiv${deg.degreeId}"); // Sử dụng ID cụ thể
                 const file = event.target.files[0];
@@ -381,6 +416,13 @@
                     if (currentImageDiv) {
                         currentImageDiv.style.display = "block"; // Hiển thị ảnh hiện tại nếu không có ảnh mới
                     }
+                }
+            });
+            const zoomModal = document.getElementById('zoomImageModal${deg.degreeId}');
+            zoomModal.addEventListener('click', function (e) {
+                if (e.target === zoomModal) {
+                    const modalInstance = bootstrap.Modal.getInstance(zoomModal);
+                    modalInstance.hide();
                 }
             });
         </script>

@@ -21,6 +21,9 @@
 
         <style>
             /* Global styles for Inter font and background */
+            html, body {
+                overflow-x: hidden;
+            }
             body {
                 font-family: 'Inter', sans-serif;
                 background-color: #f0f2f5; /* Adjusted to match other admin pages */
@@ -49,8 +52,9 @@
             }
 
             .sidebar-container:hover {
-                width: 250px;
+                width: 200px;
             }
+
 
             .sidebar-container .sidebar-logo span,
             .sidebar-container .nav-link span,
@@ -74,16 +78,17 @@
                 margin-right: 8px;
             }
 
-            /* Apply margin-left to the main content area */
             .main-content {
-                margin-left: 80px; /* Initial margin for collapsed sidebar */
-                flex-grow: 1; /* Allow main content to take remaining space */
+                margin-left: 80px;
+                flex-grow: 1;
                 transition: margin-left 0.3s ease-in-out;
-                padding: 20px; /* Consistent padding */
-                display: flex; /* Use flex to align content within main-content */
-                flex-direction: column; /* Stack items vertically */
-                align-items: center; /* Center horizontally */
+                padding: 20px 10px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                overflow-x: hidden;
             }
+
 
             /* Adjust main content margin when sidebar expands */
             .sidebar-container:hover ~ .main-content {
@@ -107,18 +112,17 @@
                 }
             }
 
-
-            /* Existing userDetails.jsp styles - ADJUSTED FOR COMPACTNESS AND BOXES */
             .container {
                 background-color: #ffffff;
                 border-radius: 10px;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                padding: 25px; /* Reduced padding */
+                padding: 25px;
                 width: 100%;
-                max-width: 700px; /* Further reduced max-width for a more compact look */
+                max-width: 100%;
                 box-sizing: border-box;
                 margin-bottom: 20px;
             }
+
             h2 {
                 color: #333;
                 text-align: center;
@@ -236,25 +240,21 @@
                 padding: 8px 12px;
                 box-sizing: border-box;
                 line-height: 1.4;
-                color: #333; /* Make text color slightly darker for non-editable fields */
-                font-weight: normal; /* Ensure text inside box is normal weight */
+                color: #333;
+                font-weight: normal;
             }
             /* Specific styling for the label of non-editable fields */
             .detail-item.non-editable .detail-label {
                 font-weight: bold;
                 color: #555;
             }
-            /* Remove the unnecessary font-weight reset on detail-value */
-            /* #displayUsername, #displayUserCreateDate, #displayRole, #displayReports {
-                font-weight: normal;
-            } */
 
 
             /* Style cho lỗi */
             .error-message {
                 color: red;
                 font-size: 0.85em; /* Smaller error message font */
-                margin-left: 0; /* Remove left margin for better alignment in compact layout */
+                margin-left: 0;
                 display: block;
                 margin-top: 3px; /* Reduced margin */
             }
@@ -303,7 +303,6 @@
                 <c:if test="${editMode != true}">display: none;</c:if>
                 }
 
-                /* Responsive adjustments for the grid */
                 @media (max-width: 600px) { /* Adjust breakpoint as needed */
                     .detail-grid {
                         grid-template-columns: 1fr; /* Single column layout on smaller screens */
@@ -318,11 +317,11 @@
             </style>
         </head>
         <body>
-            <jsp:include page="/layout/sidebar_admin.jsp" />
+        <jsp:include page="/layout/sidebar_admin.jsp" />
 
 
 
-            <div class="flex flex-grow w-full">
+        <div class="flex flex-grow w-full">
 
             <div class="main-content px-5 py-5">
                 <div class="container px-5">
@@ -334,11 +333,15 @@
 
                         <span class="flex-grow text-center">User Information Detail</span>
 
-                        <button type="button"
-                                class="text-white text-sm font-medium rounded" style="background-color: #fd7e14; padding: 8px 16px;" id="editButton"
-                                onclick="window.location.href = 'aboutInform?userInform=${requestScope.currentUsername != null ? requestScope.currentUsername : param.userInform}&editMode=true'">
-                            Edit
-                        </button>
+                        <c:if test="${editMode != true}">
+                            <button type="button"
+                                    class="text-white text-sm font-medium rounded"
+                                    style="background-color: #fd7e14; padding: 8px 16px;" id="editButton"
+                                    onclick="window.location.href = 'aboutInform?userInform=${requestScope.currentUsername != null ? requestScope.currentUsername : param.userInform}&editMode=true'">
+                                Edit
+                            </button>
+                        </c:if>
+
                     </h2>
                     <c:if test="${not empty globalMessage}">
                         <p class="global-message <c:if test="${not empty successMessage}">success-message</c:if> <c:if test="${not empty errorMessages}">error-global-message</c:if>">
@@ -447,7 +450,7 @@
         </div>
 
         <jsp:include page="/layout/toast.jsp" />
-       <%-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> --%>
+        <%-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> --%>
     </body>
 
 </html>

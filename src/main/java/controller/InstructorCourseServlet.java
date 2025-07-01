@@ -5,6 +5,7 @@ import dao.CourseDAO;
 import dao.NotificationDAO;
 import dao.UserDAO;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -221,6 +222,47 @@ public class InstructorCourseServlet extends HttpServlet {
                     return;
                 }
 
+                if (courseSummary == null || courseSummary.trim().isEmpty()) {
+                    User acc = uDao.getByUserID(userID);
+                    List<Course> list = cDao.getCourseByUserID(acc.getUserId());
+
+                    request.setAttribute("listCourse", list);
+                    request.setAttribute("err", "Create failed: Course Summary is required.");
+                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                    return;
+                }
+
+                if (courseSummary.contains("  ")) {
+                    User acc = uDao.getByUserID(userID);
+                    List<Course> list = cDao.getCourseByUserID(acc.getUserId());
+
+                    request.setAttribute("listCourse", list);
+                    request.setAttribute("err", "Create failed: Course Summary must not contain consecutive spaces.");
+                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                    return;
+                }
+
+                if (courseHighlight == null || courseHighlight.trim().isEmpty()) {
+                    User acc = uDao.getByUserID(userID);
+                    List<Course> list = cDao.getCourseByUserID(acc.getUserId());
+
+                    request.setAttribute("listCourse", list);
+                    request.setAttribute("err", "Create failed: Course Highlight is required.");
+                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                    return;
+                }
+
+                if (courseHighlight.contains("  ")) {
+                    User acc = uDao.getByUserID(userID);
+                    List<Course> list = cDao.getCourseByUserID(acc.getUserId());
+
+                    request.setAttribute("listCourse", list);
+                    request.setAttribute("err", "Create failed: Course Highlight must not contain consecutive spaces.");
+                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                    return;
+                }
+
+
                 int insert = cDao.insertCourse(courseName, categoryId, userID, salePrice, originalPrice, isSale, imageInputStream, courseSummary, courseHighlight);
 
                 if (insert > 0) {
@@ -248,6 +290,12 @@ public class InstructorCourseServlet extends HttpServlet {
 
                 if(filePartUpdate != null && filePartUpdate.getSize() > 0) {
                     imageInputStream = filePartUpdate.getInputStream();
+                } else {
+                    Course existCourse = cDao.getCourseByCourseID(courseID);
+                    byte[] imageBytes = existCourse.getCourseImageLocation();
+                    if (imageBytes != null) {
+                        imageInputStream = new ByteArrayInputStream(imageBytes);
+                    }
                 }
 
                 int isSale = request.getParameter("isSale") != null ? 1 : 0;
@@ -305,6 +353,46 @@ public class InstructorCourseServlet extends HttpServlet {
 
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Update failed: Sale price is higher than original price!");
+                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                    return;
+                }
+
+                if (courseSummary == null || courseSummary.trim().isEmpty()) {
+                    User acc = uDao.getByUserID(userID);
+                    List<Course> list = cDao.getCourseByUserID(acc.getUserId());
+
+                    request.setAttribute("listCourse", list);
+                    request.setAttribute("err", "Create failed: Course Summary is required.");
+                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                    return;
+                }
+
+                if (courseSummary.contains("  ")) {
+                    User acc = uDao.getByUserID(userID);
+                    List<Course> list = cDao.getCourseByUserID(acc.getUserId());
+
+                    request.setAttribute("listCourse", list);
+                    request.setAttribute("err", "Create failed: Course Summary must not contain consecutive spaces.");
+                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                    return;
+                }
+
+                if (courseHighlight == null || courseHighlight.trim().isEmpty()) {
+                    User acc = uDao.getByUserID(userID);
+                    List<Course> list = cDao.getCourseByUserID(acc.getUserId());
+
+                    request.setAttribute("listCourse", list);
+                    request.setAttribute("err", "Create failed: Course Highlight is required.");
+                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                    return;
+                }
+
+                if (courseHighlight.contains("  ")) {
+                    User acc = uDao.getByUserID(userID);
+                    List<Course> list = cDao.getCourseByUserID(acc.getUserId());
+
+                    request.setAttribute("listCourse", list);
+                    request.setAttribute("err", "Create failed: Course Highlight must not contain consecutive spaces.");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 }

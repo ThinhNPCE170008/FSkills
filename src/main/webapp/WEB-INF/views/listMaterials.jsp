@@ -71,7 +71,7 @@
         <jsp:include page="/layout/header_user.jsp"/>
 
         <main class="main">
-        <div class="container py-2 ps-3">
+        <div class="container my-5" style="margin-left: 2500px;">
             <div class="container py-2 ps-3">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">

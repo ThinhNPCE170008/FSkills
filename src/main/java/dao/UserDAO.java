@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Timestamp;
+import model.PasswordResetToken;
 
 import model.UserGoogle;
 
@@ -30,10 +31,10 @@ public class UserDAO extends DBContext {
 
     public boolean checkPassword(int userId, String oldPassword) throws Exception {
         String sql = "SELECT COUNT(*) FROM Users WHERE userId = ? AND password = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
             ps.setString(2, hashMD5(oldPassword));
-            try (ResultSet rs = ps.executeQuery()) {
+            try ( ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;
                 }
@@ -44,7 +45,7 @@ public class UserDAO extends DBContext {
 
     public void updatePassword(int userId, String newPassword) throws Exception {
         String sql = "UPDATE Users SET password = ? WHERE userId = ?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, hashMD5(newPassword));
             ps.setInt(2, userId);
             ps.executeUpdate();
@@ -91,20 +92,20 @@ public class UserDAO extends DBContext {
         }
         return list;
     }
-    
+
     public List<User> getAllLearners() {
         List<User> list = new ArrayList<>();
         String sql = "SELECT UserID, UserName, DisplayName, Role, BanStatus, ReportAmount FROM Users WHERE Role = ? ORDER BY ReportAmount DESC";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, Role.LEARNER.ordinal()); 
+            ps.setInt(1, Role.LEARNER.ordinal());
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 User u = new User();
                 u.setUserId(rs.getInt("UserID"));
                 u.setUserName(rs.getString("UserName"));
                 u.setDisplayName(rs.getString("DisplayName"));
-                u.setRole(Role.LEARNER); 
+                u.setRole(Role.LEARNER);
                 int banInt = rs.getInt("BanStatus");
                 switch (banInt) {
                     case 0:
@@ -128,14 +129,14 @@ public class UserDAO extends DBContext {
         String sql = "SELECT UserID, UserName, DisplayName, Role, BanStatus, ReportAmount FROM Users WHERE Role = ? ORDER BY ReportAmount DESC";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, Role.INSTRUCTOR.ordinal()); 
+            ps.setInt(1, Role.INSTRUCTOR.ordinal());
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 User u = new User();
                 u.setUserId(rs.getInt("UserID"));
                 u.setUserName(rs.getString("UserName"));
                 u.setDisplayName(rs.getString("DisplayName"));
-                u.setRole(Role.INSTRUCTOR); 
+                u.setRole(Role.INSTRUCTOR);
                 int banInt = rs.getInt("BanStatus");
                 switch (banInt) {
                     case 0:
@@ -193,14 +194,14 @@ public class UserDAO extends DBContext {
         }
         return users;
     }
-    
+
     public List<User> searchLearnersByName(String searchName) throws SQLException {
         List<User> users = new ArrayList<>();
         String sql = "SELECT UserID, UserName, DisplayName, Role, BanStatus, ReportAmount FROM Users WHERE Role = ? AND LOWER(UserName) LIKE LOWER(?) ORDER BY ReportAmount DESC";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, Role.LEARNER.ordinal());
             ps.setString(2, "%" + searchName + "%");
-            try (ResultSet rs = ps.executeQuery()) {
+            try ( ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     User u = new User();
                     u.setUserId(rs.getInt("UserID"));
@@ -227,10 +228,10 @@ public class UserDAO extends DBContext {
     public List<User> searchInstructorsByName(String searchName) throws SQLException {
         List<User> users = new ArrayList<>();
         String sql = "SELECT UserID, UserName, DisplayName, Role, BanStatus, ReportAmount FROM Users WHERE Role = ? AND LOWER(UserName) LIKE LOWER(?) ORDER BY ReportAmount DESC";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, Role.INSTRUCTOR.ordinal());
             ps.setString(2, "%" + searchName + "%");
-            try (ResultSet rs = ps.executeQuery()) {
+            try ( ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     User u = new User();
                     u.setUserId(rs.getInt("UserID"));
@@ -309,10 +310,10 @@ public class UserDAO extends DBContext {
     }
 
     public boolean updateUser(User user) throws SQLException {
-         String sql = "UPDATE Users SET DisplayName = ?, Email = ?, Role = ?, BanStatus = ?, ReportAmount = ?, DateOfBirth = ?, info = ?, PhoneNumber = ? WHERE UserName = ?";
+        String sql = "UPDATE Users SET DisplayName = ?, Email = ?, Role = ?, BanStatus = ?, ReportAmount = ?, DateOfBirth = ?, info = ?, PhoneNumber = ? WHERE UserName = ?";
 
         try ( PreparedStatement ps = conn.prepareStatement(sql)) {
-            int i = 1; //dùng i thì ít gây ra lôi null hon 
+            int i = 1; //dùng i thì ít gây ra lôi null hon
             ps.setString(i++, user.getDisplayName());
             ps.setString(i++, user.getEmail());
             if (user.getRole() != null) {
@@ -389,7 +390,7 @@ public class UserDAO extends DBContext {
                 int gender = rs.getInt("Gender");
                 Timestamp BirthOfDay = rs.getTimestamp("DateOfBirth");
                 Timestamp TimeCreate = rs.getTimestamp("UserCreateDate");
-                String Avatar = rs.getString("Avatar");
+                byte[] Avatar = rs.getBytes("Avatar");
                 String info = rs.getString("info");
                 int banInt = rs.getInt("BanStatus");
                 Ban Ban = null;
@@ -466,7 +467,7 @@ public class UserDAO extends DBContext {
                 user.setGender(rs.getInt("Gender"));
                 user.setDateOfBirth(rs.getTimestamp("DateOfBirth"));
                 user.setUserCreateDate(rs.getTimestamp("UserCreateDate"));
-                user.setAvatar(rs.getString("Avatar"));
+                user.setAvatar(rs.getBytes("Avatar"));
                 user.setInfo(rs.getNString("Info"));
                 user.setReports(rs.getInt("ReportAmount"));
                 user.setPhone(rs.getString("PhoneNumber"));
@@ -520,7 +521,7 @@ public class UserDAO extends DBContext {
                 int gender = rs.getInt("Gender");
                 Timestamp birthOfDay = rs.getTimestamp("DateOfBirth");
                 Timestamp timeCreate = rs.getTimestamp("UserCreateDate");
-                String avatar = rs.getString("Avatar");
+                byte[] avatar = rs.getBytes("Avatar");
                 String info = rs.getString("info");
                 int banInt = rs.getInt("BanStatus");
                 Ban Ban = null;
@@ -580,7 +581,7 @@ public class UserDAO extends DBContext {
                 int gender = rs.getInt("Gender");
                 Timestamp BirthOfDay = rs.getTimestamp("DateOfBirth");
                 Timestamp TimeCreate = rs.getTimestamp("UserCreateDate");
-                String Avatar = rs.getString("Avatar");
+                byte[] Avatar = rs.getBytes("Avatar");
                 String info = rs.getString("info");
                 int banInt = rs.getInt("BanStatus");
                 Ban Ban = null;
@@ -638,7 +639,7 @@ public class UserDAO extends DBContext {
                 int gender = rs.getInt("Gender");
                 Timestamp BirthOfDay = rs.getTimestamp("DateOfBirth");
                 Timestamp TimeCreate = rs.getTimestamp("UserCreateDate");
-                String Avatar = rs.getString("Avatar");
+                byte[] Avatar = rs.getBytes("Avatar");
                 String info = rs.getString("info");
                 int banInt = rs.getInt("BanStatus");
                 Ban Ban = null;
@@ -684,7 +685,7 @@ public class UserDAO extends DBContext {
     }
 
     public int insertGoogle(UserGoogle user) {
-        String sql = "INSERT INTO Users (UserName, DisplayName, Email, Password, Role, Avatar, GoogleID, IsVerified) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Users (UserName, DisplayName, Email, Password, Role, AvatarGoogle, GoogleID, IsVerified) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             String email = user.getEmail();
@@ -693,7 +694,7 @@ public class UserDAO extends DBContext {
             String googleID = user.getId();
 
             String username = email.split("@")[0];
-            String password = generateRandomPassword(10); // tạo password ngẫu nhiên
+            String password = generateRandomPassword(10);
 
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, username);
@@ -703,7 +704,7 @@ public class UserDAO extends DBContext {
             ps.setInt(5, 0);
             ps.setString(6, picture);
             ps.setString(7, googleID);
-            ps.setBoolean(8, true); // IsVerified
+            ps.setBoolean(8, true);
 
             int result = ps.executeUpdate();
             return result > 0 ? 1 : 0;
@@ -724,6 +725,72 @@ public class UserDAO extends DBContext {
         }
 
         return sb.toString();
+    }
+
+    public void saveTokenForgotPassword(int userId, String token, Timestamp createdAt, Timestamp expiresAt) {
+        String sql = "INSERT INTO PasswordResetTokens (UserID, token, created_at, expires_at) VALUES (?, ?, ?, ?)";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, userId);
+            ps.setString(2, token);
+            ps.setTimestamp(3, createdAt);
+            ps.setTimestamp(4, expiresAt);
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public PasswordResetToken findValidTokenForgotPassword(String token) {
+        String sql = "SELECT * FROM PasswordResetTokens WHERE token = ? AND expires_at > DATEADD(HOUR, 7, GETUTCDATE())";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, token);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                PasswordResetToken prt = new PasswordResetToken();
+                prt.setId(rs.getInt("id"));
+                prt.setUserId(rs.getInt("UserID"));
+                prt.setToken(token);
+                return prt;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public void deleteTokenForgotPassword(int userId) {
+        String sql = "DELETE FROM PasswordResetTokens WHERE UserID = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, userId);
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public int updatePasswordAfterForgot(int userId, String newPassword) {
+        String hashPass = hashMD5(newPassword);
+        String sql = "UPDATE Users SET Password = ? WHERE UserID = ?";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, hashPass);
+            ps.setInt(2, userId);
+
+            int result = ps.executeUpdate();
+            return result > 0 ? 1 : 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
     }
 
     public int saveToken(int userID, String token, Timestamp expiryDate) {
@@ -773,7 +840,7 @@ public class UserDAO extends DBContext {
                 int gender = rs.getInt("Gender");
                 Timestamp BirthOfDay = rs.getTimestamp("DateOfBirth");
                 Timestamp TimeCreate = rs.getTimestamp("UserCreateDate");
-                String Avatar = rs.getString("Avatar");
+                byte[] Avatar = rs.getBytes("Avatar");
                 String info = rs.getString("info");
                 int banInt = rs.getInt("BanStatus");
                 Ban Ban = null;
@@ -859,9 +926,25 @@ public class UserDAO extends DBContext {
 //            int result = dao.updateGoogleID(acc);
 //            System.out.println(result);
 //        }
-
 //        UserDAO dao = new UserDAO();
 //        User user = dao.getByUserID(2);
 //        System.out.println(user);
+
+//        UserDAO dao = new UserDAO();
+//        PasswordResetToken pass = dao.findValidTokenForgotPassword("60b9f904-4887-41ab-bf7d-8cf2f3e8f499");
+//        System.out.println(pass);
+
+//        String googleID = "123123123";
+//        String  email = "abc@gmail.com";
+//
+//        UserDAO userDao = new UserDAO();
+//        UserGoogle user = new UserGoogle();
+//        user.setName("heroic");
+//        user.setEmail(email);
+//        user.setPicture("https://www.facebook.com/");
+//        user.setId(googleID);
+//
+//        int insert = userDao.insertGoogle(user);
+//        System.out.println(insert);
     }
 }

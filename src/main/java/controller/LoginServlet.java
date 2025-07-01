@@ -92,7 +92,7 @@ public class LoginServlet extends HttpServlet {
                 user = dao.findByEmail(userGoogle.getEmail());
                 if (user == null) {
                     dao.insertGoogle(userGoogle);
-                    user = dao.findByGoogleID(userGoogle.getId()); // Lấy lại user đã insert để lưu vào session
+                    user = dao.findByGoogleID(userGoogle.getId());
                 } else {
                     user.setGoogleID(userGoogle.getId());
                     dao.updateGoogleID(user);
@@ -132,11 +132,11 @@ public class LoginServlet extends HttpServlet {
                 }
             }
 
-            String turnstileSiteKey = System.getenv("CLOUDFLARE_SITE_KEY");
-            request.setAttribute("turnstileSiteKey", turnstileSiteKey);
+//            String turnstileSiteKey = System.getenv("CLOUDFLARE_SITE_KEY");
+//            request.setAttribute("turnstileSiteKey", turnstileSiteKey);
 
             request.setAttribute("usernameCookieSaved", usernameCookieSaved);
-            request.setAttribute("turnstileSiteKey", turnstileSiteKey);
+//            request.setAttribute("turnstileSiteKey", turnstileSiteKey);
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }
     }

@@ -245,9 +245,11 @@
                     <div class="page-header flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
                         <h2 class="text-2xl font-bold text-gray-800 m-0">Account List</h2>
                         <div class="header-actions flex gap-3">
-                            <a href="${pageContext.request.contextPath}/admin" class="text-gray-600 font-medium py-2 px-3 rounded-md hover:bg-gray-100 transition duration-200">
-                                Return to Dashboard
-                            </a>
+                            <form action="${pageContext.request.contextPath}/admin" method="get" class="inline">
+                                <button type="submit" class="bg-primary text-white py-3 px-5 rounded-lg hover:bg-primary-dark transition duration-200 font-medium">
+                                    <i class="bi bi-arrow-left mr-2"></i>Return to Dashboard
+                                </button>
+                            </form>
                         </div>
                     </div>
                     <c:if test="${not empty sessionScope.deleteComplete}">

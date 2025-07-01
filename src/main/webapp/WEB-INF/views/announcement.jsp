@@ -263,8 +263,6 @@
                                            accept="image/*"
                                            onchange="previewImage(event, '${ann.annoucementID}')" />
 
-                                    <input type="hidden" name="deleteImage" id="deleteImage${ann.annoucementID}" value="false" />
-
                                     <c:if test="${not empty ann.imageDataURI}">
                                         <div class="mt-2 position-relative" id="currentImageDiv${ann.annoucementID}">
                                             <label class="form-label fw-bold">Current Image</label><br>
