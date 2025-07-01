@@ -10,14 +10,14 @@ public class Profile {
     private String phoneNumber;
     private String info;
     private Timestamp dateOfBirth;
-    private String avatar;
+    private byte[] avatar;
     private boolean gender; // Giữ boolean cho gender như trong Profile cũ
 
     public Profile() {
     }
 
     public Profile(int userId, String displayName, String email, String phoneNumber,
-                   String info, Timestamp dateOfBirth, String avatar, boolean gender) {
+                   String info, Timestamp dateOfBirth, byte[] avatar, boolean gender) {
         this.userId = userId;
         this.displayName = displayName;
         this.email = email;
@@ -78,11 +78,11 @@ public class Profile {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public String getAvatar() {
+    public byte[] getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(String avatar) {
+    public void setAvatar(byte[] avatar) {
         this.avatar = avatar;
     }
 
@@ -118,8 +118,12 @@ public class Profile {
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", info='" + info + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
-                ", avatar='" + avatar + '\'' +
+                ", avatar='" + (avatar != null ? "binary data" : "null") + '\'' +
                 ", gender=" + gender +
                 '}';
+    }
+
+    public String getImageDataURI() {
+        return util.ImageBase64.toDataURI(avatar, "image/jpeg");
     }
 }

@@ -4,9 +4,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <header class="header bg-white shadow-md p-4 rounded-b-lg">
     <div class="flex items-center justify-between">
-        <div class="w-1/4">
-            <!-- Logo removed as per requirement -->
-        </div>
+        <%--        <div class="w-1/4">--%>
+        <%--            --%>
+        <%--        </div>--%>
 
         <div class="flex-grow flex justify-center">
             <div class="relative w-full max-w-xl">
@@ -124,7 +124,7 @@
                     <%-- Display user avatar if available --%>
                     <c:choose>
                         <c:when test="${not empty sessionScope.user.avatar}">
-                            <img src="${sessionScope.user.avatar}" alt="User Avatar" class="w-8 h-8 rounded-full">
+                            <img src="${sessionScope.user.imageDataURI}" alt="User Avatar" class="w-8 h-8 rounded-full">
                         </c:when>
                         <c:otherwise>
                             <i class="fas fa-user"></i>
@@ -152,7 +152,8 @@
         const notificationBell = document.getElementById('notification-bell');
         const notificationPopup = document.getElementById('notification-popup');
 
-        notificationBell.addEventListener('click', function () {
+        notificationBell.addEventListener('click', function(event) {
+            event.stopPropagation();
             notificationPopup.classList.toggle('hidden');
         });
 
