@@ -192,7 +192,7 @@
                                            id="degreeImage"
                                            name="degreeImage"
                                            accept="image/*"
-                                           onchange="previewImg(event)">
+                                           onchange="previewImg(event)" required>
                                     <img id="imgPreview" class="mt-2 rounded shadow" style="max-height: 200px; display: none;" alt="Preview">
                                 </div>
 
