@@ -52,7 +52,7 @@ public class UserDAO extends DBContext {
         }
     }
 
-    public List<User> getAllStudents() {
+    public List<User> getAllStudents() { //hien tai chua dung
         List<User> list = new ArrayList<>();
         String sql = "select UserID, UserName, DisplayName, Role, BanStatus, ReportAmount from Users Order by ReportAmount Desc";
         try {

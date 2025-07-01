@@ -116,7 +116,7 @@
 </head>
 <body>
 <div class="container-detail">
-    <a href="${pageContext.request.contextPath}/guest/announcements"
+    <a href="${pageContext.request.contextPath}/announcements"
        class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-full
        hover:bg-blue-700 transition-colors shadow-md mb-6 text-lg">
         <i class="fa-solid fa-arrow-left-long mr-2"></i> Return

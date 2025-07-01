@@ -68,7 +68,7 @@
 <%--                    <a href="#home" class="text-gray-600 hover:text-primary font-medium transition-colors">Home</a>--%>
 <%--                    <a href="#subjects" class="text-gray-600 hover:text-primary font-medium transition-colors">Subjects</a>--%>
 <%--                    <a href="#courses" class="text-gray-600 hover:text-primary font-medium transition-colors">Courses</a>--%>
-<%--                    <a href="${pageContext.request.contextPath}/guest/announcements" class="text-gray-600 hover:text-primary font-medium transition-colors">Announcement</a>--%>
+<%--                    <a href="${pageContext.request.contextPath}/announcements" class="text-gray-600 hover:text-primary font-medium transition-colors">Announcement</a>--%>
 <%--                </nav>--%>
 
     <div class="flex-grow flex justify-center">
