@@ -11,8 +11,7 @@
                 <goal>package</goal>
             </goals>
             <properties>
-                
-                <netbeans.deploy.clientUrlPart>/login</netbeans.deploy.clientUrlPart>
+                <netbeans.deploy.clientUrlPart>/login</netbeans.deploy.clientUrlPart
             </properties>
         </action>
         <action>
@@ -28,7 +27,7 @@
             <properties>
                 <netbeans.deploy.debugmode>true</netbeans.deploy.debugmode>
                 <netbeans.deploy>true</netbeans.deploy>
-                <netbeans.deploy.clientUrlPart>/login</netbeans.deploy.clientUrlPart>
+                <netbeans.deploy.clientUrlPart></netbeans.deploy.clientUrlPart>
             </properties>
         </action>
         <action>
@@ -44,7 +43,7 @@
             <properties>
                 <netbeans.deploy>true</netbeans.deploy>
                 <netbeans.deploy.profilemode>true</netbeans.deploy.profilemode>
-                <netbeans.deploy.clientUrlPart>/login</netbeans.deploy.clientUrlPart>
+                <netbeans.deploy.clientUrlPart></netbeans.deploy.clientUrlPart>
             </properties>
         </action>
     </actions>

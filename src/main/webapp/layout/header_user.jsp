@@ -4,9 +4,9 @@
 
 <header class="header bg-white shadow-md p-4 rounded-b-lg">
     <div class="flex items-center justify-between">
-        <div class="w-1/4">
-            <!-- Logo removed as per requirement -->
-        </div>
+        <%--        <div class="w-1/4">--%>
+        <%--            --%>
+        <%--        </div>--%>
 
         <div class="flex-grow flex justify-center">
             <div class="relative w-full max-w-xl">
@@ -73,11 +73,12 @@
     document.addEventListener('DOMContentLoaded', function() {
         const notificationBell = document.getElementById('notification-bell');
         const notificationPopup = document.getElementById('notification-popup');
-        
-        notificationBell.addEventListener('click', function() {
+
+        notificationBell.addEventListener('click', function(event) {
+            event.stopPropagation(); // Ngăn sự kiện click lan ra ngoài
             notificationPopup.classList.toggle('hidden');
         });
-        
+
         // Close popup when clicking outside
         document.addEventListener('click', function(event) {
             if (!notificationBell.contains(event.target) && !notificationPopup.contains(event.target)) {
