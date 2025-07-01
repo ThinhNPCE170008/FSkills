@@ -12,7 +12,7 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.sql.SQLException;
 
-@WebServlet(name = "ProfileServlet", urlPatterns = {"/learner/profile", "/instructor/profile", "/editProfile", "/changePassword"})
+@WebServlet(name = "ProfileServlet", urlPatterns = {"/learner/profile", "/instructor/profile", "/admin/profile", "/editProfile", "/changePassword"})
 @MultipartConfig(
         fileSizeThreshold = 1024 * 1024,
         maxFileSize = 1024 * 1024 * 10,
@@ -42,9 +42,12 @@ public class ProfileServlet extends HttpServlet {
         } else if (requestURI.startsWith(contextPath + "/instructor/profile") && !"INSTRUCTOR".equalsIgnoreCase(user.getRole().toString())) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Only instructors can access this page.");
             return;
+        } else if (requestURI.startsWith(contextPath + "/admin/profile") && !"ADMIN".equalsIgnoreCase(user.getRole().toString())) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Only administrators can access this page.");
+            return;
         } else if ((requestURI.equals(contextPath + "/editProfile") || requestURI.equals(contextPath + "/changePassword")) 
-                && !("LEARNER".equalsIgnoreCase(user.getRole().toString()) || "INSTRUCTOR".equalsIgnoreCase(user.getRole().toString()))) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Only learners or instructors can access this page.");
+                && !("LEARNER".equalsIgnoreCase(user.getRole().toString()) || "INSTRUCTOR".equalsIgnoreCase(user.getRole().toString()) || "ADMIN".equalsIgnoreCase(user.getRole().toString()))) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Only learners, instructors, or administrators can access this page.");
             return;
         }
 
@@ -124,9 +127,12 @@ public class ProfileServlet extends HttpServlet {
         } else if (requestURI.startsWith(contextPath + "/instructor/profile") && !"INSTRUCTOR".equalsIgnoreCase(user.getRole().toString())) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Only instructors can access this page.");
             return;
+        } else if (requestURI.startsWith(contextPath + "/admin/profile") && !"ADMIN".equalsIgnoreCase(user.getRole().toString())) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Only administrators can access this page.");
+            return;
         } else if ((requestURI.equals(contextPath + "/editProfile") || requestURI.equals(contextPath + "/changePassword")) 
-                && !("LEARNER".equalsIgnoreCase(user.getRole().toString()) || "INSTRUCTOR".equalsIgnoreCase(user.getRole().toString()))) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Only learners or instructors can access this page.");
+                && !("LEARNER".equalsIgnoreCase(user.getRole().toString()) || "INSTRUCTOR".equalsIgnoreCase(user.getRole().toString()) || "ADMIN".equalsIgnoreCase(user.getRole().toString()))) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Only learners, instructors, or administrators can access this page.");
             return;
         }
 
@@ -169,17 +175,6 @@ public class ProfileServlet extends HttpServlet {
             }
             profile.setGender(Boolean.parseBoolean(request.getParameter("gender")));
 
-            Part filePart = request.getPart("avatar");
-            if (filePart != null && filePart.getSize() > 0) {
-                String fileName = processFileUpload(filePart, user.getUserId());
-                profile.setAvatar(fileName);
-            } else {
-                Profile oldProfile = profileDAO.getProfile(user.getUserId());
-                if (oldProfile != null) {
-                    profile.setAvatar(oldProfile.getAvatar());
-                }
-            }
-
             if (!profile.validateEmail() || !profile.validatePhoneNumber() || !profile.validateDisplayName()) {
                 request.setAttribute("profile", profile);
                 request.setAttribute("error", "Invalid input data");
@@ -187,11 +182,25 @@ public class ProfileServlet extends HttpServlet {
                 return;
             }
 
-            if (profileDAO.updateProfile(profile)) {
+            boolean updateSuccess = false;
+            Part filePart = request.getPart("avatar");
+            if (filePart != null && filePart.getSize() > 0) {
+                // Get the input stream from the uploaded file
+                java.io.InputStream imageInputStream = filePart.getInputStream();
+                // Update profile with image
+                updateSuccess = profileDAO.updateProfileWithImage(profile, imageInputStream);
+            } else {
+                // No new image, use the regular update method
+                updateSuccess = profileDAO.updateProfile(profile);
+            }
+
+            if (updateSuccess) {
                 System.out.println("Profile updated successfully.");
                 // Redirect based on user role
                 if ("INSTRUCTOR".equalsIgnoreCase(user.getRole().toString())) {
                     response.sendRedirect(request.getContextPath() + "/instructor/profile?action=edit&success=true");
+                } else if ("ADMIN".equalsIgnoreCase(user.getRole().toString())) {
+                    response.sendRedirect(request.getContextPath() + "/admin/profile?action=edit&success=true");
                 } else {
                     response.sendRedirect(request.getContextPath() + "/learner/profile?action=edit&success=true");
                 }
@@ -200,6 +209,8 @@ public class ProfileServlet extends HttpServlet {
                 // Redirect based on user role
                 if ("INSTRUCTOR".equalsIgnoreCase(user.getRole().toString())) {
                     response.sendRedirect(request.getContextPath() + "/instructor/profile?action=edit&error=true");
+                } else if ("ADMIN".equalsIgnoreCase(user.getRole().toString())) {
+                    response.sendRedirect(request.getContextPath() + "/admin/profile?action=edit&error=true");
                 } else {
                     response.sendRedirect(request.getContextPath() + "/learner/profile?action=edit&error=true");
                 }
@@ -274,25 +285,4 @@ public class ProfileServlet extends HttpServlet {
         }
     }
 
-    private String processFileUpload(Part filePart, int userId) throws IOException {
-        String fileName = "avatar_" + userId + "_" + System.currentTimeMillis() + getFileExtension(filePart);
-        String uploadPath = getServletContext().getRealPath("/uploads/avatars/");
-        java.io.File uploadDir = new java.io.File(uploadPath);
-
-        if (!uploadDir.exists()) {
-            if (uploadDir.mkdirs()) {
-                System.out.println("Upload directory created at: " + uploadPath);
-            } else {
-                System.out.println("Failed to create upload directory at: " + uploadPath);
-            }
-        }
-
-        filePart.write(uploadPath + java.io.File.separator + fileName);
-        return "uploads/avatars/" + fileName;
-    }
-
-    private String getFileExtension(Part part) {
-        String submittedFileName = part.getSubmittedFileName();
-        return submittedFileName.substring(submittedFileName.lastIndexOf("."));
-    }
 }

@@ -17,7 +17,14 @@
 
 
 <body>
-<jsp:include page="/layout/sidebar_user.jsp" />
+<c:choose>
+    <c:when test="${sessionScope.user.role eq 'ADMIN'}">
+        <jsp:include page="/layout/sidebar_admin.jsp" />
+    </c:when>
+    <c:otherwise>
+        <jsp:include page="/layout/sidebar_user.jsp" />
+    </c:otherwise>
+</c:choose>
 <div class="profile-edit-container">
 
   <div class="welcome-section">
@@ -31,7 +38,7 @@
     <div class="profile-card">
       <div class="profile-header">
         <div class="avatar">
-          <img src="${pageContext.request.contextPath}/${profile.avatar}" alt="Avatar">
+          <img src="${profile.imageDataURI}" alt="Avatar">
         </div>
         <div class="user-info">
           <h2><c:out value="${profile.displayName}"/></h2>
@@ -77,10 +84,10 @@
     </div>
 
     <%-- Profile Edit Form (Initially Hidden) --%>
-    <form class="profile-form" id="profileEditForm" action="${pageContext.request.contextPath}${sessionScope.user.role eq 'INSTRUCTOR' ? '/instructor/profile' : '/learner/profile'}?action=edit" method="POST" enctype="multipart/form-data" style="display: none;">
+    <form class="profile-form" id="profileEditForm" action="${pageContext.request.contextPath}${sessionScope.user.role eq 'INSTRUCTOR' ? '/instructor/profile' : sessionScope.user.role eq 'ADMIN' ? '/admin/profile' : '/learner/profile'}?action=edit" method="POST" enctype="multipart/form-data" style="display: none;">
       <div class="avatar-section">
         <div class="avatar-container">
-          <img src="${pageContext.request.contextPath}/${profile.avatar}" alt="Profile Picture" id="avatar-preview">
+          <img src="${profile.imageDataURI}" alt="Profile Picture" id="avatar-preview">
         </div>
         <input type="file" id="avatar-upload" name="avatar" accept="image/*" hidden>
         <button type="button" class="avatar-upload-btn" onclick="document.getElementById('avatar-upload').click()">
@@ -146,7 +153,7 @@
     <span class="avatar-modal-close password-modal-close">&times;</span>
     <h1>Change Password</h1>
 
-    <form id="passwordForm" action="${pageContext.request.contextPath}${sessionScope.user.role eq 'INSTRUCTOR' ? '/instructor/profile' : '/learner/profile'}?action=password" method="POST">
+    <form id="passwordForm" action="${pageContext.request.contextPath}${sessionScope.user.role eq 'INSTRUCTOR' ? '/instructor/profile' : sessionScope.user.role eq 'ADMIN' ? '/admin/profile' : '/learner/profile'}?action=password" method="POST">
       <div class="form-group">
         <label for="oldPassword">Old Password</label>
         <input type="password" id="oldPassword" name="oldPassword" required>
