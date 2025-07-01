@@ -115,11 +115,11 @@ public class DegreeAdminServlet extends HttpServlet {
                 String degree = request.getParameter("degreeId");
                 int degreeId = Integer.parseInt(degree);
 
-                String id = request.getParameter("senderId");
+                String id = request.getParameter("receiverId");
                 int userId = Integer.parseInt(id);
                 String sender = request.getParameter("sender");
                 String type = "toUser";
-                String link = request.getParameter("link");
+                String link = "http://";
                 String accept = "Your degree has been approved.";
                 String reject = "Your degree has been rejected.";
 

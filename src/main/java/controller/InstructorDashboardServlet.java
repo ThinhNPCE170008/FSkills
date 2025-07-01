@@ -93,7 +93,9 @@ public class InstructorDashboardServlet extends HttpServlet {
         request.setAttribute("totalCourses", totalCourses);
         request.setAttribute("totalLearners", totalLearners);
         request.setAttribute("totalRating", totalRating);
-        request.getRequestDispatcher("/Notification").forward(request, response);
+
+        request.getRequestDispatcher("/notification").forward(request, response);
+
     }
 
     /**

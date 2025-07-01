@@ -228,13 +228,12 @@
                         </div>
                         <form method="POST" action="${pageContext.request.contextPath}/admin/degree?action=approve" enctype="multipart/form-data">
                             <input type="hidden" name="action" value="approve">
-                            
-                            
+
+
                             <input type="hidden" name="status" id="statusField${deg.degreeId}" value="">
-                            <input type="hidden" name="receiverId" value="${deg.userId.userId}">
-                            <input type="hidden" name="senderAvatar" value="${sessionScope.user.avatar}">                      
+                            <input type="hidden" name="receiverId" value="${deg.userId.userId}">                     
                             <input type="hidden" name="sender" value="${sessionScope.user.userName}">
-                            <input type="hidden" name="link" value="${pageContext.request.contextPath}">
+                            
                             <div class="modal-body">
                                 <div class="mb-3 row">
                                     <div class="col-md-2">
@@ -248,20 +247,21 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-12 mb-3">
-                                    <label class="form-label fw-bold">Image</label>
-                                    <div class="mt-2">
-                                        <c:choose>
-                                            <c:when test="${not empty deg.image}">
-                                                <img src="${pageContext.request.contextPath}/${deg.image}" class="img-fluid rounded shadow-sm"
-                                                     style="max-width: 300px; max-height: 300px; object-fit: cover; cursor: pointer;"
-                                                     data-bs-toggle="modal" data-bs-target="#zoomImageModal${deg.degreeId}"/>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <p>No image available</p>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </div>
+                                <!-- Image -->
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Current Image</label>
+                                    <c:choose>
+                                        <c:when test="${empty deg.imageDataURI}">
+                                            <div class="alert alert-warning text-center mt-2">No Image Available</div>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <div class="text-center">
+                                                <img src="${deg.imageDataURI}" alt="Degree Image"
+                                                     class="img-fluid rounded shadow-sm d-block mx-auto"
+                                                     style="max-height: 350px; object-fit: contain;">
+                                            </div>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
                             </div>
 

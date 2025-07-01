@@ -2,7 +2,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
-<html lang="en" class="w-100">
+<html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,16 +11,27 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
+
         <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
         <style>
+            body {
+                background-color: #f8f9fa;
+                overflow-x: hidden; /* Prevent horizontal scrollbar */
+            }
 
+            /* Ensure content adapts to available space */
+            .main {
+                transition: margin-left 0.3s ease, width 0.3s ease;
+                max-width: 100%;
+                box-sizing: border-box;
+            }
         </style>
     </head>
-    <body class="w-100 m-0 p-0">
-        
-        <div class="profile-edit-container w-100 mt-20">
-            <jsp:include page="/layout/sidebar_user.jsp"/>
+    <body class="bg-gray-50">
+        <jsp:include page="/layout/sidebar_user.jsp"/>
+        <jsp:include page="/layout/header_user.jsp"/>
+        <div class="main mx-auto px-4 py-8 md:py-12">
             <!-- Degree Table Section -->
             <div class="bg-white p-4 rounded-4 shadow-lg">
                 <!-- Nút Submit Luôn Hiển Thị -->
@@ -181,7 +192,7 @@
                                            id="degreeImage"
                                            name="degreeImage"
                                            accept="image/*"
-                                           onchange="previewImg(event)">
+                                           onchange="previewImg(event)" required>
                                     <img id="imgPreview" class="mt-2 rounded shadow" style="max-height: 200px; display: none;" alt="Preview">
                                 </div>
 

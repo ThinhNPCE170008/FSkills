@@ -7,7 +7,6 @@ package controller;
 import dao.AnnouncementDAO;
 import model.Announcement;
 import java.io.IOException;
-// import java.sql.SQLException;
 import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,7 +14,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "GuestViewAnnouncementServlet", urlPatterns = {"/guest/announcements", "/guest/announcement-detail"})
+@WebServlet(name = "GuestViewAnnouncementServlet", urlPatterns = {"/announcements", "/announcement-detail"})
 public class GuestViewAnnouncementServlet extends HttpServlet {
 
     @Override
@@ -27,7 +26,7 @@ public class GuestViewAnnouncementServlet extends HttpServlet {
         try {
             AnnouncementDAO annDAO = new AnnouncementDAO();
 
-            if ("/guest/announcements".equals(path)) {
+            if ("/announcements".equals(path)) {
                 List<Announcement> announcements;
                 String searchQuery = request.getParameter("search");
 
@@ -39,8 +38,7 @@ public class GuestViewAnnouncementServlet extends HttpServlet {
 
                 request.setAttribute("announcements", announcements);
                 request.getRequestDispatcher("/globalAnn.jsp").forward(request, response);
-            } else if ("/guest/announcement-detail".equals(path)) {
-                // Xử lý hiển thị chi tiết thông báo
+            } else if ("/announcement-detail".equals(path)) {
                 String idParam = request.getParameter("id");
                 if (idParam != null && !idParam.isEmpty()) {
                     try {

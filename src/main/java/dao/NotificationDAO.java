@@ -126,4 +126,16 @@ public class NotificationDAO extends DBContext {
         }
         return list;
     }
+
+    public void markAsRead(int notificationId) {
+        String sql = "UPDATE Notification SET status = 1 WHERE notificationId = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, notificationId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
