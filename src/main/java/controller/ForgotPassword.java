@@ -21,7 +21,7 @@ import util.SendEmail;
  *
  * @author Ngo Phuoc Thinh - CE170008 - SE1815
  */
-@WebServlet(name = "ForgotPassword", urlPatterns = {"/forgotpassword"})
+@WebServlet(name = "ForgotPasswordServlet", urlPatterns = {"/forgotpassword"})
 public class ForgotPassword extends HttpServlet {
 
     /**
@@ -176,7 +176,7 @@ public class ForgotPassword extends HttpServlet {
                     + "</body>"
                     + "</html>";
 
-            boolean isSend = se.sendChangePassByEmail(email, message, title);
+            boolean isSend = se.sendByEmail(email, message, title);
 
             if (isSend) {
                 request.setAttribute("success", "Sent Successfully: Please check your email.");

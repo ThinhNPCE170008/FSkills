@@ -2,11 +2,7 @@ package model;
 
 import java.sql.Timestamp;
 
-/**
- *
- * @author NgoThinh1902
- */
-public class PasswordResetToken {
+public class VerifyEmailToken {
 
     private int id;
     private int userId;
@@ -14,10 +10,10 @@ public class PasswordResetToken {
     private Timestamp created_at;
     private Timestamp expires_at;
 
-    public PasswordResetToken() {
+    public VerifyEmailToken() {
     }
 
-    public PasswordResetToken(int id, int userId, String token, Timestamp created_at, Timestamp expires_at) {
+    public VerifyEmailToken(int id, int userId, String token, Timestamp created_at, Timestamp expires_at) {
         this.id = id;
         this.userId = userId;
         this.token = token;
@@ -67,7 +63,7 @@ public class PasswordResetToken {
 
     @Override
     public String toString() {
-        return "PasswordResetToken{"
+        return "VerifyEmailToken{"
                 + "id=" + id
                 + ", userId=" + userId
                 + ", token='" + token + '\''

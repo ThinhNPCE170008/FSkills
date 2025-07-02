@@ -43,7 +43,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
   <style>
-    :where([class^="ri-"])::before { content: "\f3c2"; }
     body {
       background-color: #ffffff;
       height: 100vh; /* Đảm bảo body chiếm toàn bộ chiều cao viewport */

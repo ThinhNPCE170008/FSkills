@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ProfileDAO {
+
     private DBContext dbContext;
 
     public ProfileDAO(DBContext dbContext) {
@@ -15,7 +16,7 @@ public class ProfileDAO {
     }
 
     public Profile getProfile(int userId) throws SQLException {
-        String sql = "SELECT DisplayName, Email, PhoneNumber, Info, dateOfBirth, avatar, gender FROM Users WHERE UserID = ?";
+        String sql = "SELECT DisplayName, Email, PhoneNumber, Info, dateOfBirth, avatar, gender, IsVerified FROM Users WHERE UserID = ?";
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
@@ -34,15 +35,20 @@ public class ProfileDAO {
                         rs.getString("Info"),
                         rs.getTimestamp("dateOfBirth"),
                         rs.getBytes("avatar"),
-                        rs.getBoolean("gender")
+                        rs.getBoolean("gender"),
+                        rs.getBoolean("IsVerified")
                 );
             }
         } catch (SQLException e) {
             System.err.println("Error while fetching profile: " + e.getMessage());
             throw e;
         } finally {
-            if (rs != null) rs.close();
-            if (stmt != null) stmt.close();
+            if (rs != null) {
+                rs.close();
+            }
+            if (stmt != null) {
+                stmt.close();
+            }
         }
         return null;
     }
@@ -77,7 +83,9 @@ public class ProfileDAO {
             System.err.println("Error while updating profile: " + e.getMessage());
             throw e;
         } finally {
-            if (stmt != null) stmt.close();
+            if (stmt != null) {
+                stmt.close();
+            }
         }
     }
 
@@ -108,7 +116,9 @@ public class ProfileDAO {
             System.err.println("Error while updating profile with image: " + e.getMessage());
             throw new SQLException(e);
         } finally {
-            if (stmt != null) stmt.close();
+            if (stmt != null) {
+                stmt.close();
+            }
         }
     }
 

@@ -15,7 +15,7 @@ import model.PasswordResetToken;
  * @author Ngo Phuoc Thinh - CE170008 - SE1815
  */
 @WebServlet(name = "ChangePassword", urlPatterns = {"/changepassword"})
-public class ChangePassword extends HttpServlet {
+public class ChangePasswordServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

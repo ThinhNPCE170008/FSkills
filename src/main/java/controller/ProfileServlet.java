@@ -45,7 +45,7 @@ public class ProfileServlet extends HttpServlet {
         } else if (requestURI.startsWith(contextPath + "/admin/profile") && !"ADMIN".equalsIgnoreCase(user.getRole().toString())) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Only administrators can access this page.");
             return;
-        } else if ((requestURI.equals(contextPath + "/editProfile") || requestURI.equals(contextPath + "/changePassword")) 
+        } else if ((requestURI.equals(contextPath + "/editProfile") || requestURI.equals(contextPath + "/changePassword"))
                 && !("LEARNER".equalsIgnoreCase(user.getRole().toString()) || "INSTRUCTOR".equalsIgnoreCase(user.getRole().toString()) || "ADMIN".equalsIgnoreCase(user.getRole().toString()))) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Only learners, instructors, or administrators can access this page.");
             return;
@@ -130,7 +130,7 @@ public class ProfileServlet extends HttpServlet {
         } else if (requestURI.startsWith(contextPath + "/admin/profile") && !"ADMIN".equalsIgnoreCase(user.getRole().toString())) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Only administrators can access this page.");
             return;
-        } else if ((requestURI.equals(contextPath + "/editProfile") || requestURI.equals(contextPath + "/changePassword")) 
+        } else if ((requestURI.equals(contextPath + "/editProfile") || requestURI.equals(contextPath + "/changePassword"))
                 && !("LEARNER".equalsIgnoreCase(user.getRole().toString()) || "INSTRUCTOR".equalsIgnoreCase(user.getRole().toString()) || "ADMIN".equalsIgnoreCase(user.getRole().toString()))) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Only learners, instructors, or administrators can access this page.");
             return;
