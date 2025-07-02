@@ -1,30 +1,23 @@
 package controller;
 
-import dao.CourseDAO;
-import dao.NotificationDAO;
-import dao.UserDAO;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import dao.UserDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-
-import java.util.List;
-
-import model.Course;
-import model.Role;
-import model.User;
+import model.PasswordResetToken;
+import model.VerifyEmailToken;
 
 /**
- * @author Ngo Phuoc Thinh - CE170008 - SE1815
+ *
+ * @author NgoThinh1902
  */
-@WebServlet(name = "InstructorDashboardServlet", urlPatterns = {"/instructor"})
-public class InstructorDashboardServlet extends HttpServlet {
+@WebServlet(name = "VerifiedEmailServlet", urlPatterns = {"/verifiedemail"})
+public class VerifiedEmailServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,10 +36,10 @@ public class InstructorDashboardServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet InstructorDashboardServlet</title>");
+            out.println("<title>Servlet VerifiedEmailServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet InstructorDashboardServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet VerifiedEmailServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -64,38 +57,28 @@ public class InstructorDashboardServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String contextPath = request.getContextPath(); // Context Root (FSkills)
-        HttpSession session = request.getSession();
+        String token = request.getParameter("token");
 
-        NotificationDAO notiDAO = new NotificationDAO();
+        UserDAO userDao = new UserDAO();
+        VerifyEmailToken verifyToken = userDao.findValidTokenVerifyEmail(token);
 
-        UserDAO udao = new UserDAO();
-        CourseDAO cdao = new CourseDAO();
-
-        User acc = (User) session.getAttribute("user");
-        if (acc == null) {
-            response.sendRedirect(contextPath + "/login");
+        if (verifyToken == null) {
+            request.setAttribute("err", "Email authentication failed.");
+            request.getRequestDispatcher("/WEB-INF/views/verifiedEmail.jsp").forward(request, response);
             return;
         }
 
-        if (acc.getRole() != Role.INSTRUCTOR) {
-            response.sendRedirect(contextPath + "/homePage_Guest.jsp");
-            return;
+        int update = userDao.updateIsVerified(verifyToken.getUserId());
+
+        if (update > 0) {
+            userDao.deleteTokenVerifyEmail(verifyToken.getUserId());
+
+            request.setAttribute("success", "Email authentication successful.");
+            request.getRequestDispatcher("/WEB-INF/views/verifiedEmail.jsp").forward(request, response);
+        } else {
+            request.setAttribute("err", "Email authentication failed.");
+            request.getRequestDispatcher("/WEB-INF/views/verifiedEmail.jsp").forward(request, response);
         }
-
-        int totalCourses = cdao.countCoursesByUserID(acc.getUserId());
-        int totalLearners = cdao.countLearnersByUserID(acc.getUserId());
-        double totalRating = cdao.getAverageRatingByUserID(acc.getUserId());
-
-        List<Course> listLittle = cdao.get3CourseByUserID(acc.getUserId());
-
-        request.setAttribute("listLittle", listLittle);
-        request.setAttribute("totalCourses", totalCourses);
-        request.setAttribute("totalLearners", totalLearners);
-        request.setAttribute("totalRating", totalRating);
-
-        request.getRequestDispatcher("/notification").forward(request, response);
-
     }
 
     /**
@@ -109,6 +92,7 @@ public class InstructorDashboardServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     /**

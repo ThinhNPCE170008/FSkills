@@ -49,7 +49,6 @@ public class User {
         this.googleID = googleID;
     }
 
-
     public User(String userName, String displayName, String email, String password, Role role, byte[] avatar, boolean isVerified, String googleID) {
         this.userName = userName;
         this.displayName = displayName;
@@ -111,6 +110,17 @@ public class User {
         this.email = email;
         this.password = password;
         this.phone = phone;
+    }
+
+    public User(int userId, String userName) {
+        this.userId = userId;
+        this.userName = userName;
+    }
+
+    public User(String userName, String displayName, byte[] avatar) {
+        this.userName = userName;
+        this.displayName = displayName;
+        this.avatar = avatar;
     }
 
     public int getUserId() {

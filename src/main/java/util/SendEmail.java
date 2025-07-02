@@ -39,7 +39,7 @@ public class SendEmail {
         }
     }
 
-    public boolean sendChangePassByEmail(String toEmail, String message, String title) {
+    public boolean sendByEmail(String toEmail, String message, String title) {
         Email from = new Email("noreply@fskills.website");
         Email to = new Email(toEmail);
 
@@ -64,4 +64,3 @@ public class SendEmail {
         }
     }
 }
-

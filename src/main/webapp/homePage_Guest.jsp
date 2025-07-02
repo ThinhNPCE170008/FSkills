@@ -68,7 +68,7 @@
 <%--                    <a href="#home" class="text-gray-600 hover:text-primary font-medium transition-colors">Home</a>--%>
 <%--                    <a href="#subjects" class="text-gray-600 hover:text-primary font-medium transition-colors">Subjects</a>--%>
 <%--                    <a href="#courses" class="text-gray-600 hover:text-primary font-medium transition-colors">Courses</a>--%>
-<%--                    <a href="${pageContext.request.contextPath}/guest/announcements" class="text-gray-600 hover:text-primary font-medium transition-colors">Announcement</a>--%>
+<%--                    <a href="${pageContext.request.contextPath}/announcements" class="text-gray-600 hover:text-primary font-medium transition-colors">Announcement</a>--%>
 <%--                </nav>--%>
 
     <div class="flex-grow flex justify-center">
@@ -80,7 +80,7 @@
 
     <div class="flex items-center space-x-4">
         <a href="login" class="hidden sm:inline-block text-secondary hover:text-primary font-semibold transition-colors">Sign In</a>
-        <a href="register.jsp" class="px-5 py-2.5 rounded-full font-semibold bg-primary text-white hover:bg-primary-dark transition-all duration-300 shadow-md hover:shadow-lg">
+        <a href="signup.jsp" class="px-5 py-2.5 rounded-full font-semibold bg-primary text-white hover:bg-primary-dark transition-all duration-300 shadow-md hover:shadow-lg">
             Sign Up
         </a>
     </div>
