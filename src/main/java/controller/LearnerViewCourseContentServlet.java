@@ -8,6 +8,7 @@ import dao.CourseDAO;
 import dao.EnrollDAO;
 import dao.MaterialDAO;
 import dao.ModuleDAO;
+import dao.StudyDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -16,14 +17,19 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import model.Course;
+import model.Module;
+import model.Material;
 import model.User;
 
 /**
  *
  * @author CE191059 Phuong Gia Lac
  */
-@WebServlet(name = "LearnerViewCourseContent", urlPatterns = {"/Learner/Course"})
+@WebServlet(name = "LearnerViewCourseContent", urlPatterns = {"/learner/course"})
 public class LearnerViewCourseContentServlet extends HttpServlet {
 
     /**
@@ -67,21 +73,45 @@ public class LearnerViewCourseContentServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         EnrollDAO eDAO = new EnrollDAO();
+        StudyDAO sDAO = new StudyDAO();
         CourseDAO couDAO = new CourseDAO();
-        ModuleDAO modDAO = new ModuleDAO();
-        Course cou = new Course();
+        ModuleDAO molDAO = new ModuleDAO();
+        MaterialDAO matDAO = new MaterialDAO();
+        List<Module> molList;
+        List<Material> matList;
+        HashMap<Integer, List<Material>> mapOfModuleIdToMaterialList = new HashMap<>();
+        HashMap<Integer, Boolean> mapOfMaterialIdToStudyStatus = new HashMap<>();
+        HashMap<Integer, Boolean> mapOfModuleIdToTotalStudiedCount = new HashMap<>();
+        Course cou;
+        int progress;
         if (user == null) {
             response.sendRedirect(request.getContextPath() + "/login");
         } else {
-            String courseParam = request.getParameter("CourseID");
+            String courseParam = request.getParameter("courseID");
             try {
                 int courseID = Integer.parseInt(courseParam);
                 if (eDAO.checkEnrollment(user.getUserId(), courseID)) {
+                    progress = sDAO.returnStudyProgress(user.getUserId(), courseID);
                     cou = couDAO.getCourseByCourseID(courseID);
+                    molList = molDAO.getAllModuleByCourseID(courseID);
+                    for (Module mol : molList){
+                        matList = matDAO.getAllMaterial(courseID, mol.getModuleID());
+                        mapOfModuleIdToMaterialList.put(mol.getModuleID(), matList);
+                        mapOfModuleIdToTotalStudiedCount.put(mol.getModuleID(), sDAO.returnTotalStudy(user.getUserId(), mol.getModuleID(), matList.size()));
+                        for (Material mat : matList){
+                            mapOfMaterialIdToStudyStatus.put(mat.getMaterialId(), sDAO.checkStudy(user.getUserId(), mat.getMaterialId()));
+                        }
+                    }
                     request.setAttribute("Course", cou);
-                    request.setAttribute("ModuleList", modDAO.getAllModuleByCourseID(courseID));
+                    request.setAttribute("ModuleList", molDAO.getAllModuleByCourseID(courseID));
                     request.setAttribute("User", user);
+                    request.setAttribute("progress", progress);
+                    request.setAttribute("matMap", mapOfModuleIdToMaterialList); // key: moduleID, value: List<Material>
+                    request.setAttribute("studyMap", mapOfMaterialIdToStudyStatus); // key: materialID, value: boolean
+                    request.setAttribute("totalStudyMap", mapOfModuleIdToTotalStudiedCount); // key: moduleID, value: boolean
                     request.getRequestDispatcher("/WEB-INF/views/learnerCourseContentView.jsp").forward(request, response);
+                } else {
+                    response.sendRedirect(request.getContextPath() + "/courseDetail?id=" + courseID);
                 }
             } catch (Exception E) {
                 System.out.println("Can't convert attribute into Interger");

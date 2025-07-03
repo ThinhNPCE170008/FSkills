@@ -49,7 +49,7 @@ public class StudyDAO extends DBContext {
         return 0;
     }
 
-    public int returnTotalStudy(int UserID, int ModuleID) {
+    public boolean returnTotalStudy(int UserID, int ModuleID, int MatSize) {
         String sql = "SELECT COUNT(*) AS TotalCount\n"
                 + "FROM Study s\n"
                 + "JOIN Materials m ON s.MaterialID = m.MaterialID\n"
@@ -60,13 +60,13 @@ public class StudyDAO extends DBContext {
             ps.setInt(2, ModuleID);
             try ( ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt(1);
+                    return rs.getInt(1) == MatSize;
                 }
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        return 0;
+        return false;
     }
 
     public int returnStudyProgress(int UserID, int CourseID) {

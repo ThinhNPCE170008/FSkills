@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
 import dao.UserDAO;
@@ -16,10 +12,10 @@ import model.PasswordResetToken;
 
 /**
  *
- * @author NgoThinh1902
+ * @author Ngo Phuoc Thinh - CE170008 - SE1815
  */
 @WebServlet(name = "ChangePassword", urlPatterns = {"/changepassword"})
-public class ChangePassword extends HttpServlet {
+public class ChangePasswordServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -62,7 +58,7 @@ public class ChangePassword extends HttpServlet {
         String token = request.getParameter("token");
 
         if (token == null || token.trim().isEmpty()) {
-            request.setAttribute("error", "Token does not exist.");
+            request.setAttribute("err", "Token does not exist.");
             request.getRequestDispatcher("login.jsp").forward(request, response);
             return;
         }
@@ -76,7 +72,6 @@ public class ChangePassword extends HttpServlet {
             return;
         }
 
-        // Token hợp lệ → hiển thị form đổi mật khẩu
         request.setAttribute("token", token);
         request.getRequestDispatcher("/WEB-INF/views/changePassword.jsp").forward(request, response);
     }
@@ -97,8 +92,8 @@ public class ChangePassword extends HttpServlet {
             String newPassword = request.getParameter("newPassword");
             String confirmPassword = request.getParameter("confirmPassword");
 
-            if (newPassword.length() < 8) {
-                request.setAttribute("err", "Password must be at least 8 characters.");
+            if (newPassword.length() < 8 || newPassword.length() > 20) {
+                request.setAttribute("err", "Password must be at least 8 characters and maximum 20 characters.");
                 request.setAttribute("token", token);
                 request.getRequestDispatcher("/WEB-INF/views/changePassword.jsp").forward(request, response);
                 return;
@@ -106,6 +101,20 @@ public class ChangePassword extends HttpServlet {
 
             if (!newPassword.matches(".*[a-z].*") || !newPassword.matches(".*[A-Z].*")) {
                 request.setAttribute("err", "Password must contain both uppercase and lowercase letters.");
+                request.setAttribute("token", token);
+                request.getRequestDispatcher("/WEB-INF/views/changePassword.jsp").forward(request, response);
+                return;
+            }
+
+            if (!newPassword.matches(".*\\d.*")) {
+                request.setAttribute("err", "Password must contain at least one digit.");
+                request.setAttribute("token", token);
+                request.getRequestDispatcher("/WEB-INF/views/changePassword.jsp").forward(request, response);
+                return;
+            }
+
+            if (newPassword.matches(".*\\s.*")) {
+                request.setAttribute("err", "Password must not contain any whitespace characters.");
                 request.setAttribute("token", token);
                 request.getRequestDispatcher("/WEB-INF/views/changePassword.jsp").forward(request, response);
                 return;

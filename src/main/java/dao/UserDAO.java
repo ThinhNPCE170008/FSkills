@@ -6,11 +6,10 @@ package dao;
 
 import java.security.MessageDigest;
 import java.security.SecureRandom;
-import model.Role;
-import model.Ban;
+
+import model.*;
 import util.DBContext;
-import model.User;
-import model.UserGoogle;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,7 +17,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.Timestamp;
-import model.PasswordResetToken;
 
 import model.UserGoogle;
 
@@ -727,6 +725,70 @@ public class UserDAO extends DBContext {
         return sb.toString();
     }
 
+    public void saveTokenVerifyEmail(int userId, String token, Timestamp createdAt, Timestamp expiresAt) {
+        String sql = "INSERT INTO VerifyEmailTokens (UserID, token, created_at, expires_at) VALUES (?, ?, ?, ?)";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, userId);
+            ps.setString(2, token);
+            ps.setTimestamp(3, createdAt);
+            ps.setTimestamp(4, expiresAt);
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public VerifyEmailToken findValidTokenVerifyEmail(String token) {
+        String sql = "SELECT * FROM VerifyEmailTokens WHERE token = ? AND expires_at > GETUTCDATE()";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, token);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                VerifyEmailToken vet = new VerifyEmailToken();
+                vet.setId(rs.getInt("id"));
+                vet.setUserId(rs.getInt("UserID"));
+                vet.setToken(token);
+                return vet;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public void deleteTokenVerifyEmail(int userId) {
+        String sql = "DELETE FROM VerifyEmailTokens WHERE UserID = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, userId);
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public int updateIsVerified(int userId) {
+        String sql = "UPDATE Users SET IsVerified = 1 WHERE UserID = ?";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, userId);
+
+            int result = ps.executeUpdate();
+            return result > 0 ? 1 : 0;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
+
     public void saveTokenForgotPassword(int userId, String token, Timestamp createdAt, Timestamp expiresAt) {
         String sql = "INSERT INTO PasswordResetTokens (UserID, token, created_at, expires_at) VALUES (?, ?, ?, ?)";
 
@@ -744,7 +806,7 @@ public class UserDAO extends DBContext {
     }
 
     public PasswordResetToken findValidTokenForgotPassword(String token) {
-        String sql = "SELECT * FROM PasswordResetTokens WHERE token = ? AND expires_at > DATEADD(HOUR, 7, GETUTCDATE())";
+        String sql = "SELECT * FROM PasswordResetTokens WHERE token = ? AND expires_at > GETUTCDATE()";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -929,11 +991,9 @@ public class UserDAO extends DBContext {
 //        UserDAO dao = new UserDAO();
 //        User user = dao.getByUserID(2);
 //        System.out.println(user);
-
 //        UserDAO dao = new UserDAO();
 //        PasswordResetToken pass = dao.findValidTokenForgotPassword("60b9f904-4887-41ab-bf7d-8cf2f3e8f499");
 //        System.out.println(pass);
-
 //        String googleID = "123123123";
 //        String  email = "abc@gmail.com";
 //
@@ -946,5 +1006,9 @@ public class UserDAO extends DBContext {
 //
 //        int insert = userDao.insertGoogle(user);
 //        System.out.println(insert);
+//        UserDAO userDao = new UserDAO();
+//        String token = "5593eaee-ea26-4323-8c94-303c70b758f6";
+//        VerifyEmailToken verifyToken = userDao.findValidTokenVerifyEmail(token);
+//        System.out.println(verifyToken);
     }
 }

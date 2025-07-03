@@ -24,23 +24,23 @@
 
                 <form action="${pageContext.request.contextPath}/signup" method="POST">
                     <div class="mb-3">
-                        <input type="text" class="form-control" name="username" placeholder="Username" />
+                        <input type="text" class="form-control" name="username" placeholder="Username" required/>
                     </div>
 
                     <div class="mb-3">
-                        <input type="password" class="form-control" name="password" placeholder="Password" />
+                        <input type="password" class="form-control" name="password" placeholder="Password" required/>
                     </div>
 
                     <div class="mb-3">
-                        <input type="password" class="form-control" name="confirmPassword" placeholder="Confirm Password" />
+                        <input type="password" class="form-control" name="confirmPassword" placeholder="Confirm Password" required/>
                     </div>
 
                     <div class="mb-3">
-                        <input type="email" class="form-control" name="email" placeholder="Email" />
+                        <input type="email" class="form-control" name="email" placeholder="Email" required/>
                     </div>
 
                     <div class="mb-3">
-                        <input type="tel" class="form-control" name="phoneNumber" placeholder="Phone Number" />
+                        <input type="tel" class="form-control" name="phoneNumber" placeholder="Phone Number" required/>
                     </div>
 
                     <button type="submit" class="btn btn-info w-100 mb-3">Sign Up</button>

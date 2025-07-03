@@ -275,79 +275,79 @@
 </c:forEach>
 
 <!-- Check Create Input-->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const form = document.getElementById("createModuleForm");
+<%--<script>--%>
+<%--    document.addEventListener("DOMContentLoaded", function () {--%>
+<%--        const form = document.getElementById("createModuleForm");--%>
 
-        form.addEventListener("submit", function (e) {
-            const nameInput = document.getElementById("moduleName");
-            const name = nameInput.value.trim();
+<%--        form.addEventListener("submit", function (e) {--%>
+<%--            const nameInput = document.getElementById("moduleName");--%>
+<%--            const name = nameInput.value.trim();--%>
 
-            const spaceOnlyRegex = /^(?!.* {2,}).+$/u;
+<%--            const spaceOnlyRegex = /^(?!.* {2,}).+$/u;--%>
 
-            if (!spaceOnlyRegex.test(name)) {
-                showJsToast("Module name must not contain consecutive spaces.");
-                nameInput.focus();
-                e.preventDefault();
-                return;
-            }
+<%--            if (!spaceOnlyRegex.test(name)) {--%>
+<%--                showJsToast("Module name must not contain consecutive spaces.");--%>
+<%--                nameInput.focus();--%>
+<%--                e.preventDefault();--%>
+<%--                return;--%>
+<%--            }--%>
 
-            if (!name) {
-                showJsToast("Module Name is required.");
-                nameInput.focus();
-                e.preventDefault();
-                return;
-            }
+<%--            if (!name) {--%>
+<%--                showJsToast("Module Name is required.");--%>
+<%--                nameInput.focus();--%>
+<%--                e.preventDefault();--%>
+<%--                return;--%>
+<%--            }--%>
 
-            if (name.length > 30) {
-                showJsToast("Content must not exceed 30 characters.");
-                nameInput.focus();
-                e.preventDefault();
-                return;
-            }
+<%--            if (name.length > 30) {--%>
+<%--                showJsToast("Content must not exceed 30 characters.");--%>
+<%--                nameInput.focus();--%>
+<%--                e.preventDefault();--%>
+<%--                return;--%>
+<%--            }--%>
 
-            nameInput.value = name;
-        });
-    });
-</script>
+<%--            nameInput.value = name;--%>
+<%--        });--%>
+<%--    });--%>
+<%--</script>--%>
 
-<!-- Check Update Input-->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll("form[id^='updateModuleForm']").forEach(function (form) {
-            form.addEventListener("submit", function (e) {
-                const moduleID = form.id.replace("updateModuleForm", "");
-                const nameInput = document.getElementById("updateModuleName" + moduleID);
-                const name = nameInput.value.trim();
+<%--<!-- Check Update Input-->--%>
+<%--<script>--%>
+<%--    document.addEventListener("DOMContentLoaded", function () {--%>
+<%--        document.querySelectorAll("form[id^='updateModuleForm']").forEach(function (form) {--%>
+<%--            form.addEventListener("submit", function (e) {--%>
+<%--                const moduleID = form.id.replace("updateModuleForm", "");--%>
+<%--                const nameInput = document.getElementById("updateModuleName" + moduleID);--%>
+<%--                const name = nameInput.value.trim();--%>
 
-                const spaceOnlyRegex = /^(?!.* {2,}).+$/u;
+<%--                const spaceOnlyRegex = /^(?!.* {2,}).+$/u;--%>
 
-                if (!spaceOnlyRegex.test(name)) {
-                    showJsToast("Module name must not contain consecutive spaces.");
-                    nameInput.focus();
-                    e.preventDefault();
-                    return;
-                }
+<%--                if (!spaceOnlyRegex.test(name)) {--%>
+<%--                    showJsToast("Module name must not contain consecutive spaces.");--%>
+<%--                    nameInput.focus();--%>
+<%--                    e.preventDefault();--%>
+<%--                    return;--%>
+<%--                }--%>
 
-                if (!name) {
-                    showJsToast("Course Name is required.");
-                    nameInput.focus();
-                    e.preventDefault();
-                    return;
-                }
+<%--                if (!name) {--%>
+<%--                    showJsToast("Course Name is required.");--%>
+<%--                    nameInput.focus();--%>
+<%--                    e.preventDefault();--%>
+<%--                    return;--%>
+<%--                }--%>
 
-                if (name.length > 30) {
-                    showJsToast("Content must not exceed 30 characters.");
-                    nameInput.focus();
-                    e.preventDefault();
-                    return;
-                }
+<%--                if (name.length > 30) {--%>
+<%--                    showJsToast("Content must not exceed 30 characters.");--%>
+<%--                    nameInput.focus();--%>
+<%--                    e.preventDefault();--%>
+<%--                    return;--%>
+<%--                }--%>
 
-                nameInput.value = name;
-            });
-        });
-    });
-</script>
+<%--                nameInput.value = name;--%>
+<%--            });--%>
+<%--        });--%>
+<%--    });--%>
+<%--</script>--%>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
