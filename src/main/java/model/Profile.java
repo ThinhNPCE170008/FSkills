@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 import java.util.regex.Pattern; // Cần thiết cho validateEmail và validatePhoneNumber
 
 public class Profile {
-
     private int userId;
     private String displayName;
     private String email;
@@ -19,7 +18,7 @@ public class Profile {
     }
 
     public Profile(int userId, String displayName, String email, String phoneNumber,
-            String info, Timestamp dateOfBirth, byte[] avatar, boolean gender, boolean isVerified) {
+                   String info, Timestamp dateOfBirth, byte[] avatar, boolean gender, boolean isVerified) {
         this.userId = userId;
         this.displayName = displayName;
         this.email = email;
@@ -32,11 +31,12 @@ public class Profile {
     }
 
     public Profile(int userId, String displayName, String email, String phoneNumber,
-            String info, Timestamp dateOfBirth, byte[] avatar, boolean gender) {
+                   String info, Timestamp dateOfBirth, byte[] avatar, boolean gender) {
         this(userId, displayName, email, phoneNumber, info, dateOfBirth, avatar, gender, false);
     }
 
     // Getters và Setters
+
     public int getUserId() {
         return userId;
     }
@@ -116,6 +116,7 @@ public class Profile {
                 }
             }
         }
+
         return isValidFormat && containsNumber;
     }
 
@@ -130,17 +131,17 @@ public class Profile {
 
     @Override
     public String toString() {
-        return "Profile{"
-                + "userId=" + userId
-                + ", displayName='" + displayName + '\''
-                + ", email='" + email + '\''
-                + ", phoneNumber='" + phoneNumber + '\''
-                + ", info='" + info + '\''
-                + ", dateOfBirth=" + dateOfBirth
-                + ", avatar='" + (avatar != null ? "binary data" : "null") + '\''
-                + ", gender=" + gender
-                + ", isVerified=" + isVerified
-                + '}';
+        return "Profile{" +
+                "userId=" + userId +
+                ", displayName='" + displayName + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", info='" + info + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", avatar='" + (avatar != null ? "binary data" : "null") + '\'' +
+                ", gender=" + gender +
+                ", isVerified=" + isVerified +
+                '}';
     }
 
     public String getImageDataURI() {

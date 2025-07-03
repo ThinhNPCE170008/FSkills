@@ -17,12 +17,20 @@ public class DBContext {
     // Connect Local
     public DBContext() {
         try {
+//            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+//            String dbURL = "jdbc:sqlserver://javademo-server.database.windows.net:1433;"
+//                    + "databaseName=FLearn;"
+//                    + "user=adminuser@javademo-server;"
+//                    + "password=Group3SWP391!;"
+//                    + "encrypt=true;trustServerCertificate=false;loginTimeout=30;";
+//            conn = DriverManager.getConnection(dbURL);
+
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            String dbURL = "jdbc:sqlserver://javademo-server.database.windows.net:1433;"
+            String dbURL = "jdbc:sqlserver://localhost:1433;"
                     + "databaseName=FLearn;"
-                    + "user=adminuser@javademo-server;"
-                    + "password=Group3SWP391!;"
-                    + "encrypt=true;trustServerCertificate=false;loginTimeout=30;";
+                    + "user=sa;"
+                    + "password=123456;"
+                    + "encrypt=true;trustServerCertificate=true;";
             conn = DriverManager.getConnection(dbURL);
 
             if (conn != null) {
@@ -35,7 +43,12 @@ public class DBContext {
                         + dm.getDatabaseProductVersion());
             }
         } catch (SQLException ex) {
+            System.err.println("Database connection error: " + ex.getMessage());
+            System.err.println("SQL State: " + ex.getSQLState());
+            System.err.println("Error Code: " + ex.getErrorCode());
+            ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
+            System.err.println("JDBC Driver not found: " + ex.getMessage());
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

@@ -47,6 +47,7 @@ public class FeedbackUserServlet extends HttpServlet {
             throws ServletException, IOException {
         // Get form data
         String feedbackType = request.getParameter("feedbackType");
+        String feedbackTitle = request.getParameter("feedbackTitle");
         String feedbackContent = request.getParameter("feedbackContent");
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
@@ -95,7 +96,8 @@ public class FeedbackUserServlet extends HttpServlet {
         
         // Create feedback object
         Feedback_user feedback = new Feedback_user(
-                feedbackType, 
+                feedbackType,
+                feedbackTitle,
                 feedbackContent, 
                 firstName, 
                 lastName, 

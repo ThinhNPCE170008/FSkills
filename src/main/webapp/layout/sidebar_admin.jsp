@@ -22,6 +22,7 @@
         <a href="${pageContext.request.contextPath}/admin/degree"><i class="bi bi-mortarboard"></i> <span>Manage Degree</span></a>
         <a href="${pageContext.request.contextPath}/alluser"><i class="bi bi-people"></i> <span>Manage Accounts</span></a>
         <a href="${pageContext.request.contextPath}/report"><i class="bi bi-bar-chart"></i> <span>Report</span></a>
+        <a href="${pageContext.request.contextPath}/admin/feedback"><i class="bi bi-chat-dots"></i> <span>Feedback Management</span></a>
         <div class="divider"></div>
         <a href="${pageContext.request.contextPath}/admin/profile" class="user-profile">
           <c:choose>
