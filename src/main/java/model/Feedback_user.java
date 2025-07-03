@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 public class Feedback_user {
     private int feedbackId;
     private String feedbackType;
+    private String feedbackTitle;
     private String feedbackContent;
     private String firstName;
     private String lastName;
@@ -21,10 +22,11 @@ public class Feedback_user {
     }
 
     // Constructor with all fields
-    public Feedback_user(int feedbackId, String feedbackType, String feedbackContent, String firstName, 
+    public Feedback_user(int feedbackId, String feedbackType, String feedbackTitle, String feedbackContent, String firstName,
                          String lastName, String email, int userId, Timestamp createdAt, boolean isResolved) {
         this.feedbackId = feedbackId;
         this.feedbackType = feedbackType;
+        this.feedbackTitle = feedbackTitle;
         this.feedbackContent = feedbackContent;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -35,9 +37,10 @@ public class Feedback_user {
     }
 
     // Constructor without ID (for new feedback)
-    public Feedback_user(String feedbackType, String feedbackContent, String firstName, 
+    public Feedback_user(String feedbackType, String feedbackTitle, String feedbackContent, String firstName,
                          String lastName, String email, int userId) {
         this.feedbackType = feedbackType;
+        this.feedbackTitle = feedbackTitle;
         this.feedbackContent = feedbackContent;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -63,6 +66,10 @@ public class Feedback_user {
     public void setFeedbackType(String feedbackType) {
         this.feedbackType = feedbackType;
     }
+
+    public String getFeedbackTitle() {return feedbackTitle;}
+
+    public void setFeedbackTitle(String feedbackTitle) {this.feedbackTitle = feedbackTitle;}
 
     public String getFeedbackContent() {
         return feedbackContent;
