@@ -21,19 +21,20 @@ public class Feedback_userDAO extends DBContext {
      * @return 1 if successful, 0 if failed
      */
     public int insertFeedback(Feedback_user feedback) {
-        String sql = "INSERT INTO Feedback_user (FeedbackType, FeedbackContent, FirstName, LastName, Email, UserID, CreatedAt, IsResolved) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Feedback_user (FeedbackType, FeedbackTitle, FeedbackContent, FirstName, LastName, Email, UserID, CreatedAt, IsResolved) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, feedback.getFeedbackType());
-            ps.setString(2, feedback.getFeedbackContent());
-            ps.setString(3, feedback.getFirstName());
-            ps.setString(4, feedback.getLastName());
-            ps.setString(5, feedback.getEmail());
-            ps.setInt(6, feedback.getUserId());
-            ps.setTimestamp(7, feedback.getCreatedAt() != null ? feedback.getCreatedAt() : new Timestamp(System.currentTimeMillis()));
-            ps.setBoolean(8, feedback.isIsResolved());
+            ps.setString(2, feedback.getFeedbackTitle());
+            ps.setString(3, feedback.getFeedbackContent());
+            ps.setString(4, feedback.getFirstName());
+            ps.setString(5, feedback.getLastName());
+            ps.setString(6, feedback.getEmail());
+            ps.setInt(7, feedback.getUserId());
+            ps.setTimestamp(8, feedback.getCreatedAt() != null ? feedback.getCreatedAt() : new Timestamp(System.currentTimeMillis()));
+            ps.setBoolean(9, feedback.isIsResolved());
             
             int result = ps.executeUpdate();
             return result > 0 ? 1 : 0;

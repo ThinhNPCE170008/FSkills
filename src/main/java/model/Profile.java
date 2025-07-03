@@ -12,12 +12,13 @@ public class Profile {
     private Timestamp dateOfBirth;
     private byte[] avatar;
     private boolean gender; // Giữ boolean cho gender như trong Profile cũ
+    private boolean isVerified; // Add isVerified field
 
     public Profile() {
     }
 
     public Profile(int userId, String displayName, String email, String phoneNumber,
-                   String info, Timestamp dateOfBirth, byte[] avatar, boolean gender) {
+                   String info, Timestamp dateOfBirth, byte[] avatar, boolean gender, boolean isVerified) {
         this.userId = userId;
         this.displayName = displayName;
         this.email = email;
@@ -26,6 +27,12 @@ public class Profile {
         this.dateOfBirth = dateOfBirth;
         this.avatar = avatar;
         this.gender = gender;
+        this.isVerified = isVerified;
+    }
+
+    public Profile(int userId, String displayName, String email, String phoneNumber,
+                   String info, Timestamp dateOfBirth, byte[] avatar, boolean gender) {
+        this(userId, displayName, email, phoneNumber, info, dateOfBirth, avatar, gender, false);
     }
 
     // Getters và Setters
@@ -97,7 +104,20 @@ public class Profile {
     // Các phương thức validation (giữ nguyên từ Profile cũ vì chúng hữu ích)
     public boolean validateEmail() {
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.(com|vn|io|me|net|edu|org|info|biz|co|xyz|gov|mil|asia|us|uk|ca|au|edu\\.vn|fpt\\.edu\\.vn|[a-zA-Z]{2,})$";
-        return email != null && Pattern.matches(emailRegex, email);
+
+        boolean isValidFormat = email != null && Pattern.matches(emailRegex, email);
+
+        boolean containsNumber = false;
+        if (email != null) {
+            for (char c : email.toCharArray()) {
+                if (Character.isDigit(c)) {
+                    containsNumber = true;
+                    break;
+                }
+            }
+        }
+
+        return isValidFormat && containsNumber;
     }
 
     public boolean validatePhoneNumber() {
@@ -120,10 +140,19 @@ public class Profile {
                 ", dateOfBirth=" + dateOfBirth +
                 ", avatar='" + (avatar != null ? "binary data" : "null") + '\'' +
                 ", gender=" + gender +
+                ", isVerified=" + isVerified +
                 '}';
     }
 
     public String getImageDataURI() {
         return util.ImageBase64.toDataURI(avatar, "image/jpeg");
+    }
+
+    public boolean isIsVerified() {
+        return isVerified;
+    }
+
+    public void setIsVerified(boolean isVerified) {
+        this.isVerified = isVerified;
     }
 }

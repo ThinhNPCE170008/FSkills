@@ -108,6 +108,8 @@
                 <p class="requirement" id="length-requirement">At least 8 characters</p>
                 <p class="requirement" id="case-requirement">Must have uppercase and lowercase letters</p>
                 <p class="requirement" id="special-requirement">Must have special characters</p>
+                <p class="requirement" id="number-requirement">Must have numbers</p>
+                <p class="requirement" id="whitespace-requirement">Must not have white spaces</p>
             </div>
         </div>
 
@@ -128,11 +130,17 @@
         const lengthRequirement = document.getElementById('length-requirement');
         const caseRequirement = document.getElementById('case-requirement');
         const specialRequirement = document.getElementById('special-requirement');
+        const numberRequirement = document.getElementById('number-requirement');
+        const whiteSpaceRequirement = document.getElementById('whitespace-requirement');
         const savePasswordBtn = document.getElementById('savePasswordBtn');
         const confirmMessage = document.getElementById('confirm-message');
 
+        // Add event listeners to password inputs
         newPasswordInput.addEventListener('input', validatePassword);
         confirmPasswordInput.addEventListener('input', validatePassword);
+
+        // Call validatePassword initially to set initial state
+        validatePassword();
 
         function validatePassword() {
             const password = newPasswordInput.value;
@@ -141,7 +149,10 @@
             toggleClass(lengthRequirement, password.length >= 8);
             toggleClass(caseRequirement, /[a-z]/.test(password) && /[A-Z]/.test(password));
             toggleClass(specialRequirement, /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password));
+            toggleClass(numberRequirement, /[0-9]/.test(password));
+            toggleClass(whiteSpaceRequirement, !/\s/.test(password));
 
+            // Update confirm message
             if (confirmPassword.length > 0) {
                 if (password === confirmPassword) {
                     confirmMessage.textContent = "Passwords match";
@@ -154,13 +165,17 @@
                 }
             } else {
                 confirmMessage.textContent = "";
-                confirmMessage.classList.remove('valid', 'invalid');
+                confirmMessage.classList.remove('valid');
+                confirmMessage.classList.remove('invalid');
             }
 
+            // Update your final validation check to include all requirements
             if (
                 lengthRequirement.classList.contains('valid') &&
                 caseRequirement.classList.contains('valid') &&
                 specialRequirement.classList.contains('valid') &&
+                numberRequirement.classList.contains('valid') &&
+                whiteSpaceRequirement.classList.contains('valid') &&
                 password === confirmPassword &&
                 password.length > 0
             ) {

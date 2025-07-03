@@ -9,6 +9,7 @@
   <title>Feedback Form - F-Skills</title>
 
   <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/sidebar.css">
@@ -43,13 +44,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
   <style>
-    :where([class^="ri-"])::before { content: "\f3c2"; }
     body {
-      background-color: #ffffff;
-      height: 100vh; /* Đảm bảo body chiếm toàn bộ chiều cao viewport */
-      display: flex; /* Sử dụng flexbox cho body */
-      font-family: 'Roboto', sans-serif;
-      overflow: hidden; /* Ngăn cuộn toàn bộ trang nếu không muốn */
+      background-color: #f8fafc;
+      height: 100vh;
+      display: flex;
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
     }
     .custom-radio {
       display: flex;
@@ -97,6 +99,7 @@
       transition: margin-left 0.3s ease;
       box-sizing: border-box;
       margin-left: 80px; /* sidebar ban đầu */
+      padding: 0;
     }
     .header {
       flex-shrink: 0; /* Ngăn header bị co lại */
@@ -107,18 +110,20 @@
       display: flex;
       align-items: center; /* Căn giữa theo chiều dọc */
       justify-content: center; /* Căn giữa theo chiều ngang */
-      padding: 20px; /* Thêm padding để tránh nội dung dính sát vào mép */
+      padding: 10px; /* Giảm padding để tối đa hóa không gian */
       overflow-y: auto; /* Cho phép cuộn chỉ trong phần feedback-container nếu nội dung quá lớn */
       box-sizing: border-box;
+      height: 100%; /* Đảm bảo chiếm toàn bộ chiều cao */
     }
-    /* Optional: Make the feedback form responsive to the container height */
+    /* Make the feedback form responsive and use maximum available space */
     .feedback-container > div { /* Target the div with w-[1300px] */
       width: 100%; /* Đảm bảo nó không vượt quá 1300px nhưng vẫn responsive */
       max-width: 1300px; /* Giới hạn chiều rộng tối đa */
-      height: auto; /* Chiều cao tự động điều chỉnh theo nội dung */
+      height: 100%; /* Chiếm toàn bộ chiều cao có sẵn */
       min-height: 500px; /* Đảm bảo chiều cao tối thiểu */
       display: flex;
       flex-direction: column;
+      margin: 0 auto; /* Căn giữa và loại bỏ margin không cần thiết */
     }
     .feedback-container form {
       flex: 1; /* Cho phép form chiếm hết không gian còn lại */
@@ -127,14 +132,19 @@
     }
     .grid.grid-cols-2.gap-6 {
       flex: 1; /* Cho phép grid chiếm hết không gian còn lại trong form */
-      height: auto !important; /* Loại bỏ chiều cao cố định để nó tự co giãn */
+      height: 100% !important; /* Đảm bảo grid chiếm toàn bộ chiều cao */
+      min-height: 0; /* Cho phép grid co lại khi cần thiết */
     }
     .col-span-1.flex.flex-col.h-full {
-      height: auto; /* Loại bỏ chiều cao 100% cứng nhắc, cho phép flex tự điều chỉnh */
+      height: 100%; /* Đảm bảo chiếm toàn bộ chiều cao của grid */
+      min-height: 0; /* Cho phép co lại khi cần thiết */
     }
     textarea#feedbackContent {
       flex: 1; /* Cho textarea chiếm hết chiều cao còn lại trong cột của nó */
       min-height: 150px; /* Chiều cao tối thiểu cho textarea */
+      height: 100%; /* Đảm bảo chiếm toàn bộ chiều cao có sẵn */
+      box-sizing: border-box; /* Đảm bảo padding không làm tăng kích thước */
+      resize: none; /* Ngăn người dùng thay đổi kích thước, để tránh phá vỡ layout */
     }
 
     /* Slide effect for sidebar - main content and header */
@@ -148,76 +158,62 @@
 <jsp:include page="/layout/sidebar_user.jsp" />
 
 <div class="main-content">
-<%--  <jsp:include page="/layout/header_user.jsp" />--%>
+  <%--  <jsp:include page="/layout/header_user.jsp" />--%>
 
   <div class="feedback-container">
-    <c:if test="${not empty success}">
-      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded absolute top-4 right-4 z-50" role="alert">
-        <span class="block sm:inline">${success}</span>
-      </div>
-    </c:if>
 
-    <c:if test="${not empty err}">
-      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded absolute top-4 right-4 z-50" role="alert">
-        <span class="block sm:inline">${err}</span>
-      </div>
-    </c:if>
-
-    <div class="w-[1300px] mx-auto bg-white shadow-lg rounded-lg p-6 border border-green-500" style="margin-right: 80px;">
+    <div class="w-[1300px] mx-auto bg-white shadow-xl rounded-xl p-6 border border-green-100" style="box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); height: calc(100% - 20px);">
       <div class="text-center mb-4">
-        <h1 class="text-2xl font-bold text-gray-900 mb-2">Feedback Form</h1>
-        <p class="text-sm text-gray-700 max-w-2xl mx-auto">We would love to hear your thoughts, suggestions, concerns or problems with anything so we can improve!</p>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2 bg-gradient-to-r from-green-600 to-green-400 bg-clip-text text-transparent">Share Your Feedback</h1>
+        <p class="text-sm text-gray-600 max-w-2xl mx-auto">We value your input! Help us improve by sharing your thoughts, suggestions, or questions.</p>
       </div>
-      <form id="feedbackForm" action="${pageContext.request.contextPath}/feedback" method="POST">
-        <div class="grid grid-cols-2 gap-6"> <%-- Removed h-[calc(100%-80px)] from here --%>
+      <form id="feedbackForm" action="${pageContext.request.contextPath}/feedback" method="POST" class="h-full flex flex-col">
+        <div class="grid grid-cols-2 gap-6 flex-grow"> <%-- Added flex-grow to ensure it takes available space --%>
           <div class="col-span-1 flex flex-col h-full">
             <div class="space-y-4">
               <p class="text-sm font-medium text-gray-800 mb-2">Feedback Type:</p>
               <div class="flex gap-4">
-                <label class="custom-radio">
+                <label class="custom-radio hover:bg-green-50 px-3 py-2 rounded-lg transition-all">
                   <input type="radio" name="feedbackType" value="comments" class="custom-radio-input" checked>
-                  <span class="text-sm text-gray-700">Comments</span>
+                  <span class="text-sm font-medium text-gray-700">Comments</span>
                 </label>
-                <label class="custom-radio">
+                <label class="custom-radio hover:bg-green-50 px-3 py-2 rounded-lg transition-all">
                   <input type="radio" name="feedbackType" value="suggestions" class="custom-radio-input">
-                  <span class="text-sm text-gray-700">Suggestions</span>
+                  <span class="text-sm font-medium text-gray-700">Suggestions</span>
                 </label>
-                <label class="custom-radio">
+                <label class="custom-radio hover:bg-green-50 px-3 py-2 rounded-lg transition-all">
                   <input type="radio" name="feedbackType" value="questions" class="custom-radio-input">
-                  <span class="text-sm text-gray-700">Questions</span>
+                  <span class="text-sm font-medium text-gray-700">Questions</span>
                 </label>
               </div>
               <div class="grid grid-cols-2 gap-4 mt-4">
                 <div>
-                  <label for="firstName" class="block text-sm font-medium text-gray-800 mb-1">First Name</label>
-                  <input type="text" id="firstName" name="firstName" class="w-full border border-gray-300 rounded-lg p-2 text-sm" placeholder="John" value="${sessionScope.user.displayName != null ? sessionScope.user.displayName.split(' ')[0] : ''}">
+                  <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                  <input type="text" id="firstName" name="firstName" class="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-green-200 focus:border-green-500 transition-all" placeholder="John" value="${sessionScope.user.displayName != null ? sessionScope.user.displayName.split(' ')[0] : ''}">
                 </div>
                 <div>
-                  <label for="lastName" class="block text-sm font-medium text-gray-800 mb-1">Last Name</label>
-                  <input type="text" id="lastName" name="lastName" class="w-full border border-gray-300 rounded-lg p-2 text-sm" placeholder="Doe">
+                  <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                  <input type="text" id="lastName" name="lastName" class="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-green-200 focus:border-green-500 transition-all" placeholder="Doe">
                 </div>
               </div>
               <div class="mt-4">
-                <label for="email" class="block text-sm font-medium text-gray-800 mb-1">E-mail</label>
-                <input type="email" id="email" name="email" class="w-full border border-gray-300 rounded-lg p-2 text-sm" placeholder="ex: myname@example.com" value="${sessionScope.user.email != null ? sessionScope.user.email : ''}">
+                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Receive Feedback</label>
+                <input type="email" id="email" name="email" class="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-green-200 focus:border-green-500 transition-all" placeholder="ex: myname@example.com" value="${sessionScope.user.email != null ? sessionScope.user.email : ''}">
               </div>
             </div>
             <div class="mt-auto pt-4">
-              <button type="submit" class="bg-green-500 text-white font-medium py-2 px-6 rounded-button hover:bg-opacity-90 transition-all whitespace-nowrap text-sm">Submit Feedback</button>
+              <button type="submit" class="bg-gradient-to-r from-green-500 to-green-600 text-white font-medium py-2.5 px-6 rounded-lg hover:shadow-md transition-all duration-300 whitespace-nowrap text-sm shadow-sm hover:shadow-green-100">
+                Submit Feedback <i class="ri-send-plane-2-fill ml-1"></i>
+              </button>
             </div>
           </div>
-          <div class="col-span-1 flex flex-col"> <%-- Added flex flex-col here to make textarea expand --%>
+          <div class="col-span-1 flex flex-col h-full"> <%-- Added h-full to ensure full height --%>
+            <div class="mb-3">
+              <label for="feedbackTitle" class="block text-sm font-medium text-gray-800 mb-1">Title Name:</label>
+              <input type="text" id="feedbackTitle" name="feedbackTitle" class="w-full border border-gray-200 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-green-200 focus:border-green-500 transition-all" placeholder="Enter a title for your feedback">
+            </div>
             <label for="feedbackContent" class="block text-sm font-medium text-gray-800 mb-1">Describe Your Feedback:</label>
-            <textarea id="feedbackContent" name="feedbackContent" class="w-full h-full border border-gray-300 rounded-lg p-3 text-sm" placeholder="Please share your feedback details here..."></textarea>
-            <%--              <div id="questionTips" class="hidden mt-2 p-2 bg-gray-50 rounded text-xs text-gray-600">--%>
-            <%--                <p class="font-medium mb-1">Tips for asking questions:</p>--%>
-            <%--                <ul class="list-disc pl-4 space-y-0.5">--%>
-            <%--                  <li>Be specific about your question</li>--%>
-            <%--                  <li>Include relevant details</li>--%>
-            <%--                  <li>Explain what you've already tried</li>--%>
-            <%--                  <li>Keep it clear and concise</li>--%>
-            <%--                </ul>--%>
-            <%--              </div>--%>
+            <textarea id="feedbackContent" name="feedbackContent" class="w-full flex-grow border border-gray-200 rounded-lg p-3 text-sm focus:ring-2 focus:ring-green-200 focus:border-green-500 transition-all" placeholder="Please share your feedback details here..." style="min-height: 200px; height: 100%;"></textarea>
           </div>
         </div>
       </form>
@@ -225,8 +221,58 @@
   </div>
 </div>
 
+<!-- Toast Notification -->
+<div style="z-index: 2000;" class="toast-container position-fixed bottom-0 end-0 p-3">
+  <!-- Success Toast -->
+  <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body">
+        <c:if test="${not empty success}">${success}</c:if>
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+
+  <!-- Error Toast -->
+  <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body" id="errorToastMessage">
+        <c:if test="${not empty err}">${err}</c:if>
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+
+  <!-- Validation Error Toast -->
+  <div id="validationErrorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body" id="validationErrorMessage">
+        Validation error message
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
 <script>
   document.addEventListener("DOMContentLoaded", function () {
+    // Initialize toast notifications
+    if ('${not empty success}' === 'true') {
+      const successToastEl = document.getElementById('successToast');
+      if (successToastEl) {
+        const successToast = new bootstrap.Toast(successToastEl, {delay: 5000});
+        successToast.show();
+      }
+    }
+
+    if ('${not empty err}' === 'true') {
+      const errorToastEl = document.getElementById('errorToast');
+      if (errorToastEl) {
+        const errorToast = new bootstrap.Toast(errorToastEl, {delay: 5000});
+        errorToast.show();
+      }
+    }
+
     const form = document.getElementById("feedbackForm");
     const feedbackContent = document.getElementById("feedbackContent");
     // const questionTips = document.getElementById("questionTips"); // Giữ nguyên bị comment nếu không dùng trong HTML
@@ -235,16 +281,13 @@
     function updatePlaceholder(type) {
       switch (type) {
         case "questions":
-          feedbackContent.placeholder = "Vui lòng nhập câu hỏi của bạn ở đây...";
-          // if (questionTips) questionTips.classList.remove("hidden"); // Uncomment nếu sử dụng questionTips
+          feedbackContent.placeholder = "Please enter your questions details here...";
           break;
         case "comments":
-          feedbackContent.placeholder = "Please share your feedback details here...";
-          // if (questionTips) questionTips.classList.add("hidden"); // Uncomment nếu sử dụng questionTips
+          feedbackContent.placeholder = "Please enter your comments details here...";
           break;
         case "suggestions":
-          feedbackContent.placeholder = "Please share your suggestions here...";
-          // if (questionTips) questionTips.classList.add("hidden"); // Uncomment nếu sử dụng questionTips
+          feedbackContent.placeholder = "Please enter your suggestions details here...";
           break;
       }
     }
@@ -261,19 +304,27 @@
     updatePlaceholder(initialFeedbackType);
 
 
+    // Function to show validation error toast
+    function showValidationError(message) {
+      const validationErrorMessage = document.getElementById('validationErrorMessage');
+      validationErrorMessage.textContent = message;
+      const validationErrorToast = new bootstrap.Toast(document.getElementById('validationErrorToast'), {delay: 5000});
+      validationErrorToast.show();
+    }
+
     form.addEventListener("submit", function (e) {
       const feedbackContentValue = feedbackContent.value.trim(); // Dùng biến mới để tránh nhầm lẫn với element
       const email = document.getElementById("email").value.trim();
 
       if (!feedbackContentValue) {
         e.preventDefault();
-        alert("Please enter your feedback content.");
+        showValidationError("Please enter your feedback content.");
         return;
       }
 
       if (!email) {
         e.preventDefault();
-        alert("Please enter your email address.");
+        showValidationError("Please enter your email address.");
         return;
       }
 
@@ -281,7 +332,7 @@
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailPattern.test(email)) {
         e.preventDefault();
-        alert("Please enter a valid email address.");
+        showValidationError("Please enter a valid email address.");
         return;
       }
 

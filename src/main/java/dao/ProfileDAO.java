@@ -15,7 +15,7 @@ public class ProfileDAO {
     }
 
     public Profile getProfile(int userId) throws SQLException {
-        String sql = "SELECT DisplayName, Email, PhoneNumber, Info, dateOfBirth, avatar, gender FROM Users WHERE UserID = ?";
+        String sql = "SELECT DisplayName, Email, PhoneNumber, Info, dateOfBirth, avatar, gender, IsVerified FROM Users WHERE UserID = ?";
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
@@ -34,7 +34,8 @@ public class ProfileDAO {
                         rs.getString("Info"),
                         rs.getTimestamp("dateOfBirth"),
                         rs.getBytes("avatar"),
-                        rs.getBoolean("gender")
+                        rs.getBoolean("gender"),
+                        rs.getBoolean("IsVerified")
                 );
             }
         } catch (SQLException e) {
