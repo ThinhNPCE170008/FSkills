@@ -104,7 +104,19 @@ public class Profile {
     // Các phương thức validation (giữ nguyên từ Profile cũ vì chúng hữu ích)
     public boolean validateEmail() {
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.(com|vn|io|me|net|edu|org|info|biz|co|xyz|gov|mil|asia|us|uk|ca|au|edu\\.vn|fpt\\.edu\\.vn|[a-zA-Z]{2,})$";
-        return email != null && Pattern.matches(emailRegex, email);
+
+        boolean isValidFormat = email != null && Pattern.matches(emailRegex, email);
+
+        boolean containsNumber = false;
+        if (email != null) {
+            for (char c : email.toCharArray()) {
+                if (Character.isDigit(c)) {
+                    containsNumber = true;
+                    break;
+                }
+            }
+        }
+        return isValidFormat && containsNumber;
     }
 
     public boolean validatePhoneNumber() {

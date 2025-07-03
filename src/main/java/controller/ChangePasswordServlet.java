@@ -92,8 +92,8 @@ public class ChangePasswordServlet extends HttpServlet {
             String newPassword = request.getParameter("newPassword");
             String confirmPassword = request.getParameter("confirmPassword");
 
-            if (newPassword.length() < 8) {
-                request.setAttribute("err", "Password must be at least 8 characters.");
+            if (newPassword.length() < 8 || newPassword.length() > 20) {
+                request.setAttribute("err", "Password must be at least 8 characters and maximum 20 characters.");
                 request.setAttribute("token", token);
                 request.getRequestDispatcher("/WEB-INF/views/changePassword.jsp").forward(request, response);
                 return;
@@ -101,6 +101,20 @@ public class ChangePasswordServlet extends HttpServlet {
 
             if (!newPassword.matches(".*[a-z].*") || !newPassword.matches(".*[A-Z].*")) {
                 request.setAttribute("err", "Password must contain both uppercase and lowercase letters.");
+                request.setAttribute("token", token);
+                request.getRequestDispatcher("/WEB-INF/views/changePassword.jsp").forward(request, response);
+                return;
+            }
+
+            if (!newPassword.matches(".*\\d.*")) {
+                request.setAttribute("err", "Password must contain at least one digit.");
+                request.setAttribute("token", token);
+                request.getRequestDispatcher("/WEB-INF/views/changePassword.jsp").forward(request, response);
+                return;
+            }
+
+            if (newPassword.matches(".*\\s.*")) {
+                request.setAttribute("err", "Password must not contain any whitespace characters.");
                 request.setAttribute("token", token);
                 request.getRequestDispatcher("/WEB-INF/views/changePassword.jsp").forward(request, response);
                 return;
