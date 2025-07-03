@@ -104,9 +104,11 @@
                     <label for="newPassword" class="form-label">New Password</label>
                     <input type="password" class="form-control" id="newPassword" name="newPassword" required>
                     <div class="password-requirements mt-2">
-                        <p class="requirement" id="length-requirement">At least 8 characters</p>
+                        <p class="requirement" id="length-requirement">Minimum 8 characters, maximum 20 characters</p>
                         <p class="requirement" id="case-requirement">Must have uppercase and lowercase letters</p>
                         <p class="requirement" id="special-requirement">Must have special characters</p>
+                        <p class="requirement" id="number-requirement">Must contain at least one number</p>
+                        <p class="requirement" id="whitespace-requirement">Must not contain spaces</p>
                     </div>
                 </div>
 
@@ -116,7 +118,7 @@
                     <p id="confirm-message" class="requirement"></p>
                 </div>
 
-                <button type="submit" id="savePasswordBtn" class="btn btn-primary w-100" disabled>Save Change</button>
+                <button type="submit" id="savePasswordBtn" class="btn btn-primary w-100" >Save Change</button>
             </form>
         </div>
 
@@ -129,6 +131,8 @@
                 const specialRequirement = document.getElementById('special-requirement');
                 const savePasswordBtn = document.getElementById('savePasswordBtn');
                 const confirmMessage = document.getElementById('confirm-message');
+                const numberRequirement = document.getElementById('number-requirement');
+                const whitespaceRequirement = document.getElementById('whitespace-requirement');
 
                 newPasswordInput.addEventListener('input', validatePassword);
                 confirmPasswordInput.addEventListener('input', validatePassword);
@@ -140,6 +144,8 @@
                     toggleClass(lengthRequirement, password.length >= 8);
                     toggleClass(caseRequirement, /[a-z]/.test(password) && /[A-Z]/.test(password));
                     toggleClass(specialRequirement, /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password));
+                    toggleClass(numberRequirement, /\d/.test(password));
+                    toggleClass(whitespaceRequirement, !/\s/.test(password));
 
                     if (confirmPassword.length > 0) {
                         if (password === confirmPassword) {
@@ -160,6 +166,8 @@
                             lengthRequirement.classList.contains('valid') &&
                             caseRequirement.classList.contains('valid') &&
                             specialRequirement.classList.contains('valid') &&
+                            numberRequirement.classList.contains('valid') &&
+                            whitespaceRequirement.classList.contains('valid') &&
                             password === confirmPassword &&
                             password.length > 0
                             ) {
@@ -181,5 +189,7 @@
             });
         </script>
 
+        <jsp:include page="/layout/toast.jsp" />
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

@@ -114,7 +114,8 @@
                                 <span>📧 <c:out value="${profile.email}"/></span>
 
                                 <c:if test="${not profile.isVerified}">
-                                    <a href="${pageContext.request.contextPath}/verifyemail?userID=${profile.userId}" class="unverified-badge" title="Email chưa xác minh">
+                                    <a href="${pageContext.request.contextPath}/verifyemail?userID=${profile.userId}"
+                                       class="unverified-badge" title="Email chưa xác minh">
                                         <i class="bi bi-exclamation-circle-fill"></i> Not Verified
                                     </a>
                                 </c:if>
@@ -596,6 +597,22 @@
                         // Check email format and domain
                         const email = document.getElementById('email').value;
                         if (email) {
+                            let containsNumber = false;
+                            for (let i = 0; i < email.length; i++) {
+                                if (!isNaN(parseInt(email[i]))) {
+                                    containsNumber = true;
+                                    break;
+                                }
+                            }
+
+                            if (!containsNumber) {
+                                event.preventDefault();
+                                document.getElementById('customErrorMessage').textContent = "New email must contain at least one number";
+                                const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 2000});
+                                toast.show();
+                                return false;
+                            }
+
                             // Split email into local part and domain
                             const parts = email.split('@');
                             if (parts.length === 2) {
