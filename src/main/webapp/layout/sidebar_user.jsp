@@ -19,7 +19,7 @@
         <a href="${pageContext.request.contextPath}/AllCourses.jsp"><i class="bi bi-book"></i> <span>All Courses</span></a>
         <a href="#"><i class="bi bi-mortarboard"></i> <span>My Courses</span></a>
         <a href="${pageContext.request.contextPath}/cart"><i class="bi bi-cart"></i> <span>Cart</span></a>
-        <a href="${pageContext.request.contextPath}/guest/announcement"><i class="bi bi-megaphone"></i> <span>Announcements</span></a>
+        <a href="${pageContext.request.contextPath}/announcements"><i class="bi bi-megaphone"></i> <span>Announcements</span></a>
 
         <div class="divider"></div>
         <a href="${pageContext.request.contextPath}/learner/profile" class="user-profile">
