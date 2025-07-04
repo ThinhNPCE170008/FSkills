@@ -18,7 +18,8 @@
         <a href="${pageContext.request.contextPath}/homePage_Guest.jsp"><i class="bi bi-house-door"></i> <span>Home</span></a>
         <a href="${pageContext.request.contextPath}/AllCourses.jsp"><i class="bi bi-book"></i> <span>All Courses</span></a>
         <a href="#"><i class="bi bi-mortarboard"></i> <span>My Courses</span></a>
-        <a href="#"><i class="bi bi-cart"></i> <span>Cart</span></a>
+        <a href="${pageContext.request.contextPath}/cart"><i class="bi bi-cart"></i> <span>Cart</span></a>
+        <a href="${pageContext.request.contextPath}/announcements"><i class="bi bi-megaphone"></i> <span>Announcements</span></a>
 
         <a href="${pageContext.request.contextPath}/announcements"><i class="bi bi-megaphone"></i> <span>Announcements</span></a>
         <a href="${pageContext.request.contextPath}/feedback"><i class="bi bi-chat-dots"></i> <span>Feedback</span></a>

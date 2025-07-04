@@ -39,7 +39,7 @@ public class MaterialDAO extends DBContext {
                 String type = rs.getString("Type");
                 Timestamp MaterialLastUpdate = rs.getTimestamp("MaterialLastUpdate");
                 int materialOrder = rs.getInt("MaterialOrder");
-                String materialLocation = rs.getString("MaterialLocation");
+                String materialLocation = rs.getString("MaterialUrl");
                 String videoTime = rs.getString("VideoTime");
                 String materialDescription = rs.getString("MaterialDescription");
                 String moduleName = rs.getString("ModuleName");
@@ -61,7 +61,7 @@ public class MaterialDAO extends DBContext {
             String materialLocation, String videoTime, String materialDescription) {
         String sql = "INSERT INTO [dbo].[Materials] "
                 + "([ModuleID],[MaterialName],[Type],[MaterialLastUpdate],[MaterialOrder],"
-                + "[MaterialLocation],[VideoTime],[MaterialDescription]) "
+                + "[MaterialUrl],[VideoTime],[MaterialDescription]) "
                 + "VALUES (?, ?, ?, GETDATE(), ?, ?, ?, ?)";
 
         try {
@@ -101,7 +101,7 @@ public class MaterialDAO extends DBContext {
                 String type = rs.getString("Type");
                 Timestamp MaterialLastUpdate = rs.getTimestamp("MaterialLastUpdate");
                 int materialOrder = rs.getInt("MaterialOrder");
-                String materialLocation = rs.getString("MaterialLocation");
+                String materialLocation = rs.getString("MaterialUrl");
                 String videoTime = rs.getString("VideoTime");
                 String materialDescription = rs.getString("MaterialDescription");
                 String moduleName = rs.getString("ModuleName");
@@ -121,7 +121,7 @@ public class MaterialDAO extends DBContext {
     public boolean update(String materialName, String type, int order, String materialLocation,
             String videoTime, String description, int materialId, int moduleId, int courseId) {
         String sql = "UPDATE mtl SET mtl.MaterialName = ?, mtl.Type = ?,mtl.MaterialLastUpdate = GETDATE(),\n"
-                + "mtl.MaterialOrder = ?,mtl.MaterialLocation = ?,mtl.VideoTime = ?, mtl.MaterialDescription = ?\n"
+                + "mtl.MaterialOrder = ?,mtl.MaterialUrl = ?,mtl.VideoTime = ?, mtl.MaterialDescription = ?\n"
                 + "FROM Materials mtl JOIN Modules m ON mtl.ModuleID = m.ModuleID JOIN Courses c ON m.CourseID = c.CourseID\n"
                 + "WHERE mtl.MaterialID = ? AND m.ModuleID = ? AND c.CourseID = ?; ";
         try {

@@ -9,6 +9,8 @@ import dao.EnrollDAO;
 import dao.MaterialDAO;
 import dao.ModuleDAO;
 import dao.StudyDAO;
+import dao.CommentDAO;
+import model.Comment;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -30,6 +32,8 @@ import model.User;
  */
 @WebServlet(name = "LearnerMaterialServlet", urlPatterns = {"/learner/course/module/material"})
 public class LearnerMaterialServlet extends HttpServlet {
+
+    private final CommentDAO commentDAO = new CommentDAO();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -97,14 +101,23 @@ public class LearnerMaterialServlet extends HttpServlet {
                     course = couDAO.getCourseByCourseID(courseID);
                     moduleList = molDAO.getAllModuleByCourseID(courseID);
                     currentMaterial = matDAO.getMaterialById(materialID);
+                    System.out.println(currentMaterial);
                     materialURL = currentMaterial.getMaterialLocation();
-                    for (Module mol : moduleList){
+                    if (!(materialURL == null)) {
+                        if (!materialURL.startsWith("http")) {
+                            materialURL = request.getContextPath() + "/" + materialURL;
+                        }
+                    }
+                    for (Module mol : moduleList) {
                         matList = matDAO.getAllMaterial(courseID, mol.getModuleID());
                         mapOfModuleIdToMaterialList.put(mol.getModuleID(), matList);
-                        for (Material mat : matList){
+                        for (Material mat : matList) {
                             mapOfMaterialIdToStudyStatus.put(mat.getMaterialId(), stuDAO.checkStudy(user.getUserId(), mat.getMaterialId()));
                         }
                     }
+
+                    List<Comment> comments = commentDAO.getCommentsByMaterialId(materialID);
+                    request.setAttribute("comments", comments);                    
                     request.setAttribute("Course", course);
                     request.setAttribute("ModuleList", moduleList);
                     request.setAttribute("Material", currentMaterial);
@@ -114,10 +127,15 @@ public class LearnerMaterialServlet extends HttpServlet {
                     request.setAttribute("CurrentMaterialID", materialID);
                     request.setAttribute("CurrentModuleID", moduleID);
                     request.setAttribute("User", user);
+                    
+                    request.setAttribute("courseID", courseID); 
+                    request.setAttribute("moduleID", moduleID);
+                    request.setAttribute("materialID", materialID);
+
                     request.getRequestDispatcher("/WEB-INF/views/learnerMaterialView.jsp").forward(request, response);
                 }
             } catch (Exception E) {
-                System.out.println("Can't convert attribute into Interger");
+                System.out.println("Can't convert attribute into Interger or other error: " + E.getMessage());
             }
         }
     }
@@ -145,7 +163,7 @@ public class LearnerMaterialServlet extends HttpServlet {
                 matID = Integer.parseInt(request.getParameter("materialID"));
                 molID = Integer.parseInt(request.getParameter("moduleID"));
                 couID = Integer.parseInt(request.getParameter("courseID"));
-                if (stuDAO.addLearnerStudyCompletion(user.getUserId(), matID) != 0) {
+                if (user != null && stuDAO.addLearnerStudyCompletion(user.getUserId(), matID) != 0) {
                     response.sendRedirect(request.getContextPath() + "/learner/course/module/material?courseID=" + couID + "&moduleID=" + molID + "&materialID=" + matID);
                 }
             } catch (Exception E) {

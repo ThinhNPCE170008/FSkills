@@ -4,9 +4,6 @@ import util.ImageBase64;
 
 import java.sql.Timestamp;
 
-/**
- * @author DELL
- */
 public class User {
 
     private int userId;
@@ -25,9 +22,9 @@ public class User {
     private String phone;
     private boolean isVerified;
     private String googleID;
+    private String avatarUrl;
 
     public User() {
-
     }
 
     public User(int userId, String userName, String displayName, String email, String password, Role role, int gender, Timestamp dateOfBirth, Timestamp userCreateDate, byte[] avatar, String info, Ban ban, int reports, String phone, boolean isVerified, String googleID) {
@@ -47,6 +44,26 @@ public class User {
         this.phone = phone;
         this.isVerified = isVerified;
         this.googleID = googleID;
+    }
+    
+    public User(int userId, String userName, String displayName, String email, String password, Role role, int gender, Timestamp dateOfBirth, Timestamp userCreateDate, byte[] avatar, String info, Ban ban, int reports, String phone, boolean isVerified, String googleID, String avatarUrl) {
+        this.userId = userId;
+        this.userName = userName;
+        this.displayName = displayName;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.gender = gender;
+        this.dateOfBirth = dateOfBirth;
+        this.userCreateDate = userCreateDate;
+        this.avatar = avatar;
+        this.info = info;
+        this.ban = ban;
+        this.reports = reports;
+        this.phone = phone;
+        this.isVerified = isVerified;
+        this.googleID = googleID;
+        this.avatarUrl = avatarUrl;
     }
 
     public User(String userName, String displayName, String email, String password, Role role, byte[] avatar, boolean isVerified, String googleID) {
@@ -104,7 +121,6 @@ public class User {
         this.info = info;
     }
 
-    // Using Sign Up
     public User(String userName, String email, String password, String phone) {
         this.userName = userName;
         this.email = email;
@@ -251,9 +267,17 @@ public class User {
         this.googleID = googleID;
     }
 
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
     @Override
     public String toString() {
-        return "User{" + "userId=" + userId + ", userName=" + userName + ", displayName=" + displayName + ", email=" + email + ", password=" + password + ", role=" + role + ", gender=" + gender + ", dateOfBirth=" + dateOfBirth + ", userCreateDate=" + userCreateDate + ", avatar=" + avatar + ", info=" + info + ", ban=" + ban + ", reports=" + reports + ", phone=" + phone + ", isVerified=" + isVerified + ", googleID=" + googleID + '}';
+        return "User{" + "userId=" + userId + ", userName=" + userName + ", displayName=" + displayName + ", email=" + email + ", password=" + password + ", role=" + role + ", gender=" + gender + ", dateOfBirth=" + dateOfBirth + ", userCreateDate=" + userCreateDate + ", avatar=" + avatar + ", info=" + info + ", ban=" + ban + ", reports=" + reports + ", phone=" + phone + ", isVerified=" + isVerified + ", googleID=" + googleID + ", avatarUrl=" + avatarUrl + '}';
     }
 
     public String getImageDataURI() {
