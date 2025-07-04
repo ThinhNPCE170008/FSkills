@@ -173,6 +173,9 @@
                         <input type="hidden" name="materialID" value="${Material.materialId}"/>
                     </form>
                 </c:if>
+                
+                <%-- de ké o day --%>
+                <jsp:include page="/WEB-INF/views/comments_section.jsp" />
             </div>
 
             <div id="material-list">
