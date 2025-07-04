@@ -18,13 +18,18 @@ public class DBContext {
     public DBContext() {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+//            String dbURL = "jdbc:sqlserver://javademo-server.database.windows.net:1433;"
+//                    + "databaseName=FLearn;"
+//                    + "user=adminuser@javademo-server;"
+//                    + "password=Group3SWP391!;"
+//                    + "encrypt=true;trustServerCertificate=false;loginTimeout=30;";
             String dbURL = "jdbc:sqlserver://localhost:1433;"
                     + "databaseName=FLearn;"
                     + "user=sa;"
                     + "password=123456;"
                     + "encrypt=false;trustServerCertificate=true;loginTimeout=30;";
-
             conn = DriverManager.getConnection(dbURL);
+
             if (conn != null) {
                 DatabaseMetaData dm = (DatabaseMetaData) conn.getMetaData();
                 System.out.println("Driver name: " + dm.getDriverName());
@@ -58,12 +63,12 @@ public class DBContext {
 //                    + "trustServerCertificate=false;"
 //                    + "loginTimeout=30;";
 //
-//            System.out.println("✅ DEBUG JDBC START");
-//            System.out.println("🔸 DB_HOST = " + host);
-//            System.out.println("🔸 DB_USER = " + user);
-//            System.out.println("🔸 DB_NAME = " + dbName);
-//            System.out.println("🔸 JDBC URL = " + dbURL);
-//            System.out.println("✅ DEBUG JDBC END");
+//            System.out.println("DEBUG JDBC START");
+//            System.out.println("DB_HOST = " + host);
+//            System.out.println("DB_USER = " + user);
+//            System.out.println("DB_NAME = " + dbName);
+//            System.out.println("JDBC URL = " + dbURL);
+//            System.out.println("DEBUG JDBC END");
 //
 //            conn = DriverManager.getConnection(dbURL, user, pass);
 //

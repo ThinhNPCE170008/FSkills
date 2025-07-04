@@ -27,6 +27,610 @@ import model.UserGoogle;
  */
 public class UserDAO extends DBContext {
 
+    //sinh viên google
+    public List<User> getAllStudentsWithAvatar() {
+        List<User> list = new ArrayList<>();
+        String sql = "select UserID, UserName, DisplayName, Role, BanStatus, ReportAmount, AvatarGoogle from Users Order by ReportAmount Desc";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User u = new User();
+                u.setUserId(rs.getInt("UserID"));
+                u.setUserName(rs.getString("UserName"));
+                u.setDisplayName(rs.getString("DisplayName"));
+                int roleInt = rs.getInt("Role");
+                switch (roleInt) {
+                    case 0:
+                        u.setRole(Role.LEARNER);
+                        break;
+                    case 1:
+                        u.setRole(Role.INSTRUCTOR);
+                        break;
+                    case 2:
+                        u.setRole(Role.ADMIN);
+                        break;
+                }
+                int banInt = rs.getInt("BanStatus");
+                switch (banInt) {
+                    case 0:
+                        u.setBan(Ban.NORMAL);
+                        break;
+                    case 1:
+                        u.setBan(Ban.BANNED);
+                        break;
+                }
+                u.setReports(rs.getInt("ReportAmount"));
+                u.setAvatarUrl(rs.getString("AvatarGoogle"));
+                list.add(u);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<User> getAllLearnersWithAvatar() {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT UserID, UserName, DisplayName, Role, BanStatus, ReportAmount, AvatarGoogle FROM Users WHERE Role = ? ORDER BY ReportAmount DESC";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, Role.LEARNER.ordinal());
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User u = new User();
+                u.setUserId(rs.getInt("UserID"));
+                u.setUserName(rs.getString("UserName"));
+                u.setDisplayName(rs.getString("DisplayName"));
+                u.setRole(Role.LEARNER);
+                int banInt = rs.getInt("BanStatus");
+                switch (banInt) {
+                    case 0:
+                        u.setBan(Ban.NORMAL);
+                        break;
+                    case 1:
+                        u.setBan(Ban.BANNED);
+                        break;
+                }
+                u.setReports(rs.getInt("ReportAmount"));
+                u.setAvatarUrl(rs.getString("AvatarGoogle"));
+                list.add(u);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<User> getAllInstructorsWithAvatar() {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT UserID, UserName, DisplayName, Role, BanStatus, ReportAmount, AvatarGoogle FROM Users WHERE Role = ? ORDER BY ReportAmount DESC";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, Role.INSTRUCTOR.ordinal());
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User u = new User();
+                u.setUserId(rs.getInt("UserID"));
+                u.setUserName(rs.getString("UserName"));
+                u.setDisplayName(rs.getString("DisplayName"));
+                u.setRole(Role.INSTRUCTOR);
+                int banInt = rs.getInt("BanStatus");
+                switch (banInt) {
+                    case 0:
+                        u.setBan(Ban.NORMAL);
+                        break;
+                    case 1:
+                        u.setBan(Ban.BANNED);
+                        break;
+                }
+                u.setReports(rs.getInt("ReportAmount"));
+                u.setAvatarUrl(rs.getString("AvatarGoogle"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public List<User> searchUsersByNameWithAvatar(String searchName) throws SQLException {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT UserID, UserName, DisplayName, Role, BanStatus, ReportAmount, AvatarGoogle FROM Users WHERE LOWER(UserName) LIKE LOWER(?)";
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "%" + searchName + "%");
+            try ( ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    User u = new User();
+                    u.setUserId(rs.getInt("UserID"));
+                    u.setUserName(rs.getString("UserName"));
+                    u.setDisplayName(rs.getString("DisplayName"));
+                    int roleInt = rs.getInt("Role");
+                    switch (roleInt) {
+                        case 0:
+                            u.setRole(Role.LEARNER);
+                            break;
+                        case 1:
+                            u.setRole(Role.INSTRUCTOR);
+                            break;
+                        case 2:
+                            u.setRole(Role.ADMIN);
+                            break;
+                    }
+                    int banInt = rs.getInt("BanStatus");
+                    switch (banInt) {
+                        case 0:
+                            u.setBan(Ban.NORMAL);
+                            break;
+                        case 1:
+                            u.setBan(Ban.BANNED);
+                            break;
+                    }
+                    u.setReports(rs.getInt("ReportAmount"));
+                    u.setAvatarUrl(rs.getString("AvatarGoogle"));
+                }
+            }
+        }
+        return users;
+    }
+
+    public List<User> searchLearnersByNameWithAvatar(String searchName) throws SQLException {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT UserID, UserName, DisplayName, Role, BanStatus, ReportAmount, AvatarGoogle FROM Users WHERE Role = ? AND LOWER(UserName) LIKE LOWER(?) ORDER BY ReportAmount DESC";
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, Role.LEARNER.ordinal());
+            ps.setString(2, "%" + searchName + "%");
+            try ( ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    User u = new User();
+                    u.setUserId(rs.getInt("UserID"));
+                    u.setUserName(rs.getString("UserName"));
+                    u.setDisplayName(rs.getString("DisplayName"));
+                    u.setRole(Role.LEARNER);
+                    int banInt = rs.getInt("BanStatus");
+                    switch (banInt) {
+                        case 0:
+                            u.setBan(Ban.NORMAL);
+                            break;
+                        case 1:
+                            u.setBan(Ban.BANNED);
+                            break;
+                    }
+                    u.setReports(rs.getInt("ReportAmount"));
+                    u.setAvatarUrl(rs.getString("AvatarGoogle"));
+                    users.add(u);
+                }
+            }
+        }
+        return users;
+    }
+
+    public List<User> searchInstructorsByNameWithAvatar(String searchName) throws SQLException {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT UserID, UserName, DisplayName, Role, BanStatus, ReportAmount, AvatarGoogle FROM Users WHERE Role = ? AND LOWER(UserName) LIKE LOWER(?) ORDER BY ReportAmount DESC";
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, Role.INSTRUCTOR.ordinal());
+            ps.setString(2, "%" + searchName + "%");
+            try ( ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    User u = new User();
+                    u.setUserId(rs.getInt("UserID"));
+                    u.setUserName(rs.getString("UserName"));
+                    u.setDisplayName(rs.getString("DisplayName"));
+                    u.setRole(Role.INSTRUCTOR);
+                    int banInt = rs.getInt("BanStatus");
+                    switch (banInt) {
+                        case 0:
+                            u.setBan(Ban.NORMAL);
+                            break;
+                        case 1:
+                            u.setBan(Ban.BANNED);
+                            break;
+                    }
+                    u.setReports(rs.getInt("ReportAmount"));
+                    u.setAvatarUrl(rs.getString("AvatarGoogle"));
+                    users.add(u);
+                }
+            }
+        }
+        return users;
+    }
+
+    public List<User> showAllInformWithAvatar(String informUser) throws SQLException {
+        List<User> us = new ArrayList<>();
+        String sql = "SELECT UserName, DisplayName, Email, Password, Role, DateOfBirth, UserCreateDate, info, BanStatus, ReportAmount, PhoneNumber, AvatarGoogle FROM Users WHERE UserName = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, informUser);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            User u = new User();
+            u.setUserName(rs.getString("UserName"));
+            u.setDisplayName(rs.getString("DisplayName"));
+            u.setEmail(rs.getString("Email"));
+            u.setPassword(rs.getString("Password"));
+            int roleInt = rs.getInt("Role");
+            switch (roleInt) {
+                case 0:
+                    u.setRole(Role.LEARNER);
+                    break;
+                case 1:
+                    u.setRole(Role.INSTRUCTOR);
+                    break;
+                case 2:
+                    u.setRole(Role.ADMIN);
+                    break;
+            }
+            u.setDateOfBirth(rs.getTimestamp("DateOfBirth"));
+            u.setUserCreateDate(rs.getTimestamp("UserCreateDate"));
+            u.setInfo(rs.getString("info"));
+            int banInt = rs.getInt("BanStatus");
+            switch (banInt) {
+                case 0:
+                    u.setBan(Ban.NORMAL);
+                    break;
+                case 1:
+                    u.setBan(Ban.BANNED);
+                    break;
+            }
+            u.setPhone(rs.getString("PhoneNumber"));
+            u.setReports(rs.getInt("ReportAmount"));
+            u.setAvatarUrl(rs.getString("AvatarGoogle")); // <-- ĐÃ THÊM DÒNG NÀY CHO PHƯƠNG THỨC MỚI
+            us.add(u);
+        }
+        return us;
+    }
+
+    public User verifyMD5WithAvatar(String input, String Password) {
+        String sql = "SELECT *, AvatarGoogle FROM Users WHERE (UserName = ? OR Email = ?) AND Password = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, input);
+            ps.setString(2, input);
+            ps.setString(3, hashMD5(Password));
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int UserID = rs.getInt("UserID");
+                String UserName = rs.getString("UserName");
+                String DisplayName = rs.getString("DisplayName");
+                String Email = rs.getString("Email");
+                Password = rs.getString("Password");
+                int roleInt = rs.getInt("Role");
+                Role role = null;
+                switch (roleInt) {
+                    case 0:
+                        role = Role.LEARNER;
+                        break;
+                    case 1:
+                        role = Role.INSTRUCTOR;
+                        break;
+                    case 2:
+                        role = Role.ADMIN;
+                        break;
+                    default:
+                        System.err.println("Invalid role value from DB: " + roleInt);
+                }
+                int gender = rs.getInt("Gender");
+                Timestamp BirthOfDay = rs.getTimestamp("DateOfBirth");
+                Timestamp TimeCreate = rs.getTimestamp("UserCreateDate");
+                byte[] Avatar = rs.getBytes("Avatar");
+                String info = rs.getString("info");
+                int banInt = rs.getInt("BanStatus");
+                Ban Ban = null;
+                switch (banInt) {
+                    case 0:
+                        Ban = Ban.NORMAL;
+                        break;
+                    case 1:
+                        Ban = Ban.BANNED;
+                        break;
+                    default:
+                        System.err.println("Invalid ban value from DB: " + banInt);
+                }
+                int ReportAmount = rs.getInt("ReportAmount");
+                String PhoneNumber = rs.getString("PhoneNumber");
+                boolean isVerified = rs.getBoolean("IsVerified");
+                String GoogleID = rs.getString("GoogleID");
+                String avatarGoogleUrl = rs.getString("AvatarGoogle"); // <-- ĐÃ THÊM DÒNG NÀY CHO PHƯƠNG THỨC MỚI
+
+                User acc = new User(UserID, UserName, DisplayName, Email, Password, role, gender, TimeCreate, TimeCreate, Avatar, info, Ban, ReportAmount, info, isVerified, GoogleID);
+                acc.setAvatarUrl(avatarGoogleUrl); // <-- ĐÃ THÊM DÒNG NÀY CHO PHƯƠNG THỨC MỚI
+                return acc;
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public User getByUsernameWithAvatar(String userName) {
+        String sql = "SELECT *, AvatarGoogle FROM users WHERE UserName = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, userName);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                User user = new User();
+                user.setUserId(rs.getInt("UserID"));
+                user.setUserName(rs.getString("UserName"));
+                user.setDisplayName(rs.getNString("DisplayName"));
+                user.setEmail(rs.getString("Email"));
+                user.setPassword(rs.getString("Password"));
+                int roleInt = rs.getInt("Role");
+                switch (roleInt) {
+                    case 0:
+                        user.setRole(Role.LEARNER);
+                        break;
+                    case 1:
+                        user.setRole(Role.INSTRUCTOR);
+                        break;
+                    case 2:
+                        user.setRole(Role.ADMIN);
+                        break;
+                }
+                user.setGender(rs.getInt("Gender"));
+                user.setDateOfBirth(rs.getTimestamp("DateOfBirth"));
+                user.setUserCreateDate(rs.getTimestamp("UserCreateDate"));
+                user.setAvatar(rs.getBytes("Avatar")); // Avatar thường (byte[])
+                user.setInfo(rs.getNString("Info"));
+                user.setReports(rs.getInt("ReportAmount"));
+                user.setPhone(rs.getString("PhoneNumber"));
+                user.setIsVerified(rs.getBoolean("IsVerified"));
+                int banInt = rs.getInt("BanStatus");
+                switch (banInt) {
+                    case 0:
+                        user.setBan(Ban.NORMAL);
+                        break;
+                    case 1:
+                        user.setBan(Ban.BANNED);
+                        break;
+                }
+                user.setGoogleID(rs.getString("GoogleID"));
+                user.setAvatarUrl(rs.getString("AvatarGoogle"));
+                return user;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public User getByUserIDWithAvatar(int userID) {
+        String sql = "SELECT *, AvatarGoogle FROM Users WHERE UserID = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, userID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                String userName = rs.getString("UserName");
+                String displayName = rs.getString("DisplayName");
+                String email = rs.getString("Email");
+                String password = rs.getString("Password");
+                int roleInt = rs.getInt("Role");
+                Role role = null;
+                switch (roleInt) {
+                    case 0:
+                        role = Role.LEARNER;
+                        break;
+                    case 1:
+                        role = Role.INSTRUCTOR;
+                        break;
+                    case 2:
+                        role = Role.ADMIN;
+                        break;
+                    default:
+                        System.err.println("Invalid role value from DB: " + roleInt);
+                }
+                int gender = rs.getInt("Gender");
+                Timestamp birthOfDay = rs.getTimestamp("DateOfBirth");
+                Timestamp timeCreate = rs.getTimestamp("UserCreateDate");
+                byte[] avatar = rs.getBytes("Avatar");
+                String info = rs.getString("info");
+                int banInt = rs.getInt("BanStatus");
+                Ban Ban = null;
+                switch (banInt) {
+                    case 0:
+                        Ban = Ban.NORMAL;
+                        break;
+                    case 1:
+                        Ban = Ban.BANNED;
+                        break;
+                    default:
+                        System.err.println("Invalid ban value from DB: " + banInt);
+                }
+                int reportAmount = rs.getInt("ReportAmount");
+                String phoneNumber = rs.getString("PhoneNumber");
+                boolean isVerified = rs.getBoolean("IsVerified");
+                String GoogleID = rs.getString("GoogleID");
+                String avatarGoogleUrl = rs.getString("AvatarGoogle");
+
+                User acc = new User(userID, userName, displayName, email, password, role, gender, timeCreate, timeCreate, avatar, info, Ban, reportAmount, info, isVerified, GoogleID);
+                acc.setAvatarUrl(avatarGoogleUrl);
+                return acc;
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public User findByGoogleIDWithAvatar(String googleID) {
+        String sql = "SELECT *, AvatarGoogle FROM Users WHERE GoogleID = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, googleID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int UserID = rs.getInt("UserID");
+                String UserName = rs.getString("UserName");
+                String DisplayName = rs.getString("DisplayName");
+                String Email = rs.getString("Email");
+                String Password = rs.getString("Password");
+                int roleInt = rs.getInt("Role");
+                Role role = null;
+                switch (roleInt) {
+                    case 0:
+                        role = Role.LEARNER;
+                        break;
+                    case 1:
+                        role = Role.INSTRUCTOR;
+                        break;
+                    case 2:
+                        role = Role.ADMIN;
+                        break;
+                    default:
+                        System.err.println("Invalid role value from DB: " + roleInt);
+                }
+                int gender = rs.getInt("Gender");
+                Timestamp BirthOfDay = rs.getTimestamp("DateOfBirth");
+                Timestamp TimeCreate = rs.getTimestamp("UserCreateDate");
+                byte[] Avatar = rs.getBytes("Avatar"); // Avatar thường (byte[])
+                String info = rs.getString("info");
+                int banInt = rs.getInt("BanStatus");
+                Ban Ban = null;
+                switch (banInt) {
+                    case 0:
+                        Ban = Ban.NORMAL;
+                        break;
+                    case 1:
+                        Ban = Ban.BANNED;
+                        break;
+                    default:
+                        System.err.println("Invalid ban value from DB: " + banInt);
+                }
+                int ReportAmount = rs.getInt("ReportAmount");
+                String PhoneNumber = rs.getString("PhoneNumber");
+                boolean isVerified = rs.getBoolean("IsVerified");
+                String avatarGoogleUrl = rs.getString("AvatarGoogle");
+
+                User acc = new User(UserID, UserName, DisplayName, Email, Password, role, gender, TimeCreate, TimeCreate, Avatar, info, Ban, ReportAmount, info, isVerified, googleID);
+                acc.setAvatarUrl(avatarGoogleUrl);
+                return acc;
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+// NEW METHOD: Tìm người dùng theo Email với avatar Google
+    public User findByEmailWithAvatar(String Email) {
+        String sql = "SELECT *, AvatarGoogle FROM Users WHERE Email = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, Email);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int UserID = rs.getInt("UserID");
+                String UserName = rs.getString("UserName");
+                String DisplayName = rs.getString("DisplayName");
+                String Password = rs.getString("Password");
+                int roleInt = rs.getInt("Role");
+                Role role = null;
+                switch (roleInt) {
+                    case 0:
+                        role = Role.LEARNER;
+                        break;
+                    case 1:
+                        role = Role.INSTRUCTOR;
+                        break;
+                    case 2:
+                        role = Role.ADMIN;
+                        break;
+                    default:
+                        System.err.println("Invalid role value from DB: " + roleInt);
+                }
+                int gender = rs.getInt("Gender");
+                Timestamp BirthOfDay = rs.getTimestamp("DateOfBirth");
+                Timestamp TimeCreate = rs.getTimestamp("UserCreateDate");
+                byte[] Avatar = rs.getBytes("Avatar");
+                String info = rs.getString("info");
+                int banInt = rs.getInt("BanStatus");
+                Ban Ban = null;
+                switch (banInt) {
+                    case 0:
+                        Ban = Ban.NORMAL;
+                        break;
+                    case 1:
+                        Ban = Ban.BANNED;
+                        break;
+                    default:
+                        System.err.println("Invalid ban value from DB: " + banInt);
+                }
+                int ReportAmount = rs.getInt("ReportAmount");
+                String PhoneNumber = rs.getString("PhoneNumber");
+                boolean isVerified = rs.getBoolean("IsVerified");
+                String GoogleID = rs.getString("GoogleID");
+                String avatarGoogleUrl = rs.getString("AvatarGoogle");
+
+                User acc = new User(UserID, UserName, DisplayName, Email, Password, role, gender, TimeCreate, TimeCreate, Avatar, info, Ban, ReportAmount, info, isVerified, GoogleID);
+                acc.setAvatarUrl(avatarGoogleUrl);
+                return acc;
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public User findByTokenWithAvatar(String token) {
+        String sql = "SELECT u.*, u.AvatarGoogle FROM users u JOIN RememberTokens t ON u.UserID = t.user_id WHERE t.token = ? AND t.expiry_date > CURRENT_TIMESTAMP;";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, token);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int UserID = rs.getInt("UserID");
+                String UserName = rs.getString("UserName");
+                String DisplayName = rs.getString("DisplayName");
+                String Email = rs.getString("Email");
+                String Password = rs.getString("Password");
+                int roleInt = rs.getInt("Role");
+                Role role = null;
+                switch (roleInt) {
+                    case 0:
+                        role = Role.LEARNER;
+                        break;
+                    case 1:
+                        role = Role.INSTRUCTOR;
+                        break;
+                    case 2:
+                        role = Role.ADMIN;
+                        break;
+                    default:
+                        System.err.println("Invalid role value from DB: " + roleInt);
+                }
+                int gender = rs.getInt("Gender");
+                Timestamp BirthOfDay = rs.getTimestamp("DateOfBirth");
+                Timestamp TimeCreate = rs.getTimestamp("UserCreateDate");
+                byte[] Avatar = rs.getBytes("Avatar"); // Avatar thường (byte[])
+                String info = rs.getString("info");
+                int banInt = rs.getInt("BanStatus");
+                Ban Ban = null;
+                switch (banInt) {
+                    case 0:
+                        Ban = Ban.NORMAL;
+                        break;
+                    case 1:
+                        Ban = Ban.BANNED;
+                        break;
+                    default:
+                        System.err.println("Invalid ban value from DB: " + banInt);
+                }
+                int ReportAmount = rs.getInt("ReportAmount");
+                String PhoneNumber = rs.getString("PhoneNumber");
+                boolean isVerified = rs.getBoolean("IsVerified");
+                String GoogleID = rs.getString("GoogleID");
+                String avatarGoogleUrl = rs.getString("AvatarGoogle");
+
+                User acc = new User(UserID, UserName, DisplayName, Email, Password, role, gender, TimeCreate, TimeCreate, Avatar, info, Ban, ReportAmount, info, isVerified, GoogleID);
+                acc.setAvatarUrl(avatarGoogleUrl);
+                return acc;
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
     public boolean checkPassword(int userId, String oldPassword) throws Exception {
         String sql = "SELECT COUNT(*) FROM Users WHERE userId = ? AND password = ?";
         try ( PreparedStatement ps = conn.prepareStatement(sql)) {
