@@ -21,6 +21,8 @@
         <a href="${pageContext.request.contextPath}/cart"><i class="bi bi-cart"></i> <span>Cart</span></a>
         <a href="${pageContext.request.contextPath}/announcements"><i class="bi bi-megaphone"></i> <span>Announcements</span></a>
 
+        <a href="${pageContext.request.contextPath}/announcements"><i class="bi bi-megaphone"></i> <span>Announcements</span></a>
+        <a href="${pageContext.request.contextPath}/feedback"><i class="bi bi-chat-dots"></i> <span>Feedback</span></a>
         <div class="divider"></div>
         <a href="${pageContext.request.contextPath}/learner/profile" class="user-profile">
           <c:choose>
@@ -33,7 +35,6 @@
           </c:choose>
           <span class="user-profile-name">${sessionScope.user.displayName}</span>
         </a>
-        <a href="${pageContext.request.contextPath}/feedback"><i class="bi bi-chat-dots"></i> <span>Feedback</span></a>
         <a href="${pageContext.request.contextPath}/logout"><i class="bi bi-box-arrow-right"></i> <span>Logout</span></a>
       </c:if>
 
@@ -41,7 +42,7 @@
         <a href="${pageContext.request.contextPath}/instructor"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
         <a href="${pageContext.request.contextPath}/instructor/courses?action=list"><i class="bi bi-laptop"></i> <span>Manage Courses</span></a>
         <a href="analytics.jsp"><i class="bi bi-graph-up"></i> <span>Analytics</span></a>
-        <a href="feedback.jsp"><i class="bi bi-chat-dots"></i> <span>Feedback</span></a>
+        <a href="${pageContext.request.contextPath}/feedback"><i class="bi bi-chat-dots"></i> <span>Feedback</span></a>
         <a href="${pageContext.request.contextPath}/announcements"><i class="bi bi-megaphone"></i> <span>Announcements</span></a>
 
         <div class="divider"></div>
@@ -66,7 +67,9 @@
         <a href="${pageContext.request.contextPath}/announcements"><i class="bi bi-megaphone"></i> <span>Announcements</span></a>
 
         <div class="divider"></div>
-        <a href="${pageContext.request.contextPath}/logout"><i class="bi bi-box-arrow-right"></i> <span>Logout</span></a>
+        <c:if test="${not empty sessionScope.user}">
+          <a href="${pageContext.request.contextPath}/logout"><i class="bi bi-box-arrow-right"></i> <span>Logout</span></a>
+        </c:if>
       </c:if>
     </nav>
   </div>

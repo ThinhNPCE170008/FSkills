@@ -150,7 +150,7 @@ body {
 }
 
 .address-field, .email-field {
-    grid-column: 1 / -1;
+    grid-column: auto;
 }
 
 .email-info {
