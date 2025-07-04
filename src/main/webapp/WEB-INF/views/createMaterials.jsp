@@ -10,10 +10,6 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
         <style>
-            body {
-                background: linear-gradient(135deg, #f0f4ff, #f9f9f9);
-                font-family: 'Segoe UI', sans-serif;
-            }
             .card-custom {
                 border: none;
                 border-radius: 20px;
@@ -68,17 +64,17 @@
         </style>
     </head>
     <body>
-        <jsp:include page="/layout/header_user.jsp"/>
-        <div class="container py-2 ps-3">
+        <jsp:include page="/layout/sidebar_user.jsp"/>
+        <div class="container-fluid flex px-4">
             <div class="container py-2 ps-3">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/instructor">Home</a></li>
-                        <li class="breadcrumb-item">
-                            <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${course.courseID}">${course.courseName}</a>
+                        <li class="breadcrumb-item inline-flex items-center"><a class="text-indigo-600 hover:text-indigo-700 font-medium no-underline" href="${pageContext.request.contextPath}/instructor">Home</a></li>
+                        <li class="breadcrumb-item inline-flex items-center">
+                            <a class="text-indigo-600 hover:text-indigo-700 font-medium no-underline" href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${course.courseID}">${course.courseName}</a>
                         </li>
-                        <li class="breadcrumb-item">
-                            <a href="${pageContext.request.contextPath}/instructor/courses/modules/material?moduleId=${module.moduleID}&courseId=${course.courseID}">
+                        <li class="breadcrumb-item inline-flex items-center">
+                            <a class="text-indigo-600 hover:text-indigo-700 font-medium no-underline" href="${pageContext.request.contextPath}/instructor/courses/modules/material?moduleId=${module.moduleID}&courseId=${course.courseID}">
                                 ${module.moduleName}
                             </a>
                         </li>
@@ -87,11 +83,14 @@
                         </li>
                     </ol>
                 </nav>
+
                 <div class="bg-white p-5 rounded-4 shadow-lg mx-auto" style="max-width: 900px;">
-                    <h3 class="mb-4 text-primary fw-semibold text-center">
-                        <i class="bi bi-journal-plus"></i> Create New Material
-                    </h3>
-                    <form method="POST" action="${pageContext.request.contextPath}/instructor/courses/modules/material?action=create" enctype="multipart/form-data" onsubmit="return prepareCreateMaterial()">
+                    <h2 class="mb-4 text-primary fw-semibold text-center fs-1">
+                        <i class="bi bi-journal-plus"></i>New Material
+                    </h2>
+                    <form method="POST" action="${pageContext.request.contextPath}/instructor/courses/modules/material?action=create" 
+                          enctype="multipart/form-data" 
+                          onsubmit="return validateYoutubeFields()">
                         <input type="hidden" name="action" value="create">
                         <input type="hidden" name="moduleId" value="${module.moduleID}">
                         <input type="hidden" name="courseId" value="${course.courseID}">
@@ -114,21 +113,23 @@
                                 </select>
                             </div>
 
-                            <!-- Upload Video -->
-                            <div class="col-md-6 d-none" id="videoUploadDiv">
-                                <label class="form-label fw-semibold">Upload Video</label>
-                                <input type="file" name="videoFile" id="videoFile" class="form-control" accept="video/*"
-                                       onchange="previewSelectedVideo(); updateMaterialLocation('video')">
-
-                                <!-- Video preview -->
-                                <div id="videoPreviewContainer" class="mt-3 d-none">
-                                    <label class="form-label">Video Preview</label>
-                                    <video id="videoPreview" width="200%" controls>
-                                        <source id="videoPreviewSource" src="" type="video/mp4">
-                                        Your browser does not support the video tag.
-                                    </video>
+                            <!-- Nhúng Video YouTube -->
+                            <div class="col-md-6 d-none" id="youtubeLinkDiv">
+                                <label class="form-label fw-semibold">YouTube Video URL</label>
+                                <input type="text" name="materialVideo" id="youtubeLinkInput" class="form-control"
+                                       placeholder="https://www.youtube.com/"
+                                       onchange="previewYoutubeThumbnail(); updateMaterialLocation('video')">
+                                <div id="youtubeUrlError" class="text-danger small mt-1 d-none">
+                                    Please enter Youtube's link!
+                                </div>
+                                <!-- Preview thumbnail -->
+                                <div id="youtubeThumbnailPreview" class="mt-3 d-none">
+                                    <label class="form-label">Thumbnail Preview</label><br>
+                                    <img id="youtubeThumbnailImage" class="img-fluid rounded shadow-sm" style="max-height: 160px;" alt="Video thumbnail">
                                 </div>
                             </div>
+
+
 
 
                             <div class="col-md-6 d-none" id="fileUploadDiv">
@@ -142,13 +143,18 @@
                                        placeholder="https://..." pattern="https?://.+" title="Must start with http:// or https://">
                             </div>
 
+                            <!-- Thời lượng video (readonly) -->
                             <div class="col-md-6 d-none" id="videoDurationDiv">
                                 <label class="form-label fw-semibold">Video Duration (hh:mm:ss)</label>
-                                <input type="text" class="form-control" id="durationInput"
-                                       placeholder="e.g. 5:03, 00:02:59" onchange="updateVideoDuration()">
+                                <input type="text" class="form-control bg-light" id="durationInput"
+                                       placeholder="Auto-filled after entering YouTube link"
+                                       readonly>
+
                                 <div id="durationError" class="text-danger small mt-1 d-none">
-                                    ⚠ Please enter correct format hh:mm:ss (time can be shortened)
+                                    ⚠ Could not fetch video duration. Please check the YouTube link.
                                 </div>
+
+                                <!-- Hidden input để gửi giá trị thời lượng cho backend -->
                                 <input type="hidden" name="videoTime" id="videoTime" value="00:00:00" required>
                             </div>
 
@@ -183,20 +189,20 @@
             function toggleInputFields() {
                 const type = document.getElementById("type").value;
 
-                const videoUpload = document.querySelector('input[name="videoFile"]');
                 const fileUpload = document.querySelector('input[name="docFile"]');
                 const linkInput = document.querySelector('input[name="materialLink"]');
+                const youtubeLink = document.getElementById("youtubeLinkInput");
                 const videoTime = document.getElementById("durationInput");
 
-                // Hide all
-                document.getElementById("videoUploadDiv").classList.add("d-none");
+                // Ẩn tất cả input
+                document.getElementById("youtubeLinkDiv").classList.add("d-none");
                 document.getElementById("fileUploadDiv").classList.add("d-none");
                 document.getElementById("linkInputDiv").classList.add("d-none");
                 document.getElementById("videoDurationDiv").classList.add("d-none");
 
-                // Remove required
-                if (videoUpload)
-                    videoUpload.removeAttribute("required");
+                // Gỡ required
+                if (youtubeLink)
+                    youtubeLink.removeAttribute("required");
                 if (fileUpload)
                     fileUpload.removeAttribute("required");
                 if (linkInput)
@@ -204,117 +210,175 @@
                 if (videoTime)
                     videoTime.removeAttribute("required");
 
-                // Show required inputs by type
+                // Hiện đúng input theo type
                 if (type === "video") {
-                    document.getElementById("videoUploadDiv").classList.remove("d-none");
+                    document.getElementById("youtubeLinkDiv").classList.remove("d-none");
                     document.getElementById("videoDurationDiv").classList.remove("d-none");
-                    if (videoUpload)
-                        videoUpload.setAttribute("required", "required");
+                    if (youtubeLink)
+                        youtubeLink.setAttribute("required", "required");
                     if (videoTime)
                         videoTime.setAttribute("required", "required");
+
                 } else if (type === "pdf") {
                     document.getElementById("fileUploadDiv").classList.remove("d-none");
                     if (fileUpload)
                         fileUpload.setAttribute("required", "required");
+
                 } else if (type === "link") {
                     document.getElementById("linkInputDiv").classList.remove("d-none");
                     if (linkInput)
                         linkInput.setAttribute("required", "required");
                 }
             }
-            function prepareCreateMaterial() {
-                // Nếu loại là video thì cập nhật lại videoTime
-                const type = document.getElementById("type").value;
-                if (type === "video") {
-                    updateVideoDuration();
+        </script>
+        <script>
+            function validateYoutubeFields() {
+                const urlInput = document.getElementById("youtubeLinkInput");
+                const durationInput = document.getElementById("videoTime");
+
+                const url = urlInput.value.trim();
+                const duration = durationInput.value.trim();
+
+                const urlErrorDiv = document.getElementById("youtubeUrlError");
+                const durationErrorDiv = document.getElementById("durationError");
+
+                // Reset lỗi
+                urlErrorDiv.classList.add("d-none");
+                durationErrorDiv.classList.add("d-none");
+                urlErrorDiv.innerText = "";
+                durationErrorDiv.innerText = "";
+
+                let isValid = true;
+
+                const videoIdPattern = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|.*[?&]v=))([a-zA-Z0-9_-]{11})/;
+                const urlIsValid = videoIdPattern.test(url);
+
+                const durationPattern = /^([0-9]{2}):([0-9]{2}):([0-9]{2})$/;
+                const durationIsValid = duration.match(durationPattern) && duration !== "00:00:00";
+
+                const isYoutubeVisible = !document.getElementById("youtubeLinkDiv").classList.contains("d-none");
+
+                if (isYoutubeVisible) {
+                    if (!urlIsValid) {
+                        urlErrorDiv.innerText = "Please enter a valid YouTube video URL.";
+                        urlErrorDiv.classList.remove("d-none");
+                        isValid = false;
+                    }
+
+                    if (!durationIsValid) {
+                        durationErrorDiv.innerText = "Could not fetch video duration. Please check the YouTube link.";
+                        durationErrorDiv.classList.remove("d-none");
+                        isValid = false;
+                    }
                 }
-                return true; // cho phép form submit
+
+                return isValid;
             }
+        </script>
 
-            function updateVideoDuration() {
-                const inputEl = document.getElementById("durationInput");
-                const errorEl = document.getElementById("durationError");
-                const hiddenInput = document.getElementById("videoTime");
 
-                let input = inputEl.value.trim();
 
-                if (input === "") {
-                    hiddenInput.value = "00:00:00";
-                    errorEl.classList.remove("d-none");
-                    errorEl.textContent = "⚠ Please enter a non-zero duration.";
-                    return;
+        <script>
+            const YOUTUBE_API_KEY = "AIzaSyBSPV56TgcJqr6mgWr6hDkMA2yfdirLDpA"; // ← bạn cần thay bằng API key thật
+
+            function previewYoutubeThumbnail() {
+                const url = document.getElementById("youtubeLinkInput").value.trim();
+                let videoId = null;
+
+                const patterns = [
+                    /(?:https?:\/\/)?(?:www\.)?youtu\.be\/([a-zA-Z0-9_-]{11})/, // youtu.be/VIDEO_ID
+                    /(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/, // youtube.com/embed/VIDEO_ID
+                    /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/, // youtube.com/watch?v=VIDEO_ID
+                    /(?:https?:\/\/)?(?:www\.)?youtube\.com\/.*[?&]v=([a-zA-Z0-9_-]{11})/, // youtube.com/...&v=VIDEO_ID
+                ];
+
+                for (const pattern of patterns) {
+                    const match = url.match(pattern);
+                    if (match && match[1]) {
+                        videoId = match[1];
+                        break;
+                    }
                 }
 
-                const parts = input.split(":");
+                if (videoId && videoId.length === 11) {
+                    // Hiển thị thumbnail
+                    const thumbnailUrl = "https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg";
+                    document.getElementById("youtubeThumbnailImage").src = thumbnailUrl;
+                    document.getElementById("youtubeThumbnailPreview").classList.remove("d-none");
 
-                if (parts.length === 2) {
-                    parts.unshift("0");
-                }
+                    // Lấy thời lượng video
+                    fetch("https://www.googleapis.com/youtube/v3/videos?id=" + videoId + "&part=contentDetails&key=" + YOUTUBE_API_KEY)
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log("YouTube API response:", data);
+                                console.log("Full video item:", data.items[0]);
+                                const durationISO = data?.items?.[0]?.contentDetails?.duration;
+                                        if (durationISO) {
+                                    const durationFormatted = convertISO8601ToTime(durationISO);
+                                    console.log(convertISO8601ToTime("PT3M43S"));  // → "00:03:43"
+                                    document.getElementById("durationInput").value = durationFormatted;
+                                    document.getElementById("videoTime").value = durationFormatted;
+                                    document.getElementById("videoDurationDiv").classList.remove("d-none");
+                                    document.getElementById("durationError").classList.add("d-none");
+                                } else {
+                                    showDurationError();
+                                }
+                            })
+                            .catch(() => showDurationError());
 
-                if (parts.length !== 3) {
-                    showError("⚠ Invalid format. Use hh:mm:ss or mm:ss.");
-                    return;
-                }
-
-                let [hh, mm, ss] = parts.map(p => p.trim());
-
-                if (!/^\d+$/.test(hh) || !/^\d+$/.test(mm) || !/^\d+$/.test(ss)) {
-                    showError("⚠ Hours, minutes, and seconds must be numbers.");
-                    return;
-                }
-
-                hh = parseInt(hh, 10);
-                mm = parseInt(mm, 10);
-                ss = parseInt(ss, 10);
-
-                if (mm > 59 || ss > 59) {
-                    showError("⚠ Minutes and seconds must be between 00 and 59.");
-                    return;
-                }
-
-                // Không được bằng 00:00:00
-                if (hh === 0 && mm === 0 && ss === 0) {
-                    showError("⚠ Duration cannot be 00:00:00.");
-                    return;
-                }
-
-                const formatted = [
-                    hh.toString().padStart(2, "0"),
-                    mm.toString().padStart(2, "0"),
-                    ss.toString().padStart(2, "0")
-                ].join(":");
-
-                hiddenInput.value = formatted;
-                errorEl.classList.add("d-none");
-
-                function showError(message) {
-                    hiddenInput.value = "00:00:00";
-                    errorEl.classList.remove("d-none");
-                    errorEl.textContent = message;
-                }
-            }
-
-            function previewSelectedVideo() {
-                const fileInput = document.getElementById("videoFile");
-                const file = fileInput?.files[0];
-
-                const previewContainer = document.getElementById("videoPreviewContainer");
-                const previewSource = document.getElementById("videoPreviewSource");
-                const previewVideo = document.getElementById("videoPreview");
-
-                if (file) {
-                    const url = URL.createObjectURL(file);
-                    previewSource.src = url;
-                    previewVideo.load();
-                    previewContainer.classList.remove("d-none");
                 } else {
-                    previewSource.src = "";
-                    previewVideo.load();
-                    previewContainer.classList.add("d-none");
+                    document.getElementById("youtubeThumbnailPreview").classList.add("d-none");
+                    showDurationError();
                 }
             }
+
+            function convertISO8601ToTime(duration) {
+                const regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
+                const matches = duration.match(regex);
+
+                if (!matches)
+                    return "00:00:00";
+
+                const hours = matches[1] ? parseInt(matches[1]) : 0;
+                const minutes = matches[2] ? parseInt(matches[2]) : 0;
+                const seconds = matches[3] ? parseInt(matches[3]) : 0;
+
+                // Ép thành chuỗi rồi padStart
+                const hh = String(hours).padStart(2, '0');
+                const mm = String(minutes).padStart(2, '0');
+                const ss = String(seconds).padStart(2, '0');
+
+
+                return hh + ":" + mm + ":" + ss;
+            }
+
 
         </script>
+
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                // Gắn sự kiện khi bất kỳ modal nào đóng
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.addEventListener('hidden.bs.modal', function () {
+                        const iframe = modal.querySelector('iframe');
+                        if (iframe) {
+                            const src = iframe.getAttribute('src');
+                            iframe.setAttribute('src', '');   // Dừng video
+                            iframe.setAttribute('src', src);  // Gán lại để giữ link
+                        }
+                    });
+                });
+            });
+
+            function showDurationError() {
+                document.getElementById("durationError").classList.remove("d-none"); // Hiện lỗi
+                document.getElementById("durationInput").value = "";
+                document.getElementById("videoTime").value = ""; // Xoá giá trị cũ
+            }
+        </script>
+
+
         <jsp:include page="/layout/footer.jsp"/>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <jsp:include page="/layout/toast.jsp"/>

@@ -11,17 +11,18 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
-import java.io.File;
-import model.Course;
 import model.Module;
 import model.Role;
 import model.User;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
-import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import model.Material;
+import util.ImageBase64;
 
 /**
  * @author Hua Khanh Duy - CE180230 - SE1815
@@ -98,6 +99,13 @@ public class InstructorMaterialServlet extends HttpServlet {
                 moduleId = Integer.parseInt(module);
                 Module m = mdao.getModuleByID(moduleId);
                 List<Material> listMaterial = madao.getAllMaterial(courseId, moduleId);
+
+                for (Material ma : listMaterial) {
+                    if ("pdf".equalsIgnoreCase(ma.getType()) && ma.getMaterialFile() != null) {
+                        String uri = ImageBase64.toDataURI(ma.getMaterialFile(), "application/pdf");
+                        ma.setPdfDataURI(uri); // cần có setter trong class Material
+                    }
+                }
                 request.setAttribute("module", m);
                 request.setAttribute("listMaterial", listMaterial);
                 request.getRequestDispatcher("/WEB-INF/views/listMaterials.jsp").forward(request, response);
@@ -158,7 +166,7 @@ public class InstructorMaterialServlet extends HttpServlet {
                 String moduleIdStr = request.getParameter("moduleId");
                 String materialName = request.getParameter("materialName");
 
-                if (materialName.trim() == null || materialName.trim().isEmpty() || materialName.matches(".*\\s{2,}.*")) {
+                if (materialName == null || materialName.trim().isEmpty() || materialName.matches(".*\\s{2,}.*")) {
                     moduleId = Integer.parseInt(module);
                     Module mo = mdao.getModuleByID(moduleId);
                     request.setAttribute("module", mo);
@@ -176,6 +184,17 @@ public class InstructorMaterialServlet extends HttpServlet {
                     return;
                 }
                 String type = request.getParameter("type");
+                if (!type.equalsIgnoreCase("video") && !type.equalsIgnoreCase("pdf") && !type.equalsIgnoreCase("link")) {
+                    moduleId = Integer.parseInt(module);
+                    Material ma = madao.getMaterialById(materialId);
+                    Module mo = mdao.getModuleByID(moduleId);
+                    request.setAttribute("material", ma);
+                    request.setAttribute("module", mo);
+                    request.setAttribute("err", "The material type must be either video, PDF/Doc, or link — no other types are allowed.");
+                    request.getRequestDispatcher("/WEB-INF/views/createMaterials.jsp").forward(request, response);
+                    return;
+                }
+
                 String materialOrderStr = request.getParameter("materialOrder");
                 if (materialOrderStr == null || materialOrderStr.trim().isEmpty()) {
                     moduleId = Integer.parseInt(module);
@@ -240,45 +259,48 @@ public class InstructorMaterialServlet extends HttpServlet {
                     request.getRequestDispatcher("/WEB-INF/views/createMaterials.jsp").forward(request, response);
                     return;
                 }
-                String materialLocation = "";
-                if ("video".equals(type)) {
-                    // Nhận file
-                    Part filePart = request.getPart("videoFile");
-                    String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-                    if (fileName == null || fileName.isEmpty()) {
-                        materialLocation = ""; // hoặc "No File" nếu bạn muốn
-                    } else {
-                        // Đường dẫn upload
-                        String uploadPath = getServletContext().getRealPath("") + File.separator + "materialUpload";
-                        File uploadDir = new File(uploadPath);
-                        if (!uploadDir.exists()) {
-                            uploadDir.mkdir();
-                        }
-
-                        filePart.write(uploadPath + File.separator + fileName);
-                        materialLocation = "materialUpload/" + fileName; // Đường dẫn để lưu trong DB
-                    }
-                } else if ("pdf".equals(type)) {
-                    // Nhận file
-                    Part filePart = request.getPart("docFile");
-                    String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-                    if (fileName == null || fileName.isEmpty()) {
-                        materialLocation = "No"; // hoặc "No File" nếu bạn muốn
-                    } else {
-                        // Đường dẫn upload
-                        String uploadPath = getServletContext().getRealPath("") + File.separator + "materialUpload";
-                        File uploadDir = new File(uploadPath);
-                        if (!uploadDir.exists()) {
-                            uploadDir.mkdir();
-                        }
-
-                        filePart.write(uploadPath + File.separator + fileName);
-                        materialLocation = "materialUpload/" + fileName; // Đường dẫn để lưu trong DB
-                    }
-                } else if ("link".equals(type)) {
-                    materialLocation = request.getParameter("materialLink");
+                if (materialDescription != null) {
+                    // Xóa khoảng trắng ở đầu mỗi dòng
+                    materialDescription = Arrays.stream(materialDescription.split("\n"))
+                            .map(String::stripLeading)
+                            .collect(Collectors.joining("\n"));
                 }
+                String materialUrl = "";
 
+                if ("video".equalsIgnoreCase(type)) {
+                    materialUrl = request.getParameter("materialVideo");
+                    // Kiểm tra và chuẩn hóa nếu cần
+                    if (materialUrl == null || materialUrl.trim().isEmpty()) {
+                        materialUrl = "";
+                    }
+
+                } else if ("link".equalsIgnoreCase(type)) {
+                    materialUrl = request.getParameter("materialLink");
+                    if (materialUrl == null || materialUrl.trim().isEmpty()) {
+                        materialUrl = ""; // hoặc thông báo lỗi
+                    }
+                } else {
+                    materialUrl = "";
+                }
+                // Nhận file
+                Part filePart = request.getPart("docFile");
+
+                InputStream materialFile = null;
+                String fileName = null;
+
+                if (filePart != null && filePart.getSize() > 0) {
+                    // Lấy nội dung file thành mảng byte
+                    materialFile = filePart.getInputStream();
+
+                    // Lấy tên gốc của file
+                    String contentDisp = filePart.getHeader("content-disposition");
+                    for (String token : contentDisp.split(";")) {
+                        if (token.trim().startsWith("filename")) {
+                            fileName = token.substring(token.indexOf('=') + 1).trim().replace("\"", "");
+                            break;
+                        }
+                    }
+                }
                 try {
                     moduleId = Integer.parseInt(moduleIdStr);
                     courseId = Integer.parseInt(courseIdStr);
@@ -287,7 +309,7 @@ public class InstructorMaterialServlet extends HttpServlet {
                     ModuleDAO moddao = new ModuleDAO();
                     CourseDAO coudao = new CourseDAO();
                     int res = dao.insertMaterial(moduleId, materialName, type, materialOrder,
-                            materialLocation, videoTimeStr, materialDescription);
+                            materialUrl, materialFile, fileName, videoTimeStr, materialDescription);
 
                     int rowmod = moddao.moduleUpdateTime(moduleId);
                     int rowcou = coudao.courseUpdateTime(courseId);
@@ -360,7 +382,7 @@ public class InstructorMaterialServlet extends HttpServlet {
                 String moduleIdStr = request.getParameter("moduleId");
                 String materialIdStr = request.getParameter("materialId");
                 String materialName = request.getParameter("materialName");
-                if (materialName.trim() == null || materialName.trim().isEmpty()|| materialName.matches(".*\\s{2,}.*")) {
+                if (materialName == null || materialName.trim().isEmpty() || materialName.matches(".*\\s{2,}.*")) {
                     moduleId = Integer.parseInt(module);
                     materialId = Integer.parseInt(material);
                     Material ma = madao.getMaterialById(materialId);
@@ -385,6 +407,17 @@ public class InstructorMaterialServlet extends HttpServlet {
                 }
 
                 String type = request.getParameter("type");
+                if (!type.equalsIgnoreCase("video") && !type.equalsIgnoreCase("pdf") && !type.equalsIgnoreCase("link")) {
+                    moduleId = Integer.parseInt(module);
+                    materialId = Integer.parseInt(material);
+                    Material ma = madao.getMaterialById(materialId);
+                    Module mo = mdao.getModuleByID(moduleId);
+                    request.setAttribute("material", ma);
+                    request.setAttribute("module", mo);
+                    request.setAttribute("err", "The material type must be either video, PDF/Doc, or link — no other types are allowed.");
+                    request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
+                    return;
+                }
 
                 String materialOrderStr = request.getParameter("materialOrder");
                 if (materialOrderStr == null || materialOrderStr.trim().isEmpty()) {
@@ -425,33 +458,6 @@ public class InstructorMaterialServlet extends HttpServlet {
                     request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
                     return;
                 }
-
-                String videoTime = request.getParameter("videoTime");
-                if ("00:00:00".equals(videoTime) || videoTime == null || videoTime.trim().isEmpty()) {
-                    moduleId = Integer.parseInt(module);
-                    materialId = Integer.parseInt(material);
-                    Material ma = madao.getMaterialById(materialId);
-                    Module mo = mdao.getModuleByID(moduleId);
-                    request.setAttribute("material", ma);
-                    request.setAttribute("module", mo);
-                    request.setAttribute("err", "Video time cannot empty!");
-                    request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
-                    return;
-                }
-                // Định dạng: hh:mm:ss hoặc mm:ss
-                String timePattern = "^((\\d{1,2}):)?([0-5]?\\d):([0-5]\\d)$";
-                if (!videoTime.matches(timePattern)) {
-                    moduleId = Integer.parseInt(module);
-                    materialId = Integer.parseInt(material);
-                    Material ma = madao.getMaterialById(materialId);
-                    Module mo = mdao.getModuleByID(moduleId);
-                    request.setAttribute("material", ma);
-                    request.setAttribute("module", mo);
-                    request.setAttribute("err", "Video time must be in format hh:mm:ss or mm:ss (e.g., 01:30 or 00:05:30).");
-                    request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
-                    return;
-                }
-
                 String materialDescription = request.getParameter("materialDescription");
                 if (materialDescription == null || materialDescription.trim().isEmpty() || materialDescription.matches(".*\\s{2,}.*")) {
                     moduleId = Integer.parseInt(module);
@@ -464,39 +470,78 @@ public class InstructorMaterialServlet extends HttpServlet {
                     request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
                     return;
                 }
+                if (materialDescription != null) {
+                    // Xóa khoảng trắng ở đầu mỗi dòn
+                    materialDescription = Arrays.stream(materialDescription.split("\n"))
+                            .map(String::stripLeading)
+                            .collect(Collectors.joining("\n"));
+                }
+                InputStream materialFile = null;
+                String fileName = null;
+                String materialUrl = "";
+                String videoTime = "";
+                boolean updateNew = true;
+                if ("video".equalsIgnoreCase(type)) {
+                    materialUrl = request.getParameter("materialVideo");
 
-                String materialLocation = ""; // sẽ quyết định tùy type
-
-                if ("video".equals(type)) {
-                    Part filePart = request.getPart("videoFile");
-                    if (filePart != null && filePart.getSize() > 0) {
-                        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-                        String uploadPath = getServletContext().getRealPath("") + File.separator + "materialUpload";
-                        File uploadDir = new File(uploadPath);
-                        if (!uploadDir.exists()) {
-                            uploadDir.mkdir();
-                        }
-                        filePart.write(uploadPath + File.separator + fileName);
-                        materialLocation = "materialUpload/" + fileName;
-                    } else {
-                        materialLocation = request.getParameter("materialLocation");
+                    videoTime = request.getParameter("videoTime");
+                    if ("00:00:00".equals(videoTime) || videoTime == null || videoTime.trim().isEmpty()) {
+                        moduleId = Integer.parseInt(module);
+                        materialId = Integer.parseInt(material);
+                        Material ma = madao.getMaterialById(materialId);
+                        Module mo = mdao.getModuleByID(moduleId);
+                        request.setAttribute("material", ma);
+                        request.setAttribute("module", mo);
+                        request.setAttribute("err", "Video time cannot empty!");
+                        request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
+                        return;
                     }
-                } else if ("pdf".equals(type)) {
+                    // Định dạng: hh:mm:ss hoặc mm:ss
+                    String timePattern = "^((\\d{1,2}):)?([0-5]?\\d):([0-5]\\d)$";
+                    if (!videoTime.matches(timePattern)) {
+                        moduleId = Integer.parseInt(module);
+                        materialId = Integer.parseInt(material);
+                        Material ma = madao.getMaterialById(materialId);
+                        Module mo = mdao.getModuleByID(moduleId);
+                        request.setAttribute("material", ma);
+                        request.setAttribute("module", mo);
+                        request.setAttribute("err", "Video time must be in format hh:mm:ss or mm:ss (e.g., 01:30 or 00:05:30).");
+                        request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
+                        return;
+                    }
+                    // Kiểm tra và chuẩn hóa nếu cần
+                    if (materialUrl == null || materialUrl.trim().isEmpty()) {
+                        materialUrl = "";
+
+                    }
+
+                } else if ("link".equalsIgnoreCase(type)) {
+                    materialUrl = request.getParameter("materialLink");
+                    if (materialUrl == null || materialUrl.trim().isEmpty()) {
+                        materialUrl = ""; // hoặc thông báo lỗi
+                    }
+                } else {
+
                     Part filePart = request.getPart("docFile");
+
+                    materialFile = null;
+                    fileName = null;
+                    updateNew = true;
+                    // Kiểm tra có upload file mới không
                     if (filePart != null && filePart.getSize() > 0) {
-                        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-                        String uploadPath = getServletContext().getRealPath("") + File.separator + "materialUpload";
-                        File uploadDir = new File(uploadPath);
-                        if (!uploadDir.exists()) {
-                            uploadDir.mkdir();
+                        // Lấy stream và tên file mới
+                        materialFile = filePart.getInputStream();
+
+                        String contentDisp = filePart.getHeader("content-disposition");
+                        for (String token : contentDisp.split(";")) {
+                            if (token.trim().startsWith("filename")) {
+                                fileName = token.substring(token.indexOf('=') + 1).trim().replace("\"", "");
+                                break;
+                            }
                         }
-                        filePart.write(uploadPath + File.separator + fileName);
-                        materialLocation = "materialUpload/" + fileName;
                     } else {
-                        materialLocation = request.getParameter("materialLocation");
+                        updateNew = false;
                     }
-                } else if ("link".equals(type)) {
-                    materialLocation = request.getParameter("materialLink");
                 }
 
                 try {
@@ -506,8 +551,9 @@ public class InstructorMaterialServlet extends HttpServlet {
                     MaterialDAO dao = new MaterialDAO();
                     ModuleDAO moddao = new ModuleDAO();
                     CourseDAO coudao = new CourseDAO();
-                    boolean res = dao.update(materialName, type, materialOrder, materialLocation,
-                            videoTime, materialDescription, materialId, moduleId, courseId);
+                    boolean res = dao.update(materialName, type, materialOrder, materialUrl,
+                            materialFile, fileName,
+                            videoTime, materialDescription, materialId, moduleId, courseId, updateNew);
                     int rowmod = moddao.moduleUpdateTime(moduleId);
                     int rowcou = coudao.courseUpdateTime(courseId);
                     if (res == true) {

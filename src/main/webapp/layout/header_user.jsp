@@ -16,10 +16,10 @@
         </div>
 
         <div class="flex items-center space-x-4 w-1/4 justify-end">
-            <!-- Container bell và popup -->
+<!--             Container bell và popup 
             <div class="relative z-50" id="notification-bell-container">
 
-                <!-- Đếm số lượng chưa đọc -->
+                 Đếm số lượng chưa đọc 
                 <c:set var="unreadCount" value="0" />
                 <c:forEach var="noti" items="${sessionScope.listNotification}">
                     <c:if test="${not noti.status}">
@@ -27,7 +27,7 @@
                     </c:if>
                 </c:forEach>
 
-                <!-- Icon chuông -->
+                 Icon chuông 
                 <button id="notification-bell" class="relative focus:outline-none">
                     <i class="fas fa-bell text-gray-700 text-xl"></i>
                     <c:if test="${unreadCount > 0}">
@@ -37,7 +37,7 @@
                     </c:if>
                 </button>
 
-                <!-- Popup thông báo -->
+                 Popup thông báo 
                 <div id="notification-popup" class="hidden absolute right-0 mt-3 w-[380px] bg-white border border-gray-200 rounded-xl shadow-xl z-50">
 
                     <div class="flex justify-between items-center px-4 py-3 border-b">
@@ -45,7 +45,7 @@
 
                     </div>
 
-                    <!-- Danh sách thông báo -->
+                     Danh sách thông báo 
                     <div id="notification-list" class="max-h-[400px] overflow-y-auto divide-y divide-gray-100">
                         <c:forEach var="noti" items="${sessionScope.listNotification}">
                             <div class="notification-item" id="noti-${noti.notificationId}">
@@ -56,10 +56,10 @@
                                      data-id="${noti.notificationId}"
                                      onclick="markAsRead('${noti.notificationId}')">
 
-                                    <!-- Ảnh đại diện -->
+                                     Ảnh đại diện 
                                     <img src="${noti.userName.imageDataURI}" class="w-10 h-10 rounded-full object-cover flex-shrink-0" alt="avatar" />
 
-                                    <!-- Nội dung thông báo -->
+                                     Nội dung thông báo 
                                     <div class="flex-1 text-sm">
                                         <p>
                                             <span class="font-semibold">${noti.userName.userName}</span>
@@ -70,27 +70,27 @@
                                         </p>
                                     </div>
 
-                                    <!-- Dấu chấm xanh nếu chưa đọc -->
+                                     Dấu chấm xanh nếu chưa đọc 
                                     <c:if test="${not noti.status}">
                                         <div class="mt-2 w-2 h-2 bg-blue-500 rounded-full"></div>
                                     </c:if>
                                 </div>
 
 
-                                <!-- Trường ẩn để lưu status -->
+                                 Trường ẩn để lưu status 
                                 <input type="hidden" id="statusField${noti.notificationId}" name="status" value="${noti.status}" />
                             </div>
                         </c:forEach>
                     </div>
 
-                    <!-- Footer -->
+                     Footer 
                     <div class="text-center border-t py-3">
                         <button class="text-sm text-gray-600 hover:bg-gray-200 px-4 py-1 rounded-md">
                             Xem thông báo trước đó
                         </button>
                     </div>
                 </div>
-            </div>
+            </div>-->
             <script>
                 function markAsRead(id) {
                     // Gửi request cập nhật server

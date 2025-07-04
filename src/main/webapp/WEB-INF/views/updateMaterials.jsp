@@ -61,115 +61,144 @@
         </style>
     </head>
     <body>
-        <jsp:include page="/layout/header_user.jsp"/>
+        <jsp:include page="/layout/sidebar_user.jsp"/>
+        <div class="container-fluid flex px-4">
+            <div class="container py-5">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item inline-flex items-center"><a class="text-indigo-600 hover:text-indigo-700 font-medium no-underline" href="${pageContext.request.contextPath}/instructor">Home</a></li>
+                        <li class="breadcrumb-item inline-flex items-center">
+                            <a class="text-indigo-600 hover:text-indigo-700 font-medium no-underline" href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${course.courseID}">${course.courseName}</a>
+                        </li>
+                        <li class="breadcrumb-item inline-flex items-center">
+                            <a class="text-indigo-600 hover:text-indigo-700 font-medium no-underline" href="${pageContext.request.contextPath}/instructor/courses/modules/material?moduleId=${module.moduleID}&courseId=${course.courseID}">
+                                ${module.moduleName}
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            ${material.materialName}
+                        </li>
+                    </ol>
+                </nav>
+                <div class="bg-white p-5 rounded-4 shadow-lg mx-auto" style="max-width: 900px;">
+                    <h1 class="mb-4 text-primary fw-semibold text-center fs-1">
+                        <i class="bi bi-journal-plus"></i>Update Material
+                    </h1>
+                    <form method="POST" action="${pageContext.request.contextPath}/instructor/courses/modules/material?action=update" 
+                          enctype="multipart/form-data" onsubmit="return validateYoutubeFields()">
+                        <input type="hidden" name="action" value="update">
+                        <input type="hidden" name="moduleId" value="${module.moduleID}">
+                        <input type="hidden" name="courseId" value="${course.courseID}">
+                        <input type="hidden" name="materialId" value="${material.materialId}">
+                        <div class="row g-4">
+                            <!-- Material Name -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Material Name</label>
+                                <input type="text" name="materialName" class="form-control" required
+                                       maxlength="1000" pattern=".{3,}" title="Must be at least 3 characters"
+                                       value="${material.materialName}">
+                            </div>
 
-        <div class="container py-5">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/instructor">Home</a></li>
-                    <li class="breadcrumb-item">
-                        <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${course.courseID}">${course.courseName}</a>
-                    </li>
-                    <li class="breadcrumb-item">
-                        <a href="${pageContext.request.contextPath}/instructor/courses/modules/material?moduleId=${module.moduleID}&courseId=${course.courseID}">
-                            ${module.moduleName}
-                        </a>
-                    </li>
-                    <li class="breadcrumb-item">
-                        ${material.materialName}
-                    </li>
-                </ol>
-            </nav>
-            <div class="bg-white p-5 rounded-4 shadow-lg mx-auto" style="max-width: 900px;">
-                <h3 class="mb-4 text-primary fw-semibold text-center">
-                    <i class="bi bi-journal-plus"></i> Update Material
-                </h3>
-                <form method="POST" action="${pageContext.request.contextPath}/instructor/courses/modules/material?action=update" enctype="multipart/form-data">
-                    <input type="hidden" name="action" value="update">
-                    <input type="hidden" name="moduleId" value="${module.moduleID}">
-                    <input type="hidden" name="courseId" value="${course.courseID}">
-                    <input type="hidden" name="materialId" value="${material.materialId}">
-                    <div class="row g-4">
-                        <!-- Material Name -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Material Name</label>
-                            <input type="text" name="materialName" class="form-control" required
-                                   maxlength="1000" pattern=".{3,}" title="Must be at least 3 characters"
-                                   value="${material.materialName}">
+                            <!-- Type -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Material Type</label>
+                                <select class="form-select form-select-lg" id="type" name="type" onchange="toggleInputFields()" required>
+                                    <option value="video" <c:if test="${material.type eq 'video'}">selected</c:if>>Video</option>
+                                    <option value="pdf" <c:if test="${material.type eq 'pdf'}">selected</c:if>>PDF/Doc</option>
+                                    <option value="link" <c:if test="${material.type eq 'link'}">selected</c:if>>Link</option>
+                                    </select>
+                                </div>
+                            <c:choose>
+                                <c:when test="${material.type == 'video' && not empty material.materialUrl}">
+                                    <%-- Tách videoId từ nhiều loại URL khác nhau --%>
+                                    <c:set var="videoId" value="" />
+
+                                    <%-- 1. Nếu có 'embed/' --%>
+                                    <c:if test="${fn:contains(material.materialUrl, 'embed/')}">
+                                        <c:set var="temp" value="${fn:substringAfter(material.materialUrl, 'embed/')}" />
+                                        <c:set var="videoId" value="${fn:substringBefore(temp, '?')}" />
+                                    </c:if>
+
+                                    <%-- 2. Nếu có 'youtu.be/' --%>
+                                    <c:if test="${empty videoId && fn:contains(material.materialUrl, 'youtu.be/')}">
+                                        <c:set var="temp" value="${fn:substringAfter(material.materialUrl, 'youtu.be/')}" />
+                                        <c:set var="videoId" value="${fn:substringBefore(temp, '?')}" />
+                                    </c:if>
+
+                                    <%-- 3. Nếu có 'watch?v=' --%>
+                                    <c:if test="${empty videoId && fn:contains(material.materialUrl, 'watch?v=')}">
+                                        <c:set var="temp" value="${fn:substringAfter(material.materialUrl, 'watch?v=')}" />
+                                        <c:choose>
+                                            <c:when test="${fn:contains(temp, '&')}">
+                                                <c:set var="videoId" value="${fn:substringBefore(temp, '&')}" />
+                                            </c:when>
+                                            <c:otherwise>
+                                                <c:set var="videoId" value="${temp}" />
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </c:if>
+
+                                    <%-- 4. Nếu có 'v=' (fallback) --%>
+                                    <c:if test="${empty videoId && fn:contains(material.materialUrl, 'v=')}">
+                                        <c:set var="temp" value="${fn:substringAfter(material.materialUrl, 'v=')}" />
+                                        <c:choose>
+                                            <c:when test="${fn:contains(temp, '&')}">
+                                                <c:set var="videoId" value="${fn:substringBefore(temp, '&')}" />
+                                            </c:when>
+                                            <c:otherwise>
+                                                <c:set var="videoId" value="${temp}" />
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </c:if>
+
+                                    <%-- Hiển thị thumbnail và mở modal --%>
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#videoModal${material.materialId}">
+                                        <img class="img-fluid rounded shadow-sm d-block mx-auto"
+                                             style="max-height: 160px;"
+                                             src="https://img.youtube.com/vi/${videoId}/0.jpg"
+                                             alt="YouTube Thumbnail">
+                                    </a>
+                                </c:when>
+                            </c:choose>
                         </div>
+                        <!-- Upload File -->
+                        <div class="col-md-6 ${material.type == 'pdf' || material.type == 'doc' ? '' : 'd-none'}" id="fileUploadDiv">
+                            <label class="form-label fw-semibold">Upload File (PDF/DOC)</label>
+                            <input type="file" name="docFile" class="form-control" accept=".pdf,.doc,.docx">
 
-                        <!-- Type -->
-                        <div class="col-md-6">
-                            <label class="form-label fw-semibold">Material Type</label>
-                            <select class="form-select form-select-lg" id="type" name="type" onchange="toggleInputFields()" required>
-                                <option value="">-- Choose Type --</option>
-                                <option value="video" ${material.type == 'video' ? 'selected' : ''}>Video</option>
-                                <option value="pdf" ${material.type == 'pdf' ? 'selected' : ''}>PDF/Doc</option>
-                                <option value="link" ${material.type == 'link' ? 'selected' : ''}>Link</option>
-                            </select>
-                        </div>
-                        <input type="hidden" name="materialLocation" id="materialLocation" value="${material.materialLocation}">
-
-                        <!-- Upload Video -->
-                        <div class="col-md-6 ${material.type == 'video' ? '' : 'd-none'}" id="videoUploadDiv">
-                            <label class="form-label fw-semibold">Upload Video</label>
-                            <input type="file" id="videoFile" name="videoFile"class="form-control" accept="video/*" onchange="previewSelectedVideo(); updateMaterialLocation('video')">
-
-                            <!-- Hiển thị preview nếu có video hiện tại -->
-                            <c:if test="${material.type == 'video' && not empty material.materialLocation}">
-                                <div class="mt-3">
-                                    <label class="form-label">Preview Video</label><br>
-                                    <video id="videoPreviewOld" width="100%" controls>
-                                        <source src="${pageContext.request.contextPath}/${material.materialLocation}" type="video/mp4">
-                                        Your browser does not support the video tag.
-                                    </video>
+                            <!-- Nếu có file cũ thì hiển thị tên + lưu hidden field -->
+                            <c:if test="${not empty material.materialFile}">
+                                <input type="hidden" name="existingFile" value="${material.materialFile}"/>
+                                <div class="mt-2">
+                                    <a class="btn btn-sm btn-outline-primary"
+                                       href="${pageContext.request.contextPath}/downloadmaterial?id=${material.materialId}"
+                                       target="_blank">
+                                        ${material.fileName}
+                                    </a>
                                 </div>
                             </c:if>
-
-                            <!-- Hiển thị preview video mới chọn -->
-                            <div id="videoPreviewContainer" class="mt-3 d-none">
-                                <label class="form-label">Selected Video Preview</label><br>
-                                <video id="videoPreviewNew" width="100%" controls></video>
-                            </div>
                         </div>
 
-
-                        <div class="col-md-6 ${material.type == 'pdf' ? '' : 'd-none'}" id="fileUploadDiv">
-                            <label class="form-label fw-semibold">Upload File (PDF/DOC)</label>
-                            <input type="file" id="docFile" name="docFile" class="form-control" accept=".pdf,.doc,.docx" onchange="updateMaterialLocation('pdf')">
-                            <c:if test="${material.type == 'pdf'}">
-                                <small class="text-muted">Current file: ${material.materialLocation}</small>
-                            </c:if>
-                        </div>
-
-                        <div class="col-md-6 ${material.type eq 'link' ? '' : 'd-none'}" id="linkInputDiv">
+                        <!-- Link -->
+                        <div class="col-md-6 ${material.type == 'link' ? '' : 'd-none'}" id="linkInputDiv">
                             <label class="form-label fw-semibold">Material Link</label>
-                            <input type="url" id="materialLink" name="materialLink"
-                                   class="form-control"
-                                   placeholder="https://..." pattern="https?://.+"
-                                   title="Must start with http:// or https://"
-                                   value="${material.materialLocation}"
-                                   oninput="updateMaterialLocation('link')">
+                            <input type="url" name="materialLink" class="form-control"
+                                   placeholder="https://..."
+                                   pattern="https?://.+" title="Must start with http:// or https://"
+                                   value="${material.type == 'link' ? material.materialUrl : ''}">
                         </div>
 
-                        <div class="col-md-6 " id="videoDurationDiv">
+                        <!-- Thời lượng video -->
+                        <div class="col-md-6 ${material.type == 'video' ? '' : 'd-none'}" id="videoDurationDiv">
                             <label class="form-label fw-semibold">Video Duration (hh:mm:ss)</label>
-
-                            <!-- Input nhập thời lượng -->
-                            <input type="text" class="form-control" id="durationInput"
-                                   placeholder="e.g. 5:03, 00:02:59"
-                                   value="${material.time}"
-                                   onchange="updateVideoDuration()">
-
-                            <!-- Thông báo lỗi -->
+                            <input type="text" class="form-control bg-light" id="durationInput"
+                                   placeholder="Auto-filled after entering YouTube link"
+                                   readonly value="${material.time}">
                             <div id="durationError" class="text-danger small mt-1 d-none">
-                                ⚠ Please enter correct format hh:mm:ss (time can be shortened)
+                                ⚠ Could not fetch video duration. Please check the YouTube link.
                             </div>
-
-                            <!-- Input ẩn để submit -->
-                            <input type="hidden" name="videoTime" id="videoTime" value="${material.time}">
+                            <input type="hidden" name="videoTime" id="videoTime" value="${material.time}" required>
                         </div>
-
 
                         <!-- Display Order -->
                         <div class="col-md-6">
@@ -194,151 +223,273 @@
                                 <i class="bi bi-x-circle"></i> Cancel
                             </a>
                         </div>
-                    </div>
+                </div>
                 </form>
             </div>
         </div>
+    </div>
+    <c:choose>
+        <c:when test="${material.type == 'video' && not empty material.materialUrl}">
+            <%-- Trích xuất videoId từ mọi loại link YouTube --%>
+            <c:set var="videoId" value="" />
 
-        <script>
-            function toggleInputFields() {
-            const type = document.getElementById("type").value;
-            const videoDiv = document.getElementById("videoUploadDiv");
-            const fileDiv = document.getElementById("fileUploadDiv");
-            const linkDiv = document.getElementById("linkInputDiv");
-            const durationDiv = document.getElementById("videoDurationDiv");
-            const videoFile = document.getElementById("videoFile");
-            const docFile = document.getElementById("docFile");
-            const materialLink = document.getElementById("materialLink");
-            // Ẩn tất cả các khu vực
-            [videoDiv, fileDiv, linkDiv, durationDiv].forEach(div => div.classList.add("d-none"));
-            // Xóa thuộc tính required khỏi tất cả input liên quan
-            videoFile?.removeAttribute("required");
-            docFile?.removeAttribute("required");
-            materialLink?.removeAttribute("required");
-            // Hiển thị đúng vùng theo loại
-            if (type === "video") {
-            videoDiv.classList.remove("d-none");
-            durationDiv.classList.remove("d-none");
-            // KHÔNG thêm required cho videoTime vì nó là hidden
-            } else if (type === "pdf") {
-            fileDiv.classList.remove("d-none");
-            } else if (type === "link") {
-            linkDiv.classList.remove("d-none");
-            materialLink?.setAttribute("required", "required");
-            }
-            if (type !== "link") {
-            materialLink.value = "";
-            }
+            <c:if test="${fn:contains(material.materialUrl, 'embed/')}">
+                <c:set var="videoId" value="${fn:substringBefore(fn:substringAfter(material.materialUrl, 'embed/'), '?')}" />
+            </c:if>
+            <c:if test="${empty videoId && fn:contains(material.materialUrl, 'youtu.be/')}">
+                <c:set var="videoId" value="${fn:substringBefore(fn:substringAfter(material.materialUrl, 'youtu.be/'), '?')}" />
+            </c:if>
+            <!-- ✅ 3. watch?v= (đã fix) -->
+            <c:if test="${empty videoId && fn:contains(material.materialUrl, 'watch?v=')}">
+                <c:set var="temp" value="${fn:substringAfter(material.materialUrl, 'watch?v=')}" />
+                <c:choose>
+                    <c:when test="${fn:contains(temp, '&')}">
+                        <c:set var="videoId" value="${fn:substringBefore(temp, '&')}" />
+                    </c:when>
+                    <c:otherwise>
+                        <c:set var="videoId" value="${temp}" />
+                    </c:otherwise>
+                </c:choose>
+            </c:if>v
+            <c:if test="${empty videoId && fn:contains(material.materialUrl, 'v=')}">
+                <c:set var="videoId" value="${fn:substringBefore(fn:substringAfter(material.materialUrl, 'v='), '&')}" />
+            </c:if>
 
-            updateMaterialLocation(type);
-            }
+            <%-- Modal hiển thị video YouTube --%>
+            <div class="modal fade" id="videoModal${material.materialId}" tabindex="-1"
+                 aria-labelledby="videoModalLabel${material.materialId}" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="videoModalLabel${material.materialId}">Video</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                    ></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="ratio ratio-16x9">
+                                <iframe id="youtubeFrame${material.materialId}"
+                                        src="https://www.youtube.com/embed/${videoId}"
+                                        title="YouTube video" frameborder="0" allowfullscreen>
+                                </iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </c:when>
+    </c:choose>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        toggleInputFields();
+        });</script>
+    <script>
+        function previewYoutubeThumbnail() {
+        const url = document.getElementById("youtubeLinkInput").value;
+        const videoId = extractYouTubeVideoId(url);
+        if (videoId) {
+        const thumbnailUrl = "https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg";
+        const imgElement = document.getElementById("youtubeThumbnailImage");
+        const previewDiv = document.getElementById("youtubeThumbnailPreview");
+        imgElement.src = thumbnailUrl;
+        previewDiv.classList.remove("d-none");
+        } else {
+        document.getElementById("youtubeThumbnailPreview").classList.add("d-none");
+        }
+        }
+
+        function extractYouTubeVideoId(url) {
+        // Hỗ trợ nhiều định dạng YouTube URL
+        const regex = /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+        const match = url.match(regex);
+        return match ? match[1] : null;
+        }
+
+        // Tự động hiển thị thumbnail nếu URL đã có sẵn trong input khi load trang
+        window.addEventListener("DOMContentLoaded", function () {
+        const url = document.getElementById("youtubeLinkInput").value;
+        if (url) {
+        previewYoutubeThumbnail();
+        }
+        });
+        function toggleInputFields() {
+        const type = document.getElementById("type").value;
+        const youtubeDiv = document.getElementById("youtubeLinkDiv");
+        const fileDiv = document.getElementById("fileUploadDiv");
+        const linkDiv = document.getElementById("linkInputDiv");
+        const videoDurationDiv = document.getElementById("videoDurationDiv");
+        const youtubeInput = document.getElementById("youtubeLinkInput");
+        const fileInput = document.querySelector('input[name="docFile"]');
+        const linkInput = document.querySelector('input[name="materialLink"]');
+        const videoTimeInput = document.getElementById("durationInput");
+        // Reset
+        youtubeDiv.classList.add("d-none");
+        fileDiv.classList.add("d-none");
+        linkDiv.classList.add("d-none");
+        videoDurationDiv.classList.add("d-none");
+        youtubeInput?.removeAttribute("required");
+        fileInput?.removeAttribute("required");
+        linkInput?.removeAttribute("required");
+        videoTimeInput?.removeAttribute("required");
+        if (type === "video") {
+        youtubeDiv.classList.remove("d-none");
+        videoDurationDiv.classList.remove("d-none");
+        youtubeInput?.setAttribute("required", "required");
+        videoTimeInput?.setAttribute("required", "required");
+        previewYoutubeThumbnail();
+        } else if (type === "pdf" || type === "doc") {
+        fileDiv.classList.remove("d-none");
+        } else if (type === "link") {
+        linkDiv.classList.remove("d-none");
+        linkInput?.setAttribute("required", "required");
+        // KHÔNG hiển thị videoDurationDiv ở đây
+        }
+        }
+
+        function prepareCreateMaterial() {
+        // Nếu loại là video thì cập nhật lại videoTime
+        const type = document.getElementById("type").value;
+        if (type === "video") {
+        updateVideoDuration();
+        }
+        return true; // cho phép form submit
+        }
 
 
-            function updateMaterialLocation(type) {
-            const materialLocation = document.getElementById("materialLocation");
-            if (type === "video") {
-            const file = document.getElementById("videoFile").files[0];
-            if (file) {
-            materialLocation.value = "materialUpload/" + file.name;
-            } else {
-            materialLocation.value = "${material.materialLocation}";
-            }
-            } else if (type === "pdf") {
-            const file = document.getElementById("docFile").files[0];
-            if (file) {
-            materialLocation.value = "materialUpload/" + file.name;
-            } else {
-            materialLocation.value = "${material.materialLocation}";
-            }
-            } else if (type === "link") {
-            const link = document.getElementById("materialLink").value;
-            materialLocation.value = link;
-            }
-            }
 
-            function updateVideoDuration() {
-            const inputEl = document.getElementById("durationInput");
-            const errorEl = document.getElementById("durationError");
-            const hiddenInput = document.getElementById("videoTime");
-            let input = inputEl.value.trim();
-            if (input === "") {
-            hiddenInput.value = "00:00:00";
-            errorEl.classList.remove("d-none");
-            errorEl.textContent = "⚠ Please enter a non-zero duration.";
-            return;
-            }
+        const YOUTUBE_API_KEY = "AIzaSyBSPV56TgcJqr6mgWr6hDkMA2yfdirLDpA"; // ← bạn cần thay bằng API key thật
 
-            const parts = input.split(":");
-            if (parts.length === 2) {
-            parts.unshift("0"); // Thêm giờ nếu chỉ có phút:giây
-            }
+        function previewYoutubeThumbnail() {
+        const url = document.getElementById("youtubeLinkInput").value.trim();
+        let videoId = null;
+        const patterns = [
+                /(?:https?:\/\/)?(?:www\.)?youtu\.be\/([a-zA-Z0-9_-]{11})/, // youtu.be/VIDEO_ID
+                /(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/, // youtube.com/embed/VIDEO_ID
+                /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/, // youtube.com/watch?v=VIDEO_ID
+                /(?:https?:\/\/)?(?:www\.)?youtube\.com\/.*[?&]v=([a-zA-Z0-9_-]{11})/, // youtube.com/...&v=VIDEO_ID
+        ];
+        for (const pattern of patterns) {
+        const match = url.match(pattern);
+        if (match && match[1]) {
+        videoId = match[1];
+        break;
+        }
+        }
 
-            if (parts.length !== 3) {
-            showError("⚠ Invalid format. Use hh:mm:ss or mm:ss.");
-            return;
-            }
+        if (videoId && videoId.length === 11) {
+        // Hiển thị thumbnail
+        const thumbnailUrl = "https://img.youtube.com/vi/" + videoId + "/hqdefault.jpg";
+        document.getElementById("youtubeThumbnailImage").src = thumbnailUrl;
+        document.getElementById("youtubeThumbnailPreview").classList.remove("d-none");
+        // Lấy thời lượng video
+        fetch("https://www.googleapis.com/youtube/v3/videos?id=" + videoId + "&part=contentDetails&key=" + YOUTUBE_API_KEY)
+                .then(response => response.json())
+                .then(data => {
+                console.log("YouTube API response:", data);
+                console.log("Full video item:", data.items[0]);
+                const durationISO = data?.items?.[0]?.contentDetails?.duration;
+                if (durationISO) {
+                const durationFormatted = convertISO8601ToTime(durationISO);
+                console.log(convertISO8601ToTime("PT3M43S")); // → "00:03:43"
+                document.getElementById("durationInput").value = durationFormatted;
+                document.getElementById("videoTime").value = durationFormatted;
+                document.getElementById("videoDurationDiv").classList.remove("d-none");
+                document.getElementById("durationError").classList.add("d-none");
+                } else {
+                showDurationError();
+                }
+                })
+                .catch(() => showDurationError());
+        } else {
+        document.getElementById("youtubeThumbnailPreview").classList.add("d-none");
+        showDurationError();
+        }
+        }
 
-            let [hh, mm, ss] = parts.map(p => p.trim());
-            if (!/^\d+$/.test(hh) || !/^\d+$/.test(mm) || !/^\d+$/.test(ss)) {
-            showError("⚠ Hours, minutes, and seconds must be numbers.");
-            return;
-            }
+        function convertISO8601ToTime(duration) {
+        const regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
+        const matches = duration.match(regex);
+        if (!matches)
+                return "00:00:00";
+        const hours = matches[1] ? parseInt(matches[1]) : 0;
+        const minutes = matches[2] ? parseInt(matches[2]) : 0;
+        const seconds = matches[3] ? parseInt(matches[3]) : 0;
+        // Ép thành chuỗi rồi padStart
+        const hh = String(hours).padStart(2, '0');
+        const mm = String(minutes).padStart(2, '0');
+        const ss = String(seconds).padStart(2, '0');
+        return hh + ":" + mm + ":" + ss;
+        }
 
-            hh = parseInt(hh, 10);
-            mm = parseInt(mm, 10);
-            ss = parseInt(ss, 10);
-            if (mm > 59 || ss > 59) {
-            showError("⚠ Minutes and seconds must be between 00 and 59.");
-            return;
-            }
+        window.onload = function () {
+        toggleInputFields(); // để hiển thị đúng input khi load form update
 
-            if (hh === 0 && mm === 0 && ss === 0) {
-            showError("⚠ Duration cannot be 00:00:00.");
-            return;
-            }
+        const type = document.getElementById("type").value;
+        if (type === "video") {
+        previewYoutubeThumbnail(); // hiển thị lại thumbnail
+        }
+        };
+    </script>
+    <script>
+        function validateYoutubeFields() {
+        const urlInput = document.getElementById("youtubeLinkInput");
+        const durationInput = document.getElementById("videoTime");
+        const url = urlInput.value.trim();
+        const duration = durationInput.value.trim();
+        const urlErrorDiv = document.getElementById("youtubeUrlError");
+        const durationErrorDiv = document.getElementById("durationError");
+        // Reset lỗi
+        urlErrorDiv.classList.add("d-none");
+        durationErrorDiv.classList.add("d-none");
+        urlErrorDiv.innerText = "";
+        durationErrorDiv.innerText = "";
+        let isValid = true;
+        const videoIdPattern = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|.*[?&]v=))([a-zA-Z0-9_-]{11})/;
+        const urlIsValid = videoIdPattern.test(url);
+        const durationPattern = /^([0-9]{2}):([0-9]{2}):([0-9]{2})$/;
+        const durationIsValid = duration.match(durationPattern) && duration !== "00:00:00";
+        const isYoutubeVisible = !document.getElementById("youtubeLinkDiv").classList.contains("d-none");
+        if (isYoutubeVisible) {
+        if (!urlIsValid) {
+        urlErrorDiv.innerText = "Please enter a valid YouTube video URL.";
+        urlErrorDiv.classList.remove("d-none");
+        isValid = false;
+        }
 
-            const formatted = [
-                    hh.toString().padStart(2, "0"),
-                    mm.toString().padStart(2, "0"),
-                    ss.toString().padStart(2, "0")
-            ].join(":");
-            hiddenInput.value = formatted;
-            errorEl.classList.add("d-none");
-            function showError(message) {
-            hiddenInput.value = "00:00:00";
-            errorEl.classList.remove("d-none");
-            errorEl.textContent = message;
-            }
-            }
+        if (!durationIsValid) {
+        durationErrorDiv.innerText = "Could not fetch video duration. Please check the YouTube link.";
+        durationErrorDiv.classList.remove("d-none");
+        isValid = false;
+        }
+        }
 
-            function previewSelectedVideo() {
-            const fileInput = document.getElementById("videoFile");
-            const file = fileInput.files[0];
-            const previewContainer = document.getElementById("videoPreviewContainer");
-            const previewVideo = document.getElementById("videoPreviewNew");
-            if (file) {
-            const url = URL.createObjectURL(file);
-            previewVideo.src = url;
-            previewVideo.load();
-            previewContainer.classList.remove("d-none");
-            // Ẩn video cũ nếu có
-            const oldPreview = document.getElementById("videoPreviewOld");
-            if (oldPreview) {
-            oldPreview.parentElement.classList.add("d-none");
-            }
-            }
-            }
+        return isValid;
+        }
 
-            window.onload = function () {
-            toggleInputFields();
-            updateVideoDuration();
-            const currentType = document.getElementById("type").value;
-            updateMaterialLocation(currentType);
-            };
-        </script>
+        function showDurationError() {
+        document.getElementById("durationError").classList.remove("d-none"); // Hiện lỗi
+        document.getElementById("durationInput").value = "";
+        document.getElementById("videoTime").value = ""; // Xoá giá trị cũ
+        }
+    </script>
 
-        <jsp:include page="/layout/footer.jsp"/>
-        <jsp:include page="/layout/toast.jsp"/>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    </body>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        // Gắn sự kiện khi bất kỳ modal nào đóng
+        document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('hidden.bs.modal', function () {
+        const iframe = modal.querySelector('iframe');
+        if (iframe) {
+        const src = iframe.getAttribute('src');
+        iframe.setAttribute('src', ''); // Dừng video
+        iframe.setAttribute('src', src); // Gán lại để giữ link
+        }
+        });
+        });
+        });
+    </script>
+    <jsp:include page="/layout/footer.jsp"/>
+    <jsp:include page="/layout/toast.jsp"/>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>

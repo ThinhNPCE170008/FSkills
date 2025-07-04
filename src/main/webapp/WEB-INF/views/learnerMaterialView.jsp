@@ -159,7 +159,7 @@
                         </a>
                     </c:when>
                     <c:otherwise>
-                        <iframe class="d-block mx-auto" src="${MaterialPath}"></iframe>
+                        <iframe class="d-block mx-auto" src="${pageContext.request.contextPath}/${Material.materialLocation}"></iframe>
                         </c:otherwise>
                     </c:choose>
 

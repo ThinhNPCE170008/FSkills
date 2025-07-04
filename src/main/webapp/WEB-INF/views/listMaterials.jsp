@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -12,11 +13,19 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+
+        <!-- Bootstrap 5 JS (phải đặt cuối trang) -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <style>
-            body {
-                background-color: #f8f9fa;
-                font-family: 'Segoe UI', sans-serif;
+            .sidebar {
+                width: 250px;
+                position: fixed;
+                height: 100%;
+                background-color: #fff;
+                border-right: 1px solid #dee2e6;
+                z-index: 1000;
             }
+
 
             .table th, .table td {
                 vertical-align: middle;
@@ -57,27 +66,26 @@
                 color: #343a40;
                 margin-bottom: 25px;
             }
-
-            /* Ensure content adapts to available space */
-            .main {
-                transition: margin-left 0.3s ease, width 0.3s ease;
-                max-width: 100%;
-                box-sizing: border-box;
+            .container-fluid {
+                width: 100%;
+                padding-left: 0;
+                padding-right: 0;
+                margin-left: 0;
             }
+
         </style>
     </head>
     <body>
         <jsp:include page="/layout/sidebar_user.jsp"/>
-        <jsp:include page="/layout/header_user.jsp"/>
 
-        <main class="main">
-        <div class="container my-5" style="margin-left: 2500px;">
-            <div class="container py-2 ps-3">
+
+        <div class="container-fluid flex px-4">
+            <div class="container py-10">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/instructor">Home</a></li>
-                        <li class="breadcrumb-item">
-                            <a href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${course.courseID}">${course.courseName}</a>
+                        <li class="breadcrumb-item inline-flex items-center"><a class="text-indigo-600 hover:text-indigo-700 font-medium no-underline" href="${pageContext.request.contextPath}/instructor">Home</a></li>
+                        <li class="breadcrumb-item inline-flex items-center">
+                            <a class="text-indigo-600 hover:text-indigo-700 font-medium no-underline" href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${course.courseID}">${course.courseName}</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">
                             ${module.moduleName}
@@ -102,7 +110,7 @@
                         <div class="alert alert-warning text-center mt-6">No material available.</div>
                     </c:when>
                     <c:otherwise>
-                        <div class="bg-white p-5 rounded-4 shadow-lg mx-auto mt-6" style="max-width: 1500px;" >
+                        <div class="bg-white p-5 rounded-4 shadow-lg mt-6" style="max-width: 1500px;" >
                             <h1 class="text-center mb-4 fw-bold text-primary-emphasis display-5" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">
                                 <i class="bi bi-journal-text me-2" style="font-size: 2rem;"></i>
                                 <span style="border-bottom: 4px solid #0d6efd; padding-bottom: 6px;">All Material</span>
@@ -115,6 +123,7 @@
                                         <th>Name</th>
                                         <th>Type</th>
                                         <th>Materials</th>
+                                        <th>Description</th>
                                         <th>Last Update</th>
                                         <th>Actions</th>
                                     </tr>
@@ -131,39 +140,74 @@
 
                                             <td>
                                                 <c:choose>
+                                                    <c:when test="${material.type == 'video' && not empty material.materialUrl}">
+                                                        <!-- Tách videoId theo nhiều kiểu -->
+                                                        <c:set var="videoId" value="" />
 
-                                                    <c:when test="${material.type == 'video' && not empty material.materialLocation}">
+                                                        <!-- 1. Từ embed -->
+                                                        <c:if test="${fn:contains(material.materialUrl, 'embed/')}">
+                                                            <c:set var="videoId" value="${fn:substringBefore(fn:substringAfter(material.materialUrl, 'embed/'), '?')}" />
+                                                        </c:if>
+
+                                                        <!-- 2. Từ youtu.be/ -->
+                                                        <c:if test="${empty videoId && fn:contains(material.materialUrl, 'youtu.be/')}">
+                                                            <c:set var="videoId" value="${fn:substringBefore(fn:substringAfter(material.materialUrl, 'youtu.be/'), '?')}" />
+                                                        </c:if>
+
+                                                        <!-- ✅ 3. watch?v= (đã fix) -->
+                                                        <c:if test="${empty videoId && fn:contains(material.materialUrl, 'watch?v=')}">
+                                                            <c:set var="temp" value="${fn:substringAfter(material.materialUrl, 'watch?v=')}" />
+                                                            <c:choose>
+                                                                <c:when test="${fn:contains(temp, '&')}">
+                                                                    <c:set var="videoId" value="${fn:substringBefore(temp, '&')}" />
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    <c:set var="videoId" value="${temp}" />
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </c:if>
+
+                                                        <!-- 4. Từ v= ở cuối (fallback) -->
+                                                        <c:if test="${empty videoId && fn:contains(material.materialUrl, 'v=')}">
+                                                            <c:set var="videoId" value="${fn:substringBefore(fn:substringAfter(material.materialUrl, 'v='), '&')}" />
+                                                        </c:if>
+
                                                         <a href="#" data-bs-toggle="modal" data-bs-target="#videoModal${material.materialId}">
-                                                            <video class="img-fluid rounded shadow-sm d-block mx-auto" style="max-height: 160px;" muted>
-                                                                <source src="${pageContext.request.contextPath}/${material.materialLocation}" type="video/mp4">
-
-                                                                Your browser does not support the video tag.
-                                                            </video>
-
+                                                            <img class="img-fluid rounded shadow-sm d-block mx-auto"
+                                                                 style="max-height: 160px;"
+                                                                 src="https://img.youtube.com/vi/${videoId}/0.jpg"
+                                                                 alt="YouTube Thumbnail">
                                                         </a>
                                                     </c:when>
 
-
-                                                    <c:when test="${material.type == 'pdf' && not empty material.materialLocation}">
-                                                        <a href="${material.materialLocation}" target="_blank">
-                                                            ${material.materialLocation}
+                                                    <c:when test="${material.type == 'pdf' && not empty material.materialFile}">
+                                                        <a href="${pageContext.request.contextPath}/downloadmaterial?id=${material.materialId}"
+                                                           class="text-primary text-decoration-underline"
+                                                           target="_blank">
+                                                            ${material.fileName}
                                                         </a>
                                                     </c:when>
-
-
-                                                    <c:when test="${material.type == 'link' && not empty material.materialLocation}">
-                                                        <a href="${material.materialLocation}" target="_blank">
-                                                            ${material.materialLocation}
+                                                    <c:when test="${material.type == 'link' && not empty material.materialUrl}">
+                                                        <a href="${material.materialUrl}" target="_blank" class="text-primary text-decoration-underline">
+                                                            ${material.materialUrl}
                                                         </a>
                                                     </c:when>
-
 
                                                     <c:otherwise>
                                                         <span class="text-muted fst-italic">Material not available</span>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>
-
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${fn:length(material.materialDescription) > 100}">
+                                                        ${fn:substring(material.materialDescription, 0, 100)}...
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <pre style="white-space:pre-wrap;">${material.materialDescription}</pre>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
 
                                             <!-- Last Update -->
                                             <td>
@@ -203,7 +247,7 @@
                 </c:choose>
             </div>
         </div>
-        </main>
+
         <!-- Delete Modal -->
         <c:forEach var="material" items="${listMaterial}">
             <div class="modal fade" id="deleteModal${material.materialId}" tabindex="-1" aria-labelledby="deleteModalLabel"
@@ -232,26 +276,70 @@
                     </div>
                 </div>
             </div>
-            <!-- Video Modal -->                 
-            <c:if test="${not empty material.materialLocation}">
-                <div class="modal fade" id="videoModal${material.materialId}" tabindex="-1" aria-labelledby="videoModalLabel${material.materialId}" aria-hidden="true">
-                    <div class="modal-dialog modal-lg modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="videoModalLabel${material.materialId}">${material.materialName}</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body text-center">
-                                <video controls style="width: 100%; height: auto;">
-                                    <source src="${material.materialLocation}" type="video/mp4">
-                                    Your browser does not support the video tag.
-                                </video>
+            <c:choose>
+                <c:when test="${material.type == 'video' && not empty material.materialUrl}">
+                    <%-- Trích xuất videoId từ mọi loại link YouTube --%>
+                    <c:set var="videoId" value="" />
+
+                    <c:if test="${fn:contains(material.materialUrl, 'embed/')}">
+                        <c:set var="videoId" value="${fn:substringBefore(fn:substringAfter(material.materialUrl, 'embed/'), '?')}" />
+                    </c:if>
+                    <c:if test="${empty videoId && fn:contains(material.materialUrl, 'youtu.be/')}">
+                        <c:set var="videoId" value="${fn:substringBefore(fn:substringAfter(material.materialUrl, 'youtu.be/'), '?')}" />
+                    </c:if>
+                    <c:if test="${empty videoId && fn:contains(material.materialUrl, 'watch?v=')}">
+                        <c:set var="temp" value="${fn:substringAfter(material.materialUrl, 'watch?v=')}" />
+                        <c:choose>
+                            <c:when test="${fn:contains(temp, '&')}">
+                                <c:set var="videoId" value="${fn:substringBefore(temp, '&')}" />
+                            </c:when>
+                            <c:otherwise>
+                                <c:set var="videoId" value="${temp}" />
+                            </c:otherwise>
+                        </c:choose>
+                    </c:if>
+                    <c:if test="${empty videoId && fn:contains(material.materialUrl, 'v=')}">
+                        <c:set var="videoId" value="${fn:substringBefore(fn:substringAfter(material.materialUrl, 'v='), '&')}" />
+                    </c:if>
+
+                    <%-- Modal hiển thị video YouTube --%>
+                    <div class="modal fade" id="videoModal${material.materialId}" tabindex="-1"
+                         aria-labelledby="videoModalLabel${material.materialId}" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="videoModalLabel${material.materialId}">Video</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                            ></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="ratio ratio-16x9">
+                                        <iframe id="youtubeFrame${material.materialId}"
+                                                src="https://www.youtube.com/embed/${videoId}"
+                                                title="YouTube video" frameborder="0" allowfullscreen>
+                                        </iframe>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </c:if>             
-
+                </c:when>
+            </c:choose>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    // Gắn sự kiện khi bất kỳ modal nào đóng
+                    document.querySelectorAll('.modal').forEach(modal => {
+                        modal.addEventListener('hidden.bs.modal', function () {
+                            const iframe = modal.querySelector('iframe');
+                            if (iframe) {
+                                const src = iframe.getAttribute('src');
+                                iframe.setAttribute('src', '');   // Dừng video
+                                iframe.setAttribute('src', src);  // Gán lại để giữ link
+                            }
+                        });
+                    });
+                });
+            </script>
         </c:forEach>
         <jsp:include page="/layout/footer.jsp"/>
         <jsp:include page="/layout/toast.jsp"/>
