@@ -5,12 +5,14 @@
 package model;
 
 import java.sql.Timestamp;
+import util.ImageBase64;
 
 /**
  *
  * @author Duy - CE180230 - SE1815
  */
 public class Material {
+
     private int materialId;
     private String materialName;
     private Module module;
@@ -19,12 +21,34 @@ public class Material {
     private int materialOrder;
     private String time;
     private String materialDescription;
-    private String materialLocation;
+    private String materialUrl;
+    private byte[] materialFile;
+    private String fileName;
+    private String pdfDataURI;
+
+    public String getPdfDataURI() {
+        return pdfDataURI;
+    }
+
+    public void setPdfDataURI(String pdfDataURI) {
+        this.pdfDataURI = pdfDataURI;
+    }
 
     public Material() {
     }
 
-    public Material(int materialId, String materialName, Module module, String type, Timestamp materialLastUpdate, int materialOrder, String time, String materialDescription, String materialLocation) {
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public Material(int materialId, String materialName, Module module, String type, 
+            Timestamp materialLastUpdate, int materialOrder, String time, 
+            String materialDescription, String materialUrl, byte[] materialFile, 
+            String fileName) {
         this.materialId = materialId;
         this.materialName = materialName;
         this.module = module;
@@ -33,8 +57,11 @@ public class Material {
         this.materialOrder = materialOrder;
         this.time = time;
         this.materialDescription = materialDescription;
-        this.materialLocation = materialLocation;
+        this.materialUrl = materialUrl;
+        this.materialFile = materialFile;
+        this.fileName = fileName;
     }
+
 
     public int getMaterialId() {
         return materialId;
@@ -100,19 +127,25 @@ public class Material {
         this.materialDescription = materialDescription;
     }
 
-    public String getMaterialLocation() {
-        return materialLocation;
+    public String getMaterialUrl() {
+        return materialUrl;
     }
 
-    public void setMaterialLocation(String materialLocation) {
-        this.materialLocation = materialLocation;
+    public void setMaterialUrl(String materialUrl) {
+        this.materialUrl = materialUrl;
+    }
+
+    public byte[] getMaterialFile() {
+        return materialFile;
+    }
+
+    public void setMaterialFile(byte[] materialFile) {
+        this.materialFile = materialFile;
     }
 
     @Override
     public String toString() {
-        return "Material{" + "materialId=" + materialId + ", materialName=" + materialName + ", module=" + module + ", type=" + type + ", materialLastUpdate=" + materialLastUpdate + ", materialOrder=" + materialOrder + ", time=" + time + ", materialDescription=" + materialDescription + ", materialLocation=" + materialLocation + '}';
+        return "Material{" + "materialId=" + materialId + ", materialName=" + materialName + ", module=" + module + ", type=" + type + ", materialLastUpdate=" + materialLastUpdate + ", materialOrder=" + materialOrder + ", time=" + time + ", materialDescription=" + materialDescription + ", materialUrl=" + materialUrl + ", materialFile=" + materialFile + '}';
     }
-
-    
 
 }

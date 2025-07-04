@@ -22,5 +22,7 @@ Any value defined here will override the pom.xml file value but is only applicab
         <org-netbeans-modules-css-prep.sass_2e_mappings>/scss:/css</org-netbeans-modules-css-prep.sass_2e_mappings>
         <org-netbeans-modules-web-clientproject-api.js_2e_libs_2e_folder>js/libs</org-netbeans-modules-web-clientproject-api.js_2e_libs_2e_folder>
         <org-netbeans-modules-maven-j2ee.netbeans_2e_hint_2e_deploy_2e_server>Tomcat</org-netbeans-modules-maven-j2ee.netbeans_2e_hint_2e_deploy_2e_server>
+        <netbeans.hint.jdkPlatform>JDK_11</netbeans.hint.jdkPlatform>
+        <org-netbeans-modules-javascript2-editor.jsversion>ECMA7</org-netbeans-modules-javascript2-editor.jsversion>
     </properties>
 </project-shared-configuration>

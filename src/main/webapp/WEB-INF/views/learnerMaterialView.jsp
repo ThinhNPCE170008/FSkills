@@ -150,19 +150,18 @@
                 </div>
 
                 <p class="h1 text-center mt-3">${Material.materialName}</p>
-                <c:if test="${not empty MaterialPath}">
-                    <c:choose>
-                        <c:when test="${fn:endsWith(MaterialPath,'.docx')}">
-                            <p class="h6 ms-5 mt-5">Download Word Document:</p>
-                            <a class="h6 ms-5 link-primary" href="${MaterialPath}" download>
-                                ${Material.materialLocation}
-                            </a>
-                        </c:when>
-                        <c:otherwise>
-                            <iframe class="d-block mx-auto" src="${MaterialPath}"></iframe>
-                            </c:otherwise>
-                        </c:choose>
-                    </c:if>
+
+                <c:choose>
+                    <c:when test="${fn:endsWith(MaterialPath,'.docx')}">
+                        <p class="h6 ms-5 mt-5">Download Word Document:</p>
+                        <a class="h6 ms-5 link-primary" href="${MaterialPath}" download>
+                            ${Material.materialLocation}
+                        </a>
+                    </c:when>
+                    <c:otherwise>
+                        <iframe class="d-block mx-auto" src="${pageContext.request.contextPath}/${Material.materialLocation}"></iframe>
+                        </c:otherwise>
+                    </c:choose>
 
                 <p class="h6 ms-5 mat-des">${Material.materialDescription}</p>
 
@@ -174,9 +173,6 @@
                         <input type="hidden" name="materialID" value="${Material.materialId}"/>
                     </form>
                 </c:if>
-
-                <%-- de ké o day --%>
-                <jsp:include page="/WEB-INF/views/comments_section.jsp" />
             </div>
 
             <div id="material-list">
