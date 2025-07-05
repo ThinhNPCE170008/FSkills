@@ -117,9 +117,13 @@ public class CommentServlet extends HttpServlet {
 
         List<Comment> comments = commentDAO.getCommentsByMaterialId(materialID);
         request.setAttribute("comments", comments);
-        request.setAttribute("courseID", courseID);
-        request.setAttribute("moduleID", moduleID);
-        request.setAttribute("materialID", materialID);
+
+        model.Course course = new model.Course();
+        course.setCourseID(courseID);
+        request.setAttribute("Course", course);
+
+        request.setAttribute("CurrentModuleID", moduleID);
+        request.setAttribute("CurrentMaterialID", materialID);
 
         request.getRequestDispatcher("/WEB-INF/views/learnerMaterialView.jsp")
                 .forward(request, response);

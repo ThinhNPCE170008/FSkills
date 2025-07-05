@@ -1,7 +1,7 @@
 <%--
-    Document     : comments_section
+    Document       : comments_section
     Created on : Jul 3, 2025, 7:20:26 PM
-    Author       : DELL
+    Author         : DELL
 --%>
 
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
@@ -10,9 +10,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <c:url var="materialPageUrl" value="/learner/course/module/material">
-    <c:param name="courseID" value="${courseID}" />
-    <c:param name="moduleID" value="${moduleID}" />
-    <c:param name="materialID" value="${materialID}" />
+    <c:param name="courseID" value="${Course.courseID}" />
+    <c:param name="moduleID" value="${CurrentModuleID}" />
+    <c:param name="materialID" value="${CurrentMaterialID}" />
 </c:url>
 
 <style>
@@ -89,9 +89,9 @@
             <c:when test="${sessionScope.user != null}">
                 <form id="addCommentForm" action="${pageContext.request.contextPath}/comments" method="post" onsubmit="return validateCommentForm()">
                     <input type="hidden" name="action" value="add"/>
-                    <input type="hidden" name="courseID" value="${courseID}"/>
-                    <input type="hidden" name="moduleID" value="${moduleID}"/>
-                    <input type="hidden" name="materialID" value="${materialID}"/>
+                    <input type="hidden" name="courseID" value="${Course.courseID}"/>
+                    <input type="hidden" name="moduleID" value="${CurrentModuleID}"/>
+                    <input type="hidden" name="materialID" value="${CurrentMaterialID}"/>
                     <input type="hidden" name="redirectUrl" value="${materialPageUrl}" />
                     <div class="mb-3">
                         <textarea class="form-control" id="addCommentContent" name="commentContent" rows="3" placeholder="Write your comment here" required></textarea>
@@ -133,9 +133,9 @@
                             <form action="${pageContext.request.contextPath}/comments" method="post" class="edit-comment-form" onsubmit="return validateEditCommentForm(this)">
                                 <input type="hidden" name="action" value="update"/>
                                 <input type="hidden" name="commentId" value="${comment.commentId}"/>
-                                <input type="hidden" name="courseID" value="${courseID}"/>
-                                <input type="hidden" name="moduleID" value="${moduleID}"/>
-                                <input type="hidden" name="materialID" value="${materialID}"/>
+                                <input type="hidden" name="courseID" value="${Course.courseID}"/>
+                                <input type="hidden" name="moduleID" value="${CurrentModuleID}"/>
+                                <input type="hidden" name="materialID" value="${CurrentMaterialID}"/>
                                 <input type="hidden" name="redirectUrl" value="${materialPageUrl}" />
                                 <div class="mb-2">
                                     <textarea class="form-control" name="commentContent" rows="2" required>${comment.commentContent}</textarea>
@@ -160,15 +160,15 @@
                 <div class="comment-actions">
                     <c:if test="${sessionScope.user != null && sessionScope.user.userId == comment.userId}">
                         <c:if test="${commentToEdit == null || commentToEdit.commentId != comment.commentId}">
-                            <a href="${pageContext.request.contextPath}/comments?action=editForm&commentId=${comment.commentId}&courseID=${courseID}&moduleID=${moduleID}&materialID=${materialID}&redirectUrl=${materialPageUrl}" class="btn btn-sm btn-info text-white">Edit</a>
-                        </c:if>
 
-                        <form action="${pageContext.request.contextPath}/comments" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bình luận này không?');">
+                            <a href="${pageContext.request.contextPath}/comments?action=editForm&commentId=${comment.commentId}&courseID=${Course.courseID}&moduleID=${CurrentModuleID}&materialID=${CurrentMaterialID}&redirectUrl=${materialPageUrl}" class="btn btn-sm btn-info text-white">Edit</a>                        </c:if>
+
+                            <form action="${pageContext.request.contextPath}/comments" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bình luận này không?');">
                             <input type="hidden" name="action" value="delete"/>
                             <input type="hidden" name="commentId" value="${comment.commentId}"/>
-                            <input type="hidden" name="courseID" value="${courseID}"/>
-                            <input type="hidden" name="moduleID" value="${moduleID}"/>
-                            <input type="hidden" name="materialID" value="${materialID}"/>
+                            <input type="hidden" name="courseID" value="${Course.courseID}"/>
+                            <input type="hidden" name="moduleID" value="${CurrentModuleID}"/>
+                            <input type="hidden" name="materialID" value="${CurrentMaterialID}"/>
                             <input type="hidden" name="redirectUrl" value="${materialPageUrl}" />
                             <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                         </form>

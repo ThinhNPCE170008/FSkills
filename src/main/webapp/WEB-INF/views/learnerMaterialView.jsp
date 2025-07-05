@@ -150,19 +150,19 @@
                 </div>
 
                 <p class="h1 text-center mt-3">${Material.materialName}</p>
-
+                <%System.out.println("a");%>
                 <c:choose>
                     <c:when test="${fn:endsWith(MaterialPath,'.docx')}">
                         <p class="h6 ms-5 mt-5">Download Word Document:</p>
                         <a class="h6 ms-5 link-primary" href="${MaterialPath}" download>
-                            ${Material.materialLocation}
+                            ${Material.fileName}
                         </a>
                     </c:when>
                     <c:otherwise>
-                        <iframe class="d-block mx-auto" src="${pageContext.request.contextPath}/${Material.materialLocation}"></iframe>
+                        <iframe class="d-block mx-auto" src="${MaterialPath}"></iframe>
                         </c:otherwise>
                     </c:choose>
-
+                        <%System.out.println("b");%>
                 <p class="h6 ms-5 mat-des">${Material.materialDescription}</p>
 
                 <c:if test="${!StudyMap[Material.materialId]}">
@@ -173,11 +173,10 @@
                         <input type="hidden" name="materialID" value="${Material.materialId}"/>
                     </form>
                 </c:if>
-                
                 <%-- de ké o day --%>
                 <jsp:include page="/WEB-INF/views/comments_section.jsp" />
             </div>
-
+                <%System.out.println("c");%>
             <div id="material-list">
                 <c:forEach var="mo" items="${ModuleList}" varStatus="loop">
                     <c:set var="matList" value="${MaterialMap[mo.moduleID]}" />
