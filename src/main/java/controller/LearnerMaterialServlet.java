@@ -30,6 +30,11 @@ import model.User;
 public class LearnerMaterialServlet extends HttpServlet {
 
     private final CommentDAO commentDAO = new CommentDAO();
+    private final CourseDAO couDAO = new CourseDAO();
+    private final EnrollDAO eDAO = new EnrollDAO();
+    private final ModuleDAO molDAO = new ModuleDAO();
+    private final MaterialDAO matDAO = new MaterialDAO();
+    private final StudyDAO stuDAO = new StudyDAO();
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,8 +48,7 @@ public class LearnerMaterialServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
+        try (PrintWriter out = response.getWriter()) {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -71,65 +75,92 @@ public class LearnerMaterialServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
+
         if (user == null) {
             response.sendRedirect(request.getContextPath() + "/login");
-        } else {
-            EnrollDAO eDAO = new EnrollDAO();
-            ModuleDAO molDAO = new ModuleDAO();
-            CourseDAO couDAO = new CourseDAO();
-            MaterialDAO matDAO = new MaterialDAO();
-            StudyDAO stuDAO = new StudyDAO();
-            Course course;
-            Material currentMaterial;
-            List<Module> moduleList;
-            String courseParam = request.getParameter("courseID");
-            String moduleParam = request.getParameter("moduleID");
-            String materialParam = request.getParameter("materialID");
-            String materialURL;
-            byte[] materialFile;
-            HashMap<Integer, List<Material>> mapOfModuleIdToMaterialList = new HashMap<>();
-            HashMap<Integer, Boolean> mapOfMaterialIdToStudyStatus = new HashMap<>();
-            List<Material> matList;
-            try {
-                int courseID = Integer.parseInt(courseParam);
-                int moduleID = Integer.parseInt(moduleParam);
-                int materialID = Integer.parseInt(materialParam);
-                if (eDAO.checkEnrollment(user.getUserId(), courseID)) {
-                    course = couDAO.getCourseByCourseID(courseID);
-                    moduleList = molDAO.getAllModuleByCourseID(courseID);
-                    currentMaterial = matDAO.getMaterialById(materialID);
-                    materialURL = currentMaterial.getMaterialUrl();
-                    materialFile = currentMaterial.getMaterialFile();
-                    for (Module mol : moduleList){
-                        matList = matDAO.getAllMaterial(courseID, mol.getModuleID());
-                        mapOfModuleIdToMaterialList.put(mol.getModuleID(), matList);
-                        for (Material mat : matList){
-                            mapOfMaterialIdToStudyStatus.put(mat.getMaterialId(), stuDAO.checkStudy(user.getUserId(), mat.getMaterialId()));
-                        }
-                    }
-                    
-                    List<Comment> comments = commentDAO.getCommentsByMaterialId(materialID);
-                    request.setAttribute("comments", comments);
-                    
-                    request.setAttribute("Course", course);
-                    request.setAttribute("ModuleList", moduleList);
-                    request.setAttribute("Material", currentMaterial);
-                    if (materialFile == null){
-                        request.setAttribute("MaterialPath", materialURL);
-                    } else {
-                        request.setAttribute("MaterialPath", materialFile);
-                    }
-                    request.setAttribute("MaterialMap", mapOfModuleIdToMaterialList);
-                    request.setAttribute("StudyMap", mapOfMaterialIdToStudyStatus);
-                    request.setAttribute("CurrentMaterialID", materialID);
-                    request.setAttribute("CurrentModuleID", moduleID);
-                    request.setAttribute("User", user);
-                    request.getRequestDispatcher("/WEB-INF/views/learnerMaterialView.jsp").forward(request, response);
-                }
-            } catch (Exception E) {
-                System.out.println("Can't convert attribute into Integer or error fetching data: " + E.getMessage());
-                E.printStackTrace(); 
+            return;
+        }
+
+        Course course;
+        Material currentMaterial;
+        List<Module> moduleList;
+        HashMap<Integer, List<Material>> mapOfModuleIdToMaterialList = new HashMap<>();
+        HashMap<Integer, Boolean> mapOfMaterialIdToStudyStatus = new HashMap<>();
+        
+        String courseParam = request.getParameter("courseID");
+        String moduleParam = request.getParameter("moduleID");
+        String materialParam = request.getParameter("materialID");
+
+        try {
+            int courseID = Integer.parseInt(courseParam);
+            int moduleID = Integer.parseInt(moduleParam);
+            int materialID = Integer.parseInt(materialParam);
+
+            if (!eDAO.checkEnrollment(user.getUserId(), courseID)) {
+                response.sendRedirect(request.getContextPath() + "/courseDetail?courseID=" + courseID + "&message=not_enrolled");
+                return; 
             }
+
+            course = couDAO.getCourseByCourseID(courseID);
+            moduleList = molDAO.getAllModuleByCourseID(courseID);
+            currentMaterial = matDAO.getMaterialById(materialID);
+
+            if (currentMaterial != null) {
+                if (currentMaterial.getMaterialFile() == null) {
+                    request.setAttribute("MaterialPath", currentMaterial.getMaterialUrl());
+                } else {
+                    request.setAttribute("MaterialPath", currentMaterial.getPdfDataURI()); 
+                }
+            }
+            
+            for (Module mol : moduleList) {
+                List<Material> matList = matDAO.getAllMaterial(courseID, mol.getModuleID());
+                mapOfModuleIdToMaterialList.put(mol.getModuleID(), matList);
+                for (Material mat : matList) {
+                    mapOfMaterialIdToStudyStatus.put(mat.getMaterialId(), stuDAO.checkStudy(user.getUserId(), mat.getMaterialId()));
+                }
+            }
+
+            List<Comment> comments = commentDAO.getCommentsByMaterialId(materialID);
+            request.setAttribute("comments", comments);
+
+            String commentIdToEditParam = request.getParameter("commentIdToEdit");
+            if (commentIdToEditParam != null && !commentIdToEditParam.isEmpty()) {
+                try {
+                    int commentIdToEdit = Integer.parseInt(commentIdToEditParam);
+                    Comment commentToEdit = commentDAO.getCommentById(commentIdToEdit);
+                    
+                    if (commentToEdit != null && user.getUserId() == commentToEdit.getUserId()) {
+                        request.setAttribute("commentToEdit", commentToEdit);
+                        System.out.println("DEBUG (LearnerMaterialServlet): commentToEdit set for ID: " + commentIdToEdit);
+                    } else {
+                        System.out.println("DEBUG (LearnerMaterialServlet): User " + user.getUserId() + " not authorized or comment " + commentIdToEdit + " not found for editing.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.err.println("ERROR (LearnerMaterialServlet): Invalid commentIdToEdit parameter: " + commentIdToEditParam);
+                }
+            } else {
+                System.out.println("DEBUG (LearnerMaterialServlet): No commentIdToEdit parameter found in request.");
+            }
+
+            request.setAttribute("Course", course);
+            request.setAttribute("ModuleList", moduleList);
+            request.setAttribute("Material", currentMaterial);
+            request.setAttribute("MaterialMap", mapOfModuleIdToMaterialList);
+            request.setAttribute("StudyMap", mapOfMaterialIdToStudyStatus);
+            request.setAttribute("CurrentMaterialID", materialID);
+            request.setAttribute("CurrentModuleID", moduleID);
+            request.setAttribute("User", user); 
+            request.getRequestDispatcher("/WEB-INF/views/learnerMaterialView.jsp").forward(request, response);
+
+        } catch (NumberFormatException E) {
+            System.out.println("ERROR (LearnerMaterialServlet): Cannot convert attribute into Integer or missing parameter: " + E.getMessage());
+            E.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/errorPage.jsp"); 
+        } catch (Exception E) {
+            System.out.println("ERROR (LearnerMaterialServlet): An unexpected error occurred: " + E.getMessage());
+            E.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/errorPage.jsp");
         }
     }
 
@@ -146,25 +177,49 @@ public class LearnerMaterialServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
+        
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
         String action = request.getParameter("completeMaterial");
-        StudyDAO stuDAO = new StudyDAO();
         int matID;
         int molID;
         int couID;
-        if (action != null) {
+
+        if (action != null && action.equals("complete")) { 
             try {
                 matID = Integer.parseInt(request.getParameter("materialID"));
                 molID = Integer.parseInt(request.getParameter("moduleID"));
-                couID = Integer.parseInt(request.getParameter("courseID"));
+                couID = Integer.parseInt(request.getParameter("courseID"));                              
                 if (stuDAO.addLearnerStudyCompletion(user.getUserId(), matID) != 0) {
                     response.sendRedirect(request.getContextPath() + "/learner/course/module/material?courseID=" + couID + "&moduleID=" + molID + "&materialID=" + matID);
+                } else {
+                    System.out.println("DEBUG (LearnerMaterialServlet): Failed to add study completion for material " + matID + " by user " + user.getUserId());
+                    response.sendRedirect(request.getContextPath() + "/learner/course/module/material?courseID=" + couID + "&moduleID=" + molID + "&materialID=" + matID + "&status=failed");
                 }
-            } catch (Exception E) {
-                System.out.println("Can't convert parameter into Integer: " + E.getMessage());
+            } catch (NumberFormatException E) {
+                System.out.println("ERROR (LearnerMaterialServlet): Can't convert parameter into Integer for POST: " + E.getMessage());
                 E.printStackTrace();
+                response.sendRedirect(request.getContextPath() + "/errorPage.jsp");
+            } catch (Exception E) {
+                System.out.println("ERROR (LearnerMaterialServlet): An unexpected error occurred in POST: " + E.getMessage());
+                E.printStackTrace();
+                response.sendRedirect(request.getContextPath() + "/errorPage.jsp");
             }
+        } else {
+            String currentCourseID = request.getParameter("courseID");
+            String currentModuleID = request.getParameter("moduleID");
+            String currentMaterialID = request.getParameter("materialID");
+            String redirectBackUrl = request.getContextPath() + "/learner/course/module/material"
+                                    + "?courseID=" + (currentCourseID != null ? currentCourseID : "")
+                                    + "&moduleID=" + (currentModuleID != null ? currentModuleID : "")
+                                    + "&materialID=" + (currentMaterialID != null ? currentMaterialID : "");
+            response.sendRedirect(redirectBackUrl);
         }
     }
+
 
     /**
      * Returns a short description of the servlet.
@@ -173,7 +228,7 @@ public class LearnerMaterialServlet extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Short description";
+        return "Learner Material Servlet handles displaying material content and related functionalities.";
     }// </editor-fold>
 
 }

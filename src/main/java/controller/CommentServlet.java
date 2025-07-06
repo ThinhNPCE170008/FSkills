@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.List;
 import model.Comment;
 import model.User;
+import model.Course;
 
 @WebServlet(name = "CommentController", urlPatterns = {"/comments"})
 public class CommentServlet extends HttpServlet {
@@ -22,28 +23,22 @@ public class CommentServlet extends HttpServlet {
             action = "list";
         }
 
-        String redirectUrl = request.getParameter("redirectUrl");
+        String courseIDParam = request.getParameter("courseID");
+        String moduleIDParam = request.getParameter("moduleID");
+        String materialIDParam = request.getParameter("materialID");
 
-        if (redirectUrl == null || redirectUrl.isEmpty()) {
-            String courseID = request.getParameter("courseID");
-            String moduleID = request.getParameter("moduleID");
-            String materialID = request.getParameter("materialID");
-
-            if (courseID != null && moduleID != null && materialID != null) {
-                redirectUrl = request.getContextPath() + "/learner/course/module/material"
-                        + "?courseID=" + courseID
-                        + "&moduleID=" + moduleID
-                        + "&materialID=" + materialID;
-            } else {
-                redirectUrl = request.getContextPath() + "/home";
-            }
-        }
-
-        request.setAttribute("redirectUrl", redirectUrl);
+        String redirectUrl = request.getContextPath() + "/learner/course/module/material"
+                                + "?courseID=" + (courseIDParam != null ? courseIDParam : "")
+                                + "&moduleID=" + (moduleIDParam != null ? moduleIDParam : "")
+                                + "&materialID=" + (materialIDParam != null ? materialIDParam : "");
 
         switch (action) {
             case "editForm":
-                showEditForm(request, response);
+                String commentId = request.getParameter("commentId");
+                if (commentId != null && !commentId.isEmpty()) {
+                    redirectUrl += "&commentIdToEdit=" + commentId;
+                }
+                response.sendRedirect(redirectUrl);
                 break;
             default:
                 response.sendRedirect(redirectUrl);
@@ -60,22 +55,17 @@ public class CommentServlet extends HttpServlet {
         }
 
         String redirectUrl = request.getParameter("redirectUrl");
+        
         if (redirectUrl == null || redirectUrl.isEmpty()) {
-            String courseID = request.getParameter("courseID");
-            String moduleID = request.getParameter("moduleID");
-            String materialID = request.getParameter("materialID");
-
-            if (courseID != null && moduleID != null && materialID != null) {
-                redirectUrl = request.getContextPath() + "/learner/course/module/material"
-                        + "?courseID=" + courseID
-                        + "&moduleID=" + moduleID
-                        + "&materialID=" + materialID;
-            } else {
-                redirectUrl = request.getContextPath() + "/home";
-            }
+            String courseIDParam = request.getParameter("courseID");
+            String moduleIDParam = request.getParameter("moduleID");
+            String materialIDParam = request.getParameter("materialID");
+            redirectUrl = request.getContextPath() + "/learner/course/module/material"
+                        + "?courseID=" + (courseIDParam != null ? courseIDParam : "")
+                        + "&moduleID=" + (moduleIDParam != null ? moduleIDParam : "")
+                        + "&materialID=" + (materialIDParam != null ? materialIDParam : "");
         }
 
-        request.setAttribute("redirectUrl", redirectUrl);
 
         switch (action) {
             case "add":
@@ -91,42 +81,6 @@ public class CommentServlet extends HttpServlet {
                 response.sendRedirect(redirectUrl);
                 break;
         }
-    }
-
-    private void showEditForm(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        User currentUser = (User) session.getAttribute("user");
-
-        int commentId = parseInt(request.getParameter("commentId"));
-        int courseID = parseInt(request.getParameter("courseID"));
-        int moduleID = parseInt(request.getParameter("moduleID"));
-        int materialID = parseInt(request.getParameter("materialID"));
-
-        Comment commentToEdit = commentDAO.getCommentById(commentId);
-
-        if (commentToEdit != null && currentUser != null && commentToEdit.getUserId() == currentUser.getUserId()) {
-            request.setAttribute("commentToEdit", commentToEdit);
-        } else {
-            String redirectUrl = (String) request.getAttribute("redirectUrl");
-            if (redirectUrl != null) {
-                response.sendRedirect(redirectUrl);
-                return;
-            }
-        }
-
-        List<Comment> comments = commentDAO.getCommentsByMaterialId(materialID);
-        request.setAttribute("comments", comments);
-
-        model.Course course = new model.Course();
-        course.setCourseID(courseID);
-        request.setAttribute("Course", course);
-
-        request.setAttribute("CurrentModuleID", moduleID);
-        request.setAttribute("CurrentMaterialID", materialID);
-
-        request.getRequestDispatcher("/WEB-INF/views/learnerMaterialView.jsp")
-                .forward(request, response);
     }
 
     private void addComment(HttpServletRequest request, HttpServletResponse response, String redirectUrl)
