@@ -21,7 +21,7 @@
         <a href="${pageContext.request.contextPath}/cart"><i class="bi bi-cart"></i> <span>Cart</span></a>
         <a href="${pageContext.request.contextPath}/announcements"><i class="bi bi-megaphone"></i> <span>Announcements</span></a>
 
-        <a href="${pageContext.request.contextPath}/announcements"><i class="bi bi-megaphone"></i> <span>Announcements</span></a>
+        <a href="${pageContext.request.contextPath}/report"><i class="bi bi-flag-fill"></i> <span>Report history</span></a>
         <a href="${pageContext.request.contextPath}/feedback"><i class="bi bi-chat-dots"></i> <span>Feedback</span></a>
         <div class="divider"></div>
         <a href="${pageContext.request.contextPath}/learner/profile" class="user-profile">
