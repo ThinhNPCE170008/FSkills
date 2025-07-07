@@ -329,10 +329,10 @@ public class UserDAO extends DBContext {
                 String PhoneNumber = rs.getString("PhoneNumber");
                 boolean isVerified = rs.getBoolean("IsVerified");
                 String GoogleID = rs.getString("GoogleID");
-                String avatarGoogleUrl = rs.getString("AvatarGoogle"); // <-- ĐÃ THÊM DÒNG NÀY CHO PHƯƠNG THỨC MỚI
+                String avatarGoogleUrl = rs.getString("AvatarGoogle");
 
                 User acc = new User(UserID, UserName, DisplayName, Email, Password, role, gender, TimeCreate, TimeCreate, Avatar, info, Ban, ReportAmount, info, isVerified, GoogleID);
-                acc.setAvatarUrl(avatarGoogleUrl); // <-- ĐÃ THÊM DÒNG NÀY CHO PHƯƠNG THỨC MỚI
+                acc.setAvatarUrl(avatarGoogleUrl);
                 return acc;
             }
         } catch (Exception e) {
@@ -369,7 +369,7 @@ public class UserDAO extends DBContext {
                 user.setGender(rs.getInt("Gender"));
                 user.setDateOfBirth(rs.getTimestamp("DateOfBirth"));
                 user.setUserCreateDate(rs.getTimestamp("UserCreateDate"));
-                user.setAvatar(rs.getBytes("Avatar")); // Avatar thường (byte[])
+                user.setAvatar(rs.getBytes("Avatar"));
                 user.setInfo(rs.getNString("Info"));
                 user.setReports(rs.getInt("ReportAmount"));
                 user.setPhone(rs.getString("PhoneNumber"));
