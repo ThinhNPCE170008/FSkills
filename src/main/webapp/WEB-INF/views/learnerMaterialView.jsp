@@ -173,8 +173,19 @@
                         <input type="hidden" name="materialID" value="${Material.materialId}"/>
                     </form>
                 </c:if>
+                
+                <%-- de ké o day 
+                <c:if test="${StudyMap[Material.materialId]}">
+                    <jsp:include page="/WEB-INF/views/comments_section.jsp" />
+                </c:if>
+                <c:if test="${!StudyMap[Material.materialId]}">
+                    <div class="alert alert-info text-center mx-auto mt-5" style="width: 80%;">
+                        Complete the material before !.
+                    </div>
+                </c:if>  --%>
+                
                 <%-- de ké o day --%>
-                <jsp:include page="/WEB-INF/views/comments_section.jsp" />
+                <jsp:include page="/WEB-INF/views/comments_section.jsp" /> 
             </div>
                 <%System.out.println("c");%>
             <div id="material-list">
