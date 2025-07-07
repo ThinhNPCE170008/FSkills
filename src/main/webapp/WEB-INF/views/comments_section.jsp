@@ -64,7 +64,7 @@
     }
     .comment-text {
         margin-bottom: 5px;
-        word-wrap: break-word; /* Đảm bảo nội dung bình luận xuống dòng */
+        word-wrap: break-word;
     }
     .comment-meta {
         font-size: 0.85em;
@@ -87,7 +87,7 @@
     <div class="comment-form">
         <c:choose>
             <c:when test="${sessionScope.user != null}">
-                <form id="addCommentForm" action="${pageContext.request.contextPath}/comments" method="post" onsubmit="return validateCommentForm()">
+                <form id="addCommentForm" action="${pageContext.request.contextPath}/comments" method="post">
                     <input type="hidden" name="action" value="add"/>
                     <input type="hidden" name="courseID" value="${Course.courseID}"/>
                     <input type="hidden" name="moduleID" value="${CurrentModuleID}"/>
@@ -120,7 +120,7 @@
                         <img src="${comment.user.imageDataURI}" alt="Avatar" class="comment-avatar"/>
                     </c:when>
                     <c:otherwise>
-                        <img src="${pageContext.request.contextPath}/img/default-avatar.png" alt="Default Avatar" class="comment-avatar"/>
+                        <img src="${pageContext.request.contextPath}/img/default.png" alt="Default Avatar" class="comment-avatar"/>
                     </c:otherwise>
                 </c:choose>
 
@@ -130,7 +130,7 @@
                     </c:if>
                     <c:choose>
                         <c:when test="${commentToEdit != null && commentToEdit.commentId == comment.commentId}">
-                            <form action="${pageContext.request.contextPath}/comments" method="post" class="edit-comment-form" onsubmit="return validateEditCommentForm(this)">
+                            <form action="${pageContext.request.contextPath}/comments" method="post" class="edit-comment-form">
                                 <input type="hidden" name="action" value="update"/>
                                 <input type="hidden" name="commentId" value="${comment.commentId}"/>
                                 <input type="hidden" name="courseID" value="${Course.courseID}"/>
@@ -160,10 +160,11 @@
                 <div class="comment-actions">
                     <c:if test="${sessionScope.user != null && sessionScope.user.userId == comment.userId}">
                         <c:if test="${commentToEdit == null || commentToEdit.commentId != comment.commentId}">
+                            
+                            <a href="${pageContext.request.contextPath}/comments?action=editForm&commentId=${comment.commentId}&courseID=${Course.courseID}&moduleID=${CurrentModuleID}&materialID=${CurrentMaterialID}&redirectUrl=${materialPageUrl}" class="btn btn-sm btn-info text-white">Edit</a>                        
+                        </c:if>
 
-                            <a href="${pageContext.request.contextPath}/comments?action=editForm&commentId=${comment.commentId}&courseID=${Course.courseID}&moduleID=${CurrentModuleID}&materialID=${CurrentMaterialID}&redirectUrl=${materialPageUrl}" class="btn btn-sm btn-info text-white">Edit</a>                        </c:if>
-
-                            <form action="${pageContext.request.contextPath}/comments" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bình luận này không?');">
+                        <form action="${pageContext.request.contextPath}/comments" method="post" style="display:inline;" onsubmit="return confirm('Are you sure to delete this comment ?');">
                             <input type="hidden" name="action" value="delete"/>
                             <input type="hidden" name="commentId" value="${comment.commentId}"/>
                             <input type="hidden" name="courseID" value="${Course.courseID}"/>

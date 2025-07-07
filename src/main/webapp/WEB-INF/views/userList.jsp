@@ -262,7 +262,7 @@
                         <p class="message message-error bg-red-100 text-red-800 p-3 rounded-lg mb-4 text-center">${errorMessage}</p>
                     </c:if>
                     <div class="search-form flex items-center gap-3 mb-6">
-                        <form action="alluser" method="get" class="flex-grow flex gap-3" id="searchForm"> <%-- THÊM ID CHO FORM --%>
+                        <form action="alluser" method="get" class="flex-grow flex gap-3" id="searchForm">
                             <input type="text" id="searchName" name="searchName" placeholder="Search by User Name..." value="${param.searchName}"
                                    class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition duration-200">
                             <button type="submit" class="btn btn-primary bg-primary text-white py-3 px-5 rounded-lg hover:bg-primary-dark transition duration-200">
@@ -271,11 +271,9 @@
                             <button type="button" class="btn btn-secondary bg-gray-200 text-gray-700 py-3 px-5 rounded-lg hover:bg-gray-300 transition duration-200" onclick="window.location.href = 'alluser'">
                                 Show All
                             </button>
-                            <%-- INPUT HIDDEN ĐỂ LƯU TRỮ ROLE ĐƯỢC CHỌN HIỆN TẠI --%>
                             <input type="hidden" name="roleFilter" id="currentRoleFilter" value="${param.roleFilter != null ? param.roleFilter : 'Learner'}">
                         </form>
                     </div>
-                    <%-- Role Selection Radios --%>
                     <div class="role-filter mb-6">
                         <label class="block text-sm font-medium text-gray-700">Filter by Role:</label>
                         <div class="flex items-center gap-4">
@@ -285,12 +283,11 @@
                             <label for="filterInstructor" class="text-gray-800 font-medium cursor-pointer">Instructor</label>
                         </div>
                     </div>
-                    <%-- Learner List Section --%>
                     <div id="learnerTable" class="table-wrapper overflow-x-auto bg-white rounded-lg shadow-sm">
                         <h3 class="text-xl font-semibold text-gray-800 p-4 border-b border-gray-200">Learner Accounts</h3>
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
-                                <c:if test="${not empty listLearners}"> <%-- Use listLearners for Learner data --%>
+                                <c:if test="${not empty listLearners}">
                                     <tr>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">UserName</th>
@@ -453,7 +450,7 @@
                                         </td>
                                     </tr>
                                 </c:forEach>
-                                <c:if test="${empty listInstructors}"> <%-- Check if Instructor list is empty --%>
+                                <c:if test="${empty listInstructors}">
                                     <tr>
                                         <td colspan="7" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                                             <c:choose>
@@ -470,9 +467,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <%-- Pagination for current active list --%>
                     <div id="paginationContainer" class="pagination-container flex justify-end items-center mt-6">
-                        <%-- This pagination should ideally be dynamically updated based on the visible list and its data --%>
                         <a href="#" class="disabled text-gray-400 cursor-not-allowed py-2 px-3 rounded-md">&laquo;</a>
                         <a href="#" class="active bg-primary text-white py-2 px-3 rounded-md font-medium shadow-md">1</a>
                         <a href="#" class="py-2 px-3 rounded-md text-gray-500 hover:bg-gray-200">2</a>
@@ -502,7 +497,6 @@
                                                           document.querySelector('.sidebar-toggle').addEventListener('click', () => {
                                                               document.querySelector('.sidebar-container').classList.toggle('active');
                                                           });
-                                                          // --- JavaScript for Role Filtering ---
                                                           function toggleUserLists() {
                                                               const learnerRadio = document.getElementById('filterLearner');
                                                               const instructorRadio = document.getElementById('filterInstructor');
@@ -514,26 +508,23 @@
                                                               } else if (instructorRadio.checked) {
                                                                   selectedRole = 'Instructor';
                                                               }
-                                                              // Cập nhật giá trị của input hidden roleFilter trong form
                                                               currentRoleFilterInput.value = selectedRole;
-                                                              // Gửi form để tải lại dữ liệu với cả searchName và roleFilter
+                                                              // gửi form để tải lại dữ liệu với cả searchName và roleFilter
                                                               searchForm.submit();
                                                           }
-                                                          // Gọi hàm này khi trang tải để đảm bảo hiển thị đúng bảng ban đầu dựa trên tham số URL
                                                           document.addEventListener('DOMContentLoaded', () => {
                                                               const urlParams = new URLSearchParams(window.location.search);
                                                               const roleFilter = urlParams.get('roleFilter');
-                                                              const searchName = urlParams.get('searchName'); // Lấy searchName từ URL
+                                                              const searchName = urlParams.get('searchName'); 
                                                               if (roleFilter === 'Instructor') {
                                                                   document.getElementById('filterInstructor').checked = true;
-                                                                  document.getElementById('learnerTable').style.display = 'none'; // Giữ lại logic ẩn/hiện ban đầu
+                                                                  document.getElementById('learnerTable').style.display = 'none';
                                                                   document.getElementById('instructorTable').style.display = 'block';
-                                                              } else { // Mặc định hoặc Learner
+                                                              } else {
                                                                   document.getElementById('filterLearner').checked = true;
-                                                                  document.getElementById('learnerTable').style.display = 'block'; // Giữ lại logic ẩn/hiện ban đầu
+                                                                  document.getElementById('learnerTable').style.display = 'block';
                                                                   document.getElementById('instructorTable').style.display = 'none';
                                                               }
-                                                              // Đặt giá trị searchName vào input nếu có
                                                               if (searchName) {
                                                                   document.getElementById('searchName').value = searchName;
                                                               }

@@ -13,6 +13,7 @@ import util.DBContext;
 
 public class CommentDAO {
 
+    //hien chua có dùng 
     public List<Comment> getAllComments() {
         List<Comment> comments = new ArrayList<>();
         String sql = "SELECT c.CommentId, c.CommentContent, c.CommentDate, c.IsEdit, c.UserId, "
@@ -66,7 +67,7 @@ public class CommentDAO {
         try (Connection conn = new DBContext().conn;
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, comment.getCommentContent());
-            ps.setBoolean(2, true);
+            ps.setBoolean(2, comment.isIsEdit());
             ps.setInt(3, comment.getCommentId());
             ps.setInt(4, comment.getUserId());
             return ps.executeUpdate() > 0;
