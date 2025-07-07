@@ -9,15 +9,15 @@
     </style>
 </head>
 <body>
-    <h2>L?i x?y ra trong quá trình x? lý</h2>
+    <h2>Process: </h2>
 
     <div class="error-box">
-        <strong>Thông báo l?i:</strong>
+        <strong>Error:</strong>
         <p>${errorMessage}</p>
     </div>
 
     <div>
-        <strong>Chi ti?t l?i (Stack Trace):</strong>
+        <strong>Error detail (Stack Trace):</strong>
         <pre>${stackTrace}</pre>
     </div>
 </body>
