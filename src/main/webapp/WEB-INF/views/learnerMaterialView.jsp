@@ -6,6 +6,7 @@
     <head>
         <title>${Material.materialName}</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -133,6 +134,70 @@
                 padding-bottom: 10px;
                 background-color: lightgray;
             }
+
+            .btn-dark-custom {
+                background-color: #000 !important;
+                color: #fff !important;
+                border-radius: 999px;
+                padding: 10px 0;
+                font-weight: 500;
+                font-size: 16px;
+            }
+            /* Font chữ rõ và hiện đại */
+            .report-modal {
+                font-family: "Segoe UI", "Roboto", sans-serif;
+                font-size: 16px;
+                color: #111;
+            }
+
+            .report-modal h5 {
+                font-size: 20px;
+                font-weight: 700;
+                text-align: center;
+            }
+
+            .report-modal h6 {
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+            }
+
+            .report-modal p {
+                color: #555;
+                font-size: 14px;
+            }
+
+            .form-check-label {
+                font-weight: 500;
+                color: #222;
+            }
+
+            .form-check-input:checked {
+                background-color: #111;
+                border-color: #111;
+            }
+
+            /* Nút Next đẹp */
+            .btn-next {
+                background-color: #000;
+                color: white;
+                font-weight: 600;
+                border-radius: 999px;
+                padding: 12px 0;
+                font-size: 16px;
+            }
+
+            .btn-next:disabled {
+                opacity: 0.4;
+                cursor: not-allowed;
+            }
+
+            .modal-footer {
+                padding: 1.2rem;
+            }
+
+            .modal-body {
+                padding: 1.5rem;
+            }
         </style>
     </head>
     <body>
@@ -162,7 +227,19 @@
                         <iframe class="d-block mx-auto" src="${MaterialPath}"></iframe>
                         </c:otherwise>
                     </c:choose>
-                        <%System.out.println("b");%>
+                    <%System.out.println("b");%>
+
+
+
+
+                <!-- nút report của DUY -->   
+                <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#reportMaterialModal">
+                    <i class="fa-solid fa-flag me-1"></i> Report
+                </button>
+
+                <!-- nút report của DUY --> 
+
+
                 <p class="h6 ms-5 mat-des">${Material.materialDescription}</p>
 
                 <c:if test="${!StudyMap[Material.materialId]}">
@@ -176,7 +253,7 @@
                 <%-- de ké o day --%>
                 <jsp:include page="/WEB-INF/views/comments_section.jsp" />
             </div>
-                <%System.out.println("c");%>
+            <%System.out.println("c");%>
             <div id="material-list">
                 <c:forEach var="mo" items="${ModuleList}" varStatus="loop">
                     <c:set var="matList" value="${MaterialMap[mo.moduleID]}" />
@@ -217,6 +294,120 @@
                 </c:forEach>
             </div>
         </div>
+
+        <div class="modal fade" id="reportMaterialModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content rounded-4 report-modal">
+
+
+                    <form method="POST" action="${pageContext.request.contextPath}/report" 
+                          onsubmit="return validateReportForm();">
+                        <input type="hidden" name="action" value="reportMaterial">
+                        <input type="hidden" name="courseId" value="${Course.courseID}">
+                        <input type="hidden" name="moduleId" value="${Material.module.moduleID}">
+                        <input type="hidden" name="materialId" value="${Material.materialId}">
+                        <input type="hidden" name="userId" value="${sessionScope.user.userId}">
+
+
+                        <!-- Step 1 -->
+                        <div id="reportStep1">
+                            <div class="modal-header border-0">
+                                <h4 class="modal-title flex-grow-1 text-center fw-semibold m-0">Report</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <h6 class="fw-bold">What's going on?</h6>
+                                <p class="text-muted small">We'll check for all Community Guidelines, so don't worry about making the perfect choice.</p>
+
+                                <c:forEach var="cate" items="${listReportCategory}">
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio"
+                                               name="categorySelection"
+                                               id="materialCate${cate.reportCategoryId}"
+                                               value="${cate.reportCategoryId}" required>
+                                        <label class="form-check-label" for="materialCate${cate.reportCategoryId}">
+                                            ${cate.reportCategoryName}
+                                        </label>
+                                    </div>
+                                </c:forEach>
+                            </div>
+
+                            <div class="modal-footer border-0">
+                                <button type="button" class="btn btn-dark w-100 rounded-pill" id="nextStep" disabled>Next</button>
+                            </div>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div id="reportStep2" style="display: none;">
+                            <div class="modal-header border-0 d-flex align-items-center justify-content-between">
+
+                                <button type="button" class="btn btn-outline-secondary btn-sm me-2 px-3 py-2 rounded-pill" id="backStep">
+                                    ← Back
+                                </button>
+                                <h4 class="modal-title mx-auto fw-semibold m-0 position-absolute start-50 translate-middle-x">Report</h4>
+
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                            </div>
+                            <input type="hidden" name="categoryId" id="selectedCategoryId" />
+
+                            <div class="modal-body">
+                                <h6 class="fw-bold">Want to tell us more? It's optional</h6>
+                                <p class="text-muted small">Sharing a few details can help us understand the issue. Please don't include personal info or questions.</p>
+                                <textarea name="reportDetail" class="form-control" rows="6" placeholder="Add details..."></textarea>
+                            </div>
+
+                            <div class="modal-footer border-0">
+                                <button type="submit" class="btn btn-dark w-100 rounded-pill">Report</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script>
+            function validateReportForm() {
+                const selectedInput = document.getElementById("selectedCategoryId");
+                if (!selectedInput.value) {
+                    alert("Please select a report reason.");
+                    return false;
+                }
+                return true;
+            }
+        </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const radios = document.querySelectorAll('input[name="categorySelection"]');
+                const nextBtn = document.getElementById("nextStep");
+                const backBtn = document.getElementById("backStep");
+                const selectedInput = document.getElementById("selectedCategoryId");
+
+                const step1 = document.getElementById("reportStep1");
+                const step2 = document.getElementById("reportStep2");
+                console.log("radios: ", radios);
+                radios.forEach(radio => {
+                    radio.addEventListener("change", () => {
+                        nextBtn.disabled = false;
+                        console.log("radio.value", radio.value);
+                        selectedInput.value = radio.value;
+                        console.log("CateID: ", selectedInput);
+                    });
+                });
+
+                nextBtn.addEventListener("click", () => {
+                    step1.style.display = "none";
+                    step2.style.display = "block";
+                });
+
+                backBtn.addEventListener("click", () => {
+                    step2.style.display = "none";
+                    step1.style.display = "block";
+                });
+            });
+        </script>
+
+
+        <jsp:include page="/layout/toast.jsp"/>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     </body>

@@ -45,6 +45,19 @@ public class Material {
         this.fileName = fileName;
     }
 
+    public Material(int materialId) {
+        this.materialId = materialId;
+    }
+
+    public Material(int materialId, String materialName, Module module) {
+        this.materialId = materialId;
+        this.materialName = materialName;
+        this.module = module;
+    }
+
+    
+    
+
     public Material(int materialId, String materialName, Module module, String type, 
             Timestamp materialLastUpdate, int materialOrder, String time, 
             String materialDescription, String materialUrl, byte[] materialFile, 

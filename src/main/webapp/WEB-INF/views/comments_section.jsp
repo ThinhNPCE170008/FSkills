@@ -127,6 +127,12 @@
                 <div class="comment-content-area">
                     <c:if test="${comment.user != null}">
                         <p class="comment-author">${comment.user.displayName}</p>
+
+                        <!-- nút report của DUY -->   
+                        <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#reportCommentModal">
+                            <i class="fa-solid fa-flag me-1"></i> Report
+                        </button>
+                        <!-- nút report của DUY -->
                     </c:if>
                     <c:choose>
                         <c:when test="${commentToEdit != null && commentToEdit.commentId == comment.commentId}">
@@ -178,3 +184,115 @@
         </c:forEach>
     </div>
 </div>
+
+<!-- 🔷 Modal Báo Cáo Comment -->
+<div class="modal fade" id="reportCommentModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 report-modal">
+
+            <form method="POST" action="${pageContext.request.contextPath}/report"
+                  onsubmit="return validateReportForm();">
+                <input type="hidden" name="action" value="reportComment">
+                <input type="hidden" name="courseId" value="${Course.courseID}">
+                <input type="hidden" name="moduleId" value="${CurrentModuleID}">
+
+                <c:forEach var="comment" items="${comments}">
+                    <input type="hidden" name="commentId" value="${comment.commentId}">
+                </c:forEach>
+                <input type="hidden" name="materialId" value="${CurrentMaterialID}"/>
+                <input type="hidden" name="userId" value="${sessionScope.user.userId}">
+
+                <!-- Step 1 -->
+                <div id="reportStep1Comment">
+                    <div class="modal-header border-0">
+                        <h4 class="modal-title flex-grow-1 text-center fw-semibold m-0">Report</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h6 class="fw-bold">What's going on?</h6>
+                        <p class="text-muted small">We'll check for all Community Guidelines, so don't worry about making the perfect choice.</p>
+
+                        <c:forEach var="cate" items="${listReportCategory}">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio"
+                                       name="categorySelection"
+                                       id="commentCate${cate.reportCategoryId}"
+                                       value="${cate.reportCategoryId}" required>
+                                <label class="form-check-label" for="commentCate${cate.reportCategoryId}">
+                                    ${cate.reportCategoryName}
+                                </label>
+                            </div>
+                        </c:forEach>
+                    </div>
+
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-dark w-100 rounded-pill" id="nextStepComment" disabled>Next</button>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div id="reportStep2Comment" style="display: none;">
+                    <div class="modal-header border-0 d-flex align-items-center justify-content-between">
+                        <button type="button" class="btn btn-outline-secondary btn-sm me-2 px-3 py-2 rounded-pill" id="backStepComment">
+                            ← Back
+                        </button>
+                        <h4 class="modal-title mx-auto fw-semibold m-0 position-absolute start-50 translate-middle-x">Report</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <input type="hidden" name="categoryId" id="selectedCategoryIdComment" />
+
+                    <div class="modal-body">
+                        <h6 class="fw-bold">Want to tell us more? It's optional</h6>
+                        <p class="text-muted small">Sharing a few details can help us understand the issue. Please don't include personal info or questions.</p>
+                        <textarea name="reportDetail" class="form-control" rows="6" placeholder="Add details..."></textarea>
+                    </div>
+
+                    <div class="modal-footer border-0">
+                        <button type="submit" class="btn btn-dark w-100 rounded-pill">Report</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Script JS xử lý riêng cho modal comment -->
+<script>
+    function validateReportForm() {
+        const selectedInput = document.getElementById("selectedCategoryIdComment");
+        if (!selectedInput.value) {
+            alert("Please select a report reason.");
+            return false;
+        }
+        return true;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const radios = document.querySelectorAll('#reportCommentModal input[name="categorySelection"]');
+        const nextBtn = document.getElementById("nextStepComment");
+        const backBtn = document.getElementById("backStepComment");
+        const selectedInput = document.getElementById("selectedCategoryIdComment");
+
+        const step1 = document.getElementById("reportStep1Comment");
+        const step2 = document.getElementById("reportStep2Comment");
+
+        radios.forEach(radio => {
+            radio.addEventListener("change", () => {
+                nextBtn.disabled = false;
+                selectedInput.value = radio.value;
+            });
+        });
+
+        nextBtn.addEventListener("click", () => {
+            step1.style.display = "none";
+            step2.style.display = "block";
+        });
+
+        backBtn.addEventListener("click", () => {
+            step2.style.display = "none";
+            step1.style.display = "block";
+        });
+    });
+</script>
+

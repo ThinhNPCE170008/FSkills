@@ -13,6 +13,17 @@ public class Comment {
 
     public Comment() {}
 
+    public Comment(int commentId) {
+        this.commentId = commentId;
+    }
+
+    public Comment(int commentId, String commentContent) {
+        this.commentId = commentId;
+        this.commentContent = commentContent;
+    }
+    
+    
+
     public Comment(int commentId, int userId, int materialId, String commentContent, Timestamp commentDate, boolean isEdit, User user) {
         this.commentId = commentId;
         this.userId = userId;

@@ -13,7 +13,7 @@ public class Module {
 
     public Module() {
     }
-
+    
     public Module(int moduleID, String moduleName, Course course) {
         this.moduleID = moduleID;
         this.moduleName = moduleName;
