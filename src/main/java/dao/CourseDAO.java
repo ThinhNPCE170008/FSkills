@@ -214,12 +214,12 @@ public class CourseDAO extends DBContext {
         return null;
     }
 
-    public int insertCourse(String courseName, int categoryId, int userID, int salePrice, int originalPrice, int isSale, InputStream courseImageLocation, String courseSummary, String courseHighlight) {
+    public int insertCourse(String courseName, int categoryId, int userID, int originalPrice, InputStream courseImageLocation, String courseSummary, String courseHighlight) {
 
         String sql = "INSERT INTO Courses\n"
-                + "(CourseName, category_id, UserID, ApproveStatus, CourseLastUpdate, SalePrice, "
-                + "OriginalPrice, IsSale, CourseImageLocation, CourseSummary, CourseHighlight, Status)\n"
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
+                + "(CourseName, category_id, UserID, ApproveStatus, CourseLastUpdate, "
+                + "OriginalPrice, CourseImageLocation, CourseSummary, CourseHighlight, Status)\n"
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -228,16 +228,16 @@ public class CourseDAO extends DBContext {
             ps.setInt(3, userID);
             ps.setInt(4, 0);
             ps.setTimestamp(5, Timestamp.from(Instant.now()));
-            ps.setInt(6, salePrice);
-            ps.setInt(7, originalPrice);
-            ps.setInt(8, isSale);
+//            ps.setInt(6, salePrice);
+            ps.setInt(6, originalPrice);
+//            ps.setInt(8, isSale);
             if (courseImageLocation != null) {
-                ps.setBinaryStream(9, courseImageLocation, courseImageLocation.available());
+                ps.setBinaryStream(7, courseImageLocation, courseImageLocation.available());
             } else {
-                ps.setNull(9, Types.VARBINARY);
+                ps.setNull(7, Types.VARBINARY);
             }
-            ps.setNString(10, courseSummary);
-            ps.setNString(11, courseHighlight);
+            ps.setNString(8, courseSummary);
+            ps.setNString(9, courseHighlight);
 
             int result = ps.executeUpdate();
             return result > 0 ? 1 : 0;
@@ -247,10 +247,10 @@ public class CourseDAO extends DBContext {
         return 0;
     }
 
-    public int updateCourse(int courseID, String courseName, int categoryId, int salePrice, int originalPrice, int isSale, InputStream courseImageLocation, String courseSummary, String courseHighlight) {
+    public int updateCourse(int courseID, String courseName, int categoryId, int originalPrice, InputStream courseImageLocation, String courseSummary, String courseHighlight) {
 
         String sql = "UPDATE Courses\n"
-                + "SET CourseName = ?, category_id = ?, CourseLastUpdate = ?, SalePrice = ?, OriginalPrice = ?, IsSale = ?, CourseImageLocation = ?, CourseSummary = ?, CourseHighlight = ?\n"
+                + "SET CourseName = ?, category_id = ?, CourseLastUpdate = ?, OriginalPrice = ?, CourseImageLocation = ?, CourseSummary = ?, CourseHighlight = ?\n"
                 + "WHERE CourseID = ?";
 
         try {
@@ -258,17 +258,17 @@ public class CourseDAO extends DBContext {
             ps.setNString(1, courseName);
             ps.setInt(2, categoryId);
             ps.setTimestamp(3, Timestamp.from(Instant.now()));
-            ps.setInt(4, salePrice);
-            ps.setInt(5, originalPrice);
-            ps.setInt(6, isSale);
+//            ps.setInt(4, salePrice);
+            ps.setInt(4, originalPrice);
+//            ps.setInt(6, isSale);
             if (courseImageLocation != null) {
-                ps.setBinaryStream(7, courseImageLocation, courseImageLocation.available());
+                ps.setBinaryStream(5, courseImageLocation, courseImageLocation.available());
             } else {
-                ps.setNull(7, Types.VARBINARY);
+                ps.setNull(5, Types.VARBINARY);
             }
-            ps.setNString(8, courseSummary);
-            ps.setNString(9, courseHighlight);
-            ps.setInt(10, courseID);
+            ps.setNString(6, courseSummary);
+            ps.setNString(7, courseHighlight);
+            ps.setInt(8, courseID);
 
             int result = ps.executeUpdate();
             return result > 0 ? 1 : 0;
@@ -916,18 +916,6 @@ public class CourseDAO extends DBContext {
             System.out.println(course);
         }
 
-        String secretKey = System.getenv("CLOUDFLARE_SECRET_KEY");
-        String GOOGLE_CLIENT_ID = System.getenv("GOOGLE_CLIENT_ID");
-        String GOOGLE_CLIENT_SECRET = System.getenv("GOOGLE_CLIENT_SECRET");
-        String turnstileSiteKey = System.getenv("CLOUDFLARE_SITE_KEY");
-
-        System.out.println("Secret Key:" + secretKey);
-        System.out.println("Site Key:" + turnstileSiteKey);
-        System.out.println("Client Key:" + GOOGLE_CLIENT_ID);
-        System.out.println("Secret Google Key:" + GOOGLE_CLIENT_SECRET);
-        String SENDGRID_API_KEY = System.getenv("SENDGRID_API_KEY");
-        System.out.println(SENDGRID_API_KEY);
-
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
         System.out.println("UTC time: " + now);
 
@@ -939,10 +927,10 @@ public class CourseDAO extends DBContext {
 //        String GOOGLE_CLIENT_SECRET = System.getenv("GOOGLE_CLIENT_SECRET");
 //        String turnstileSiteKey = System.getenv("CLOUDFLARE_SITE_KEY");
 
-        System.out.println("Secret Key:" + secretKey);
-        System.out.println("Site Key:" + turnstileSiteKey);
-        System.out.println("Client Key:" + GOOGLE_CLIENT_ID);
-        System.out.println("Secret Google Key:" + GOOGLE_CLIENT_SECRET);
+//        System.out.println("Secret Key:" + secretKey);
+//        System.out.println("Site Key:" + turnstileSiteKey);
+//        System.out.println("Client Key:" + GOOGLE_CLIENT_ID);
+//        System.out.println("Secret Google Key:" + GOOGLE_CLIENT_SECRET);
         System.out.println("Local JVM time: " + ZonedDateTime.now());
         
         Instant nowInstant = Instant.now();

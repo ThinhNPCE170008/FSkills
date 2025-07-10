@@ -156,7 +156,7 @@ public class InstructorCourseServlet extends HttpServlet {
                 int categoryId = Integer.parseInt(request.getParameter("category_id"));
 
                 int originalPrice = Integer.parseInt(request.getParameter("originalPrice"));
-                int salePrice = Integer.parseInt(request.getParameter("salePrice"));
+//                int salePrice = Integer.parseInt(request.getParameter("salePrice"));
 
                 Part filePartInsert = request.getPart("courseImageLocation");
                 InputStream imageInputStream = null;
@@ -165,7 +165,7 @@ public class InstructorCourseServlet extends HttpServlet {
                     imageInputStream = filePartInsert.getInputStream();
                 }
 
-                int isSale = request.getParameter("isSale") != null ? 1 : 0;
+//                int isSale = request.getParameter("isSale") != null ? 1 : 0;
                 String courseSummary = request.getParameter("courseSummary");
                 String courseHighlight = request.getParameter("courseHighlight");
 
@@ -211,14 +211,14 @@ public class InstructorCourseServlet extends HttpServlet {
                     return;
                 }
 
-                if (salePrice >= originalPrice) {
-                    List<Course> list = cDao.getCourseByUserID(userID);
-
-                    request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Create failed: Sale price is higher than original price!");
-                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
-                    return;
-                }
+//                if (salePrice >= originalPrice) {
+//                    List<Course> list = cDao.getCourseByUserID(userID);
+//
+//                    request.setAttribute("listCourse", list);
+//                    request.setAttribute("err", "Create failed: Sale price is higher than original price!");
+//                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+//                    return;
+//                }
 
                 if (courseSummary == null || courseSummary.trim().isEmpty()) {
                     List<Course> list = cDao.getCourseByUserID(userID);
@@ -256,7 +256,7 @@ public class InstructorCourseServlet extends HttpServlet {
                     return;
                 }
 
-                int insert = cDao.insertCourse(courseName, categoryId, userID, salePrice, originalPrice, isSale, imageInputStream, courseSummary, courseHighlight);
+                int insert = cDao.insertCourse(courseName, categoryId, userID, originalPrice, imageInputStream, courseSummary, courseHighlight);
 
                 if (insert > 0) {
                     User acc = uDao.getByUserID(userID);
@@ -276,7 +276,7 @@ public class InstructorCourseServlet extends HttpServlet {
 
                 int categoryId = Integer.parseInt(request.getParameter("category_id"));
                 int originalPrice = Integer.parseInt(request.getParameter("originalPrice"));
-                int salePrice = Integer.parseInt(request.getParameter("salePrice"));
+//                int salePrice = Integer.parseInt(request.getParameter("salePrice"));
 
                 Part filePartUpdate = request.getPart("courseImageLocation");
                 InputStream imageInputStream = null;
@@ -291,7 +291,7 @@ public class InstructorCourseServlet extends HttpServlet {
                     }
                 }
 
-                int isSale = request.getParameter("isSale") != null ? 1 : 0;
+//                int isSale = request.getParameter("isSale") != null ? 1 : 0;
                 String courseSummary = request.getParameter("courseSummary");
                 String courseHighlight = request.getParameter("courseHighlight");
 
@@ -336,14 +336,14 @@ public class InstructorCourseServlet extends HttpServlet {
                     return;
                 }
 
-                if (salePrice >= originalPrice) {
-                    List<Course> list = cDao.getCourseByUserID(userID);
-
-                    request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Update failed: Sale price is higher than original price!");
-                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
-                    return;
-                }
+//                if (salePrice >= originalPrice) {
+//                    List<Course> list = cDao.getCourseByUserID(userID);
+//
+//                    request.setAttribute("listCourse", list);
+//                    request.setAttribute("err", "Update failed: Sale price is higher than original price!");
+//                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+//                    return;
+//                }
 
                 if (courseSummary == null || courseSummary.trim().isEmpty()) {
                     List<Course> list = cDao.getCourseByUserID(userID);
@@ -381,7 +381,7 @@ public class InstructorCourseServlet extends HttpServlet {
                     return;
                 }
 
-                int update = cDao.updateCourse(courseID, courseName, categoryId, salePrice, originalPrice, isSale, imageInputStream, courseSummary, courseHighlight);
+                int update = cDao.updateCourse(courseID, courseName, categoryId, originalPrice, imageInputStream, courseSummary, courseHighlight);
 
                 if (update > 0) {
                     List<Course> list = cDao.getCourseByUserID(userID);
