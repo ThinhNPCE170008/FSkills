@@ -113,7 +113,7 @@ public class CartServlet extends HttpServlet {
         }
         if (remove != null) {
             if (cDAO.removeFromCart(Integer.parseInt(remove)) != 0) {
-                response.sendRedirect(request.getContextPath() + "/cart");
+                response.sendRedirect(request.getContextPath() + "/Cart");
             }
         }
 

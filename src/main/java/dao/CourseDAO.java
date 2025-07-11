@@ -23,7 +23,7 @@ public class CourseDAO extends DBContext {
         super();
     }
 
-    public List<Course> getCourseByUserID(int userID) {
+    public List<Course> getCourseByEnrollID(int userID) {
         List<Course> list = new ArrayList<>();
 
         String sql = "SELECT\n"
@@ -31,9 +31,10 @@ public class CourseDAO extends DBContext {
                 + "c.*,\n"
                 + "cat.category_id, cat.category_name\n"
                 + "FROM Courses c\n"
-                + "JOIN Users u ON c.UserID = u.UserID\n"
+                + "JOIN Enroll e ON c.CourseID = e.CourseID\n"
+                + "JOIN [Users] u ON e.UserID = u.UserID\n"
                 + "JOIN Category cat ON c.category_id = cat.category_id\n"
-                + "WHERE c.UserID = ? AND c.Status = 0";
+                + "WHERE e.UserID = ? AND c.Status = 1";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, userID);
@@ -89,6 +90,71 @@ public class CourseDAO extends DBContext {
         return list;
     }
 
+    public List<Course> getCourseByCreatorID(int userID) {
+        List<Course> list = new ArrayList<>();
+
+        String sql = "SELECT\n"
+                + "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber,\n"
+                + "c.*,\n"
+                + "cat.category_id, cat.category_name\n"
+                + "FROM Courses c\n"
+                + "JOIN [Users] u ON c.UserID = u.UserID\n"
+                + "JOIN Category cat ON c.category_id = cat.category_id\n"
+                + "WHERE c.UserID = ? AND c.Status = 1";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, userID);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                User user = new User();
+                user.setUserId(userID);
+                user.setDisplayName(rs.getString("DisplayName"));
+                user.setEmail(rs.getString("Email"));
+                user.setPhone(rs.getString("PhoneNumber"));
+                int roleInt = rs.getInt("Role");
+                switch (roleInt) {
+                    case 0:
+                        user.setRole(Role.LEARNER);
+                        break;
+                    case 1:
+                        user.setRole(Role.INSTRUCTOR);
+                        break;
+                    case 2:
+                        user.setRole(Role.ADMIN);
+                        break;
+                }
+                user.setGender(rs.getInt("Gender"));
+                user.setDateOfBirth(rs.getTimestamp("DateOfBirth"));
+                user.setAvatar(rs.getBytes("Avatar"));
+                user.setInfo(rs.getNString("Info"));
+
+                Category category = new Category();
+                category.setId(rs.getInt("category_id"));
+                category.setName(rs.getNString("category_name"));
+
+                Course course = new Course();
+                course.setCourseID(rs.getInt("CourseID"));
+                course.setCourseName(rs.getNString("CourseName"));
+                course.setUser(user);
+                course.setCategory(category);
+                course.setApproveStatus(rs.getInt("ApproveStatus"));
+                course.setPublicDate(rs.getTimestamp("PublicDate"));
+                course.setCourseLastUpdate(rs.getTimestamp("CourseLastUpdate"));
+                course.setSalePrice(rs.getInt("SalePrice"));
+                course.setOriginalPrice(rs.getInt("OriginalPrice"));
+                course.setIsSale(rs.getInt("IsSale"));
+                course.setCourseImageLocation(rs.getBytes("CourseImageLocation"));
+                course.setCourseSummary(rs.getNString("CourseSummary"));
+                course.setCourseHighlight(rs.getNString("CourseHighlight"));
+
+                list.add(course);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return list;
+    }
     public List<Course> get3CourseByUserID(int userID) {
         List<Course> list = new ArrayList<>();
 
@@ -214,12 +280,12 @@ public class CourseDAO extends DBContext {
         return null;
     }
 
-    public int insertCourse(String courseName, int categoryId, int userID, int originalPrice, InputStream courseImageLocation, String courseSummary, String courseHighlight) {
+    public int insertCourse(String courseName, int categoryId, int userID, int salePrice, int originalPrice, int isSale, InputStream courseImageLocation, String courseSummary, String courseHighlight) {
 
         String sql = "INSERT INTO Courses\n"
-                + "(CourseName, category_id, UserID, ApproveStatus, CourseLastUpdate, "
-                + "OriginalPrice, CourseImageLocation, CourseSummary, CourseHighlight, Status)\n"
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
+                + "(CourseName, category_id, UserID, ApproveStatus, CourseLastUpdate, SalePrice, "
+                + "OriginalPrice, IsSale, CourseImageLocation, CourseSummary, CourseHighlight, Status)\n"
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -228,16 +294,16 @@ public class CourseDAO extends DBContext {
             ps.setInt(3, userID);
             ps.setInt(4, 0);
             ps.setTimestamp(5, Timestamp.from(Instant.now()));
-//            ps.setInt(6, salePrice);
-            ps.setInt(6, originalPrice);
-//            ps.setInt(8, isSale);
+            ps.setInt(6, salePrice);
+            ps.setInt(7, originalPrice);
+            ps.setInt(8, isSale);
             if (courseImageLocation != null) {
-                ps.setBinaryStream(7, courseImageLocation, courseImageLocation.available());
+                ps.setBinaryStream(9, courseImageLocation, courseImageLocation.available());
             } else {
-                ps.setNull(7, Types.VARBINARY);
+                ps.setNull(9, Types.VARBINARY);
             }
-            ps.setNString(8, courseSummary);
-            ps.setNString(9, courseHighlight);
+            ps.setNString(10, courseSummary);
+            ps.setNString(11, courseHighlight);
 
             int result = ps.executeUpdate();
             return result > 0 ? 1 : 0;
@@ -247,10 +313,10 @@ public class CourseDAO extends DBContext {
         return 0;
     }
 
-    public int updateCourse(int courseID, String courseName, int categoryId, int originalPrice, InputStream courseImageLocation, String courseSummary, String courseHighlight) {
+    public int updateCourse(int courseID, String courseName, int categoryId, int salePrice, int originalPrice, int isSale, InputStream courseImageLocation, String courseSummary, String courseHighlight) {
 
         String sql = "UPDATE Courses\n"
-                + "SET CourseName = ?, category_id = ?, CourseLastUpdate = ?, OriginalPrice = ?, CourseImageLocation = ?, CourseSummary = ?, CourseHighlight = ?\n"
+                + "SET CourseName = ?, category_id = ?, CourseLastUpdate = ?, SalePrice = ?, OriginalPrice = ?, IsSale = ?, CourseImageLocation = ?, CourseSummary = ?, CourseHighlight = ?\n"
                 + "WHERE CourseID = ?";
 
         try {
@@ -258,17 +324,17 @@ public class CourseDAO extends DBContext {
             ps.setNString(1, courseName);
             ps.setInt(2, categoryId);
             ps.setTimestamp(3, Timestamp.from(Instant.now()));
-//            ps.setInt(4, salePrice);
-            ps.setInt(4, originalPrice);
-//            ps.setInt(6, isSale);
+            ps.setInt(4, salePrice);
+            ps.setInt(5, originalPrice);
+            ps.setInt(6, isSale);
             if (courseImageLocation != null) {
-                ps.setBinaryStream(5, courseImageLocation, courseImageLocation.available());
+                ps.setBinaryStream(7, courseImageLocation, courseImageLocation.available());
             } else {
-                ps.setNull(5, Types.VARBINARY);
+                ps.setNull(7, Types.VARBINARY);
             }
-            ps.setNString(6, courseSummary);
-            ps.setNString(7, courseHighlight);
-            ps.setInt(8, courseID);
+            ps.setNString(8, courseSummary);
+            ps.setNString(9, courseHighlight);
+            ps.setInt(10, courseID);
 
             int result = ps.executeUpdate();
             return result > 0 ? 1 : 0;
@@ -911,10 +977,22 @@ public class CourseDAO extends DBContext {
         List<Course> list = new ArrayList<>();
         CourseDAO dao = new CourseDAO();
 
-        list = dao.getCourseByUserID(3);
+        list = dao.getCourseByCreatorID(3);
         for (Course course : list) {
             System.out.println(course);
         }
+
+        String secretKey = System.getenv("CLOUDFLARE_SECRET_KEY");
+        String GOOGLE_CLIENT_ID = System.getenv("GOOGLE_CLIENT_ID");
+        String GOOGLE_CLIENT_SECRET = System.getenv("GOOGLE_CLIENT_SECRET");
+        String turnstileSiteKey = System.getenv("CLOUDFLARE_SITE_KEY");
+
+        System.out.println("Secret Key:" + secretKey);
+        System.out.println("Site Key:" + turnstileSiteKey);
+        System.out.println("Client Key:" + GOOGLE_CLIENT_ID);
+        System.out.println("Secret Google Key:" + GOOGLE_CLIENT_SECRET);
+        String SENDGRID_API_KEY = System.getenv("SENDGRID_API_KEY");
+        System.out.println(SENDGRID_API_KEY);
 
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
         System.out.println("UTC time: " + now);
@@ -927,10 +1005,10 @@ public class CourseDAO extends DBContext {
 //        String GOOGLE_CLIENT_SECRET = System.getenv("GOOGLE_CLIENT_SECRET");
 //        String turnstileSiteKey = System.getenv("CLOUDFLARE_SITE_KEY");
 
-//        System.out.println("Secret Key:" + secretKey);
-//        System.out.println("Site Key:" + turnstileSiteKey);
-//        System.out.println("Client Key:" + GOOGLE_CLIENT_ID);
-//        System.out.println("Secret Google Key:" + GOOGLE_CLIENT_SECRET);
+        System.out.println("Secret Key:" + secretKey);
+        System.out.println("Site Key:" + turnstileSiteKey);
+        System.out.println("Client Key:" + GOOGLE_CLIENT_ID);
+        System.out.println("Secret Google Key:" + GOOGLE_CLIENT_SECRET);
         System.out.println("Local JVM time: " + ZonedDateTime.now());
         
         Instant nowInstant = Instant.now();

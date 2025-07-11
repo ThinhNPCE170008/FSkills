@@ -95,10 +95,10 @@
             <input type="number" class="form-control" id="originalPrice" name="originalPrice" min="0" max="10000" required>
         </div>
 
-<%--        <div class="mb-3">--%>
-<%--            <label for="salePrice" class="form-label">Sale Price (Thousand VND)</label>--%>
-<%--            <input type="number" class="form-control" id="salePrice" name="salePrice" min="0" max="10000" required>--%>
-<%--        </div>--%>
+        <div class="mb-3">
+            <label for="salePrice" class="form-label">Sale Price (Thousand VND)</label>
+            <input type="number" class="form-control" id="salePrice" name="salePrice" min="0" max="10000" required>
+        </div>
 
         <div class="mb-3">
             <label for="courseImageLocation" class="form-label">Select Image</label>
@@ -125,10 +125,10 @@
             <textarea class="form-control" id="courseHighlight" name="courseHighlight" rows="4"></textarea>
         </div>
 
-<%--        <div class="form-check mb-3">--%>
-<%--            <input class="form-check-input" type="checkbox" id="isSale" name="isSale" value="1">--%>
-<%--            <label class="form-check-label" for="isSale">On Sale</label>--%>
-<%--        </div>--%>
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="isSale" name="isSale" value="1">
+            <label class="form-check-label" for="isSale">On Sale</label>
+        </div>
 
         <button type="submit" class="btn btn-success">Create Course</button>
     </form>
@@ -171,14 +171,14 @@
             const nameInput = document.getElementById("courseName");
             const categorySelect = document.getElementById("category_id");
             const originalPriceInput = document.getElementById("originalPrice");
-            // const salePriceInput = document.getElementById("salePrice");
+            const salePriceInput = document.getElementById("salePrice");
             const summaryInput = document.getElementById("courseSummary");
             const highlightInput = document.getElementById("courseHighlight");
 
             const name = nameInput.value.trim();
             const category = categorySelect.value;
             const originalPrice = parseFloat(originalPriceInput.value);
-            // const salePrice = parseFloat(salePriceInput.value);
+            const salePrice = parseFloat(salePriceInput.value);
             const summary = summaryInput.value.trim();
             const highlight = highlightInput.value.trim();
 
@@ -220,19 +220,19 @@
                 return;
             }
 
-            // if (isNaN(salePrice) || salePrice < 0 || salePrice > 10000) {
-            //     showJsToast("Sale Price must be between 0 and 10,000,000.");
-            //     salePriceInput.focus();
-            //     e.preventDefault();
-            //     return;
-            // }
+            if (isNaN(salePrice) || salePrice < 0 || salePrice > 10000) {
+                showJsToast("Sale Price must be between 0 and 10,000,000.");
+                salePriceInput.focus();
+                e.preventDefault();
+                return;
+            }
 
-            // if (salePrice >= originalPrice) {
-            //     showJsToast("Sale Price cannot be greater than or equal to the Original Price.");
-            //     salePriceInput.focus();
-            //     e.preventDefault();
-            //     return;
-            // }
+            if (salePrice >= originalPrice) {
+                showJsToast("Sale Price cannot be greater than or equal to the Original Price.");
+                salePriceInput.focus();
+                e.preventDefault();
+                return;
+            }
 
             if (!summary) {
                 showJsToast("Summary is required.");
