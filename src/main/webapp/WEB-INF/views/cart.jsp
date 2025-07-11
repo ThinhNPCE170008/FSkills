@@ -238,6 +238,7 @@
                     <p class="empty-cart">There's nothing in your cart</p>
                 </c:when>
                 <c:otherwise>
+                    <!-- Form for removing items (submits to CartServlet) -->
                     <form method="POST" action="${pageContext.request.contextPath}/cart">
                         <div id="content" class="mx-auto">
                             <div class="table-container">
@@ -283,27 +284,33 @@
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+                    </form>
 
-                            <div class="receipt-container">
-                                <table class="table">
-                                    <thead>
-                                        <tr><th>Receipt</th></tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex justify-content-between ps-3 pe-3">
-                                                    <span class="text">Total:</span>
-                                                    <span><span id="total">0</span> VND</span>
-                                                </div>
-                                                <div>
-                                                    <button type="submit" class="btn btn-primary text mt-3">To Checkout</button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                    <!-- Separate form for checkout (submits to CheckoutServlet) -->
+                    <form method="POST" action="${pageContext.request.contextPath}/Checkout">
+                        <div class="receipt-container">
+                            <table class="table">
+                                <thead>
+                                    <tr><th>Receipt</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex justify-content-between ps-3 pe-3">
+                                                <span class="text">Total:</span>
+                                                <span><span id="total">0</span> VND</span>
+                                            </div>
+                                            <div>
+                                                <c:forEach var="cart" items="${list}">
+                                                    <input type="hidden" name="checkbox" value="${cart.cartID}" class="check-hidden"/>
+                                                </c:forEach>
+                                                <button type="submit" class="btn btn-primary text mt-3">To Checkout</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </form>
                 </c:otherwise>
@@ -314,6 +321,7 @@
             document.addEventListener('DOMContentLoaded', function () {
                 const checkAll = document.getElementById('checkall');
                 const checkboxes = document.querySelectorAll('.checkone');
+                const checkHidden = document.querySelectorAll('.check-hidden');
                 const totalDisplay = document.getElementById('total');
 
                 function updateTotal() {
@@ -326,14 +334,22 @@
                     totalDisplay.textContent = new Intl.NumberFormat('de-DE').format(total);
                 }
 
+                function syncCheckboxes() {
+                    checkboxes.forEach((cb, index) => {
+                        checkHidden[index].disabled = !cb.checked;
+                    });
+                }
+
                 checkAll.addEventListener('change', function () {
                     checkboxes.forEach(cb => cb.checked = this.checked);
+                    syncCheckboxes();
                     updateTotal();
                 });
 
                 checkboxes.forEach(cb => {
                     cb.addEventListener('change', () => {
                         checkAll.checked = [...checkboxes].every(cb => cb.checked);
+                        syncCheckboxes();
                         updateTotal();
                     });
                 });

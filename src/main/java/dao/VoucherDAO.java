@@ -53,6 +53,35 @@ public class VoucherDAO extends DBContext {
         }
         return null;
     }
+    
+    public boolean useVoucher(int voucherCode){
+        String sql = "Update Vouchers Set Amount = Amount - 1 Where VoucherCode =?";
+        try{
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, voucherCode);
+            int result = ps.executeUpdate();
+            return result > 0;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+    
+    public Voucher getVoucherByCode(String voucherCode) throws SQLException {
+        String sql = "SELECT VoucherID, VoucherName, VoucherCode, ExpiredDate, SaleType, SaleAmount, MinPrice, Amount FROM Vouchers WHERE VoucherCode = ?";
+        try ( PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, voucherCode);
+            try ( ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return setVoucher(rs);
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error in getVoucherByID for ID " + voucherCode + ": " + e.getMessage(), e);
+            throw e;
+        }
+        return null;
+    }
 
     public List<Voucher> searchVouchers(String searchTerm) throws SQLException {
         List<Voucher> vouchers = new ArrayList<>();
