@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import model.Comment;
@@ -109,14 +110,6 @@ public class LearnerMaterialServlet extends HttpServlet {
             moduleList = molDAO.getAllModuleByCourseID(courseID);
             currentMaterial = matDAO.getMaterialById(materialID);
 
-            if (currentMaterial != null) {
-                if (currentMaterial.getMaterialFile() == null) {
-                    request.setAttribute("MaterialPath", currentMaterial.getMaterialUrl());
-                } else {
-                    request.setAttribute("MaterialPath", currentMaterial.getPdfDataURI());
-                }
-            }
-
             for (Module mol : moduleList) {
                 List<Material> matList = matDAO.getAllMaterial(courseID, mol.getModuleID());
                 mapOfModuleIdToMaterialList.put(mol.getModuleID(), matList);
@@ -192,12 +185,12 @@ public class LearnerMaterialServlet extends HttpServlet {
         int molID;
         int couID;
 
-        if (action != null && action.equals("complete")) {
+        if (action != null) {
             try {
                 matID = Integer.parseInt(request.getParameter("materialID"));
                 molID = Integer.parseInt(request.getParameter("moduleID"));
                 couID = Integer.parseInt(request.getParameter("courseID"));
-                if (stuDAO.addLearnerStudyCompletion(user.getUserId(), matID) != 0) {
+                if (stuDAO.addLearnerStudyCompletion(user.getUserId(), matID, couID) != 0) {
                     response.sendRedirect(request.getContextPath() + "/learner/course/module/material?courseID=" + couID + "&moduleID=" + molID + "&materialID=" + matID);
                 } else {
                     System.out.println("DEBUG (LearnerMaterialServlet): Failed to add study completion for material " + matID + " by user " + user.getUserId());
