@@ -165,7 +165,7 @@ public class LearnerTestServlet extends HttpServlet {
         }
 
         // Get enrolled courses for filter dropdown
-        List<Course> enrolledCourses = courseDAO.getCourseByEnrollID(user.getUserId());
+        List<Course> enrolledCourses = testDAO.getCourseByEnrollID(user.getUserId());
 
         // Get modules for selected course
         List<Module> modules = new ArrayList<>();

@@ -50,11 +50,11 @@
                    value="${listCourse.originalPrice}" class="form-control" min="0" max="10000" required>
         </div>
 
-        <div class="mb-3">
-            <label class="form-label">Sale Price (Thousand VND)</label>
-            <input type="number" name="salePrice" id="updateSalePrice${listCourse.courseID}"
-                   value="${listCourse.salePrice}" class="form-control" min="0" max="10000" required>
-        </div>
+        <%--        <div class="mb-3">--%>
+        <%--            <label class="form-label">Sale Price (Thousand VND)</label>--%>
+        <%--            <input type="number" name="salePrice" id="updateSalePrice${listCourse.courseID}"--%>
+        <%--                   value="${listCourse.salePrice}" class="form-control" min="0" max="10000" required>--%>
+        <%--        </div>--%>
 
         <div class="mb-3">
             <label for="courseImageLocation" class="form-label">Course Image</label>
@@ -86,11 +86,11 @@
                       name="courseHighlight" rows="4">${listCourse.courseHighlight}</textarea>
         </div>
 
-        <div class="form-check mb-3">
-            <input class="form-check-input" type="checkbox" name="isSale" value="1"
-            ${listCourse.isSale == 1 ? 'checked' : ''}>
-            <label class="form-check-label">On Sale</label>
-        </div>
+        <%--        <div class="form-check mb-3">--%>
+        <%--            <input class="form-check-input" type="checkbox" name="isSale" value="1"--%>
+        <%--            ${listCourse.isSale == 1 ? 'checked' : ''}>--%>
+        <%--            <label class="form-check-label">On Sale</label>--%>
+        <%--        </div>--%>
 
         <button type="submit" class="btn btn-primary">Save changes</button>
     </form>
@@ -120,7 +120,7 @@
         const nameInput = document.getElementById("updateCourseName" + courseID);
         const categoryInput = document.getElementById("updateCourseCategory" + courseID);
         const originalPriceInput = document.getElementById("updateOriginalPrice" + courseID);
-        const salePriceInput = document.getElementById("updateSalePrice" + courseID);
+        // const salePriceInput = document.getElementById("updateSalePrice" + courseID);
         const summaryInput = document.getElementById("updateCourseSummary" + courseID);
         const highlightInput = document.getElementById("updateCourseHighlight" + courseID);
 
@@ -131,7 +131,7 @@
             const name = nameInput.value.trim();
             const category = categoryInput.value;
             const originalPrice = parseInt(originalPriceInput.value);
-            const salePrice = parseInt(salePriceInput.value);
+            // const salePrice = parseInt(salePriceInput.value);
             const summary = summaryInput.value.trim();
             const highlight = highlightInput.value.trim();
 
@@ -170,19 +170,19 @@
                 return;
             }
 
-            if (isNaN(salePrice) || salePrice < 0 || salePrice > 10000000) {
-                showJsToast("Sale Price must be between 0 and 10,000,000.");
-                salePriceInput.focus();
-                e.preventDefault();
-                return;
-            }
+            // if (isNaN(salePrice) || salePrice < 0 || salePrice > 10000000) {
+            //     showJsToast("Sale Price must be between 0 and 10,000,000.");
+            //     salePriceInput.focus();
+            //     e.preventDefault();
+            //     return;
+            // }
 
-            if (salePrice >= originalPrice) {
-                showJsToast("Sale Price cannot be greater than or equal to Original Price.");
-                salePriceInput.focus();
-                e.preventDefault();
-                return;
-            }
+            // if (salePrice >= originalPrice) {
+            //     showJsToast("Sale Price cannot be greater than or equal to Original Price.");
+            //     salePriceInput.focus();
+            //     e.preventDefault();
+            //     return;
+            // }
 
             if (!summary) {
                 showJsToast("Summary is required.");

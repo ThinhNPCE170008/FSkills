@@ -298,8 +298,8 @@
                                         <i class="bi ${testResult.passed ? 'bi-trophy' : 'bi-x-circle'} me-3"></i>
                                         Test Completed
                                     </h1>
-                                    <h2 class="mb-2">Test ${test.testOrder} - ${test.module.moduleName}</h2>
-                                    <p class="mb-4 opacity-75">${test.module.course.courseName}</p>
+                                    <h2 class="mb-2">${test.testName}</h2>
+                                    <p class="mb-4 opacity-75">${test.module.course.courseName} - ${test.module.moduleName}</p>
                                     
                                     <div class="result-score">${testResult.result}%</div>
                                     <div class="result-status">

@@ -237,12 +237,16 @@
                                         <div class="eachTest">
                                             <div class="testInfo">
                                                 <div class="testTitle">
-                                                    Test ${test.testOrder} - ${test.module.moduleName}
+                                                    ${test.testName}
                                                 </div>
                                                 <div class="testMeta">
                                                     <span>
                                                         <i class="fas fa-book"></i>
                                                         Course: ${test.module.course.courseName}
+                                                    </span>
+                                                    <span>
+                                                        <i class="fas fa-layer-group"></i>
+                                                        Module: ${test.module.moduleName}
                                                     </span>
                                                     <span>
                                                         <i class="fas fa-question-circle"></i>

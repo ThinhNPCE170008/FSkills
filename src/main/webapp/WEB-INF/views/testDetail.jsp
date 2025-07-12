@@ -160,9 +160,9 @@
                                         <div class="test-header text-center">
                                             <h1 class="display-6 mb-3">
                                                 <i class="bi bi-journal-text me-3"></i>
-                                                Test ${test.testOrder} - ${test.module.moduleName}
+                                                ${test.testName}
                                             </h1>
-                                            <p class="lead mb-0">${test.module.course.courseName}</p>
+                                            <p class="lead mb-0">${test.module.course.courseName} - ${test.module.moduleName}</p>
                                         </div>
 
                                         <!-- Test Information -->

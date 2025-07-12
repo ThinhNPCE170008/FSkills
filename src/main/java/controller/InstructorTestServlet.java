@@ -75,7 +75,7 @@ public class InstructorTestServlet extends HttpServlet {
             switch (action) {
                 case "list":
                     CourseDAO courseDAO = new CourseDAO();
-                    List<Course> courses = courseDAO.getCourseByCreatorID(acc.getUserId());
+                    List<Course> courses = courseDAO.getCourseByUserID(acc.getUserId());
                     request.setAttribute("courses", courses);
                     
                     // Handle filtering
@@ -144,7 +144,7 @@ public class InstructorTestServlet extends HttpServlet {
                     break;
 
                 case "create":
-                    List<Course> coursesByUser =  new CourseDAO().getCourseByCreatorID(acc.getUserId());
+                    List<Course> coursesByUser =  new CourseDAO().getCourseByUserID(acc.getUserId());
                     request.setAttribute("courses", coursesByUser);
                     request.getRequestDispatcher("/WEB-INF/views/createTest.jsp").forward(request, response);
                     break;
@@ -294,6 +294,7 @@ public class InstructorTestServlet extends HttpServlet {
                                  throws ServletException, IOException {
         
         String moduleIdStr = request.getParameter("moduleId");
+        String testName = request.getParameter("testName");
         String testOrderStr = request.getParameter("testOrder");
         String passPercentageStr = request.getParameter("passPercentage");
         String isRandomizeStr = request.getParameter("isRandomize");
@@ -302,6 +303,12 @@ public class InstructorTestServlet extends HttpServlet {
         // Validation
         if (moduleIdStr == null || moduleIdStr.isEmpty()) {
             request.setAttribute("err", "Module ID is required.");
+            request.getRequestDispatcher("/WEB-INF/views/createTest.jsp").forward(request, response);
+            return;
+        }
+
+        if (testName == null || testName.trim().isEmpty()) {
+            request.setAttribute("err", "Test name is required.");
             request.getRequestDispatcher("/WEB-INF/views/createTest.jsp").forward(request, response);
             return;
         }
@@ -322,6 +329,7 @@ public class InstructorTestServlet extends HttpServlet {
             // Create test
             Test test = new Test();
             test.setModuleID(moduleId);
+            test.setTestName(testName.trim());
             test.setTestOrder(testOrder);
             test.setPassPercentage(passPercentage);
             test.setRandomize(isRandomize);
@@ -353,6 +361,7 @@ public class InstructorTestServlet extends HttpServlet {
                                  throws ServletException, IOException {
         
         String testIdStr = request.getParameter("testId");
+        String testName = request.getParameter("testName");
         String testOrderStr = request.getParameter("testOrder");
         String passPercentageStr = request.getParameter("passPercentage");
         String isRandomizeStr = request.getParameter("isRandomize");
@@ -374,6 +383,12 @@ public class InstructorTestServlet extends HttpServlet {
                 return;
             }
 
+            if (testName == null || testName.trim().isEmpty()) {
+                request.setAttribute("err", "Test name is required.");
+                request.getRequestDispatcher("/WEB-INF/views/updateTest.jsp").forward(request, response);
+                return;
+            }
+
             int testOrder = Integer.parseInt(testOrderStr);
             int passPercentage = Integer.parseInt(passPercentageStr);
             boolean isRandomize = "1".equals(isRandomizeStr);
@@ -386,6 +401,7 @@ public class InstructorTestServlet extends HttpServlet {
             }
 
             // Update test
+            existingTest.setTestName(testName.trim());
             existingTest.setTestOrder(testOrder);
             existingTest.setPassPercentage(passPercentage);
             existingTest.setRandomize(isRandomize);

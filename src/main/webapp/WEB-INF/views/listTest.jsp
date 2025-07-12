@@ -170,6 +170,7 @@
                 <thead>
                 <tr>
                     <th>Test #</th>
+                    <th>Test Name</th>
                     <th>Module</th>
                     <th>Course</th>
                     <th>Test Order</th>
@@ -187,6 +188,9 @@
                     <tr>
                         <td>
                             <strong>#${test.testID}</strong>
+                        </td>
+                        <td>
+                            <strong>${test.testName}</strong>
                         </td>
                         <td>
                             <c:if test="${not empty test.module}">

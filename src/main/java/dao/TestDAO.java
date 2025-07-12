@@ -1,8 +1,7 @@
 package dao;
 
-import model.Course;
+import model.*;
 import model.Module;
-import model.Test;
 import util.DBContext;
 
 import java.sql.*;
@@ -48,6 +47,7 @@ public class TestDAO extends DBContext {
                 Test test = new Test();
                 test.setTestID(rs.getInt("TestID"));
                 test.setModuleID(moduleID);
+                test.setTestName(rs.getString("TestName"));
                 test.setTestLastUpdate(rs.getTimestamp("TestLastUpdate"));
                 test.setTestOrder(rs.getInt("TestOrder"));
                 test.setPassPercentage(rs.getInt("PassPercentage"));
@@ -89,6 +89,7 @@ public class TestDAO extends DBContext {
                 Test test = new Test();
                 test.setTestID(testID);
                 test.setModuleID(rs.getInt("ModuleID"));
+                test.setTestName(rs.getString("TestName"));
                 test.setTestLastUpdate(rs.getTimestamp("TestLastUpdate"));
                 test.setTestOrder(rs.getInt("TestOrder"));
                 test.setPassPercentage(rs.getInt("PassPercentage"));
@@ -108,17 +109,18 @@ public class TestDAO extends DBContext {
      * Insert new test
      */
     public int insertTest(Test test) {
-        String sql = "INSERT INTO Tests (ModuleID, TestLastUpdate, TestOrder, PassPercentage, IsRandomize, ShowAnswer) " +
-                    "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Tests (ModuleID, TestName, TestLastUpdate, TestOrder, PassPercentage, IsRandomize, ShowAnswer) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setInt(1, test.getModuleID());
-            ps.setTimestamp(2, Timestamp.from(Instant.now()));
-            ps.setInt(3, test.getTestOrder());
-            ps.setInt(4, test.getPassPercentage());
-            ps.setBoolean(5, test.isRandomize());
-            ps.setBoolean(6, test.isShowAnswer());
+            ps.setString(2, test.getTestName());
+            ps.setTimestamp(3, Timestamp.from(Instant.now()));
+            ps.setInt(4, test.getTestOrder());
+            ps.setInt(5, test.getPassPercentage());
+            ps.setBoolean(6, test.isRandomize());
+            ps.setBoolean(7, test.isShowAnswer());
 
             int insert = ps.executeUpdate();
             if (insert > 0) {
@@ -144,17 +146,18 @@ public class TestDAO extends DBContext {
      */
     public int updateTest(Test test) {
         String sql = "UPDATE Tests SET " +
-                    "TestOrder = ?, PassPercentage = ?, IsRandomize = ?, ShowAnswer = ?, TestLastUpdate = ? " +
+                    "TestName = ?, TestOrder = ?, PassPercentage = ?, IsRandomize = ?, ShowAnswer = ?, TestLastUpdate = ? " +
                     "WHERE TestID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, test.getTestOrder());
-            ps.setInt(2, test.getPassPercentage());
-            ps.setBoolean(3, test.isRandomize());
-            ps.setBoolean(4, test.isShowAnswer());
-            ps.setTimestamp(5, Timestamp.from(Instant.now()));
-            ps.setInt(6, test.getTestID());
+            ps.setString(1, test.getTestName());
+            ps.setInt(2, test.getTestOrder());
+            ps.setInt(3, test.getPassPercentage());
+            ps.setBoolean(4, test.isRandomize());
+            ps.setBoolean(5, test.isShowAnswer());
+            ps.setTimestamp(6, Timestamp.from(Instant.now()));
+            ps.setInt(7, test.getTestID());
 
             int update = ps.executeUpdate();
             if (update > 0) {
@@ -244,6 +247,7 @@ public class TestDAO extends DBContext {
                 Test test = new Test();
                 test.setTestID(rs.getInt("TestID"));
                 test.setModuleID(rs.getInt("ModuleID"));
+                test.setTestName(rs.getString("TestName"));
                 test.setTestLastUpdate(rs.getTimestamp("TestLastUpdate"));
                 test.setTestOrder(rs.getInt("TestOrder"));
                 test.setPassPercentage(rs.getInt("PassPercentage"));
@@ -417,6 +421,7 @@ public class TestDAO extends DBContext {
         Test test = new Test();
         test.setTestID(rs.getInt("TestID"));
         test.setModuleID(rs.getInt("ModuleID"));
+        test.setTestName(rs.getString("TestName"));
         test.setTestLastUpdate(rs.getTimestamp("TestLastUpdate"));
         test.setTestOrder(rs.getInt("TestOrder"));
         test.setPassPercentage(rs.getInt("PassPercentage"));
@@ -425,5 +430,71 @@ public class TestDAO extends DBContext {
         test.setModule(module);
 
         return test;
+    }
+    public List<Course> getCourseByEnrollID(int userID) {
+        List<Course> list = new ArrayList<>();
+
+        String sql = "SELECT\n"
+                + "u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber,\n"
+                + "c.*,\n"
+                + "cat.category_id, cat.category_name\n"
+                + "FROM Courses c\n"
+                + "JOIN Enroll e ON c.CourseID = e.CourseID\n"
+                + "JOIN [Users] u ON e.UserID = u.UserID\n"
+                + "JOIN Category cat ON c.category_id = cat.category_id\n"
+                + "WHERE e.UserID = ? AND c.Status = 1";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, userID);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                User user = new User();
+                user.setUserId(userID);
+                user.setDisplayName(rs.getString("DisplayName"));
+                user.setEmail(rs.getString("Email"));
+                user.setPhone(rs.getString("PhoneNumber"));
+                int roleInt = rs.getInt("Role");
+                switch (roleInt) {
+                    case 0:
+                        user.setRole(Role.LEARNER);
+                        break;
+                    case 1:
+                        user.setRole(Role.INSTRUCTOR);
+                        break;
+                    case 2:
+                        user.setRole(Role.ADMIN);
+                        break;
+                }
+                user.setGender(rs.getInt("Gender"));
+                user.setDateOfBirth(rs.getTimestamp("DateOfBirth"));
+                user.setAvatar(rs.getBytes("Avatar"));
+                user.setInfo(rs.getNString("Info"));
+
+                Category category = new Category();
+                category.setId(rs.getInt("category_id"));
+                category.setName(rs.getNString("category_name"));
+
+                Course course = new Course();
+                course.setCourseID(rs.getInt("CourseID"));
+                course.setCourseName(rs.getNString("CourseName"));
+                course.setUser(user);
+                course.setCategory(category);
+                course.setApproveStatus(rs.getInt("ApproveStatus"));
+                course.setPublicDate(rs.getTimestamp("PublicDate"));
+                course.setCourseLastUpdate(rs.getTimestamp("CourseLastUpdate"));
+                course.setSalePrice(rs.getInt("SalePrice"));
+                course.setOriginalPrice(rs.getInt("OriginalPrice"));
+                course.setIsSale(rs.getInt("IsSale"));
+                course.setCourseImageLocation(rs.getBytes("CourseImageLocation"));
+                course.setCourseSummary(rs.getNString("CourseSummary"));
+                course.setCourseHighlight(rs.getNString("CourseHighlight"));
+
+                list.add(course);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return list;
     }
 } 

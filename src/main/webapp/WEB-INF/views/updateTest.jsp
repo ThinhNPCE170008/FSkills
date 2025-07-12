@@ -256,6 +256,16 @@
             <h4 class="mb-3"><i class="fas fa-cog"></i> Test Settings</h4>
             
             <div class="row">
+                <div class="col-md-12">
+                    <div class="mb-3">
+                        <label for="testName" class="form-label">Test Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="testName" name="testName" 
+                               value="${test.testName}" placeholder="Enter test name" required maxlength="255">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="testOrder" class="form-label">Test Order</label>

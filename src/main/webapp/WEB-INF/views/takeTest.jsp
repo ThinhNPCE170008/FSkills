@@ -217,9 +217,9 @@
                                         <div class="col-md-4">
                                             <h2 class="mb-2">
                                                 <i class="bi bi-journal-text me-3"></i>
-                                                Test ${test.testOrder} - ${test.module.moduleName}
+                                                ${test.testName}
                                             </h2>
-                                            <p class="mb-1 opacity-75">${test.module.course.courseName}</p>
+                                            <p class="mb-1 opacity-75">${test.module.course.courseName} - ${test.module.moduleName}</p>
                                             <p class="mb-0 opacity-75">Pass Requirement: ${test.passPercentage}%</p>
                                         </div>
                                         <div class="col-md-4 text-center">

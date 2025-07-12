@@ -106,7 +106,7 @@
     </div>
 
     <h2 class="mb-4 fw-bold fs-3">
-        <i class="fas fa-eye"></i> View Test #${test.testID}
+        <i class="fas fa-eye"></i> View Test: ${test.testName}
     </h2>
 
     <!-- Test Information -->
@@ -117,6 +117,10 @@
                 <div class="row mt-3">
                     <div class="col-sm-4"><strong>Test ID:</strong></div>
                     <div class="col-sm-8">#${test.testID}</div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-sm-4"><strong>Test Name:</strong></div>
+                    <div class="col-sm-8"><strong>${test.testName}</strong></div>
                 </div>
                 <div class="row mt-2">
                     <div class="col-sm-4"><strong>Module:</strong></div>

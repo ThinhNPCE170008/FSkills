@@ -101,7 +101,7 @@ public class InstructorCourseServlet extends HttpServlet {
         try {
             switch (action) {
                 case "list":
-                    List<Course> list = cDao.getCourseByCreatorID(acc.getUserId());
+                    List<Course> list = cDao.getCourseByUserID(acc.getUserId());
 
                     request.setAttribute("listCourse", list);
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
@@ -156,7 +156,7 @@ public class InstructorCourseServlet extends HttpServlet {
                 int categoryId = Integer.parseInt(request.getParameter("category_id"));
 
                 int originalPrice = Integer.parseInt(request.getParameter("originalPrice"));
-                int salePrice = Integer.parseInt(request.getParameter("salePrice"));
+//                int salePrice = Integer.parseInt(request.getParameter("salePrice"));
 
                 Part filePartInsert = request.getPart("courseImageLocation");
                 InputStream imageInputStream = null;
@@ -165,7 +165,7 @@ public class InstructorCourseServlet extends HttpServlet {
                     imageInputStream = filePartInsert.getInputStream();
                 }
 
-                int isSale = request.getParameter("isSale") != null ? 1 : 0;
+//                int isSale = request.getParameter("isSale") != null ? 1 : 0;
                 String courseSummary = request.getParameter("courseSummary");
                 String courseHighlight = request.getParameter("courseHighlight");
 
@@ -176,7 +176,7 @@ public class InstructorCourseServlet extends HttpServlet {
                 courseName = courseName.trim();
 
                 if (courseName.isEmpty()) {
-                    List<Course> list = cDao.getCourseByCreatorID(userID);
+                    List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Create failed: Course Name is required.");
@@ -185,7 +185,7 @@ public class InstructorCourseServlet extends HttpServlet {
                 }
 
                 if (courseName.length() > 30) {
-                    List<Course> list = cDao.getCourseByCreatorID(userID);
+                    List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Create failed: Course Name must not exceed 30 characters.");
@@ -194,7 +194,7 @@ public class InstructorCourseServlet extends HttpServlet {
                 }
 
                 if (courseName.contains("  ")) {
-                    List<Course> list = cDao.getCourseByCreatorID(userID);
+                    List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Create failed: Course Name must not contain consecutive spaces.");
@@ -203,7 +203,7 @@ public class InstructorCourseServlet extends HttpServlet {
                 }
 
                 if (courseName.matches(".*\\d.*")) {
-                    List<Course> list = cDao.getCourseByCreatorID(userID);
+                    List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Create failed: Course Name must not contain numbers.");
@@ -211,17 +211,17 @@ public class InstructorCourseServlet extends HttpServlet {
                     return;
                 }
 
-                if (salePrice >= originalPrice) {
-                    List<Course> list = cDao.getCourseByCreatorID(userID);
-
-                    request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Create failed: Sale price is higher than original price!");
-                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
-                    return;
-                }
+//                if (salePrice >= originalPrice) {
+//                    List<Course> list = cDao.getCourseByUserID(userID);
+//
+//                    request.setAttribute("listCourse", list);
+//                    request.setAttribute("err", "Create failed: Sale price is higher than original price!");
+//                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+//                    return;
+//                }
 
                 if (courseSummary == null || courseSummary.trim().isEmpty()) {
-                    List<Course> list = cDao.getCourseByCreatorID(userID);
+                    List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Create failed: Course Summary is required.");
@@ -230,7 +230,7 @@ public class InstructorCourseServlet extends HttpServlet {
                 }
 
                 if (courseSummary.contains("  ")) {
-                    List<Course> list = cDao.getCourseByCreatorID(userID);
+                    List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Create failed: Course Summary must not contain consecutive spaces.");
@@ -239,7 +239,7 @@ public class InstructorCourseServlet extends HttpServlet {
                 }
 
                 if (courseHighlight == null || courseHighlight.trim().isEmpty()) {
-                    List<Course> list = cDao.getCourseByCreatorID(userID);
+                    List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Create failed: Course Highlight is required.");
@@ -248,7 +248,7 @@ public class InstructorCourseServlet extends HttpServlet {
                 }
 
                 if (courseHighlight.contains("  ")) {
-                    List<Course> list = cDao.getCourseByCreatorID(userID);
+                    List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Create failed: Course Highlight must not contain consecutive spaces.");
@@ -256,11 +256,11 @@ public class InstructorCourseServlet extends HttpServlet {
                     return;
                 }
 
-                int insert = cDao.insertCourse(courseName, categoryId, userID, salePrice, originalPrice, isSale, imageInputStream, courseSummary, courseHighlight);
+                int insert = cDao.insertCourse(courseName, categoryId, userID, originalPrice, imageInputStream, courseSummary, courseHighlight);
 
                 if (insert > 0) {
                     User acc = uDao.getByUserID(userID);
-                    List<Course> list = cDao.getCourseByCreatorID(acc.getUserId());
+                    List<Course> list = cDao.getCourseByUserID(acc.getUserId());
 
                     request.setAttribute("success", "Course created successfully!!!");
                     request.setAttribute("listCourse", list);
@@ -276,7 +276,7 @@ public class InstructorCourseServlet extends HttpServlet {
 
                 int categoryId = Integer.parseInt(request.getParameter("category_id"));
                 int originalPrice = Integer.parseInt(request.getParameter("originalPrice"));
-                int salePrice = Integer.parseInt(request.getParameter("salePrice"));
+//                int salePrice = Integer.parseInt(request.getParameter("salePrice"));
 
                 Part filePartUpdate = request.getPart("courseImageLocation");
                 InputStream imageInputStream = null;
@@ -291,7 +291,7 @@ public class InstructorCourseServlet extends HttpServlet {
                     }
                 }
 
-                int isSale = request.getParameter("isSale") != null ? 1 : 0;
+//                int isSale = request.getParameter("isSale") != null ? 1 : 0;
                 String courseSummary = request.getParameter("courseSummary");
                 String courseHighlight = request.getParameter("courseHighlight");
 
@@ -301,7 +301,7 @@ public class InstructorCourseServlet extends HttpServlet {
                 courseName = courseName.trim();
 
                 if (courseName.isEmpty()) {
-                    List<Course> list = cDao.getCourseByCreatorID(userID);
+                    List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Create failed: Course Name is required.");
@@ -310,7 +310,7 @@ public class InstructorCourseServlet extends HttpServlet {
                 }
 
                 if (courseName.length() > 30) {
-                    List<Course> list = cDao.getCourseByCreatorID(userID);
+                    List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Create failed: Course Name must not exceed 30 characters.");
@@ -319,7 +319,7 @@ public class InstructorCourseServlet extends HttpServlet {
                 }
 
                 if (courseName.contains("  ")) {
-                    List<Course> list = cDao.getCourseByCreatorID(userID);
+                    List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Create failed: Course Name must not contain consecutive spaces.");
@@ -328,7 +328,7 @@ public class InstructorCourseServlet extends HttpServlet {
                 }
 
                 if (courseName.matches(".*\\d.*")) {
-                    List<Course> list = cDao.getCourseByCreatorID(userID);
+                    List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Create failed: Course Name must not contain numbers.");
@@ -336,17 +336,17 @@ public class InstructorCourseServlet extends HttpServlet {
                     return;
                 }
 
-                if (salePrice >= originalPrice) {
-                    List<Course> list = cDao.getCourseByCreatorID(userID);
-
-                    request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Update failed: Sale price is higher than original price!");
-                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
-                    return;
-                }
+//                if (salePrice >= originalPrice) {
+//                    List<Course> list = cDao.getCourseByUserID(userID);
+//
+//                    request.setAttribute("listCourse", list);
+//                    request.setAttribute("err", "Update failed: Sale price is higher than original price!");
+//                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+//                    return;
+//                }
 
                 if (courseSummary == null || courseSummary.trim().isEmpty()) {
-                    List<Course> list = cDao.getCourseByCreatorID(userID);
+                    List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Create failed: Course Summary is required.");
@@ -355,7 +355,7 @@ public class InstructorCourseServlet extends HttpServlet {
                 }
 
                 if (courseSummary.contains("  ")) {
-                    List<Course> list = cDao.getCourseByCreatorID(userID);
+                    List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Create failed: Course Summary must not contain consecutive spaces.");
@@ -364,7 +364,7 @@ public class InstructorCourseServlet extends HttpServlet {
                 }
 
                 if (courseHighlight == null || courseHighlight.trim().isEmpty()) {
-                    List<Course> list = cDao.getCourseByCreatorID(userID);
+                    List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Create failed: Course Highlight is required.");
@@ -373,7 +373,7 @@ public class InstructorCourseServlet extends HttpServlet {
                 }
 
                 if (courseHighlight.contains("  ")) {
-                    List<Course> list = cDao.getCourseByCreatorID(userID);
+                    List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Create failed: Course Highlight must not contain consecutive spaces.");
@@ -381,10 +381,10 @@ public class InstructorCourseServlet extends HttpServlet {
                     return;
                 }
 
-                int update = cDao.updateCourse(courseID, courseName, categoryId, salePrice, originalPrice, isSale, imageInputStream, courseSummary, courseHighlight);
+                int update = cDao.updateCourse(courseID, courseName, categoryId, originalPrice, imageInputStream, courseSummary, courseHighlight);
 
                 if (update > 0) {
-                    List<Course> list = cDao.getCourseByCreatorID(userID);
+                    List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("success", "Course updated successfully!!!");
                     request.setAttribute("listCourse", list);
@@ -400,7 +400,7 @@ public class InstructorCourseServlet extends HttpServlet {
                 int onGoingLearner = cDao.onGoingLearner(courseID);
 
                 if (onGoingLearner > 0) {
-                    List<Course> list = cDao.getCourseByCreatorID(userID);
+                    List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Cannot delete course: Students are still enrolled.");
@@ -409,7 +409,7 @@ public class InstructorCourseServlet extends HttpServlet {
                     int delete = cDao.checkStatus(courseID);
 
                     if (delete > 0) {
-                        List<Course> list = cDao.getCourseByCreatorID(userID);
+                        List<Course> list = cDao.getCourseByUserID(userID);
 
                         request.setAttribute("success", "Course deleted successfully!!!");
                         request.setAttribute("listCourse", list);

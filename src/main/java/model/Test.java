@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 public class Test {
     private int testID;
     private int moduleID;
+    private String testName;
     private Timestamp testLastUpdate;
     private int testOrder;
     private int passPercentage;
@@ -24,17 +25,19 @@ public class Test {
     public Test() {
     }
 
-    public Test(int moduleID, int testOrder, int passPercentage, boolean isRandomize, boolean showAnswer) {
+    public Test(int moduleID, String testName, int testOrder, int passPercentage, boolean isRandomize, boolean showAnswer) {
         this.moduleID = moduleID;
+        this.testName = testName;
         this.testOrder = testOrder;
         this.passPercentage = passPercentage;
         this.isRandomize = isRandomize;
         this.showAnswer = showAnswer;
     }
 
-    public Test(int testID, int moduleID, Timestamp testLastUpdate, int testOrder, int passPercentage, boolean isRandomize, boolean showAnswer) {
+    public Test(int testID, int moduleID, String testName, Timestamp testLastUpdate, int testOrder, int passPercentage, boolean isRandomize, boolean showAnswer) {
         this.testID = testID;
         this.moduleID = moduleID;
+        this.testName = testName;
         this.testLastUpdate = testLastUpdate;
         this.testOrder = testOrder;
         this.passPercentage = passPercentage;
@@ -57,6 +60,14 @@ public class Test {
 
     public void setModuleID(int moduleID) {
         this.moduleID = moduleID;
+    }
+
+    public String getTestName() {
+        return testName;
+    }
+
+    public void setTestName(String testName) {
+        this.testName = testName;
     }
 
     public Timestamp getTestLastUpdate() {
@@ -120,6 +131,7 @@ public class Test {
         return "Test{" +
                 "testID=" + testID +
                 ", moduleID=" + moduleID +
+                ", testName='" + testName + '\'' +
                 ", testLastUpdate=" + testLastUpdate +
                 ", testOrder=" + testOrder +
                 ", passPercentage=" + passPercentage +
