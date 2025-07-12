@@ -34,6 +34,21 @@ public class CartDAO extends DBContext{
         return cartList;
     }
     
+    public Cart getCartByID(int CartID){
+        String sql = "Select * From Cart Where CartID = ?";
+        try{
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, CartID);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                return new Cart(rs.getInt("CartID"), rs.getInt("UserID"), rs.getInt("CourseID"), rs.getTimestamp("BuyDate"));
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+    
     public int addToCart( int UserID, int CourseID){
         String sql 
                 = "Insert Into Cart (UserID, CourseID)\n"
