@@ -1,3 +1,4 @@
+```html
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -26,13 +27,29 @@
       border-radius: 12px;
       font-weight: 500;
     }
-
     .verified-badge i {
       margin-right: 4px;
     }
+    .avatar-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    /* Styles for change-password-container and change-email-container moved to profile.css */
+    .avatar-modal-close {
+      float: right;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
   </style>
 </head>
-
 
 <body>
 <c:choose>
@@ -50,8 +67,6 @@
             value="${not empty sessionScope.user.displayName ? sessionScope.user.displayName : 'Guest'}"/>!</h1>
   </div>
 
-  <!-- Old alerts removed -->
-
   <c:if test="${not empty profile}">
     <%-- Profile Display Card --%>
   <div class="profile-card">
@@ -63,22 +78,23 @@
         <h2><c:out value="${profile.displayName}"/></h2>
         <p>
           <c:out value="${profile.email}"/>
-          &ensp;
+
           <c:choose>
             <c:when test="${profile.isVerified}">
-                                        <span class="verified-badge" title="Email đã xác nhận">
-                                            <i class="bi bi-check-circle-fill"></i> Confirmed
-                                        </span>
+              <span class="verified-badge" title="Email đã xác nhận">
+                <i class="bi bi-check-circle-fill"></i> Confirmed
+              </span>
             </c:when>
             <c:otherwise>
-                                        <span class="unverified-badge" title="Email chưa xác minh">
-                                            <i class="bi bi-exclamation-circle-fill"></i> Not Verified
-                                        </span>
+              <span class="unverified-badge" title="Email chưa xác minh">
+                <i class="bi bi-exclamation-circle-fill"></i> Not Verified
+              </span>
             </c:otherwise>
           </c:choose>
         </p>
         <div class="btn-group">
           <button class="change-password">Change Password</button>
+          <button class="change-email">Change Email</button>
           <button class="edit-btn">Edit Profile</button>
         </div>
       </div>
@@ -104,27 +120,10 @@
         <input type="date" value="<fmt:formatDate value="${profile.dateOfBirth}" pattern="yyyy-MM-dd" />"
                readonly>
       </div>
+
       <div class="field address-field">
         <label>Address</label>
         <input type="text" value="<c:out value="${profile.info}"/>" readonly>
-      </div>
-      <div class="field email-field">
-        <label>My email Address</label>
-        <div class="email-info">
-          <span>📧 <c:out value="${profile.email}"/></span>
-
-          <c:if test="${not profile.isVerified}">
-                                    <span class="unverified-badge" title="Email chưa xác minh">
-                                        <i class="bi bi-exclamation-circle-fill"></i> Not Verified
-                                    </span>
-          </c:if>
-
-          <c:if test="${profile.isVerified}">
-                                    <span class="verified-badge" title="Email đã xác nhận">
-                                        <i class="bi bi-check-circle-fill"></i> Confirmed
-                                    </span>
-          </c:if>
-        </div>
       </div>
     </div>
   </div>
@@ -176,10 +175,6 @@
         <label for="info">Address</label>
         <input type="text" id="info" name="info" value="<c:out value="${profile.info}"/>">
       </div>
-      <div class="form-group email-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" value="<c:out value="${profile.email}"/>" required>
-      </div>
     </div>
 
     <div class="button-group">
@@ -191,14 +186,14 @@
 
   <!-- Modal for Avatar Preview -->
   <div id="avatarModal" class="avatar-modal">
-    <span class="avatar-modal-close">&times;</span>
+    <span class="avatar-modal-close">×</span>
     <img class="avatar-modal-content" id="modalImage">
   </div>
 
   <!-- Modal for Change Password -->
   <div id="passwordModal" class="avatar-modal">
     <div class="change-password-container">
-      <span class="avatar-modal-close password-modal-close">&times;</span>
+      <span class="avatar-modal-close password-modal-close">×</span>
       <h1>Change Password</h1>
 
       <form id="passwordForm"
@@ -227,9 +222,43 @@
     </div>
   </div>
 
+  <!-- Modal for Change Email -->
+  <div id="emailModal" class="avatar-modal">
+    <div class="change-email-container">
+      <span class="avatar-modal-close email-modal-close">×</span>
+      <h1>Change Email</h1>
+
+      <form id="emailForm"
+            action="${pageContext.request.contextPath}${sessionScope.user.role eq 'INSTRUCTOR' ? '/instructor/profile' : sessionScope.user.role eq 'ADMIN' ? '/admin/profile' : '/learner/profile'}?action=changeEmail"
+            method="POST">
+        <div class="form-group">
+          <label for="newEmail">New Email</label>
+          <div style="display: flex; align-items: center;">
+            <input type="email" id="newEmail" name="newEmail" required>
+            <button type="button" id="sendOtpBtn">Send OTP</button>
+          </div>
+          <div class="password-requirements">
+            <p class="requirement" id="email-format">Valid email format required</p>
+            <p class="requirement" id="email-number">Must contain at least one number</p>
+          </div>
+        </div>
+      </form>
+      <form
+              id="OTPForm"
+              action="${pageContext.request.contextPath}${sessionScope.user.role eq 'INSTRUCTOR' ? '/instructor/profile' : sessionScope.user.role eq 'ADMIN' ? '/admin/profile' : '/learner/profile'}?action=OTP"
+              method="POST">
+      <div class="form-group">
+          <label for="otpCode">OTP Code</label>
+          <input type="text" id="otpCode" name="otpCode" required>
+          <p id="otp-message" class="requirement"></p>
+        </div>
+        <button type="submit" id="saveEmailBtn" disabled>Save Change</button>
+      </form>
+    </div>
+  </div>
+
   <!-- Toast Notification -->
-  <div style="z-index: 2000;"
-       class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div style="z-index: 2000;" class="toast-container position-fixed bottom-0 end-0 p-3">
     <!-- Error Toast -->
     <div id="serverToast" class="toast align-items-center text-bg-danger border-0" role="alert"
          aria-live="assertive" aria-atomic="true">
@@ -248,6 +277,18 @@
       <div class="d-flex">
         <div class="toast-body">
           Password changed successfully.
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                aria-label="Close"></button>
+      </div>
+    </div>
+
+    <!-- Email Success Toast -->
+    <div id="emailSuccessToast" class="toast align-items-center text-bg-success border-0" role="alert"
+         aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body">
+          Email changed successfully.
         </div>
         <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
                 aria-label="Close"></button>
@@ -289,6 +330,18 @@
                 aria-label="Close"></button>
       </div>
     </div>
+
+    <!-- Custom Success Toast -->
+    <div id="customSuccessToast" class="toast align-items-center text-bg-success border-0" role="alert"
+         aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body" id="customSuccessMessage">
+          Success message here
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                aria-label="Close"></button>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -298,6 +351,7 @@
     const editBtn = document.querySelector('.edit-btn');
     const cancelBtn = document.querySelector('.cancel-btn');
     const changePasswordBtn = document.querySelector('.change-password');
+    const changeEmailBtn = document.querySelector('.change-email');
 
     // Toggle between view and edit mode
     editBtn.addEventListener('click', () => {
@@ -312,6 +366,14 @@
 
     changePasswordBtn.addEventListener('click', () => {
       document.getElementById('passwordModal').style.display = 'block';
+    });
+
+    changeEmailBtn.addEventListener('click', () => {
+      document.getElementById('emailModal').style.display = 'block';
+      document.getElementById('newEmail').value = '';
+      document.getElementById('otpCode').value = '';
+      document.getElementById('otp-message').textContent = '';
+      document.getElementById('saveEmailBtn').disabled = true;
     });
 
     // Preview avatar
@@ -348,7 +410,7 @@
       modal.style.display = "none";
     });
 
-    // Close the modal when clicking outside the image
+    // Close modals when clicking outside
     window.addEventListener('click', function (event) {
       if (event.target == modal) {
         modal.style.display = "none";
@@ -356,11 +418,19 @@
       if (event.target == document.getElementById('passwordModal')) {
         document.getElementById('passwordModal').style.display = "none";
       }
+      if (event.target == document.getElementById('emailModal')) {
+        document.getElementById('emailModal').style.display = "none";
+      }
     });
 
     // Close password modal
     document.querySelector('.password-modal-close').addEventListener('click', function () {
       document.getElementById('passwordModal').style.display = "none";
+    });
+
+    // Close email modal
+    document.querySelector('.email-modal-close').addEventListener('click', function () {
+      document.getElementById('emailModal').style.display = "none";
     });
 
     // Auto-hide alerts after 3 seconds
@@ -392,7 +462,6 @@
       const confirmPassword = confirmPasswordInput.value;
       const confirmMessage = document.getElementById('confirm-message');
 
-      // Check if new password is same as old password
       if (password === oldPassword && password.length > 0) {
         confirmMessage.textContent = "The New Password can't be the same as the Old Password";
         confirmMessage.classList.add('invalid');
@@ -404,28 +473,24 @@
         confirmPasswordInput.disabled = false;
       }
 
-      // Check length requirement
       if (password.length >= 8) {
         lengthRequirement.classList.add('valid');
       } else {
         lengthRequirement.classList.remove('valid');
       }
 
-      // Check case requirement
       if (/[a-z]/.test(password) && /[A-Z]/.test(password)) {
         caseRequirement.classList.add('valid');
       } else {
         caseRequirement.classList.remove('valid');
       }
 
-      // Check special character requirement
       if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
         specialRequirement.classList.add('valid');
       } else {
         specialRequirement.classList.remove('valid');
       }
 
-      // Check if passwords match
       if (confirmPassword.length > 0) {
         if (password === confirmPassword) {
           confirmMessage.textContent = "Passwords match";
@@ -440,7 +505,6 @@
         confirmMessage.textContent = "";
       }
 
-      // Enable submit button if all requirements are met and passwords match
       if (lengthRequirement.classList.contains('valid') &&
               caseRequirement.classList.contains('valid') &&
               specialRequirement.classList.contains('valid') &&
@@ -452,31 +516,196 @@
         savePasswordBtn.disabled = true;
       }
     }
-  </script>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
+    // Email validation and OTP handling
+    const newEmailInput = document.getElementById('newEmail');
+    const otpCodeInput = document.getElementById('otpCode');
+    const sendOtpBtn = document.getElementById('sendOtpBtn');
+    const saveEmailBtn = document.getElementById('saveEmailBtn');
+    const otpMessage = document.getElementById('otp-message');
+    const emailFormatRequirement = document.getElementById('email-format');
+    const emailNumberRequirement = document.getElementById('email-number');
+
+    // Add input event listener to validate email as user types
+    newEmailInput.addEventListener('input', validateEmail);
+
+    function validateEmail() {
+      const email = newEmailInput.value;
+
+      // Validate email format
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|vn|io|me|net|edu|org|info|biz|co|xyz|gov|mil|asia|us|uk|ca|au|edu\.vn|fpt\.edu\.vn)$/;
+      const isValidFormat = emailRegex.test(email);
+
+      if (isValidFormat) {
+        emailFormatRequirement.classList.add('valid');
+      } else {
+        emailFormatRequirement.classList.remove('valid');
+      }
+
+      // Check if email contains at least one number
+      let containsNumber = false;
+      for (let i = 0; i < email.length; i++) {
+        if (!isNaN(parseInt(email[i]))) {
+          containsNumber = true;
+          break;
+        }
+      }
+
+      if (containsNumber) {
+        emailNumberRequirement.classList.add('valid');
+      } else {
+        emailNumberRequirement.classList.remove('valid');
+      }
+
+      // Enable/disable send OTP button based on validation
+      sendOtpBtn.disabled = !(isValidFormat && containsNumber);
+    }
+
+    sendOtpBtn.addEventListener('click', function () {
+      // Disable button to prevent multiple clicks
+      sendOtpBtn.disabled = true;
+      sendOtpBtn.textContent = "Sending...";
+
+      // Clear previous messages
+      otpMessage.textContent = "";
+      otpMessage.classList.remove('valid', 'invalid');
+
+      const newEmail = newEmailInput.value;
+
+      // Validate email is not empty
+      if (!newEmail) {
+        otpMessage.textContent = "Please enter a new email.";
+        otpMessage.classList.add('invalid');
+        sendOtpBtn.disabled = false;
+        sendOtpBtn.textContent = "Send";
+        return;
+      }
+
+      // Validate email format
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|vn|io|me|net|edu|org|info|biz|co|xyz|gov|mil|asia|us|uk|ca|au|edu\.vn|fpt\.edu\.vn)$/;
+      let containsNumber = false;
+      for (let i = 0; i < newEmail.length; i++) {
+        if (!isNaN(parseInt(newEmail[i]))) {
+          containsNumber = true;
+          break;
+        }
+      }
+
+      if (!emailRegex.test(newEmail) || !containsNumber) {
+        otpMessage.textContent = "Invalid email format or missing number.";
+        otpMessage.classList.add('invalid');
+        sendOtpBtn.disabled = false;
+        sendOtpBtn.textContent = "Send";
+        return;
+      }
+
+      console.log("Sending OTP request for email: " + newEmail);
+
+      // Send OTP via AJAX
+      fetch('${pageContext.request.contextPath}${sessionScope.user.role eq "INSTRUCTOR" ? "/instructor/profile" : sessionScope.user.role eq "ADMIN" ? "/admin/profile" : "/learner/profile"}?action=sendOtp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'newEmail=' + encodeURIComponent(newEmail)
+      })
+      .then(response => {
+        console.log("Response status: " + response.status);
+
+        // Check if response is ok (status in the range 200-299)
+        if (!response.ok) {
+          throw new Error("Server returned status " + response.status);
+        }
+
+        // Try to parse as JSON
+        return response.text().then(text => {
+          try {
+            return JSON.parse(text);
+          } catch (e) {
+            console.error("Failed to parse JSON response: ", text);
+            throw new Error("Invalid response from server");
+          }
+        });
+      })
+      .then(data => {
+        console.log("Response data: ", data);
+
+        if (data.success) {
+          // Success case
+          otpMessage.textContent = data.message || "OTP sent to your email.";
+          otpMessage.classList.add('valid');
+          otpMessage.classList.remove('invalid');
+          otpCodeInput.disabled = false;
+          otpCodeInput.focus();
+
+          // Show success toast
+          const customSuccessMessage = document.getElementById('customSuccessMessage');
+          if (customSuccessMessage) {
+            customSuccessMessage.textContent = "OTP sent successfully. Please check your email.";
+            const toast = new bootstrap.Toast(document.getElementById('customSuccessToast'), {delay: 3000});
+            toast.show();
+          }
+        } else {
+          // Error case
+          otpMessage.textContent = data.message || "Failed to send OTP.";
+          otpMessage.classList.add('invalid');
+          otpMessage.classList.remove('valid');
+
+          // Show error toast
+          const customErrorMessage = document.getElementById('customErrorMessage');
+          if (customErrorMessage) {
+            customErrorMessage.textContent = data.message || "Failed to send OTP.";
+            const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 3000});
+            toast.show();
+          }
+        }
+      })
+      .catch(error => {
+        console.error("Error sending OTP: ", error);
+        otpMessage.textContent = "Error sending OTP: " + error.message;
+        otpMessage.classList.add('invalid');
+
+        // Show error toast
+        const customErrorMessage = document.getElementById('customErrorMessage');
+        if (customErrorMessage) {
+          customErrorMessage.textContent = "Error sending OTP: " + error.message;
+          const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 3000});
+          toast.show();
+        }
+      })
+      .finally(() => {
+        // Re-enable button
+        sendOtpBtn.disabled = false;
+        sendOtpBtn.textContent = "Send";
+      });
+    });
+
+    otpCodeInput.addEventListener('input', function () {
+      const otp = otpCodeInput.value;
+      if (otp.length >= 6) {
+        saveEmailBtn.disabled = false;
+      } else {
+        saveEmailBtn.disabled = true;
+      }
+    });
+
     // Initialize toast notifications
     document.addEventListener('DOMContentLoaded', function () {
-      // Check for error message
       if ('${not empty err}' === 'true') {
         const toastEl = document.getElementById('serverToast');
         if (toastEl) {
           const bsToast = new bootstrap.Toast(toastEl, {delay: 5000});
           bsToast.show();
         }
-
-        // Check if error is related to password change and show password modal
         const errorMessage = '${err}';
         if (errorMessage.includes('password')) {
           document.getElementById('passwordModal').style.display = 'block';
+        } else if (errorMessage.includes('email')) {
+          document.getElementById('emailModal').style.display = 'block';
         }
       }
 
-      // Get URL parameters
       const urlParams = new URLSearchParams(window.location.search);
-
-      // Check for password success parameter in URL
       if (urlParams.has('passwordSuccess')) {
         const passwordSuccessToastEl = document.getElementById('passwordSuccessToast');
         if (passwordSuccessToastEl) {
@@ -484,8 +713,13 @@
           passwordSuccessToast.show();
         }
       }
-
-      // Check for profile update success parameter in URL
+      if (urlParams.has('emailSuccess')) {
+        const emailSuccessToastEl = document.getElementById('emailSuccessToast');
+        if (emailSuccessToastEl) {
+          const emailSuccessToast = new bootstrap.Toast(emailSuccessToastEl, {delay: 2000});
+          emailSuccessToast.show();
+        }
+      }
       if (urlParams.has('success') && urlParams.get('success') === 'true') {
         const profileSuccessToastEl = document.getElementById('profileSuccessToast');
         if (profileSuccessToastEl) {
@@ -493,8 +727,6 @@
           profileSuccessToast.show();
         }
       }
-
-      // Check for profile update error parameter in URL
       if (urlParams.has('error') && urlParams.get('error') === 'true') {
         const profileErrorToastEl = document.getElementById('profileErrorToast');
         if (profileErrorToastEl) {
@@ -506,13 +738,11 @@
 
     // Form validation for profile edit
     document.getElementById('profileEditForm').addEventListener('submit', function (event) {
-      // Get form values
       const displayName = document.getElementById('displayName').value;
       const phoneNumber = document.getElementById('phoneNumber').value;
       const dateOfBirth = document.getElementById('dateOfBirth').value;
       const info = document.getElementById('info').value;
 
-      // Check for consecutive spaces in displayName
       if (/\s{2,}/.test(displayName)) {
         event.preventDefault();
         document.getElementById('customErrorMessage').textContent = "Error: We only accept one space, check again please";
@@ -521,7 +751,6 @@
         return false;
       }
 
-      // Check for consecutive spaces in info (address)
       if (/\s{2,}/.test(info)) {
         event.preventDefault();
         document.getElementById('customErrorMessage').textContent = "Error: We only accept one space, check again please";
@@ -530,9 +759,6 @@
         return false;
       }
 
-      // Check phone number - required field check is handled by the required attribute in the HTML
-
-      // Check if phone number has exactly 10 digits
       if (phoneNumber.length !== 10) {
         event.preventDefault();
         document.getElementById('customErrorMessage').textContent = "Error: Phone number must be 10 digits";
@@ -541,7 +767,6 @@
         return false;
       }
 
-      // Check if phone number is negative
       if (parseInt(phoneNumber) <= 0) {
         event.preventDefault();
         document.getElementById('customErrorMessage').textContent = "Error: Phone number must greater than 0";
@@ -550,7 +775,6 @@
         return false;
       }
 
-      // Check if phone number starts with 0
       if (phoneNumber.charAt(0) !== '0') {
         event.preventDefault();
         document.getElementById('customErrorMessage').textContent = "Error: Phone number must begin by 0";
@@ -559,7 +783,6 @@
         return false;
       }
 
-      // Check if second digit is not 0
       if (phoneNumber.charAt(1) === '0' || phoneNumber.charAt(1) === '1' || phoneNumber.charAt(1) === '4' || phoneNumber.charAt(1) === '6' || phoneNumber.charAt(1) === '7') {
         event.preventDefault();
         document.getElementById('customErrorMessage').textContent = "Error: Phone number not valid";
@@ -568,12 +791,9 @@
         return false;
       }
 
-      // Check date of birth year
       if (dateOfBirth) {
         const selectedDate = new Date(dateOfBirth);
         const currentDate = new Date();
-
-        // Check if date is in the future
         if (selectedDate > currentDate) {
           event.preventDefault();
           document.getElementById('customErrorMessage').textContent = "Error: Date of birth cannot be in the future";
@@ -581,8 +801,6 @@
           toast.show();
           return false;
         }
-
-        // Also keep the original check for year > 3000
         const year = selectedDate.getFullYear();
         if (year > 3000) {
           event.preventDefault();
@@ -593,79 +811,10 @@
         }
       }
 
-      // Check email format and domain
-      const email = document.getElementById('email').value;
-      if (email) {
-        let containsNumber = false;
-        for (let i = 0; i < email.length; i++) {
-          if (!isNaN(parseInt(email[i]))) {
-            containsNumber = true;
-            break;
-          }
-        }
-
-        if (!containsNumber) {
-          event.preventDefault();
-          document.getElementById('customErrorMessage').textContent = "New email must contain at least one number";
-          const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 2000});
-          toast.show();
-          return false;
-        }
-
-        // Split email into local part and domain
-        const parts = email.split('@');
-        if (parts.length === 2) {
-          const domain = parts[1].toLowerCase();
-          const localPart = parts[0].toLowerCase();
-
-          // Check if email provider is valid (gmail or email)
-          const validProviders = ['gmail.com', 'email.com'];
-          const validDomains = ['.vn', '.io', '.me'];
-
-          let isValidDomain = false;
-
-          // Check if it's a valid provider
-          if (validProviders.includes(domain)) {
-            isValidDomain = true;
-          }
-
-          // Check if it ends with one of the valid domains
-          for (const validDomain of validDomains) {
-            if (domain.endsWith(validDomain)) {
-              isValidDomain = true;
-              break;
-            }
-          }
-
-          // Check if it's a common domain (contains a dot)
-          if (domain.includes('.') && !isValidDomain) {
-            // Accept other common domains that contain a dot
-            isValidDomain = true;
-          }
-
-          if (!isValidDomain) {
-            event.preventDefault();
-            document.getElementById('customErrorMessage').textContent = "Error: Invalid email domain. Accepted domains include .vn, .io, .me, gmail.com, email.com, and other common domains.";
-            const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 3000});
-            toast.show();
-            return false;
-          }
-
-          // Check if email provider is gmail or email
-          if (domain === 'gmail.com' || domain === 'email.com') {
-            // Valid provider, continue
-          } else if (domain.startsWith('gmail.') || domain.startsWith('email.')) {
-            event.preventDefault();
-            document.getElementById('customErrorMessage').textContent = "Error: Invalid email provider. For gmail or email, use gmail.com or email.com";
-            const toast = new bootstrap.Toast(document.getElementById('customErrorToast'), {delay: 3000});
-            toast.show();
-            return false;
-          }
-        }
-      }
-
       return true;
     });
   </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

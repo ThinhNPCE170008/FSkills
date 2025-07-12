@@ -97,31 +97,6 @@
                     margin-left: 0;
                 }
             }
-            .star-rating {
-                display: inline-flex;
-                flex-direction: row-reverse; /* Reverse order for better hover effect */
-                font-size: 1.5rem;
-                cursor: pointer;
-            }
-
-            .star-rating input {
-                display: none; /* Hide radio inputs */
-            }
-
-            .star-rating label {
-                color: #d1d5db; /* Gray-300 for unselected stars */
-                transition: color 0.2s ease-in-out;
-            }
-
-            .star-rating input:checked ~ label,
-            .star-rating label:hover,
-            .star-rating label:hover ~ label {
-                color: #facc15; /* Yellow-400 for selected/hovered stars */
-            }
-
-            .star-rating label:hover {
-                transform: scale(1.1); /* Slight scale effect on hover */
-            }
         </style>
     </head>
     <body>
@@ -275,74 +250,7 @@
                             <!-- Reviews Tab -->
                             <div id="reviews" class="tab-content hidden">
                                 <h3 class="text-xl font-bold text-gray-900 mb-4">Student Reviews</h3>
-
-                                <!-- Review Submission Form -->
-                                <c:if test="${studyProgress == 100 && !hasReviewed}">
-                                    <div class="bg-white p-6 rounded-lg mb-6 shadow-md">
-                                        <h4 class="text-lg font-semibold text-gray-900 mb-4">Submit Your Review</h4>
-                                        <form method="POST" action="<%= request.getContextPath() %>/submitReview">
-                                            <input type="hidden" name="courseID" value="${course.courseID}">
-                                            <input type="hidden" name="userID" value="${user.userId}">
-                                            <input type="hidden" name="rate" id="rating-value" value="0">
-                                            <div class="mb-4">
-                                                <label class="block text-sm font-medium text-gray-700 mb-2">Rating</label>
-                                                <div class="star-rating">
-                                                    <input type="radio" id="star5" name="star-rating" value="5" onclick="setRating(5)">
-                                                    <label for="star5" class="fas fa-star"></label>
-                                                    <input type="radio" id="star4" name="star-rating" value="4" onclick="setRating(4)">
-                                                    <label for="star4" class="fas fa-star"></label>
-                                                    <input type="radio" id="star3" name="star-rating" value="3" onclick="setRating(3)">
-                                                    <label for="star3" class="fas fa-star"></label>
-                                                    <input type="radio" id="star2" name="star-rating" value="2" onclick="setRating(2)">
-                                                    <label for="star2" class="fas fa-star"></label>
-                                                    <input type="radio" id="star1" name="star-rating" value="1" onclick="setRating(1)">
-                                                    <label for="star1" class="fas fa-star"></label>
-                                                </div>
-                                            </div>
-                                            <div class="mb-4">
-                                                <label for="reviewDescription" class="block text-sm font-medium text-gray-700">Feedback</label>
-                                                <textarea id="reviewDescription" name="reviewDescription" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Share your thoughts about the course..." required></textarea>
-                                            </div>
-                                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">
-                                                Submit Review
-                                            </button>
-                                        </form>
-                                    </div>
-                                </c:if>
-
-                                <!-- Display Reviews -->
-                                <c:choose>
-                                    <c:when test="${not empty reviewList}">
-                                        <div class="space-y-6">
-                                            <c:forEach var="review" items="${reviewList}">
-                                                <div class="bg-white p-4 rounded-lg shadow-md">
-                                                    <div class="flex items-center mb-2">
-                                                        <c:choose>
-                                                            <c:when test="${not empty review.user.avatarUrl || not empty review.user.avatar}">
-                                                                <img src="${not empty review.user.avatarUrl ? review.user.avatarUrl : review.user.imageDataURI}" alt="${review.user.displayName}" class="w-10 h-10 rounded-full mr-3 object-cover" onerror="this.src='https://i.pravatar.cc/48?u=${review.user.displayName}'">
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                <img src="https://i.pravatar.cc/48?u=${review.user.displayName}" alt="${review.user.displayName}" class="w-10 h-10 rounded-full mr-3 object-cover">
-                                                            </c:otherwise>
-                                                        </c:choose>
-                                                        <div>
-                                                            <p class="text-gray-900 font-semibold">${review.user.displayName}</p>
-                                                            <div class="review-stars text-sm">
-                                                                <c:forEach begin="1" end="5" var="i">
-                                                                    <i class="fas fa-star ${review.rate >= i ? 'text-yellow-400' : 'text-gray-300'}"></i>
-                                                                </c:forEach>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <p class="text-gray-700">${review.reviewDescription}</p>
-                                                </div>
-                                            </c:forEach>
-                                        </div>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <p class="text-gray-600">No reviews available for this course yet.</p>
-                                    </c:otherwise>
-                                </c:choose>
+                                <p class="text-gray-600">Course reviews will be displayed here when available.</p>
                             </div>
                         </div>
                     </div>
@@ -394,9 +302,6 @@
                     });
                 });
             });
-            function setRating(value) {
-                document.getElementById('rating-value').value = value;
-            }
         </script>
     </body>
 </html>
