@@ -50,11 +50,11 @@
                    value="${listCourse.originalPrice}" class="form-control" min="0" max="10000" required>
         </div>
 
-<%--        <div class="mb-3">--%>
-<%--            <label class="form-label">Sale Price (Thousand VND)</label>--%>
-<%--            <input type="number" name="salePrice" id="updateSalePrice${listCourse.courseID}"--%>
-<%--                   value="${listCourse.salePrice}" class="form-control" min="0" max="10000" required>--%>
-<%--        </div>--%>
+        <%--        <div class="mb-3">--%>
+        <%--            <label class="form-label">Sale Price (Thousand VND)</label>--%>
+        <%--            <input type="number" name="salePrice" id="updateSalePrice${listCourse.courseID}"--%>
+        <%--                   value="${listCourse.salePrice}" class="form-control" min="0" max="10000" required>--%>
+        <%--        </div>--%>
 
         <div class="mb-3">
             <label for="courseImageLocation" class="form-label">Course Image</label>
@@ -86,11 +86,11 @@
                       name="courseHighlight" rows="4">${listCourse.courseHighlight}</textarea>
         </div>
 
-<%--        <div class="form-check mb-3">--%>
-<%--            <input class="form-check-input" type="checkbox" name="isSale" value="1"--%>
-<%--            ${listCourse.isSale == 1 ? 'checked' : ''}>--%>
-<%--            <label class="form-check-label">On Sale</label>--%>
-<%--        </div>--%>
+        <%--        <div class="form-check mb-3">--%>
+        <%--            <input class="form-check-input" type="checkbox" name="isSale" value="1"--%>
+        <%--            ${listCourse.isSale == 1 ? 'checked' : ''}>--%>
+        <%--            <label class="form-check-label">On Sale</label>--%>
+        <%--        </div>--%>
 
         <button type="submit" class="btn btn-primary">Save changes</button>
     </form>

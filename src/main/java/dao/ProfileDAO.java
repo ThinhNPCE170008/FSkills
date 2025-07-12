@@ -21,7 +21,6 @@ public class ProfileDAO {
         ResultSet rs = null;
 
         try {
-            // Gián tiếp truy cập kết nối từ dbContext
             stmt = prepareStatement(sql);
             stmt.setInt(1, userId);
             rs = stmt.executeQuery();
@@ -54,29 +53,17 @@ public class ProfileDAO {
     }
 
     public boolean updateProfile(Profile profile) throws SQLException {
-        String sql = "UPDATE Users SET DisplayName=?, Email=?, PhoneNumber=?, Info=?, dateOfBirth=?, gender=? WHERE UserID=?";
-        if (profile.getAvatar() != null) {
-            sql = "UPDATE Users SET DisplayName=?, Email=?, PhoneNumber=?, Info=?, dateOfBirth=?, avatar=?, gender=? WHERE UserID=?";
-        }
+        String sql = "UPDATE Users SET DisplayName=?, PhoneNumber=?, Info=?, dateOfBirth=?, gender=? WHERE UserID=?";
         PreparedStatement stmt = null;
 
         try {
-            // Gián tiếp truy cập kết nối từ dbContext
             stmt = prepareStatement(sql);
             stmt.setString(1, profile.getDisplayName());
-            stmt.setString(2, profile.getEmail());
-            stmt.setString(3, profile.getPhoneNumber());
-            stmt.setString(4, profile.getInfo());
-            stmt.setTimestamp(5, profile.getDateOfBirth());
-
-            if (profile.getAvatar() != null) {
-                stmt.setBytes(6, profile.getAvatar());
-                stmt.setBoolean(7, profile.getGender());
-                stmt.setInt(8, profile.getUserId());
-            } else {
-                stmt.setBoolean(6, profile.getGender());
-                stmt.setInt(7, profile.getUserId());
-            }
+            stmt.setString(2, profile.getPhoneNumber());
+            stmt.setString(3, profile.getInfo());
+            stmt.setTimestamp(4, profile.getDateOfBirth());
+            stmt.setBoolean(5, profile.getGender());
+            stmt.setInt(6, profile.getUserId());
 
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -90,26 +77,22 @@ public class ProfileDAO {
     }
 
     public boolean updateProfileWithImage(Profile profile, java.io.InputStream avatarStream) throws SQLException {
-        String sql = "UPDATE Users SET DisplayName=?, Email=?, PhoneNumber=?, Info=?, dateOfBirth=?, avatar=?, gender=? WHERE UserID=?";
+        String sql = "UPDATE Users SET DisplayName=?, PhoneNumber=?, Info=?, dateOfBirth=?, avatar=?, gender=? WHERE UserID=?";
         PreparedStatement stmt = null;
 
         try {
-            // Gián tiếp truy cập kết nối từ dbContext
             stmt = prepareStatement(sql);
             stmt.setString(1, profile.getDisplayName());
-            stmt.setString(2, profile.getEmail());
-            stmt.setString(3, profile.getPhoneNumber());
-            stmt.setString(4, profile.getInfo());
-            stmt.setTimestamp(5, profile.getDateOfBirth());
-
+            stmt.setString(2, profile.getPhoneNumber());
+            stmt.setString(3, profile.getInfo());
+            stmt.setTimestamp(4, profile.getDateOfBirth());
             if (avatarStream != null) {
-                stmt.setBinaryStream(6, avatarStream, avatarStream.available());
+                stmt.setBinaryStream(5, avatarStream, avatarStream.available());
             } else {
-                stmt.setNull(6, java.sql.Types.VARBINARY);
+                stmt.setNull(5, java.sql.Types.VARBINARY);
             }
-
-            stmt.setBoolean(7, profile.getGender());
-            stmt.setInt(8, profile.getUserId());
+            stmt.setBoolean(6, profile.getGender());
+            stmt.setInt(7, profile.getUserId());
 
             return stmt.executeUpdate() > 0;
         } catch (Exception e) {
@@ -122,9 +105,27 @@ public class ProfileDAO {
         }
     }
 
-    /**
-     * Tạo PreparedStatement từ câu lệnh SQL và sử dụng kết nối từ dbContext.
-     */
+    public boolean updateEmail(int userId, String email) throws SQLException {
+        String sql = "UPDATE Users SET Email=?, IsVerified=? WHERE UserID=?";
+        PreparedStatement stmt = null;
+
+        try {
+            stmt = prepareStatement(sql);
+            stmt.setString(1, email);
+            stmt.setBoolean(2, false); // Set isVerified to false for new email
+            stmt.setInt(3, userId);
+
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error while updating email: " + e.getMessage());
+            throw e;
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+        }
+    }
+
     private PreparedStatement prepareStatement(String sql) throws SQLException {
         if (dbContext.conn == null) {
             throw new SQLException("Database connection is null");

@@ -95,10 +95,10 @@
             <input type="number" class="form-control" id="originalPrice" name="originalPrice" min="0" max="10000" required>
         </div>
 
-<%--        <div class="mb-3">--%>
-<%--            <label for="salePrice" class="form-label">Sale Price (Thousand VND)</label>--%>
-<%--            <input type="number" class="form-control" id="salePrice" name="salePrice" min="0" max="10000" required>--%>
-<%--        </div>--%>
+        <%--        <div class="mb-3">--%>
+        <%--            <label for="salePrice" class="form-label">Sale Price (Thousand VND)</label>--%>
+        <%--            <input type="number" class="form-control" id="salePrice" name="salePrice" min="0" max="10000" required>--%>
+        <%--        </div>--%>
 
         <div class="mb-3">
             <label for="courseImageLocation" class="form-label">Select Image</label>
@@ -125,10 +125,10 @@
             <textarea class="form-control" id="courseHighlight" name="courseHighlight" rows="4"></textarea>
         </div>
 
-<%--        <div class="form-check mb-3">--%>
-<%--            <input class="form-check-input" type="checkbox" id="isSale" name="isSale" value="1">--%>
-<%--            <label class="form-check-label" for="isSale">On Sale</label>--%>
-<%--        </div>--%>
+        <%--        <div class="form-check mb-3">--%>
+        <%--            <input class="form-check-input" type="checkbox" id="isSale" name="isSale" value="1">--%>
+        <%--            <label class="form-check-label" for="isSale">On Sale</label>--%>
+        <%--        </div>--%>
 
         <button type="submit" class="btn btn-success">Create Course</button>
     </form>

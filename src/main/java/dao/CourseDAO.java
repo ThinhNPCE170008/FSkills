@@ -932,7 +932,7 @@ public class CourseDAO extends DBContext {
 //        System.out.println("Client Key:" + GOOGLE_CLIENT_ID);
 //        System.out.println("Secret Google Key:" + GOOGLE_CLIENT_SECRET);
         System.out.println("Local JVM time: " + ZonedDateTime.now());
-        
+
         Instant nowInstant = Instant.now();
         System.out.println("Instant.now(): " + now);
     }
