@@ -163,8 +163,8 @@
                         return;
                     }
 
-                    if (isNaN(originalPrice) || originalPrice < 0 || originalPrice > 10000) {
-                        showJsToast("Original Price must be between 0 and 10,000 (Thousand VND).");
+                    if (isNaN(originalPrice) || originalPrice < 0 || originalPrice > 10000000) {
+                        showJsToast("Original Price must be between 0 and 10,000,000.");
                         originalPriceInput.focus();
                         e.preventDefault();
                         return;

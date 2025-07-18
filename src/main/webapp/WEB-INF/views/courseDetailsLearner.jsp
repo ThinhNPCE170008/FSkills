@@ -151,7 +151,7 @@
                     <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
                         <div class="md:flex">
                             <div class="md:w-1/2">
-                                <img src="${course.imageDataURI}"
+                                <img src="${course.courseImageLocation}"
                                      alt="${course.courseName}"
                                      class="w-full h-64 md:h-full object-cover"
                                      onerror="this.src='https://placehold.co/600x400/38bdf8/ffffff?text=Course'">
@@ -221,13 +221,6 @@
                                         <c:when test="${isBought}">
                                             <form method="POST" action="<%= request.getContextPath()%>/learner/course">
                                                 <button type="submit" name="Enroll" value="${course.courseID}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
-                                                    Enroll Now
-                                                </button>
-                                            </form>
-                                        </c:when>
-                                        <c:when test="${course.salePrice == 0}">
-                                            <form method="POST" action="<%= request.getContextPath()%>/learner/course">
-                                                <button type="submit" name="AddEnroll" value="${course.courseID}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
                                                     Enroll Now
                                                 </button>
                                             </form>

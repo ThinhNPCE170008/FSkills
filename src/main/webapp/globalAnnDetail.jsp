@@ -115,6 +115,8 @@
     </style>
 </head>
 <body>
+<jsp:include page="/layout/header.jsp" />
+<jsp:include page="/layout/sidebar_user.jsp" />
 <div class="container-detail">
     <a href="${pageContext.request.contextPath}/announcements"
        class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-full

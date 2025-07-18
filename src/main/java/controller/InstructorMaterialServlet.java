@@ -114,9 +114,9 @@ public class InstructorMaterialServlet extends HttpServlet {
                 moduleId = Integer.parseInt(module);
                 Module mo = mdao.getModuleByID(moduleId);
                 String YOUTUBE_API_KEY = System.getenv("YOUTUBE_API_KEY");
-
+                
                 request.setAttribute("module", mo);
-                session.setAttribute("apiKey", YOUTUBE_API_KEY);
+                request.setAttribute("apiKey", YOUTUBE_API_KEY);
                 request.getRequestDispatcher("/WEB-INF/views/createMaterials.jsp").forward(request, response);
             } else if (action.equalsIgnoreCase("update")) {
                 moduleId = Integer.parseInt(module);
@@ -124,8 +124,8 @@ public class InstructorMaterialServlet extends HttpServlet {
                 Material ma = madao.getMaterialById(materialId);
                 Module mo = mdao.getModuleByID(moduleId);
                 String YOUTUBE_API_KEY = System.getenv("YOUTUBE_API_KEY");
-
-                session.setAttribute("apiKey", YOUTUBE_API_KEY);
+                
+                request.setAttribute("apiKey", YOUTUBE_API_KEY);
                 request.setAttribute("material", ma);
                 request.setAttribute("module", mo);
                 request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
@@ -326,15 +326,6 @@ public class InstructorMaterialServlet extends HttpServlet {
                     MaterialDAO dao = new MaterialDAO();
                     ModuleDAO moddao = new ModuleDAO();
                     CourseDAO coudao = new CourseDAO();
-                    int row = dao.countMaterialOrderConflict(moduleId, courseId);
-                    if (row > 10) {
-                        moduleId = Integer.parseInt(module);
-                        Module mo = mdao.getModuleByID(moduleId);
-                        request.setAttribute("module", mo);
-                        request.setAttribute("err", "MaterialOrder must not be greater than 10.");
-                        request.getRequestDispatcher("/WEB-INF/views/createMaterials.jsp").forward(request, response);
-                        return;
-                    }
                     int res = dao.insertMaterial(moduleId, materialName, type, materialOrder,
                             materialUrl, materialFile, fileName, videoTimeStr, materialDescription);
 
@@ -477,8 +468,8 @@ public class InstructorMaterialServlet extends HttpServlet {
                         return;
                     }
 
-                    boolean isExisted = madao.checkMaterialOrderExistsForUpdate(materialOrder,
-                            moduleId, courseId, materialId);
+                    boolean isExisted = madao.checkMaterialOrderExistsForUpdate(materialOrder, 
+                            moduleId, courseId,materialId);
 
                     if (isExisted) {
                         moduleId = Integer.parseInt(module);
@@ -491,7 +482,7 @@ public class InstructorMaterialServlet extends HttpServlet {
                         request.getRequestDispatcher("/WEB-INF/views/updateMaterials.jsp").forward(request, response);
                         return;
                     }
-
+                    
                 } catch (NumberFormatException e) {
                     moduleId = Integer.parseInt(module);
                     materialId = Integer.parseInt(material);

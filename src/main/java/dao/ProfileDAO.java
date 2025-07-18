@@ -16,7 +16,7 @@ public class ProfileDAO {
     }
 
     public Profile getProfile(int userId) throws SQLException {
-        String sql = "SELECT DisplayName, Email, PhoneNumber, Info, dateOfBirth, avatar, gender, IsVerified FROM Users WHERE UserID = ?";
+        String sql = "SELECT DisplayName, Email, PhoneNumber, Info, dateOfBirth, avatar, gender, IsVerified, AvatarGoogle FROM Users WHERE UserID = ?";
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
@@ -35,7 +35,8 @@ public class ProfileDAO {
                         rs.getTimestamp("dateOfBirth"),
                         rs.getBytes("avatar"),
                         rs.getBoolean("gender"),
-                        rs.getBoolean("IsVerified")
+                        rs.getBoolean("IsVerified"),
+                        rs.getString("AvatarGoogle")
                 );
             }
         } catch (SQLException e) {
@@ -77,7 +78,7 @@ public class ProfileDAO {
     }
 
     public boolean updateProfileWithImage(Profile profile, java.io.InputStream avatarStream) throws SQLException {
-        String sql = "UPDATE Users SET DisplayName=?, PhoneNumber=?, Info=?, dateOfBirth=?, avatar=?, gender=? WHERE UserID=?";
+        String sql = "UPDATE Users SET DisplayName=?, PhoneNumber=?, Info=?, dateOfBirth=?, avatar=?, gender=?, AvatarGoogle=NULL WHERE UserID=?";
         PreparedStatement stmt = null;
 
         try {

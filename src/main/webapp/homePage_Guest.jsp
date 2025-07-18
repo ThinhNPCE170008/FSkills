@@ -53,9 +53,10 @@
     </style>
 </head>
 
-<body class="font-inter bg-white text-gray-800">
+<body 
     <jsp:include page="/layout/sidebar_user.jsp" />
-    <jsp:include page="/layout/header.jsp" />
+   <jsp:include page="/layout/header.jsp" />
+    class="font-inter bg-white text-gray-800">
 
     <div class="container mx-auto px-4 mt-4">
         <div class="flex items-center justify-between">

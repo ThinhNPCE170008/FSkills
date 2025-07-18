@@ -19,14 +19,44 @@
                 text-align: center;
             }
 
+            .course-image {
+                width: 80px;
+                height: 60px;
+                object-fit: cover;
+                border-radius: 5px;
+            }
+
             .table thead {
                 background-color: #4f46e5;
                 color: white;
             }
 
+            .badge-pending {
+                background-color: #ffc107;
+            }
+
+            .badge-approved {
+                background-color: #198754;
+            }
+
+            .price-original {
+                color: #999;
+                text-decoration: line-through;
+            }
+
+            .price-sale {
+                color: #dc3545;
+                font-weight: bold;
+            }
+
             h2 {
                 color: #343a40;
                 margin-bottom: 25px;
+            }
+
+            .link-hover:hover {
+                color: #0d6efd;
+                text-decoration: underline;
             }
         </style>
     </head>
@@ -184,7 +214,7 @@
                     }
 
                     if (isNaN(originalPrice) || originalPrice < 0 || originalPrice > 10000) {
-                        showJsToast("Original Price must be between 0 and 10,000 (Thousand VND).");
+                        showJsToast("Original Price must be between 0 and 10,000,000.");
                         originalPriceInput.focus();
                         e.preventDefault();
                         return;

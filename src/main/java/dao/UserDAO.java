@@ -1211,7 +1211,7 @@ public class UserDAO extends DBContext {
     }
 
     public User findByEmail(String Email) {
-        String sql = "SELECT * FROM Users WHERE Email = ?";
+        String sql = "SELECT *, AvatarGoogle FROM Users WHERE Email = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -1259,8 +1259,10 @@ public class UserDAO extends DBContext {
                 String PhoneNumber = rs.getString("PhoneNumber");
                 boolean isVerified = rs.getBoolean("IsVerified");
                 String GoogleID = rs.getString("GoogleID");
+                String avatarGoogleUrl = rs.getString("AvatarGoogle");
 
                 User acc = new User(UserID, UserName, DisplayName, Email, Password, role, gender, TimeCreate, TimeCreate, Avatar, info, Ban, ReportAmount, info, isVerified, GoogleID);
+                acc.setAvatarUrl(avatarGoogleUrl);
                 return acc;
             }
         } catch (Exception e) {
@@ -1270,13 +1272,14 @@ public class UserDAO extends DBContext {
     }
 
     public int updateGoogleID(User user) {
-        String sql = "UPDATE Users SET GoogleID = ?, IsVerified = ? WHERE UserID = ?";
+        String sql = "UPDATE Users SET GoogleID = ?, IsVerified = ?, AvatarGoogle = ? WHERE UserID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, user.getGoogleID());
             ps.setBoolean(2, true);
-            ps.setInt(3, user.getUserId());
+            ps.setString(3, user.getAvatarUrl());
+            ps.setInt(4, user.getUserId());
 
             int result = ps.executeUpdate();
             return result > 0 ? 1 : 0;

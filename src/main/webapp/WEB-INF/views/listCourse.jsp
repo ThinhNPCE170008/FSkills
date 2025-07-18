@@ -132,14 +132,12 @@
                                         <td>
                                             <span class="
                                                   text-xs font-semibold px-2.5 py-0.5 rounded-full
-                                                  ${course.approveStatus == 1 ? 'bg-green-500 text-white'
-                                                    : course.approveStatus == 3 ? 'bg-amber-400 text-white'
-                                                    : course.approveStatus == 2 ? 'bg-red-500 text-white'
+                                                  ${course.approveStatus == 1 ? 'bg-green-500 text-white' 
+                                                    : course.approveStatus == 3 ? 'bg-amber-400 text-white' 
                                                     : 'bg-gray-400 text-white'}">
-                                                      ${course.approveStatus == 1 ? 'Approved'
-                                                        : course.approveStatus == 3 ? 'Processing'
-                                                        : course.approveStatus == 2 ? 'Rejected'
-                                                        : 'Draft'}
+                                                      ${course.approveStatus == 1 ? 'Approved' 
+                                                        : course.approveStatus == 3 ? 'Processing' 
+                                                        : 'Default'}
                                                   </span>
                                             </td>
                                             <td>
@@ -177,22 +175,18 @@
                                                     <i class="fas fa-eye"></i>
                                                 </a>
 
-                                                <c:if test="${course.approveStatus != 2}">
-                                                    <a href="${pageContext.request.contextPath}/instructor/courses?action=update&courseID=${course.courseID}"
-                                                       class="btn btn-warning btn-sm d-flex align-items-center justify-content-center"
-                                                       style="height: 40px; width: 40px;">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                </c:if>
+                                                <a href="${pageContext.request.contextPath}/instructor/courses?action=update&courseID=${course.courseID}"
+                                                   class="btn btn-warning btn-sm d-flex align-items-center justify-content-center"
+                                                   style="height: 40px; width: 40px;">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
 
-                                                <c:if test="${course.approveStatus != 3}">
-                                                    <button class="btn btn-danger btn-sm d-flex align-items-center justify-content-center"
-                                                            style="height: 40px; width: 40px;"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#deleteModal${course.courseID}">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </button>
-                                                </c:if>
+                                                <button class="btn btn-danger btn-sm d-flex align-items-center justify-content-center"
+                                                        style="height: 40px; width: 40px;"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#deleteModal${course.courseID}">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
 
                                                 <c:if test="${course.approveStatus == 0}">
                                                     <form action="${pageContext.request.contextPath}/instructor/courses" method="post">
@@ -202,18 +196,6 @@
                                                         <button type="submit" class="btn btn-success btn-sm d-flex align-items-center justify-content-center"
                                                                 style="height: 40px; width: 40px;">
                                                             <i class="fas fa-paper-plane"></i>
-                                                        </button>
-                                                    </form>
-                                                </c:if>
-
-                                                <c:if test="${course.approveStatus == 3}">
-                                                    <form action="${pageContext.request.contextPath}/instructor/courses" method="post">
-                                                        <input type="hidden" name="action" value="cancel">
-                                                        <input type="hidden" name="courseID" value="${course.courseID}">
-                                                        <input type="hidden" name="userID" value="${course.user.userId}">
-                                                        <button type="submit" class="btn btn-secondary btn-sm d-flex align-items-center justify-content-center"
-                                                                style="height: 40px; width: 40px;">
-                                                            <i class="fas fa-ban"></i>
                                                         </button>
                                                     </form>
                                                 </c:if>
@@ -330,5 +312,6 @@
             <script src="${pageContext.request.contextPath}/layout/formatUtcToVietnamese.js"></script>
             <!-- Bootstrap JS -->
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
         </body>
     </html>

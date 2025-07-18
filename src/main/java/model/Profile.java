@@ -13,6 +13,7 @@ public class Profile {
     private byte[] avatar;
     private boolean gender; // Giữ boolean cho gender như trong Profile cũ
     private boolean isVerified; // Add isVerified field
+    private String avatarUrl; // Add avatarUrl field for Google avatar
 
     public Profile() {
     }
@@ -28,6 +29,21 @@ public class Profile {
         this.avatar = avatar;
         this.gender = gender;
         this.isVerified = isVerified;
+        this.avatarUrl = null;
+    }
+
+    public Profile(int userId, String displayName, String email, String phoneNumber,
+                   String info, Timestamp dateOfBirth, byte[] avatar, boolean gender, boolean isVerified, String avatarUrl) {
+        this.userId = userId;
+        this.displayName = displayName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.info = info;
+        this.dateOfBirth = dateOfBirth;
+        this.avatar = avatar;
+        this.gender = gender;
+        this.isVerified = isVerified;
+        this.avatarUrl = avatarUrl;
     }
 
     public Profile(int userId, String displayName, String email, String phoneNumber,
@@ -131,10 +147,14 @@ public class Profile {
                 ", avatar='" + (avatar != null ? "binary data" : "null") + '\'' +
                 ", gender=" + gender +
                 ", isVerified=" + isVerified +
+                ", avatarUrl='" + avatarUrl + '\'' +
                 '}';
     }
 
     public String getImageDataURI() {
+        if (avatarUrl != null && !avatarUrl.isEmpty()) {
+            return avatarUrl;
+        }
         return util.ImageBase64.toDataURI(avatar, "image/jpeg");
     }
 
@@ -144,5 +164,13 @@ public class Profile {
 
     public void setIsVerified(boolean isVerified) {
         this.isVerified = isVerified;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 }

@@ -11,7 +11,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Trang Quản Trị F-SKILL - Quản lý Người dùng</title>
-        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
+        <link rel="icon" type="image/png" href="https://placehold.co/32x32/0284c7/ffffff?text=FS">
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -483,45 +483,52 @@
                 integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
         <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const learnerRadio = document.getElementById('filterLearner');
-        const instructorRadio = document.getElementById('filterInstructor');
-        const searchForm = document.getElementById('searchForm');
-        const currentRoleFilterInput = document.getElementById('currentRoleFilter');
-        const searchNameInput = document.getElementById('searchName'); // Lấy tham chiếu đến ô input searchName
-
-        // Đặt trạng thái ban đầu của radio button và hiển thị/ẩn bảng dựa trên URL params
-        const urlParams = new URLSearchParams(window.location.search);
-        const roleFilterParam = urlParams.get('roleFilter');
-
-        if (roleFilterParam === 'Instructor') {
-            instructorRadio.checked = true;
-            document.getElementById('instructorTable').style.display = 'table';
-            document.getElementById('learnerTable').style.display = 'none';
-        } else { // Mặc định là Learner
-            learnerRadio.checked = true;
-            document.getElementById('learnerTable').style.display = 'table';
-            document.getElementById('instructorTable').style.display = 'none';
-        }
-
-        learnerRadio.addEventListener('change', toggleUserLists);
-        instructorRadio.addEventListener('change', toggleUserLists);
-
-        function toggleUserLists() {
-            let selectedRole = '';
-            if (learnerRadio.checked) {
-                selectedRole = 'Learner';
-            } else if (instructorRadio.checked) {
-                selectedRole = 'Instructor';
-            }
-
-            currentRoleFilterInput.value = selectedRole;
-
-            //searchNameInput.value = ''; //neu muon xoa khi doi thi uncmt
-
-            searchForm.submit();
-        }
-    });
-</script>
+                                                          const notificationBell = document.getElementById('notification-bell');
+                                                          const notificationPopup = document.getElementById('notification-popup');
+                                                          notificationBell.addEventListener('click', (event) => {
+                                                              event.stopPropagation();
+                                                              notificationPopup.classList.toggle('hidden');
+                                                          });
+                                                          document.addEventListener('click', (event) => {
+                                                              if (!notificationBell.contains(event.target) && !notificationPopup.contains(event.target)) {
+                                                                  notificationPopup.classList.add('hidden');
+                                                              }
+                                                          });
+                                                          document.querySelector('.sidebar-toggle').addEventListener('click', () => {
+                                                              document.querySelector('.sidebar-container').classList.toggle('active');
+                                                          });
+                                                          function toggleUserLists() {
+                                                              const learnerRadio = document.getElementById('filterLearner');
+                                                              const instructorRadio = document.getElementById('filterInstructor');
+                                                              const searchForm = document.getElementById('searchForm');
+                                                              const currentRoleFilterInput = document.getElementById('currentRoleFilter');
+                                                              let selectedRole = '';
+                                                              if (learnerRadio.checked) {
+                                                                  selectedRole = 'Learner';
+                                                              } else if (instructorRadio.checked) {
+                                                                  selectedRole = 'Instructor';
+                                                              }
+                                                              currentRoleFilterInput.value = selectedRole;
+                                                              // gửi form để tải lại dữ liệu với cả searchName và roleFilter
+                                                              searchForm.submit();
+                                                          }
+                                                          document.addEventListener('DOMContentLoaded', () => {
+                                                              const urlParams = new URLSearchParams(window.location.search);
+                                                              const roleFilter = urlParams.get('roleFilter');
+                                                              const searchName = urlParams.get('searchName'); 
+                                                              if (roleFilter === 'Instructor') {
+                                                                  document.getElementById('filterInstructor').checked = true;
+                                                                  document.getElementById('learnerTable').style.display = 'none';
+                                                                  document.getElementById('instructorTable').style.display = 'block';
+                                                              } else {
+                                                                  document.getElementById('filterLearner').checked = true;
+                                                                  document.getElementById('learnerTable').style.display = 'block';
+                                                                  document.getElementById('instructorTable').style.display = 'none';
+                                                              }
+                                                              if (searchName) {
+                                                                  document.getElementById('searchName').value = searchName;
+                                                              }
+                                                          });
+        </script>
     </body>
 </html>

@@ -33,7 +33,7 @@ public class CourseDAO extends DBContext {
                 + "FROM Courses c\n"
                 + "JOIN Users u ON c.UserID = u.UserID\n"
                 + "JOIN Category cat ON c.category_id = cat.category_id\n"
-                + "WHERE c.UserID = ? AND c.ApproveStatus <> 4";
+                + "WHERE c.UserID = ? AND c.Status = 0 AND (c.ApproveStatus = 0 OR c.ApproveStatus = 1 OR c.ApproveStatus = 3)";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, userID);
@@ -102,11 +102,12 @@ public class CourseDAO extends DBContext {
                 + "JOIN Category cat ON c.category_id = cat.category_id\n"
                 + "LEFT JOIN Enroll e ON c.CourseID = e.CourseID\n"
                 + "WHERE c.UserID = ? \n"
+                + "  AND c.Status = 0 \n"
                 + "  AND c.ApproveStatus = 1\n"
                 + "GROUP BY\n"
                 + "    u.DisplayName, u.Email, u.Role, u.Gender, u.DateOfBirth, u.Info, u.Avatar, u.PhoneNumber,\n"
                 + "    c.CourseID, c.CourseName, c.OriginalPrice, c.SalePrice, c.IsSale, \n"
-                + "    c.CourseImageLocation, c.PublicDate, c.CourseLastUpdate, c.ApproveStatus, c.UserID, c.category_id,\n"
+                + "    c.CourseImageLocation, c.PublicDate, c.CourseLastUpdate, c.Status, c.ApproveStatus, c.UserID, c.category_id,\n"
                 + "    c.CourseSummary, c.CourseHighlight,\n"
                 + "    cat.category_id, cat.category_name\n"
                 + "ORDER BY TotalEnrolled DESC;";
@@ -217,8 +218,8 @@ public class CourseDAO extends DBContext {
 
         String sql = "INSERT INTO Courses\n"
                 + "(CourseName, category_id, UserID, ApproveStatus, CourseLastUpdate, "
-                + "OriginalPrice, CourseImageLocation, CourseSummary, CourseHighlight)\n"
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "OriginalPrice, CourseImageLocation, CourseSummary, CourseHighlight, Status)\n"
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -294,7 +295,7 @@ public class CourseDAO extends DBContext {
     }
 
     public int checkStatus(int courseID) {
-        String sql = "UPDATE Courses SET ApproveStatus = 4, CourseLastUpdate = SYSUTCDATETIME() WHERE CourseID = ?";
+        String sql = "UPDATE Courses SET [Status] = 1, CourseLastUpdate = SYSUTCDATETIME() WHERE CourseID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -328,7 +329,7 @@ public class CourseDAO extends DBContext {
     }
 
     public int countCoursesByUserID(int userId) {
-        String sql = "SELECT COUNT(*) AS CourseCount FROM Courses WHERE UserID = ? AND (ApproveStatus = 0 OR ApproveStatus = 1 OR ApproveStatus = 3)";
+        String sql = "SELECT COUNT(*) AS CourseCount FROM Courses WHERE UserID = ? AND Status = 0 AND (ApproveStatus = 0 OR ApproveStatus = 1 OR ApproveStatus = 3)";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, userId);
@@ -398,20 +399,6 @@ public class CourseDAO extends DBContext {
         return 0;
     }
 
-    public int cancelCourseApprove(int courseID) {
-        String sql = "UPDATE Courses SET ApproveStatus = 0 WHERE CourseID = ?";
-
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, courseID);
-
-            int result = ps.executeUpdate();
-            return result > 0 ? 1 : 0;
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return 0;
-    }
 
     public int courseUpdateTime(int id) {
         String updateSql = "  UPDATE [dbo].[Courses] SET [CourseLastUpdate] = GETDATE() WHERE [CourseID] = ?;";
@@ -706,7 +693,7 @@ public class CourseDAO extends DBContext {
             if (rs.next()) {
                 Course course = buildCourseFromResultSet(rs);
                 course.setTotalEnrolled(rs.getInt("TotalEnrolled"));
-                //course.setStatus(rs.getInt("Status"));
+                course.setStatus(rs.getInt("Status"));
 
                 // Get modules
                 ModuleDAO moduleDAO = new ModuleDAO();
@@ -777,7 +764,7 @@ public class CourseDAO extends DBContext {
             while (rs.next()) {
                 Course course = buildCourseFromResultSet(rs);
                 course.setTotalEnrolled(rs.getInt("TotalEnrolled"));
-                //course.setStatus(rs.getInt("Status"));
+                course.setStatus(rs.getInt("Status"));
                 list.add(course);
             }
         } catch (Exception e) {
@@ -802,22 +789,22 @@ public class CourseDAO extends DBContext {
         System.out.println("VN time: " + vn);
 
 //        String secretKey = System.getenv("CLOUDFLARE_SECRET_KEY");
-//        String GOOGLE_CLIENT_ID = System.getenv("GOOGLE_CLIENT_ID");
-//        String GOOGLE_CLIENT_SECRET = System.getenv("GOOGLE_CLIENT_SECRET");
+        String GOOGLE_CLIENT_ID = System.getenv("GOOGLE_CLIENT_ID");
+        String GOOGLE_CLIENT_SECRET = System.getenv("GOOGLE_CLIENT_SECRET");
 //        String turnstileSiteKey = System.getenv("CLOUDFLARE_SITE_KEY");
 //        System.out.println("Secret Key:" + secretKey);
 //        System.out.println("Site Key:" + turnstileSiteKey);
-//        System.out.println("Client Key:" + GOOGLE_CLIENT_ID);
-//        System.out.println("Secret Google Key:" + GOOGLE_CLIENT_SECRET);
-        System.out.println("Local JVM time: " + ZonedDateTime.now());
+        System.out.println("Client Key:" + GOOGLE_CLIENT_ID);
+        System.out.println("Secret Google Key:" + GOOGLE_CLIENT_SECRET);
+//        System.out.println("Local JVM time: " + ZonedDateTime.now());
 
-        Instant nowInstant = Instant.now();
-        System.out.println("Instant.now(): " + now);
+//        Instant nowInstant = Instant.now();
+//        System.out.println("Instant.now(): " + now);
 
-        List<Course> courseList = dao.getCourseByUserID(3);
-        for (Course course : courseList) {
-            System.out.println(course);
-        }
+//        List<Course> courseList = dao.get3CourseByUserID(3);
+//        for (Course course : courseList) {
+//            System.out.println(course);
+//        }
 
         String YOUTUBE_API_KEY = System.getenv("YOUTUBE_API_KEY");
         System.out.println(YOUTUBE_API_KEY);
