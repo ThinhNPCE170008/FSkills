@@ -131,21 +131,21 @@
         }
 
         .answer-option.user-choice {
-            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
-            border-color: #e17055;
-            color: #2d3436;
+            background: #B93636;
+            border-color: #a52f2f;
+            color: white;
             font-weight: 600;
         }
 
         .answer-option.correct-answer {
-            background: linear-gradient(135deg, #55efc4, #00b894);
-            border-color: #00a085;
+            background: #28A745;
+            border-color: #1e7e34;
             color: white;
             font-weight: 600;
         }
 
         .answer-option.user-choice.correct-answer {
-            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+            background: #6c5ce7;
             border-color: #5f3dc4;
         }
 
@@ -160,7 +160,7 @@
         }
 
         .user-writing-answer {
-            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            background: #fdcb6e;
             border-color: #e17055;
             color: #2d3436;
         }
@@ -173,12 +173,12 @@
         }
 
         .points-earned {
-            background: linear-gradient(135deg, #55efc4, #00b894);
+            background: #28A745;
             color: white;
         }
 
         .points-lost {
-            background: linear-gradient(135deg, #fd79a8, #e84393);
+            background: #B93636;
             color: white;
         }
 
@@ -190,11 +190,11 @@
         }
 
         .indicator-correct {
-            color: #00b894;
+            color: #28A745;
         }
 
         .indicator-incorrect {
-            color: #e17055;
+            color: #B93636;
         }
 
         .indicator-partial {
@@ -263,15 +263,15 @@
         }
 
         .performance-fill.low {
-            background: linear-gradient(90deg, #fa709a, #fee140);
+            background: #B93636;
         }
 
         .performance-fill.medium {
-            background: linear-gradient(90deg, #ffeaa7, #fdcb6e);
+            background: #fdcb6e;
         }
 
         .performance-fill.high {
-            background: linear-gradient(90deg, #55efc4, #00b894);
+            background: #28A745;
         }
 
         #main-body{
@@ -290,6 +290,14 @@
     <main id="main-body" class="main d-flex">
         <div class="mt-5 flex-fill" style="margin-top: 60px !important;">
             <div class="container-fluid px-4 py-4">
+                            <!-- Back to Test Details Button -->
+                            <div class="mb-3">
+                                <a href="${pageContext.request.contextPath}/learner/tests?action=detail&testId=${test.testID}" 
+                                   class="btn btn-outline-primary">
+                                    <i class="bi bi-arrow-left me-2"></i>Back to Test Details
+                                </a>
+                            </div>
+
                             <!-- Result Container -->
                             <div class="result-container">
                                 <!-- Result Header -->
@@ -533,10 +541,6 @@
 
                                     <!-- Action Buttons -->
                                     <div class="text-center mt-5">
-                                        <a href="${pageContext.request.contextPath}/learner/tests?action=detail&testId=${test.testID}" 
-                                           class="btn btn-back btn-action me-3">
-                                            <i class="bi bi-arrow-left me-2"></i>Back to Test Details
-                                        </a>
                                         <a href="${pageContext.request.contextPath}/learner/tests?action=take&testId=${test.testID}" 
                                            class="btn btn-retake btn-action">
                                             <i class="bi bi-arrow-clockwise me-2"></i>Retake Test

@@ -78,7 +78,7 @@ public class ProfileDAO {
     }
 
     public boolean updateProfileWithImage(Profile profile, java.io.InputStream avatarStream) throws SQLException {
-        String sql = "UPDATE Users SET DisplayName=?, PhoneNumber=?, Info=?, dateOfBirth=?, avatar=?, gender=?, AvatarGoogle=NULL WHERE UserID=?";
+        String sql = "UPDATE Users SET DisplayName=?, PhoneNumber=?, Info=?, dateOfBirth=?, avatar=?, gender=? WHERE UserID=?";
         PreparedStatement stmt = null;
 
         try {

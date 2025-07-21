@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/transition.css">
 <script src="${pageContext.request.contextPath}/js/transition.js"></script>
 
-<header style="background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 1rem 1.5rem; position: fixed; top: 0; left: 80px; right: 0; z-index: 1001; border-radius: 12px; margin: 0 8px; transition: left 0.3s ease, width 0.3s ease;">
+<header style="background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 1rem 1.5rem; position: fixed; top: 0; left: 80px; right: 0; z-index: 1001; border-radius: 12px; transition: left 0.3s ease, width 0.3s ease;">
     <div style="max-width: 100%; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; border-radius: 8px;" class="header-container">
         <div style="white-space: nowrap; overflow: hidden; position: relative; width: 100%;" class="header-text">
             <div style="display: inline-block; padding-left: 100%; animation: scroll 10s linear infinite;" class="scrolling-text">

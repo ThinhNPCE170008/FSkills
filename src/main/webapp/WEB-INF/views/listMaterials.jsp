@@ -17,49 +17,14 @@
         <!-- Bootstrap 5 JS (phải đặt cuối trang) -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <style>
-            .sidebar {
-                width: 250px;
-                position: fixed;
-                height: 100%;
-                background-color: #fff;
-                border-right: 1px solid #dee2e6;
-                z-index: 1000;
-            }
-
-
             .table th, .table td {
                 vertical-align: middle;
                 text-align: center;
             }
 
-            .course-image {
-                width: 80px;
-                height: 60px;
-                object-fit: cover;
-                border-radius: 5px;
-            }
-
             .table thead {
                 background-color: #4f46e5;
                 color: white;
-            }
-
-            .badge-pending {
-                background-color: #ffc107;
-            }
-
-            .badge-approved {
-                background-color: #198754;
-            }
-
-            .price-original {
-                color: #999;
-                text-decoration: line-through;
-            }
-
-            .price-sale {
-                color: #dc3545;
-                font-weight: bold;
             }
 
             h2 {
@@ -72,18 +37,19 @@
                 padding-right: 0;
                 margin-left: 0;
             }
-
+            ;
         </style>
     </head>
     <body>
         <jsp:include page="/layout/sidebar_user.jsp"/>
+        <jsp:include page="/layout/header.jsp"/>
 
-
-        <div class="container-fluid flex px-4">
-            <div class="container py-10">
+        <main class="main">
+            <div class="px-5">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item inline-flex items-center"><a class="text-indigo-600 hover:text-indigo-700 font-medium no-underline" href="${pageContext.request.contextPath}/instructor">Home</a></li>
+                        <li class="breadcrumb-item inline-flex items-center"><a class="text-indigo-600 hover:text-indigo-700 font-medium no-underline" href="${pageContext.request.contextPath}/instructor">Dashboard</a></li>
+                        <li class="breadcrumb-item inline-flex items-center"><a class="text-indigo-600 hover:text-indigo-700 font-medium no-underline" href="${pageContext.request.contextPath}/instructor/courses?action=list">All Courses</a></li>
                         <li class="breadcrumb-item inline-flex items-center">
                             <a class="text-indigo-600 hover:text-indigo-700 font-medium no-underline" href="${pageContext.request.contextPath}/instructor/courses/modules?courseId=${course.courseID}">${course.courseName}</a>
                         </li>
@@ -91,9 +57,8 @@
                             ${module.moduleName}
                         </li>
                     </ol>
-
-
                 </nav>
+
                 <div class="text-end">
                     <a href="${pageContext.request.contextPath}/instructor/courses/modules/material?action=create&moduleId=${module.moduleID}&courseId=${course.courseID}"
                        class="btn btn-lg d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill shadow-sm fw-semibold text-white"
@@ -246,8 +211,7 @@
                     </c:otherwise>
                 </c:choose>
             </div>
-        </div>
-
+        </main>
         <!-- Delete Modal -->
         <c:forEach var="material" items="${listMaterial}">
             <div class="modal fade" id="deleteModal${material.materialId}" tabindex="-1" aria-labelledby="deleteModalLabel"

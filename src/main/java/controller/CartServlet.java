@@ -67,20 +67,38 @@ public class CartServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
+        String role = (String) session.getAttribute("role");
         CourseDAO courseDAO = new CourseDAO();
         if (user == null) {
             response.sendRedirect(request.getContextPath() + "/login");
         } else {
-            CartDAO cDAO = new CartDAO();
-            ArrayList<Cart> cartList = cDAO.getLearnerCart(user.getUserId());
-            HashMap<Integer, Course> courseMap = new HashMap<>();
-            for (Cart c : cartList) {
-                Course course = courseDAO.getCourseByCourseID(c.getCourseID());
-                courseMap.put(c.getCartID(), course);
+            if (null == role) {
+                response.sendRedirect(request.getContextPath() + "/homePage_Guest.jsp");
+            } else {
+                switch (role) {
+                    case "LEARNER":
+                        CartDAO cDAO = new CartDAO();
+                        ArrayList<Cart> cartList = cDAO.getLearnerCart(user.getUserId());
+                        HashMap<Integer, Course> courseMap = new HashMap<>();
+                        for (Cart c : cartList) {
+                            Course course = courseDAO.getCourseByCourseID(c.getCourseID());
+                            courseMap.put(c.getCartID(), course);
+                        }
+                        request.setAttribute("list", cartList);
+                        request.setAttribute("courseMap", courseMap);
+                        request.getRequestDispatcher("/WEB-INF/views/cart.jsp").forward(request, response);
+                        break;
+                    case "INSTRUCTOR":
+                        response.sendRedirect(request.getContextPath() + "/instructor");
+                        break;
+                    case "ADMIN":
+                        response.sendRedirect(request.getContextPath() + "/admin");
+                        break;
+                    default:
+                        response.sendRedirect(request.getContextPath() + "/homePage_Guest.jsp");
+                        break;
+                }
             }
-            request.setAttribute("list", cartList);
-            request.setAttribute("courseMap", courseMap);
-            request.getRequestDispatcher("/WEB-INF/views/cart.jsp").forward(request, response);
         }
     }
 
@@ -97,23 +115,41 @@ public class CartServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        String action = request.getParameter("CartAction");
-        String remove = request.getParameter("remove-from-cart");
-        CartDAO cDAO = new CartDAO();
-        int courseID;
-        if (action != null) {
-            switch (action) {
-                case "Add":
-                    courseID = Integer.parseInt(request.getParameter("CourseID"));
-                    if (cDAO.addToCart(user.getUserId(), courseID) != 0) {
-                        response.sendRedirect(request.getContextPath() + "/courseDetail?id=" + courseID);
+        String role = (String) session.getAttribute("role");
+        if (null == role) {
+            response.sendRedirect(request.getContextPath() + "/homePage_Guest.jsp");
+        } else {
+            switch (role) {
+                case "LEARNER":
+                    String action = request.getParameter("CartAction");
+                    String remove = request.getParameter("remove-from-cart");
+                    CartDAO cDAO = new CartDAO();
+                    int courseID;
+                    if (action != null) {
+                        switch (action) {
+                            case "Add":
+                                courseID = Integer.parseInt(request.getParameter("CourseID"));
+                                if (cDAO.addToCart(user.getUserId(), courseID) != 0) {
+                                    response.sendRedirect(request.getContextPath() + "/courseDetail?id=" + courseID);
+                                }
+                                break;
+                        }
+                    }
+                    if (remove != null) {
+                        if (cDAO.removeFromCart(Integer.parseInt(remove)) != 0) {
+                            response.sendRedirect(request.getContextPath() + "/cart");
+                        }
                     }
                     break;
-            }
-        }
-        if (remove != null) {
-            if (cDAO.removeFromCart(Integer.parseInt(remove)) != 0) {
-                response.sendRedirect(request.getContextPath() + "/Cart");
+                case "INSTRUCTOR":
+                    response.sendRedirect(request.getContextPath() + "/instructor");
+                    break;
+                case "ADMIN":
+                    response.sendRedirect(request.getContextPath() + "/admin");
+                    break;
+                default:
+                    response.sendRedirect(request.getContextPath() + "/homePage_Guest.jsp");
+                    break;
             }
         }
 

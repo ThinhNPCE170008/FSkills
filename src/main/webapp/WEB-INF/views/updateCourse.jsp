@@ -45,9 +45,9 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Original Price (Thousand VND)</label>
+                    <label class="form-label">Original Price</label>
                     <input type="number" name="originalPrice" id="updateOriginalPrice${listCourse.courseID}"
-                           value="${listCourse.originalPrice}" class="form-control" min="0" max="10000" required>
+                           value="${listCourse.originalPrice}" class="form-control" min="0" max="10000000" required>
                 </div>
 
                 <%--        <div class="mb-3">--%>
@@ -124,7 +124,7 @@
                 const summaryInput = document.getElementById("updateCourseSummary" + courseID);
                 const highlightInput = document.getElementById("updateCourseHighlight" + courseID);
 
-                const regexValid = /^(?!.*\d)(?!.* {2,}).+$/u;
+                const regexValid = /^(?!.* {2,}).+$/u;
                 const spaceOnlyRegex = /^(?!.* {2,}).+$/u;
 
                 form.addEventListener("submit", function (e) {
@@ -142,8 +142,8 @@
                         return;
                     }
 
-                    if (name.length > 30) {
-                        showJsToast("Course name cannot be longer than 30 characters.");
+                    if (name.length > 30 || name.length < 10) {
+                        showJsToast("Course Name must be between 10 and 30 characters.");
                         nameInput.focus();
                         e.preventDefault();
                         return;

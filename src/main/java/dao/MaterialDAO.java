@@ -237,7 +237,7 @@ public class MaterialDAO extends DBContext {
         return 0;
     }
 
-    public List<Material> getMaterialsByModuleIDAdmin(int moduleID) throws SQLException {
+     public List<Material> getMaterialsByModuleIDAdmin(int moduleID) throws SQLException {
         List<Material> materials = new ArrayList<>();
         String query = "SELECT materialId, materialName, moduleID, type, materialLastUpdate, "
                 + "materialOrder, time, materialDescription, materialUrl, materialFile, fileName "
@@ -249,7 +249,11 @@ public class MaterialDAO extends DBContext {
                     Material material = new Material();
                     material.setMaterialId(rs.getInt("materialId"));
                     material.setMaterialName(rs.getString("materialName"));
-                    material.setModule(new Module(rs.getInt("moduleID"), rs.getString("moduleName"), null));
+
+                    // Create a simple module object with just the ID since module name is not needed here
+                    Module module = new Module();
+                    module.setModuleID(rs.getInt("moduleID"));
+                    material.setModule(module);
                     material.setType(rs.getString("type"));
                     material.setMaterialLastUpdate(rs.getTimestamp("materialLastUpdate"));
                     material.setMaterialOrder(rs.getInt("materialOrder"));
@@ -258,13 +262,11 @@ public class MaterialDAO extends DBContext {
                     material.setMaterialUrl(rs.getString("materialUrl"));
                     material.setMaterialFile(rs.getBytes("materialFile"));
                     material.setFileName(rs.getString("fileName"));
-
                     // Encode PDF file to base64 (nếu cần)
                     if ("pdf".equalsIgnoreCase(material.getType()) && material.getMaterialFile() != null) {
                         String base64 = java.util.Base64.getEncoder().encodeToString(material.getMaterialFile());
                         material.setPdfDataURI("data:application/pdf;base64," + base64);
                     }
-
                     materials.add(material);
                 }
             }
@@ -307,7 +309,6 @@ public class MaterialDAO extends DBContext {
             throw e;
         }
     }
-
     public boolean checkMaterialOrderExists(int materialOrder, int moduleId, int courseId) {
         boolean exists = false;
 
@@ -328,8 +329,8 @@ public class MaterialDAO extends DBContext {
         return exists;
     }
 
-    public boolean checkMaterialOrderExistsForUpdate(int materialOrder, int moduleId, 
-            int courseId,int materialId) {
+    public boolean checkMaterialOrderExistsForUpdate(int materialOrder, int moduleId,
+            int courseId, int materialId) {
         boolean exists = false;
         String sql = "SELECT 1 FROM Materials m JOIN Modules mo ON m.ModuleID = mo.ModuleID "
                 + "JOIN Courses c ON mo.CourseID = c.CourseID \n"
@@ -343,13 +344,35 @@ public class MaterialDAO extends DBContext {
             ps.setInt(4, materialId);
             ResultSet rs = ps.executeQuery();
             exists = rs.next();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
         }
 
         return exists;
     }
+    
+    public int countMaterialOrderConflict(int moduleId, int courseId) {
+        int count = 0;
+        String sql = "SELECT COUNT(*) FROM Materials m \n"
+                + "JOIN Modules mo ON m.ModuleID = mo.ModuleID \n"
+                + "JOIN Courses c ON mo.CourseID = c.CourseID \n"
+                + "WHERE mo.ModuleID = ?\n"
+                + "AND c.CourseID = ?";
 
+	try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+	    ps.setInt(1, moduleId);
+            ps.setInt(2, courseId);
+	    ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+	    count = rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+	return count;
+    }
+    
     public int checkMaterialInCourse(int CourseID) {
         String sql = "SELECT TOP 1\n" +
                 "m.MaterialID\n" +

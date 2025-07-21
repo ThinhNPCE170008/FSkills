@@ -173,13 +173,10 @@ public class LearnerTestServlet extends HttpServlet {
             modules = moduleDAO.getAllModuleByCourseID(courseId);
         }
 
-        // Add latest test results to each test
+        // Add latest test results to each test for Take/Retake button logic and status badges
         for (Test test : tests) {
             TestResult latestResult = testResultDAO.getLatestTestResult(test.getTestID(), user.getUserId());
-            if (latestResult != null) {
-                test.setModule(test.getModule()); // Ensure module is set for display
-                // You might want to add a field to Test model to store latest result
-            }
+            test.setLatestResult(latestResult); // Store latest result in test object
         }
 
         request.setAttribute("tests", tests);
@@ -228,9 +225,13 @@ public class LearnerTestServlet extends HttpServlet {
 
         // Get latest test result
         TestResult latestResult = testResultDAO.getLatestTestResult(testId, user.getUserId());
+        
+        // Get test history for learner
+        List<TestResult> testHistory = testResultDAO.getTestResults(testId, user.getUserId());
 
         request.setAttribute("test", test);
         request.setAttribute("latestResult", latestResult);
+        request.setAttribute("testHistory", testHistory);
 
         request.getRequestDispatcher("/WEB-INF/views/testDetail.jsp").forward(request, response);
     }
@@ -331,9 +332,7 @@ public class LearnerTestServlet extends HttpServlet {
                 }
                 isCorrect = selectedOptionLetter.equals(question.getRightOption());
             } else if (question.getQuestionType().equals("WRITING")) {
-                // For writing questions, we'll consider them correct if answered
-                // In a real system, this might need manual grading
-                isCorrect = !userAnswer.trim().isEmpty();
+                isCorrect = !userAnswer.trim().equalsIgnoreCase(question.getRightOption().trim());
             }
 
             if (isCorrect) {

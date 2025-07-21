@@ -143,6 +143,7 @@ public class InstructorCourseServlet extends HttpServlet {
         UserDAO uDao = new UserDAO();
         ModuleDAO mDao = new ModuleDAO();
         MaterialDAO matDao = new MaterialDAO();
+        NotificationDAO notiDao = new NotificationDAO();
 
         if (request.getMethod().equalsIgnoreCase("POST")) {
             String action = request.getParameter("action");
@@ -181,11 +182,11 @@ public class InstructorCourseServlet extends HttpServlet {
                     return;
                 }
 
-                if (courseName.length() > 30) {
+                if (courseName.length() > 30 || courseName.length() < 10) {
                     List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Create failed: Course Name must not exceed 30 characters.");
+                    request.setAttribute("err", "Create failed: Course Name must be between 10 and 30 characters.");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 }
@@ -199,23 +200,14 @@ public class InstructorCourseServlet extends HttpServlet {
                     return;
                 }
 
-                if (courseName.matches(".*\\d.*")) {
+                if (originalPrice > 10000000) {
                     List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Create failed: Course Name must not contain numbers.");
+                    request.setAttribute("err", "Create failed: Original Price is not greater than 10,000,000!");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 }
-
-//                if (salePrice >= originalPrice) {
-//                    List<Course> list = cDao.getCourseByUserID(userID);
-//
-//                    request.setAttribute("listCourse", list);
-//                    request.setAttribute("err", "Create failed: Sale price is higher than original price!");
-//                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
-//                    return;
-//                }
 
                 if (courseSummary == null || courseSummary.trim().isEmpty()) {
                     List<Course> list = cDao.getCourseByUserID(userID);
@@ -262,9 +254,11 @@ public class InstructorCourseServlet extends HttpServlet {
                     request.setAttribute("success", "Course created successfully!!!");
                     request.setAttribute("listCourse", list);
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                    return;
                 } else {
                     request.setAttribute("err", "Create failed: Unknown error!");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                    return;
                 }
             } else if (action.equalsIgnoreCase("update")) {
                 int userID = Integer.parseInt(request.getParameter("userID"));
@@ -306,11 +300,11 @@ public class InstructorCourseServlet extends HttpServlet {
                     return;
                 }
 
-                if (courseName.length() > 30) {
+                if (courseName.length() > 30 || courseName.length() < 10) {
                     List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Create failed: Course Name must not exceed 30 characters.");
+                    request.setAttribute("err", "Create failed: Course Name must be between 10 and 30 characters.");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 }
@@ -324,23 +318,14 @@ public class InstructorCourseServlet extends HttpServlet {
                     return;
                 }
 
-                if (courseName.matches(".*\\d.*")) {
+                if (originalPrice > 10000000) {
                     List<Course> list = cDao.getCourseByUserID(userID);
 
                     request.setAttribute("listCourse", list);
-                    request.setAttribute("err", "Create failed: Course Name must not contain numbers.");
+                    request.setAttribute("err", "Create failed: Original Price is not greater than 10,000 (Ten million)!");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 }
-
-//                if (salePrice >= originalPrice) {
-//                    List<Course> list = cDao.getCourseByUserID(userID);
-//
-//                    request.setAttribute("listCourse", list);
-//                    request.setAttribute("err", "Update failed: Sale price is higher than original price!");
-//                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
-//                    return;
-//                }
 
                 if (courseSummary == null || courseSummary.trim().isEmpty()) {
                     List<Course> list = cDao.getCourseByUserID(userID);
@@ -386,9 +371,11 @@ public class InstructorCourseServlet extends HttpServlet {
                     request.setAttribute("success", "Course updated successfully!!!");
                     request.setAttribute("listCourse", list);
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                    return;
                 } else {
                     request.setAttribute("err", "Update failed: Unknown error!");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                    return;
                 }
             } else if (action.equalsIgnoreCase("delete")) {
                 int userID = Integer.parseInt(request.getParameter("userID"));
@@ -404,17 +391,49 @@ public class InstructorCourseServlet extends HttpServlet {
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
                     return;
                 } else {
-                    int delete = cDao.checkStatus(courseID);
+                    Course course = cDao.getCourseByCourseID(courseID);
 
-                    if (delete > 0) {
+                    if (course == null) {
+                        request.setAttribute("err", "Delete failed: Course not exists!");
+                        request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                        return;
+                    } else if (course.getApproveStatus() == 0 || course.getApproveStatus() == 2) {
+                        int delete = cDao.deleteCourse(courseID);
+
+                        if (delete > 0) {
+                            List<Course> list = cDao.getCourseByUserID(userID);
+
+                            request.setAttribute("success", "Course deleted successfully!!!");
+                            request.setAttribute("listCourse", list);
+                            request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                            return;
+                        } else {
+                            request.setAttribute("err", "Delete failed: Unknown error!");
+                            request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                            return;
+                        }
+                    } else if (course.getApproveStatus() == 1) {
+                        int status = cDao.checkStatus(courseID);
+
+                        if (status > 0) {
+                            List<Course> list = cDao.getCourseByUserID(userID);
+
+                            request.setAttribute("success", "Course deleted successfully!!!");
+                            request.setAttribute("listCourse", list);
+                            request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                            return;
+                        } else {
+                            request.setAttribute("err", "Delete failed: Unknown error!");
+                            request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                            return;
+                        }
+                    } else {
                         List<Course> list = cDao.getCourseByUserID(userID);
 
-                        request.setAttribute("success", "Course deleted successfully!!!");
+                        request.setAttribute("err", "Delete failed: The course is under approval and cannot be deleted!");
                         request.setAttribute("listCourse", list);
                         request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
-                    } else {
-                        request.setAttribute("err", "Delete failed: Unknown error!");
-                        request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                        return;
                     }
                 }
             } else if (action.equalsIgnoreCase("approve")) {
@@ -423,11 +442,11 @@ public class InstructorCourseServlet extends HttpServlet {
 
                 Course course = cDao.getCourseByCourseID(courseID);
 
-                if (course  != null) {
+                if (course != null) {
                     int hasModule = mDao.checkModuleByCourseID(courseID);
                     int hasMaterial = matDao.checkMaterialInCourse(courseID);
 
-                    if(hasModule < 1 || hasMaterial < 1){
+                    if (hasModule < 1 || hasMaterial < 1) {
                         List<Course> list = cDao.getCourseByUserID(userID);
 
                         request.setAttribute("listCourse", list);
@@ -439,14 +458,22 @@ public class InstructorCourseServlet extends HttpServlet {
                     int submit = cDao.submitCourseApprove(courseID);
 
                     if (submit > 0) {
+                        String sender = request.getParameter("userName");
+                        String displayName = request.getParameter("displayName");
+                        String notiMess = displayName + "(" + sender + ") has created a new course is " + courseID;
+                        String type = "addCourse";//max10
+                        String link = "http://";
+                        int idAdmin = 5;
+                        notiDao.sendNofication(idAdmin, sender, link, notiMess, type);
                         List<Course> list = cDao.getCourseByUserID(userID);
-
                         request.setAttribute("success", "Submit Course successfully!!!");
                         request.setAttribute("listCourse", list);
                         request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                        return;
                     } else {
-                        request.setAttribute("err", "Delete failed: Unknown error!");
+                        request.setAttribute("err", "Submit failed: Unknown error!");
                         request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                        return;
                     }
                 } else {
                     List<Course> list = cDao.getCourseByUserID(userID);
@@ -454,7 +481,60 @@ public class InstructorCourseServlet extends HttpServlet {
                     request.setAttribute("listCourse", list);
                     request.setAttribute("err", "Submit failed: CourseID does not exist!");
                     request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                    return;
                 }
+            } else if (action.equalsIgnoreCase("cancel")) {
+                int userID = Integer.parseInt(request.getParameter("userID"));
+                int courseID = Integer.parseInt(request.getParameter("courseID"));
+
+                Course course = cDao.getCourseByCourseID(courseID);
+
+                if (course != null) {
+
+                    int cancel = cDao.cancelCourseApprove(courseID);
+
+                    if (cancel > 0) {
+                        String sender = request.getParameter("userName");
+                        String displayName = request.getParameter("displayName");
+                        String notiMess = displayName + "(" + sender + ") has created a new course is " + courseID;
+                        int deleteId = notiDao.getNotiIdByNotiMess(notiMess);
+                        int row = notiDao.delete(deleteId);
+                        if (row == 0) {
+                            request.setAttribute("err", notiMess + deleteId);
+                            request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                            return;
+                        }
+                        List<Course> list = cDao.getCourseByUserID(userID);
+                        request.setAttribute("success", "Cancel Course successfully!!!");
+                        request.setAttribute("listCourse", list);
+                        request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                        return;
+                    } else {
+                        request.setAttribute("err", "Cancel failed: Unknown error!");
+                        request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                        return;
+                    }
+                } else {
+                    List<Course> list = cDao.getCourseByUserID(userID);
+
+                    request.setAttribute("listCourse", list);
+                    request.setAttribute("err", "Cancel failed: CourseID does not exist!");
+                    request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
+                }
+            } else if (action.equalsIgnoreCase("search")) {
+                String inputSearch = request.getParameter("searchCourse");
+                int userId = Integer.parseInt(request.getParameter("userId"));
+
+                List<Course> listCourse;
+
+                if(inputSearch != null && !inputSearch.trim().isEmpty()) {
+                    listCourse = cDao.searchCourseByName(inputSearch.trim());
+                } else {
+                    listCourse = cDao.getCourseByUserID(userId);
+                }
+
+                request.setAttribute("listCourse", listCourse);
+                request.getRequestDispatcher("/WEB-INF/views/listCourse.jsp").forward(request, response);
             }
         }
     }

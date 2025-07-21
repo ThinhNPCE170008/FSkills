@@ -214,20 +214,20 @@
         </a>
     </div>
 
-    <!-- Success/Error Messages -->
-    <c:if test="${not empty success}">
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            ${success}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    </c:if>
+<%--    <!-- Success/Error Messages -->--%>
+<%--    <c:if test="${not empty success}">--%>
+<%--        <div class="alert alert-success alert-dismissible fade show" role="alert">--%>
+<%--            ${success}--%>
+<%--            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>--%>
+<%--        </div>--%>
+<%--    </c:if>--%>
 
-    <c:if test="${not empty err}">
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            ${err}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    </c:if>
+<%--    <c:if test="${not empty err}">--%>
+<%--        <div class="alert alert-danger alert-dismissible fade show" role="alert">--%>
+<%--            ${err}--%>
+<%--            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>--%>
+<%--        </div>--%>
+<%--    </c:if>--%>
 
     <!-- Test Info -->
     <div class="test-info">
@@ -276,9 +276,13 @@
                 
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="passPercentage" class="form-label">Pass Percentage (%)</label>
-                        <input type="number" class="form-control" id="passPercentage" name="passPercentage" 
-                               value="${test.passPercentage}" min="0" max="100" required>
+                        <label for="requiredCorrectAnswers" class="form-label">Required Correct Answers</label>
+                        <input type="number" class="form-control" id="requiredCorrectAnswers" name="requiredCorrectAnswers" 
+                               min="1" required onchange="calculatePassPercentage()">
+                        <input type="hidden" id="passPercentage" name="passPercentage" value="${test.passPercentage}">
+                        <small class="form-text text-muted">
+                            Equivalent percentage: <span id="calculatedPercentage">${test.passPercentage}</span>%
+                        </small>
                     </div>
                 </div>
             </div>
@@ -329,6 +333,7 @@
 </div>
 
 <jsp:include page="/layout/footer.jsp"/>
+<jsp:include page="/layout/toast.jsp"/>
 <script src="${pageContext.request.contextPath}/layout/formatUtcToVietnamese.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -396,20 +401,14 @@
             '</div>' +
 
             '<div class="row">' +
-                '<div class="col-md-6">' +
-                    '<div class="mb-3">' +
-                        '<label class="form-label">Points</label>' +
-                        '<input type="number" class="form-control" name="point_' + questionCounter + '" ' +
-                               'value="' + (data.point || '1') + '" min="1" max="10">' +
-                    '</div>' +
-                '</div>' +
-                '<div class="col-md-6">' +
+                '<div class="col-md-12">' +
                     '<div class="mb-3">' +
                         '<label class="form-label">Question Type</label>' +
                         '<select class="form-select" name="questionType_' + questionCounter + '" onchange="toggleQuestionType(this, ' + questionCounter + ')">' +
                             '<option value="CHOICE"' + (data.questionType == 'CHOICE' ? ' selected' : '') + '>Multiple Choice</option>' +
                             '<option value="WRITING"' + (data.questionType == 'WRITING' ? ' selected' : '') + '>Writing</option>' +
                         '</select>' +
+                        '<input type="hidden" name="point_' + questionCounter + '" value="' + (data.point || '1') + '">' +
                     '</div>' +
                 '</div>' +
             '</div>' +
@@ -474,6 +473,7 @@
         
         updateQuestionCount();
         updateQuestionNumbers();
+        calculatePassPercentage();
         
         // Initialize question type display
         if (data.questionType == 'WRITING') {
@@ -487,6 +487,7 @@
             questionDiv.remove();
             updateQuestionCount();
             updateQuestionNumbers();
+            calculatePassPercentage();
         }
     }
 
@@ -650,60 +651,184 @@
     }
 
     // Form validation
-    document.getElementById('updateTestForm').addEventListener('submit', function(e) {
+    document.getElementById('updateTestForm').addEventListener('submit', async function(e) {
+        e.preventDefault(); // Always prevent default initially
+        
         const questions = document.querySelectorAll('.question-container');
         
         if (questions.length === 0) {
-            e.preventDefault();
-            alert('Please add at least one question to the test.');
+            showJsToast('Please add at least one question to the test.', 'danger');
             return;
         }
 
-        // Validate each question
+        // Validate inputs
+        if (!validateInputs()) {
+            return;
+        }
+
+        // Check test order duplicates
+        const isOrderValid = await validateTestOrder();
+        if (!isOrderValid) {
+            return;
+        }
+
+        // Check required correct answers vs total questions
+        const requiredAnswers = parseInt(document.getElementById('requiredCorrectAnswers').value) || 0;
+        const totalQuestions = questions.length;
+        
+        if (requiredAnswers > totalQuestions) {
+            showJsToast('Required correct answers cannot exceed total number of questions.', 'danger');
+            document.getElementById('requiredCorrectAnswers').focus();
+            return;
+        }
+
+        if (requiredAnswers === 0) {
+            showJsToast('Please specify the number of required correct answers.', 'danger');
+            document.getElementById('requiredCorrectAnswers').focus();
+            return;
+        }
+
+        // All validations passed, submit the form
+        this.submit();
+    });
+
+    // Calculate pass percentage based on required correct answers and total questions
+    function calculatePassPercentage() {
+        const requiredAnswers = parseInt(document.getElementById('requiredCorrectAnswers').value) || 0;
+        const totalQuestions = document.querySelectorAll('.question-container').length;
+        
+        if (totalQuestions > 0 && requiredAnswers > 0) {
+            const percentage = Math.round((requiredAnswers / totalQuestions) * 100);
+            document.getElementById('calculatedPercentage').textContent = percentage;
+            document.getElementById('passPercentage').value = percentage;
+        } else {
+            document.getElementById('calculatedPercentage').textContent = '--';
+        }
+    }
+
+    // Calculate required answers from current percentage and total questions
+    function calculateRequiredAnswers() {
+        const passPercentage = parseInt(document.getElementById('passPercentage').value) || 0;
+        const totalQuestions = document.querySelectorAll('.question-container').length;
+        
+        if (totalQuestions > 0 && passPercentage > 0) {
+            const requiredAnswers = Math.ceil((passPercentage / 100) * totalQuestions);
+            document.getElementById('requiredCorrectAnswers').value = requiredAnswers;
+        }
+    }
+
+    // Validate test order for duplicates
+    function validateTestOrder() {
+        const testOrder = document.getElementById('testOrder').value;
+        const testId = document.querySelector('input[name="testId"]').value;
+        const moduleId = '${test.moduleID}'; // Get module ID from server-side data
+        
+        if (!testOrder) {
+            return Promise.resolve(true); // Skip validation if field is empty
+        }
+        
+        return fetch('${pageContext.request.contextPath}/instructor/tests?action=checkTestOrder&moduleId=' + moduleId + '&testOrder=' + testOrder + '&testId=' + testId)
+            .then(response => response.json())
+            .then(data => {
+                if (data.exists) {
+                    showJsToast('Test order ' + testOrder + ' already exists in this module. Please choose a different order.', 'danger');
+                    return false;
+                }
+                return true;
+            })
+            .catch(error => {
+                console.error('Error checking test order:', error);
+                return true; // Allow submission on error
+            });
+    }
+
+    // Trim whitespace and validate inputs
+    function trimAndValidateInput(input) {
+        if (!input) return '';
+        
+        // Trim leading, trailing, and multiple consecutive spaces
+        let trimmed = input.trim().replace(/\s+/g, ' ');
+        return trimmed;
+    }
+
+    function validateInputs() {
         let isValid = true;
-        for (let index = 0; index < questions.length; index++) {
-            const question = questions[index];
-            const questionType = question.querySelector('select[name^="questionType_"]').value;
-            const questionContent = question.querySelector(`[id^="question-content_"]`);
+        const testName = document.getElementById('testName');
+        
+        // Validate test name
+        const trimmedTestName = trimAndValidateInput(testName.value);
+        if (trimmedTestName.length === 0) {
+            showJsToast('Test name cannot be empty or contain only whitespace.', 'danger');
+            testName.focus();
+            isValid = false;
+        } else {
+            testName.value = trimmedTestName;
+        }
+        
+        // Validate questions and answers
+        const questions = document.querySelectorAll('.question-container');
+        for (let i = 0; i < questions.length; i++) {
+            const questionContent = questions[i].querySelector('[id^="question-content_"]');
+            const questionType = questions[i].querySelector('select[name^="questionType_"]').value;
             
-            // Check for actual content (text or images)
-            const hasText = questionContent.textContent.trim().length > 0;
-            const hasImages = questionContent.getElementsByTagName('img').length > 0;
-            
-            if (!hasText && !hasImages) {
-                isValid = false;
-                alert(`Question ${index + 1}: Question text is required.`);
-                questionContent.classList.add('is-invalid');
+            // Validate question text
+            const questionText = trimAndValidateInput(questionContent.textContent);
+            if (questionText.length === 0 && questionContent.getElementsByTagName('img').length === 0) {
+                showJsToast(`Question ${i + 1}: Question text cannot be empty or contain only whitespace.`, 'danger');
                 questionContent.focus();
+                isValid = false;
                 break;
             }
             
             if (questionType === 'CHOICE') {
-                const option1 = question.querySelector(`input[name^="option1_"]`);
-                const option2 = question.querySelector(`input[name^="option2_"]`);
+                // Validate answer options
+                const option1 = questions[i].querySelector('input[name^="option1_"]');
+                const option2 = questions[i].querySelector('input[name^="option2_"]');
                 
-                if (!option1.value.trim() || !option2.value.trim()) {
+                const trimmedOption1 = trimAndValidateInput(option1.value);
+                const trimmedOption2 = trimAndValidateInput(option2.value);
+                
+                if (trimmedOption1.length === 0) {
+                    showJsToast(`Question ${i + 1}: Option A cannot be empty or contain only whitespace.`, 'danger');
+                    option1.focus();
                     isValid = false;
-                    alert(`Question ${index + 1}: At least options A and B are required for multiple choice questions.`);
-                    if (!option1.value.trim()) option1.focus();
-                    else option2.focus();
                     break;
+                } else {
+                    option1.value = trimmedOption1;
                 }
-            } else { // WRITING
-                const modelAnswer = question.querySelector('textarea[name^="writingAnswer_"]');
-                if (!modelAnswer.value.trim()) {
+                
+                if (trimmedOption2.length === 0) {
+                    showJsToast(`Question ${i + 1}: Option B cannot be empty or contain only whitespace.`, 'danger');
+                    option2.focus();
                     isValid = false;
-                    alert(`Question ${index + 1}: Model answer is required for writing questions.`);
-                    modelAnswer.focus();
                     break;
+                } else {
+                    option2.value = trimmedOption2;
+                }
+                
+                // Trim optional options
+                const option3 = questions[i].querySelector('input[name^="option3_"]');
+                const option4 = questions[i].querySelector('input[name^="option4_"]');
+                if (option3.value) option3.value = trimAndValidateInput(option3.value);
+                if (option4.value) option4.value = trimAndValidateInput(option4.value);
+            } else {
+                // Validate writing answer
+                const writingAnswer = questions[i].querySelector('textarea[name^="writingAnswer_"]');
+                const trimmedWritingAnswer = trimAndValidateInput(writingAnswer.value);
+                
+                if (trimmedWritingAnswer.length === 0) {
+                    showJsToast(`Question ${i + 1}: Model answer cannot be empty or contain only whitespace.`, 'danger');
+                    writingAnswer.focus();
+                    isValid = false;
+                    break;
+                } else {
+                    writingAnswer.value = trimmedWritingAnswer;
                 }
             }
         }
-
-        if (!isValid) {
-            e.preventDefault();
-        }
-    });
+        
+        return isValid;
+    }
 
     // Load existing questions when page loads
     document.addEventListener('DOMContentLoaded', function() {
@@ -717,6 +842,12 @@
         if (existingQuestions.length === 0) {
             addQuestion();
         }
+        
+        // Calculate required answers from existing percentage
+        calculateRequiredAnswers();
+        
+        // Add event listeners for real-time validation
+        document.getElementById('testOrder').addEventListener('blur', validateTestOrder);
     });
 
     // Auto-hide alerts after 5 seconds

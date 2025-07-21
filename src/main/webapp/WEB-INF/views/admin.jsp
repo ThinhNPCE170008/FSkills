@@ -90,26 +90,13 @@
         </div>
 
         <script>
-            // Lấy các phần tử cần thiết
-            const notificationBell = document.getElementById('notification-bell');
-            const notificationPopup = document.getElementById('notification-popup');
             const uploadFileBtn = document.getElementById('upload-file-btn');
             const fileInput = document.getElementById('file-input');
             const uploadImageBtn = document.getElementById('upload-image-btn');
             const imageInput = document.getElementById('image-input');
 
-            // Chuyển đổi trạng thái hiển thị popup thông báo khi click vào chuông
-            notificationBell.addEventListener('click', (event) => {
-                event.stopPropagation(); // Ngăn chặn sự kiện click lan truyền ra ngoài
-                notificationPopup.classList.toggle('hidden');
-            });
-
-            // Ẩn popup thông báo khi click ra ngoài
-            document.addEventListener('click', (event) => {
-                if (!notificationBell.contains(event.target) && !notificationPopup.contains(event.target)) {
-                    notificationPopup.classList.add('hidden');
-                }
-            });
+            
+          
 
             // Xử lý sự kiện click cho nút upload file (+)
             uploadFileBtn.addEventListener('click', () => {

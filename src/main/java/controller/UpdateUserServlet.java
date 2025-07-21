@@ -36,7 +36,7 @@ public class UpdateUserServlet extends HttpServlet {
     private static final Logger LOGGER = Logger.getLogger(UpdateUserServlet.class.getName());
     private static final Pattern DISPLAY_NAME_PATTERN = Pattern.compile("^[\\p{L}]+(\\s[\\p{L}]+)*$");
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-zA-Z0-9-]*[a-zA-Z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x5e-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])$");
-    private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("^(?:(0|\\+84)[35789]\\d{8}|016[2-9]\\d{7}|02\\d{9,10}|09\\d{8}|08\\d{8}|07\\d{8}|03\\d{8}|05\\d{8})$");
+    private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("^0[1-9](?!.*000)\\d{8}$");  
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

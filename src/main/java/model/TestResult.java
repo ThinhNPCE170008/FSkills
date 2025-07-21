@@ -18,6 +18,12 @@ public class TestResult {
     // For relationships
     private Test test;
     private User user;
+    
+    // Additional fields for instructor views
+    private String fullName;
+    private String email;
+    private String testName;
+    private String testType;
 
     public TestResult() {
     }
@@ -122,6 +128,38 @@ public class TestResult {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getTestName() {
+        return testName;
+    }
+
+    public void setTestName(String testName) {
+        this.testName = testName;
+    }
+
+    public String getTestType() {
+        return testType;
+    }
+
+    public void setTestType(String testType) {
+        this.testType = testType;
     }
 
     @Override

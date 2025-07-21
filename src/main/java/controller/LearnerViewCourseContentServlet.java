@@ -78,44 +78,66 @@ public class LearnerViewCourseContentServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        List<Module> molList;
-        List<Material> matList;
-        HashMap<Integer, List<Material>> mapOfModuleIdToMaterialList = new HashMap<>();
-        HashMap<Integer, Boolean> mapOfMaterialIdToStudyStatus = new HashMap<>();
-        HashMap<Integer, Boolean> mapOfModuleIdToTotalStudiedCount = new HashMap<>();
-        Course cou;
-        int progress;
+        String role = (String) session.getAttribute("role");
         if (user == null) {
             response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+        if (null == role) {
+            response.sendRedirect(request.getContextPath() + "/homePage_Guest.jsp");
         } else {
-            String courseParam = request.getParameter("courseID");
-            try {
-                int courseID = Integer.parseInt(courseParam);
-                if (eDAO.checkEnrollment(user.getUserId(), courseID)) {
-                    progress = sDAO.returnStudyProgress(user.getUserId(), courseID);
-                    cou = couDAO.getCourseByCourseID(courseID);
-                    molList = molDAO.getAllModuleByCourseID(courseID);
-                    for (Module mol : molList) {
-                        matList = matDAO.getAllMaterial(courseID, mol.getModuleID());
-                        mapOfModuleIdToMaterialList.put(mol.getModuleID(), matList);
-                        mapOfModuleIdToTotalStudiedCount.put(mol.getModuleID(), sDAO.returnTotalStudy(user.getUserId(), mol.getModuleID(), matList.size()));
-                        for (Material mat : matList) {
-                            mapOfMaterialIdToStudyStatus.put(mat.getMaterialId(), sDAO.checkStudy(user.getUserId(), mat.getMaterialId()));
+            switch (role) {
+                case "LEARNER":
+                    List<Module> molList;
+                    List<Material> matList;
+                    HashMap<Integer, List<Material>> mapOfModuleIdToMaterialList = new HashMap<>();
+                    HashMap<Integer, Boolean> mapOfMaterialIdToStudyStatus = new HashMap<>();
+                    HashMap<Integer, Boolean> mapOfModuleIdToTotalStudiedCount = new HashMap<>();
+                    Course cou;
+                    int progress;
+                    if (user == null) {
+                        response.sendRedirect(request.getContextPath() + "/login");
+                    } else {
+                        String courseParam = request.getParameter("courseID");
+                        try {
+                            int courseID = Integer.parseInt(courseParam);
+                            if (eDAO.checkEnrollment(user.getUserId(), courseID)) {
+                                progress = sDAO.returnStudyProgress(user.getUserId(), courseID);
+                                cou = couDAO.getCourseByCourseID(courseID);
+                                molList = molDAO.getAllModuleByCourseID(courseID);
+                                for (Module mol : molList) {
+                                    matList = matDAO.getAllMaterial(courseID, mol.getModuleID());
+                                    mapOfModuleIdToMaterialList.put(mol.getModuleID(), matList);
+                                    mapOfModuleIdToTotalStudiedCount.put(mol.getModuleID(), sDAO.returnTotalStudy(user.getUserId(), mol.getModuleID(), matList.size()));
+                                    for (Material mat : matList) {
+                                        mapOfMaterialIdToStudyStatus.put(mat.getMaterialId(), sDAO.checkStudy(user.getUserId(), mat.getMaterialId()));
+                                    }
+                                }
+                                request.setAttribute("Course", cou);
+                                request.setAttribute("ModuleList", molDAO.getAllModuleByCourseID(courseID));
+                                request.setAttribute("User", user);
+                                request.setAttribute("progress", progress);
+                                request.setAttribute("matMap", mapOfModuleIdToMaterialList); // key: moduleID, value: List<Material>
+                                request.setAttribute("studyMap", mapOfMaterialIdToStudyStatus); // key: materialID, value: boolean
+                                request.setAttribute("totalStudyMap", mapOfModuleIdToTotalStudiedCount); // key: moduleID, value: boolean
+                                request.getRequestDispatcher("/WEB-INF/views/learnerCourseContentView.jsp").forward(request, response);
+                            } else {
+                                response.sendRedirect(request.getContextPath() + "/courseDetail?id=" + courseID);
+                            }
+                        } catch (Exception E) {
+                            System.out.println("Can't convert attribute into Interger");
                         }
                     }
-                    request.setAttribute("Course", cou);
-                    request.setAttribute("ModuleList", molDAO.getAllModuleByCourseID(courseID));
-                    request.setAttribute("User", user);
-                    request.setAttribute("progress", progress);
-                    request.setAttribute("matMap", mapOfModuleIdToMaterialList); // key: moduleID, value: List<Material>
-                    request.setAttribute("studyMap", mapOfMaterialIdToStudyStatus); // key: materialID, value: boolean
-                    request.setAttribute("totalStudyMap", mapOfModuleIdToTotalStudiedCount); // key: moduleID, value: boolean
-                    request.getRequestDispatcher("/WEB-INF/views/learnerCourseContentView.jsp").forward(request, response);
-                } else {
-                    response.sendRedirect(request.getContextPath() + "/courseDetail?id=" + courseID);
-                }
-            } catch (Exception E) {
-                System.out.println("Can't convert attribute into Interger");
+                    break;
+                case "INSTRUCTOR":
+                    response.sendRedirect(request.getContextPath() + "/instructor");
+                    break;
+                case "ADMIN":
+                    response.sendRedirect(request.getContextPath() + "/admin");
+                    break;
+                default:
+                    response.sendRedirect(request.getContextPath() + "/homePage_Guest.jsp");
+                    break;
             }
         }
     }
@@ -133,14 +155,49 @@ public class LearnerViewCourseContentServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
-        String courseParam = request.getParameter("Enroll");
-        try{
-            int courseID = Integer.parseInt(courseParam);
-            if(eDAO.setEnrollDate(user.getUserId(), courseID) > 0){
-                response.sendRedirect(request.getContextPath() + "/learner/course?courseID=" + courseID);
+        String role = (String) session.getAttribute("role");
+
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+        if (null == role) {
+            response.sendRedirect(request.getContextPath() + "/homePage_Guest.jsp");
+        } else {
+            switch (role) {
+                case "LEARNER":
+                    String courseParam = request.getParameter("Enroll");
+                    String addCourseParam = request.getParameter("AddEnroll");
+                    try {
+                        if (courseParam != null) {
+                            int courseID = Integer.parseInt(courseParam);
+                            if (eDAO.setEnrollDate(user.getUserId(), courseID) != 0) {
+                                response.sendRedirect(request.getContextPath() + "/learner/course?courseID=" + courseID);
+                            }
+                        } else if (addCourseParam != null) {
+                            int courseID = Integer.parseInt(addCourseParam);
+                            if (eDAO.addLearnerEnrollment(user.getUserId(), courseID) != 0) {
+                                if (eDAO.setEnrollDate(user.getUserId(), courseID) != 0) {
+                                    response.sendRedirect(request.getContextPath() + "/learner/course?courseID=" + courseID);
+                                }
+                            }
+                        } else {
+                            response.sendRedirect(request.getContextPath() + "/learner/courselist");
+                        }
+                    } catch (Exception E) {
+                        System.out.println("Can't Enroll User");
+                    }
+                    break;
+                case "INSTRUCTOR":
+                    response.sendRedirect(request.getContextPath() + "/instructor");
+                    break;
+                case "ADMIN":
+                    response.sendRedirect(request.getContextPath() + "/admin");
+                    break;
+                default:
+                    response.sendRedirect(request.getContextPath() + "/homePage_Guest.jsp");
+                    break;
             }
-        } catch(Exception E){
-            System.out.println("Can't Enroll User");
         }
     }
 

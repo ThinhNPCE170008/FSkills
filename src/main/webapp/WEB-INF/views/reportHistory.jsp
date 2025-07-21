@@ -7,6 +7,7 @@
         <meta charset="UTF-8">
         <title>Report History</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
         <style>
             .status-live {
                 color: green;

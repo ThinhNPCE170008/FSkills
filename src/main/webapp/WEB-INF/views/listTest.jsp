@@ -95,37 +95,30 @@
             <i class="fas fa-arrow-left"></i> Back
         </a>
 
-        <a href="${pageContext.request.contextPath}/instructor/tests?action=create" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Create New Test
-        </a>
-    </div>
-
-    <!-- Toast Notification Container -->
-    <div style="z-index: 2000;" class="toast-container position-fixed bottom-0 end-0 p-3">
-        <!-- Success Toast -->
-        <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert"
-             aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                    <c:if test="${not empty success}">${success}</c:if>
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                        aria-label="Close"></button>
-            </div>
-        </div>
-        <!-- Error Toast -->
-        <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert"
-             aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                    <c:if test="${not empty err}">${err}</c:if>
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                        aria-label="Close"></button>
-            </div>
+        <div class="d-flex gap-2">
+            <a href="${pageContext.request.contextPath}/instructor/tests?action=studentResults" class="btn btn-info">
+                <i class="fas fa-users"></i> Student Results
+            </a>
+            <a href="${pageContext.request.contextPath}/instructor/tests?action=create" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Create New Test
+            </a>
         </div>
     </div>
 
+<%--    <!-- Success/Error Messages -->--%>
+<%--    <c:if test="${not empty success}">--%>
+<%--        <div class="alert alert-success alert-dismissible fade show" role="alert">--%>
+<%--            ${success}--%>
+<%--            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>--%>
+<%--        </div>--%>
+<%--    </c:if>--%>
+
+<%--    <c:if test="${not empty err}">--%>
+<%--        <div class="alert alert-danger alert-dismissible fade show" role="alert">--%>
+<%--            ${err}--%>
+<%--            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>--%>
+<%--        </div>--%>
+<%--    </c:if>--%>
 
     <!-- Filter Section -->
     <div class="card mb-4">
@@ -309,70 +302,28 @@
 </div>
 
 <jsp:include page="/layout/footer.jsp"/>
+<jsp:include page="/layout/toast.jsp"/>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="${pageContext.request.contextPath}/layout/formatUtcToVietnamese.js"></script>
 
 <script>
-// Function to initialize toasts - will be called after Bootstrap is fully loaded
-function initializeToasts() {
-    console.log("Initializing toasts");
-    console.log("Bootstrap available:", typeof bootstrap !== 'undefined');
-
-    try {
-        // Initialize and show toasts if needed
-        if (document.getElementById('successToast').querySelector('.toast-body').textContent.trim()) {
-            console.log("Success message found, showing toast");
-            if (typeof bootstrap === 'undefined') {
-                console.error("Bootstrap is not defined! Cannot show toast.");
-            } else {
-                const successToast = new bootstrap.Toast(document.getElementById('successToast'), {delay: 3000});
-                successToast.show();
-            }
-        } else {
-            console.log("No success message to show");
-        }
-
-        if (document.getElementById('errorToast').querySelector('.toast-body').textContent.trim()) {
-            console.log("Error message found, showing toast");
-            if (typeof bootstrap === 'undefined') {
-                console.error("Bootstrap is not defined! Cannot show toast.");
-            } else {
-                const errorToast = new bootstrap.Toast(document.getElementById('errorToast'), {delay: 3000});
-                errorToast.show();
-            }
-        } else {
-            console.log("No error message to show");
-        }
-    } catch (error) {
-        console.error("Error initializing toasts:", error);
-    }
-}
-
-// Ensure Bootstrap is loaded before initializing toasts
-window.addEventListener('load', function() {
-    console.log("Window loaded, checking Bootstrap");
-    if (typeof bootstrap !== 'undefined') {
-        console.log("Bootstrap is available, initializing toasts");
-        initializeToasts();
-    } else {
-        console.error("Bootstrap not available after window load!");
-        // Try to load Bootstrap again if it's not available
-        const bootstrapScript = document.createElement('script');
-        bootstrapScript.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js';
-        bootstrapScript.onload = function() {
-            console.log("Bootstrap loaded dynamically, initializing toasts");
-            initializeToasts();
-        };
-        document.head.appendChild(bootstrapScript);
-    }
-});
     function confirmDelete(testId) {
         document.getElementById('deleteTestId').value = testId;
         document.getElementById('deleteForm').action = '${pageContext.request.contextPath}/instructor/tests';
         new bootstrap.Modal(document.getElementById('deleteModal')).show();
     }
 
+    // Auto-hide alerts after 5 seconds
+    setTimeout(function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function(alert) {
+            if (alert.classList.contains('show')) {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            }
+        });
+    }, 5000);
 
     // Load modules for filter when course is selected
     function loadFilterModules() {
@@ -409,9 +360,6 @@ window.addEventListener('load', function() {
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        // This event listener now only handles non-toast related initialization
-        console.log("DOM Content Loaded - handling non-toast initialization");
-
         if (typeof formatUtcToVietnamese === 'function') {
             const datetimeElements = document.querySelectorAll('.datetime');
             if (datetimeElements.length > 0) {

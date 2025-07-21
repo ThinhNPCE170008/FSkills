@@ -186,11 +186,14 @@
                         <td class="course-name"><a href="<c:url value='/admin/ManageCourse?action=detail&id=${course.courseID}'/>">${course.courseName}</a></td>
                         <td class="hidden-mobile">
                             <c:choose>
-                                <c:when test="${course.courseSummary.length() > 50}">
+                                <c:when test="${not empty course.courseSummary and course.courseSummary.length() > 50}">
                                     ${course.courseSummary.substring(0, 50)}...
                                 </c:when>
-                                <c:otherwise>
+                                <c:when test="${not empty course.courseSummary}">
                                     ${course.courseSummary}
+                                </c:when>
+                                <c:otherwise>
+                                    No summary available
                                 </c:otherwise>
                             </c:choose>
                         </td>
@@ -199,14 +202,17 @@
                         <td class="hidden-mobile">
                             <span class="status
                                 <c:choose>
-                                    <c:when test='${course.status == 1}'>status-active</c:when>
-                                    <c:when test='${course.status == 2}'>status-upcoming</c:when>
+                                    <c:when test='${course.approveStatus == 1}'>status-active</c:when>
+                                    <c:when test='${course.approveStatus == 3}'>status-upcoming</c:when>
                                     <c:otherwise>status-ended</c:otherwise>
                                 </c:choose>">
                                 <c:choose>
-                                    <c:when test="${course.status == 1}">Active</c:when>
-                                    <c:when test="${course.status == 2}">Upcoming</c:when>
-                                    <c:otherwise>Ended</c:otherwise>
+                                    <c:when test="${course.approveStatus == 1}">Approved</c:when>
+                                    <c:when test="${course.approveStatus == 3}">Processing</c:when>
+                                    <c:when test="${course.approveStatus == 0}">Pending</c:when>
+                                    <c:when test="${course.approveStatus == 2}">Rejected</c:when>
+                                    <c:when test="${course.approveStatus == 4}">Hidden</c:when>
+                                    <c:otherwise>Unknown</c:otherwise>
                                 </c:choose>
                             </span>
                         </td>

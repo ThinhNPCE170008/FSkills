@@ -65,9 +65,9 @@ public class NotificationDAO extends DBContext {
                     + "[Status], [NotificationDate], [Type]) \n"
                     + "VALUES (?, ?, ?, ?,0, GETDATE(), 'toUser');";
         } else {
-            sql = "INSERT INTO [dbo].[Notification]([ReceiverID], [Sender], [Link], [NotificationMessage], \n"
+            sql = "INSERT INTO [dbo].[Notification]([ReceiverID], [Sender], [Link], [NotificationMessage],\n"
                     + "[Status], [NotificationDate], [Type]) \n"
-                    + "VALUES (?, ?, ?, ?,0, GETDATE(), ?);";
+                    + "VALUES (?, ?, ?, ?,0, GETDATE(), ?)";
         }
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -75,10 +75,10 @@ public class NotificationDAO extends DBContext {
             ps.setString(2, sender);
             ps.setString(3, link);
             ps.setString(4, notiMess);
-            int row = ps.executeUpdate();
             if (!type.equalsIgnoreCase("toUser")) {
                 ps.setString(5, type);
             }
+            int row = ps.executeUpdate();
             if (row > 0) {
                 return 1;
             } else {
@@ -134,8 +134,41 @@ public class NotificationDAO extends DBContext {
             ps.setInt(1, notificationId);
             ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 
+    public int delete(int id) {
+        String sql = "DELETE FROM [Notification] WHERE NotificationID = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, id);
+            int num = ps.executeUpdate();
+            if (num > 0) {
+                return 1;
+            } else {
+                return 0;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return 0;
+    }
+
+    public int getNotiIdByNotiMess(String mess) {
+        int id = -1; 
+        String sql = "SELECT NotificationID\n"
+                + "FROM Notification\n"
+                + "WHERE NotificationMessage = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1,mess); 
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                id = rs.getInt("NotificationID");
+            }
+        } catch (SQLException e) {
+        }
+        return id;
+    }
 }

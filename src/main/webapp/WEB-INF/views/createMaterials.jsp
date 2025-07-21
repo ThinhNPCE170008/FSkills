@@ -65,7 +65,7 @@
     </head>
     <body>
         <script>
-            const YOUTUBE_API_KEY = '${apiKey}';
+            const YOUTUBE_API_KEY = '${sessionScope.apiKey}';
         </script>
 
         <jsp:include page="/layout/sidebar_user.jsp"/>
@@ -289,11 +289,11 @@
                 let videoId = null;
 
                 const patterns = [
-                    /(?:https?:\/\/)?(?:www\.)?youtu\.be\/([a-zA-Z0-9_-]{11})/, // youtu.be/VIDEO_ID
-                    /(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/, // youtube.com/embed/VIDEO_ID
-                    /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/, // youtube.com/watch?v=VIDEO_ID
-                    /(?:https?:\/\/)?(?:www\.)?youtube\.com\/.*[?&]v=([a-zA-Z0-9_-]{11})/, // youtube.com/...&v=VIDEO_ID
+                    /https?:\/\/youtu\.be\/([a-zA-Z0-9_-]{11})(?:[?&].*)?/,
+                    /https?:\/\/www\.youtube\.com\/embed\/([a-zA-Z0-9_-]{11})(?:[?&].*)?/,
+                    /https?:\/\/www\.youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})(?:[?&].*)?/
                 ];
+
 
                 for (const pattern of patterns) {
                     const match = url.match(pattern);
@@ -313,12 +313,10 @@
                     fetch("https://www.googleapis.com/youtube/v3/videos?id=" + videoId + "&part=contentDetails&key=" + YOUTUBE_API_KEY)
                             .then(response => response.json())
                             .then(data => {
-                                console.log("YouTube API response:", data);
-                                console.log("Full video item:", data.items[0]);
                                 const durationISO = data?.items?.[0]?.contentDetails?.duration;
                                         if (durationISO) {
                                     const durationFormatted = convertISO8601ToTime(durationISO);
-                                    console.log(convertISO8601ToTime("PT3M43S"));  // → "00:03:43"
+
                                     document.getElementById("durationInput").value = durationFormatted;
                                     document.getElementById("videoTime").value = durationFormatted;
                                     document.getElementById("videoDurationDiv").classList.remove("d-none");

@@ -25,6 +25,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
+import model.Ban;
 
 import model.User;
 import model.UserGoogle;
@@ -88,6 +89,7 @@ public class LoginServlet extends HttpServlet {
             UserDAO dao = new UserDAO();
             User user = dao.findByGoogleIDWithAvatar(userGoogle.getId());
 
+
             if (user == null) {
                 user = dao.findByEmail(userGoogle.getEmail());
                 if (user == null) {
@@ -95,14 +97,20 @@ public class LoginServlet extends HttpServlet {
                     user = dao.findByGoogleIDWithAvatar(userGoogle.getId());
                 } else {
                     user.setGoogleID(userGoogle.getId());
-                    user.setAvatarUrl(userGoogle.getPicture());
                     dao.updateGoogleID(user);
                 }
             }
 
-            session.setAttribute("user", user);
-            session.setAttribute("role", user.getRole().toString());
-            RoleRedirect.redirect(user, response);
+            if (user.getBan() != Ban.BANNED) {
+                session.setAttribute("user", user);
+                session.setAttribute("role", user.getRole().toString());
+                RoleRedirect.redirect(user, response);
+            } else {
+                session.setAttribute("userBanned", user);
+                response.sendRedirect("banned.jsp");
+                return;
+            }
+
         } else {
             String token = null;
             String usernameCookieSaved = "";
@@ -123,10 +131,16 @@ public class LoginServlet extends HttpServlet {
                     UserDAO dao = new UserDAO();
                     User user = dao.findByToken(token);
                     if (user != null) {
-                        session.setAttribute("user", user);
-                        session.setAttribute("role", user.getRole().toString());
-                        RoleRedirect.redirect(user, response);
-                        return;
+                        if (user.getBan() != Ban.BANNED) {
+                            session.setAttribute("user", user);
+                            session.setAttribute("role", user.getRole().toString());
+                            RoleRedirect.redirect(user, response);
+                            return;
+                        } else {
+                            session.setAttribute("userBanned", user);
+                            response.sendRedirect("banned.jsp");
+                            return;
+                        }
                     }
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
@@ -205,34 +219,41 @@ public class LoginServlet extends HttpServlet {
             User user = dao.verifyMD5(username, password);
 
             if (user != null) {
-                session.setAttribute("user", user);
-                session.setAttribute("role", user.getRole().toString());
+                if (user.getBan() != Ban.BANNED) {
+                    session.setAttribute("user", user);
+                    session.setAttribute("role", user.getRole().toString());
 
-                if ("on".equalsIgnoreCase(rememberMe)) {
-                    try {
-                        String token = UUID.randomUUID().toString();
-                        Timestamp expiryDate = Timestamp.from(Instant.now().plus(30, ChronoUnit.DAYS));
-                        dao.saveToken(user.getUserId(), token, expiryDate);
+                    if ("on".equalsIgnoreCase(rememberMe)) {
+                        try {
+                            String token = UUID.randomUUID().toString();
+                            Timestamp expiryDate = Timestamp.from(Instant.now().plus(30, ChronoUnit.DAYS));
+                            dao.saveToken(user.getUserId(), token, expiryDate);
 
-                        Cookie tokenCookie = new Cookie("REMEMBER_TOKEN", token);
-                        tokenCookie.setMaxAge(30 * 24 * 60 * 60); // 30 day
-                        tokenCookie.setPath("/");
-                        tokenCookie.setHttpOnly(true);
-                        tokenCookie.setSecure(true);
-                        response.addCookie(tokenCookie);
+                            Cookie tokenCookie = new Cookie("REMEMBER_TOKEN", token);
+                            tokenCookie.setMaxAge(30 * 24 * 60 * 60); // 30 day
+                            tokenCookie.setPath("/");
+                            tokenCookie.setHttpOnly(true);
+                            tokenCookie.setSecure(true);
+                            response.addCookie(tokenCookie);
 
-                        Cookie usernameCookie = new Cookie("COOKIE_INPUT", username);
-                        usernameCookie.setMaxAge(30 * 24 * 60 * 60);
-                        usernameCookie.setPath("/");
-                        usernameCookie.setHttpOnly(true);
-                        usernameCookie.setSecure(true);
-                        response.addCookie(usernameCookie);
-                    } catch (Exception e) {
-                        System.out.println(e.getMessage());
+                            Cookie usernameCookie = new Cookie("COOKIE_INPUT", username);
+                            usernameCookie.setMaxAge(30 * 24 * 60 * 60);
+                            usernameCookie.setPath("/");
+                            usernameCookie.setHttpOnly(true);
+                            usernameCookie.setSecure(true);
+                            response.addCookie(usernameCookie);
+                        } catch (Exception e) {
+                            System.out.println(e.getMessage());
+                        }
                     }
-                }
 
-                RoleRedirect.redirect(user, response);
+                    RoleRedirect.redirect(user, response);
+                    return;
+                } else {
+                    session.setAttribute("userBanned", user);
+                    response.sendRedirect("banned.jsp");
+                    return;
+                }
             } else {
                 request.setAttribute("err", "Login failed: The user or password are wrong!!!");
                 request.getRequestDispatcher("login.jsp").forward(request, response);

@@ -62,7 +62,7 @@
     </head>
     <body>
         <script>
-            const YOUTUBE_API_KEY = '${apiKey}';
+            const YOUTUBE_API_KEY = '${sessionScope.apiKey}';
         </script>
         
         <jsp:include page="/layout/sidebar_user.jsp"/>

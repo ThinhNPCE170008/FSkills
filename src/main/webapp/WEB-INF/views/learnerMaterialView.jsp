@@ -310,10 +310,10 @@
         </style>
     </head>
     <body>
-        <%@include file="../../layout/sidebar_user.jsp" %>
 
         <div id="content" class="w-100">
-            <div id="material-content" class="main">
+            <%@include file="../../layout/sidebar_user.jsp" %>
+            <div id="material-content" class="main container">
                 <div id="listOfLink" class="ms-3">
                     <a class="linkoverflow link-primary"
                        href="${pageContext.request.contextPath}/learner/course?courseID=${Course.courseID}">
@@ -324,6 +324,8 @@
                 </div>
 
                 <h1 class="text-center mt-3 mb-4" style="font-size: 2rem; font-weight: 700;">${Material.materialName}</h1>
+                
+                <p class="mat-des mt-5 w-75 mx-auto">${Material.materialDescription}</p>
 
                 <c:choose>
                     <c:when test="${Material.type == 'video' && not empty Material.materialUrl}">
@@ -419,8 +421,6 @@
                         </form>
                     </c:if>
                 </div>
-
-                <p class="mat-des">${Material.materialDescription}</p>
 
                 <jsp:include page="/WEB-INF/views/comments_section.jsp" />
             </div>
@@ -567,7 +567,7 @@
             });
         </script>
 
-        <jsp:include page="/layout/toast.jsp"/>
+        <jsp:include page="../../layout/toast.jsp"/>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     </body>
 </html>

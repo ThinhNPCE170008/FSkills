@@ -3,7 +3,7 @@
 
 <div id="jsToast"
      class="toast align-items-center text-white bg-danger border-0 position-fixed bottom-0 end-0 m-3 d-none"
-     role="alert">
+     role="alert" style="z-index: 3000;">
     <div class="d-flex">
         <div class="toast-body" id="jsToastMessage"></div>
         <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>

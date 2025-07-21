@@ -511,7 +511,7 @@ public class UserDAO extends DBContext {
         return null;
     }
 
-// NEW METHOD: Tìm người dùng theo Email với avatar Google
+    // NEW METHOD: Tìm người dùng theo Email với avatar Google
     public User findByEmailWithAvatar(String Email) {
         String sql = "SELECT *, AvatarGoogle FROM Users WHERE Email = ?";
         try {
@@ -1142,7 +1142,7 @@ public class UserDAO extends DBContext {
                 boolean isVerified = rs.getBoolean("IsVerified");
                 String GoogleID = rs.getString("GoogleID");
 
-                User acc = new User(userID, userName, displayName, email, password, role, gender, timeCreate, timeCreate, avatar, info, Ban, reportAmount, info, isVerified, GoogleID);
+                User acc = new User(userID, userName, displayName, email, password, role, gender, birthOfDay, timeCreate, avatar, info, Ban, reportAmount, info, isVerified, GoogleID);
                 return acc;
             }
         } catch (Exception e) {
@@ -1211,7 +1211,7 @@ public class UserDAO extends DBContext {
     }
 
     public User findByEmail(String Email) {
-        String sql = "SELECT *, AvatarGoogle FROM Users WHERE Email = ?";
+        String sql = "SELECT * FROM Users WHERE Email = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -1261,8 +1261,8 @@ public class UserDAO extends DBContext {
                 String GoogleID = rs.getString("GoogleID");
                 String avatarGoogleUrl = rs.getString("AvatarGoogle");
 
-                User acc = new User(UserID, UserName, DisplayName, Email, Password, role, gender, TimeCreate, TimeCreate, Avatar, info, Ban, ReportAmount, info, isVerified, GoogleID);
-                acc.setAvatarUrl(avatarGoogleUrl);
+                User acc = new User(UserID, UserName, DisplayName, Email, Password, role, gender, BirthOfDay, TimeCreate, Avatar, info, Ban, ReportAmount, PhoneNumber, isVerified, GoogleID, avatarGoogleUrl);
+                
                 return acc;
             }
         } catch (Exception e) {

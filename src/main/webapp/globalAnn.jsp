@@ -55,13 +55,8 @@
         </style>
     </head>
     <body class="font-sans bg-gray-100">
-        <div class="p-4">
-            <a href="${pageContext.request.contextPath}/homePage_Guest.jsp" 
-               class="inline-flex items-center px-6 py-3 bg-gray-600 text-white rounded-full
-               hover:bg-gray-700 transition-colors shadow-md text-lg">
-                <i class="fa-solid fa-arrow-left mr-2"></i> Return
-            </a>
-        </div>
+        <jsp:include page="/layout/header.jsp" />
+        <jsp:include page="/layout/sidebar_user.jsp" />
         <div class="container mx-auto p-8">
             <h1 class="text-4xl font-bold text-center text-gray-800 mb-10">Global Announcements</h1>
 

@@ -289,6 +289,37 @@ public class TestDAO extends DBContext {
     }
 
     /**
+     * Check if test order already exists in a module
+     * @param moduleID The module ID to check
+     * @param testOrder The test order to check
+     * @param excludeTestID Test ID to exclude from check (for updates), use -1 for new tests
+     * @return true if test order exists, false otherwise
+     */
+    public boolean checkTestOrderExists(int moduleID, int testOrder, int excludeTestID) {
+        String sql = "SELECT COUNT(*) as count FROM Tests WHERE ModuleID = ? AND TestOrder = ?";
+        if (excludeTestID > 0) {
+            sql += " AND TestID != ?";
+        }
+        
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, moduleID);
+            ps.setInt(2, testOrder);
+            if (excludeTestID > 0) {
+                ps.setInt(3, excludeTestID);
+            }
+            
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("count") > 0;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error in checkTestOrderExists: " + e.getMessage());
+        }
+        return false;
+    }
+
+    /**
      * Helper method to update module's last update timestamp
      */
     private void updateModuleLastUpdate(int moduleID) {

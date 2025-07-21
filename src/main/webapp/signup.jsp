@@ -28,14 +28,6 @@
                     </div>
 
                     <div class="mb-3">
-                        <input type="password" class="form-control" name="password" placeholder="Password" required/>
-                    </div>
-
-                    <div class="mb-3">
-                        <input type="password" class="form-control" name="confirmPassword" placeholder="Confirm Password" required/>
-                    </div>
-
-                    <div class="mb-3">
                         <input type="email" class="form-control" name="email" placeholder="Email" required/>
                     </div>
 
@@ -43,11 +35,33 @@
                         <input type="tel" class="form-control" name="phoneNumber" placeholder="Phone Number" required/>
                     </div>
 
+                    <div class="mb-3 position-relative">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" required/>
+                        <i class="bi bi-eye-slash toggle-password" data-target="password" style="position:absolute; top:50%; right:10px; transform:translateY(-50%); cursor:pointer;"></i>
+                    </div>
+
+                    <div class="mb-3 position-relative">
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required/>
+                        <i class="bi bi-eye-slash toggle-password" data-target="confirmPassword" style="position:absolute; top:50%; right:10px; transform:translateY(-50%); cursor:pointer;"></i>
+                    </div>
+
                     <button type="submit" class="btn btn-info w-100 mb-3">Sign Up</button>
                 </form>
             </div>
         </div>
     </div>
+
+    <script>
+        document.querySelectorAll('.toggle-password').forEach(icon => {
+            icon.addEventListener('click', () => {
+                const targetInput = document.getElementById(icon.getAttribute('data-target'));
+                const isPassword = targetInput.type === 'password';
+                targetInput.type = isPassword ? 'text' : 'password';
+                icon.classList.toggle('bi-eye');
+                icon.classList.toggle('bi-eye-slash');
+            });
+        });
+    </script>    
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -126,18 +140,18 @@
                 }
 
                 if (
-                    !acceptedDomains.includes(domain) &&
-                    !acceptedTLDs.some(tld => domain.endsWith(tld))
-                ) {
+                        !acceptedDomains.includes(domain) &&
+                        !acceptedTLDs.some(tld => domain.endsWith(tld))
+                        ) {
                     showJsToast('Only accept gmail.com, email.com, or domains ending in .vn, .io, .me');
                     e.preventDefault();
                     return;
                 }
 
                 if (
-                    (domain.startsWith('gmail.') && domain !== 'gmail.com') ||
-                    (domain.startsWith('email.') && domain !== 'email.com')
-                ) {
+                        (domain.startsWith('gmail.') && domain !== 'gmail.com') ||
+                        (domain.startsWith('email.') && domain !== 'email.com')
+                        ) {
                     showJsToast('Invalid gmail/email domain. Only gmail.com or email.com are accepted.');
                     e.preventDefault();
                     return;

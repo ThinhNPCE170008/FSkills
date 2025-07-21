@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import model.Notification;
+import model.Role;
 import model.User;
 
 /**
@@ -69,14 +70,21 @@ public class NotificationServlet extends HttpServlet {
             response.sendRedirect("Login");
             return;
         }
+        Role role = acc.getRole();
         String action = request.getParameter("action");
-        if (action == null) {
+        if (action == null && role != Role.ADMIN) {
             action = "listNotification";
+        } else if (action == null && role == Role.ADMIN) {
+            action = "NotificationAdmin";
         }
         if (action.equalsIgnoreCase("listNotification")) {
             List<Notification> dataNotification = notiDAO.getAllNotificationsByUserId(acc.getUserId());
             session.setAttribute("listNotification", dataNotification);
             request.getRequestDispatcher("/WEB-INF/views/instructor_dBoard.jsp").forward(request, response);
+        } else if (action.equalsIgnoreCase("NotificationAdmin")) {
+            List<Notification> AdminNoti = notiDAO.getAllNotificationsForAdmin();
+            session.setAttribute("listNotification", AdminNoti);
+            request.getRequestDispatcher("/WEB-INF/views/admin.jsp").forward(request, response);
         }
     }
 

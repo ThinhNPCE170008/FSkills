@@ -42,7 +42,9 @@ public class StudyDAO extends DBContext {
             ps.setInt(1, UserID);
             ps.setInt(2, MaterialID);
             int result = ps.executeUpdate();
+            System.out.println(returnStudyProgress(UserID, CourseID));
             if ((result != 0) && (returnStudyProgress(UserID, CourseID) == 100)){
+                System.out.println("b");
                 EnrollDAO eDAO = new EnrollDAO();
                 eDAO.setCompleteDate(UserID, CourseID);
             }

@@ -74,6 +74,7 @@
                 border-radius: 8px;
                 background: white;
                 transition: all 0.3s ease;
+                position: relative;
             }
             .eachTest:hover{
                 background-color: #f8f9fa;
@@ -164,6 +165,40 @@
                 margin-bottom: 20px;
                 opacity: 0.5;
             }
+            .status-badge{
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                padding: 4px 12px;
+                border-radius: 12px;
+                font-size: 12px;
+                font-weight: 600;
+                z-index: 10;
+            }
+            .status-passed{
+                background-color: #28a745;
+                color: white;
+            }
+            .status-failed{
+                background-color: #dc3545;
+                color: white;
+            }
+            .btn-retake-test{
+                background-color: #ffc107;
+                border-color: #ffc107;
+                color: #212529;
+                padding: 8px 20px;
+                border-radius: 6px;
+                text-decoration: none;
+                font-size: 14px;
+                transition: all 0.3s ease;
+            }
+            .btn-retake-test:hover{
+                background-color: #e0a800;
+                border-color: #d39e00;
+                color: #212529;
+                transform: translateY(-1px);
+            }
         </style>
     </head>
     <body>
@@ -235,6 +270,20 @@
                                 <c:otherwise>
                                     <c:forEach var="test" items="${tests}">
                                         <div class="eachTest">
+                                            <!-- Status Badge -->
+                                            <c:if test="${not empty test.latestResult}">
+                                                <div class="status-badge ${test.latestResult.passed ? 'status-passed' : 'status-failed'}">
+                                                    <c:choose>
+                                                        <c:when test="${test.latestResult.passed}">
+                                                            <i class="fas fa-check-circle"></i> Passed
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <i class="fas fa-times-circle"></i> Not Passed
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </div>
+                                            </c:if>
+                                            
                                             <div class="testInfo">
                                                 <div class="testTitle">
                                                     ${test.testName}
@@ -256,13 +305,30 @@
                                                         <i class="fas fa-percentage"></i>
                                                         Pass: ${test.passPercentage}%
                                                     </span>
+                                                    <c:if test="${not empty test.latestResult}">
+                                                        <span>
+                                                            <i class="fas fa-chart-line"></i>
+                                                            Score: ${test.latestResult.result}%
+                                                        </span>
+                                                    </c:if>
                                                 </div>
                                             </div>
                                             <div class="testActions">
-                                                <a href="${pageContext.request.contextPath}/learner/tests?action=take&testId=${test.testID}" 
-                                                   class="btn-take-test">
-                                                    <i class="fas fa-play"></i> Take Test
-                                                </a>
+                                                <!-- Conditional Take/Retake Button -->
+                                                <c:choose>
+                                                    <c:when test="${not empty test.latestResult}">
+                                                        <a href="${pageContext.request.contextPath}/learner/tests?action=take&testId=${test.testID}" 
+                                                           class="btn-retake-test">
+                                                            <i class="fas fa-redo"></i> Retake Test
+                                                        </a>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <a href="${pageContext.request.contextPath}/learner/tests?action=take&testId=${test.testID}" 
+                                                           class="btn-take-test">
+                                                            <i class="fas fa-play"></i> Take Test
+                                                        </a>
+                                                    </c:otherwise>
+                                                </c:choose>
                                                 <a href="${pageContext.request.contextPath}/learner/tests?action=detail&testId=${test.testID}"
                                                    class="btn-view-detail">
                                                     <i class="fas fa-info-circle"></i> Details

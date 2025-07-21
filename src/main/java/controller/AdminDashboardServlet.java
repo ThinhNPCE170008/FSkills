@@ -38,7 +38,8 @@ public class AdminDashboardServlet extends HttpServlet {
         }
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8"); 
-        request.getRequestDispatcher("/WEB-INF/views/admin.jsp").forward(request, response);
+        
+        request.getRequestDispatcher("/notification").forward(request, response);
     }
 
     @Override

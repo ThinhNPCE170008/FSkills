@@ -29,7 +29,7 @@
 
         <style>
             body {
-                font-family: 'Inter', sans-serif;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                 background-color: #f8f9fa;
                 overflow-x: hidden; /* Prevent horizontal scrollbar */
             }
@@ -68,13 +68,13 @@
         <jsp:include page="/layout/header.jsp"/>
 
         <!-- ======================= Main Content ======================= -->
-        <main class="main mx-auto px-4 py-8 md:py-12">
+        <main style="padding: 0 48px;" class="main mx-auto px-4 py-8 md:py-12">
             <section id="dashboard" class="mb-12">
                 <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Dashboard</h1>
                 <p class="text-gray-500 text-lg">Here's your teaching dashboard for today.</p>
             </section>
 
-            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 mb-12">
                 <!-- Card 1 -->
                 <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center justify-center text-center">
                     <div class="bg-indigo-100 p-4 rounded-full mb-3">
@@ -94,19 +94,19 @@
                 </div>
 
                 <!-- Card 3 -->
-                <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center justify-center text-center">
-                    <div class="bg-yellow-100 p-4 rounded-full mb-3">
-                        <i class="fas fa-star text-2xl text-yellow-500"></i>
-                    </div>
-                    <p class="text-gray-500 text-sm">Average Rating</p>
-                    <p class="text-3xl font-bold text-gray-800">${totalRating}</p>
-                </div>
+<%--                <div class="bg-white rounded-lg shadow p-6 flex flex-col items-center justify-center text-center">--%>
+<%--                    <div class="bg-yellow-100 p-4 rounded-full mb-3">--%>
+<%--                        <i class="fas fa-star text-2xl text-yellow-500"></i>--%>
+<%--                    </div>--%>
+<%--                    <p class="text-gray-500 text-sm">Average Rating</p>--%>
+<%--                    <p class="text-3xl font-bold text-gray-800">${totalRating}</p>--%>
+<%--                </div>--%>
 
             </section>
 
             <section id="my-courses">
                 <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl md:text-3xl font-bold text-gray-800">My Courses</h2>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Top 3 Most Enrolled Courses of Yours</h2>
                     <a href="${pageContext.request.contextPath}/instructor/courses"
                        class="text-indigo-600 font-semibold hover:underline">View All</a>
                 </div>
@@ -152,31 +152,7 @@
                 </div>
             </section>
         </main>
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const userBtn = document.getElementById("userMenuBtn");
-                const dropdown = document.getElementById("userDropdownMenu");
-
-                userBtn.addEventListener("click", function (e) {
-                    e.stopPropagation();
-                    dropdown.classList.toggle("dropdown-open");
-                });
-
-                window.addEventListener("click", function () {
-                    dropdown.classList.remove("dropdown-open");
-                });
-
-                dropdown.addEventListener("click", function (e) {
-                    e.stopPropagation();
-                });
-            });
-        </script>
-
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                formatUtcToVietnamese(".datetime");
-            });
-        </script>
+        
 
         <script>
             // Script to ensure proper sidebar hover behavior

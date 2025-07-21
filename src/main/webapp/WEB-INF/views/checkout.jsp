@@ -60,8 +60,10 @@
                         <table class="table table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <th>Image</th>
+                                    <th></th>
                                     <th>Course Name</th>
+                                    <th>Category</th>
+                                    <th>Instructor Name</th>
                                     <th>Price</th>
                                 </tr>
                             </thead>
@@ -75,6 +77,12 @@
                                         </td>
                                         <td class="align-middle">
                                             <a href="${pageContext.request.contextPath}/courseDetail?id=${course.courseID}">${course.courseName}</a>
+                                        </td>
+                                        <td class="align-middle">
+                                            ${course.category.name}
+                                        </td>
+                                        <td class="align-middle">
+                                            <a href="${pageContext.request.contextPath}/userDetail?id=${courseUser[course.courseID].userId}">${courseUser[course.courseID].displayName}</a>
                                         </td>
                                         <td class="align-middle">
                                             <c:choose>
@@ -136,7 +144,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body text-center">
-                            <c:set var="addInfo" value="${sessionScope.user.userId} ${selectedCourseIDs} ${totalPrice} 0"/>
+                            <c:set var="addInfo" value="${paymentContent}"/>
                             <c:url var="encodedAddInfo" value="${addInfo}"/>
                             <img class="modal-img" id="qrCodeImg" src="https://img.vietqr.io/image/MB-0919470174-compact2.png?amount=${totalPrice}&addInfo=${encodedAddInfo}&accountName=Phuong%20Gia%20Lac" alt="QR Code"/>
                             <p>Scan the QR code to complete your payment.</p>
@@ -153,61 +161,32 @@
 
         <script>
             let isSuccess = false;
-            const price = ${totalPrice};
-            const content = "${addInfo}";
+            let price = ${totalPrice};
+            let content = "${addInfo}";
             document.addEventListener("DOMContentLoaded", () => {
                 setInterval(() => {
-                    checkPaid(price, content);
+                    checkPaid(window.price, window.content || '');
                 }, 1000);
             });
-            async function checkPaid(price, content) {
-                if (isSuccess) {
-                    return;
-                } else {
-                    try {
-                        const response = await fetch(
-                                "https://script.google.com/macros/s/AKfycbxKPwVyhF7P1WVYoa7kKjl_wFHTCZ0uCf9a521GovWVgKFObLmhhXTeWgthZjYNHLPu/exec",
-                                );
 
-                        const data = await response.json();
-                        const lastPaid = data.data[data.data.length - 1];
-                        const lastPrice = lastPaid["Giá trị"];
-                        const lastContent = lastPaid["Mô tả"];
-                        const submitData = document.createElement("input");
-                        const submitAction = document.createElement("input");
-
-                        if (lastPrice >= price && lastContent.includes(content)) {
-                            isSuccess = true;
-                            submitData.type = "hidden";
-                            submitData.name = "submitData";
-                            submitData.value = content;
-                            submitAction.type = "hidden";
-                            submitAction.name = "action";
-                            submitAction.value = "submit-payment";
-                            document.getElementById("submit-form").appendChild(submitData);
-                            document.getElementById("submit-form").appendChild(submitAction);
-                            document.getElementById("submit-form").submit();
-                        } else {
-                            console.log("Không thành công"); // ❌ Payment failed
-                        }
-                    } catch (e) {
-                        console.error("Lỗi", e); // ⚠️ Error handling
-                    }
-                }
-            }
             function applyVoucher() {
                 const voucherCode = document.getElementById('voucherCode').value;
                 const userID = ${user.userId};
                 const courseIDs = '${selectedCourseIDs}';
                 const totalPrice = parseFloat(document.getElementById('finalPrice').value);
 
+                console.log('Applying voucher:', {voucherCode, userID, courseIDs, totalPrice});
+
                 if (!userID) {
                     $('#voucherMessage').css('color', 'red').text('Error: Please log in to apply a voucher.');
+                    console.error('No userID found');
                     return;
                 }
 
+                $('#voucherMessage').text('');
+
                 $.ajax({
-                    url: '${pageContext.request.contextPath}/Checkout',
+                    url: '${pageContext.request.contextPath}/checkout',
                     type: 'POST',
                     data: {
                         action: 'voucher',
@@ -218,23 +197,100 @@
                     },
                     dataType: 'json',
                     success: function (response) {
+                        console.log('AJAX Response:', response);
+
+                        if (!response || typeof response.valid === 'undefined') {
+                            $('#voucherMessage').css('color', 'red').text('Error: Invalid response from server.');
+                            console.error('Invalid response structure:', response);
+                            return;
+                        }
+
                         if (response.valid) {
-                            $('#voucherMessage').css('color', 'green').text('Voucher applied! Discount: ' + response.discount + '. New Price: ' + new Intl.NumberFormat('de-DE').format(response.newPrice) + ' VND');
-                            $('#totalDisplay').text(new Intl.NumberFormat('de-DE').format(response.newPrice));
-                            $('#finalPrice').val(response.newPrice);
+                            if (isNaN(response.newPrice) || response.newPrice === null) {
+                                $('#voucherMessage').css('color', 'red').text('Error: Invalid price returned from server.');
+                                console.error('Invalid newPrice:', response.newPrice);
+                                return;
+                            }
+
+                            const newPrice = parseInt(response.newPrice);
+                            $('#voucherMessage').css('color', 'green').text(
+                                    'Voucher applied! Discount: ' + (response.discount || '0') + '. New Price: ' +
+                                    new Intl.NumberFormat('de-DE').format(newPrice) + ' VND'
+                                    );
+                            $('#totalDisplay').text(new Intl.NumberFormat('de-DE').format(newPrice));
+                            $('#finalPrice').val(newPrice);
                             $('#voucherCodeHidden').val(voucherCode);
-                            // Update QR code URL with new price and voucher code
-                            const addInfo = userID + ' ' + courseIDs + ' ' + response.parseInt(newPrice) + ' ' + encodeURIComponent(voucherCode);
-                            const qrUrl = 'https://img.vietqr.io/image/MB-0919470174-compact2.png?amount=' + response.parseInt(newPrice) + '&addInfo=' + encodeURIComponent(addInfo) + '&accountName=Phuong%20Gia%20Lac';
+
+                            const addInfo = userID + ' ' + courseIDs + ' ' + newPrice + ' ' + encodeURIComponent(voucherCode);
+                            window.price = newPrice;
+                            window.content = userID + ' ' + courseIDs + ' ' + newPrice + ' ' + voucherCode;
+                            window.contentBefore = window.content;
+
+                            const qrUrl = 'https://img.vietqr.io/image/MB-0919470174-compact2.png?amount=' +
+                                    newPrice + '&addInfo=' + encodeURIComponent(addInfo) +
+                                    '&accountName=Phuong%20Gia%20Lac';
+                            console.log('QR URL:', qrUrl);
+
+                            $('#qrCodeImg').off('error').on('error', function () {
+                                $('#voucherMessage').css('color', 'red').text('Error: Failed to load QR code.');
+                                console.error('QR code failed to load:', qrUrl);
+                            });
                             $('#qrCodeImg').attr('src', qrUrl);
                         } else {
-                            $('#voucherMessage').css('color', 'red').text('Error: ' + response.message);
+                            $('#voucherMessage').css('color', 'red').text('Error: ' + (response.message || 'Unknown error'));
+                            console.log('Voucher invalid, message:', response.message);
                         }
                     },
-                    error: function () {
+                    error: function (xhr, status, error) {
                         $('#voucherMessage').css('color', 'red').text('Error checking voucher. Please try again.');
+                        console.error('AJAX error:', status, error, xhr.responseText);
                     }
                 });
+            }
+
+            async function checkPaid(price, content) {
+                if (isSuccess) {
+                    return;
+                } else {
+                    try {
+                        const response = await fetch(
+                                "https://script.google.com/macros/s/AKfycbxKPwVyhF7P1WVYoa7kKjl_wFHTCZ0uCf9a521GovWVgKFObLmhhXTeWgthZjYNHLPu/exec"
+                                );
+                        const data = await response.json();
+                        const lastPaid = data.data[data.data.length - 1];
+                        const lastPrice = lastPaid["Giá trị"];
+                        const lastContent = lastPaid["Mô tả"];
+
+                        // Fixed syntax for console.log with object literal
+                        console.log('Comparing:', {
+                            lastPrice: lastPrice,
+                            price: price,
+                            lastContent: lastContent,
+                            windowContent: window.content
+                        });
+
+                        const submitData = document.createElement("input");
+                        const submitAction = document.createElement("input");
+                        console.log('Comparing values:', {lastPrice, price, lastContent, windowContent: window.content});
+
+                        if (lastPrice >= price && lastContent.includes(window.content)) {
+                            isSuccess = true;
+                            submitData.type = "hidden";
+                            submitData.name = "submitData";
+                            submitData.value = window.content;
+                            submitAction.type = "hidden";
+                            submitAction.name = "action";
+                            submitAction.value = "submit-payment";
+                            document.getElementById("submit-form").appendChild(submitData);
+                            document.getElementById("submit-form").appendChild(submitAction);
+                            document.getElementById("submit-form").submit();
+                        } else {
+                            console.log("Không thành công");
+                        }
+                    } catch (e) {
+                        console.error("Lỗi", e);
+                    }
+                }
             }
         </script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

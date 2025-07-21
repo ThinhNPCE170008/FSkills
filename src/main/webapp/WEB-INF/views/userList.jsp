@@ -18,6 +18,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css"/>
         <script>
             tailwind.config = {
@@ -235,12 +236,9 @@
             <i class="bi bi-list text-lg"></i>
         </button>
         <jsp:include page="/layout/header.jsp" />
-
-
-
         <div class="flex flex-grow">
             <jsp:include page="/layout/sidebar_admin.jsp" />
-            <main class="flex-grow p-6 bg-white rounded-tl-lg overflow-y-auto">
+            <main class="flex-grow p-6 bg-[#DFEBF6] rounded-tl-lg overflow-y-auto">
                 <div class="bg-white p-6 rounded shadow-sm">
                     <div class="page-header flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
                         <h2 class="text-2xl font-bold text-gray-800 m-0">Account List</h2>
@@ -268,7 +266,7 @@
                             <button type="submit" class="btn btn-primary bg-primary text-white py-3 px-5 rounded-lg hover:bg-primary-dark transition duration-200">
                                 <i class="fas fa-search mr-2"></i>Search
                             </button>
-                            <button type="button" class="btn btn-secondary bg-gray-200 text-gray-700 py-3 px-5 rounded-lg hover:bg-gray-300 transition duration-200" onclick="window.location.href = 'alluser'">
+                            <button type="button" class="btn btn-secondary bg-gray-200 text-gray-700 py-3 px-5 rounded-lg hover:bg-gray-300 transition duration-200" onclick="window.location.href = '${pageContext.request.contextPath}/alluser?searchName=&roleFilter=${param.roleFilter != null ? param.roleFilter : 'Learner'}'">
                                 Show All
                             </button>
                             <input type="hidden" name="roleFilter" id="currentRoleFilter" value="${param.roleFilter != null ? param.roleFilter : 'Learner'}">
@@ -483,52 +481,45 @@
                 integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
         <script>
-                                                          const notificationBell = document.getElementById('notification-bell');
-                                                          const notificationPopup = document.getElementById('notification-popup');
-                                                          notificationBell.addEventListener('click', (event) => {
-                                                              event.stopPropagation();
-                                                              notificationPopup.classList.toggle('hidden');
-                                                          });
-                                                          document.addEventListener('click', (event) => {
-                                                              if (!notificationBell.contains(event.target) && !notificationPopup.contains(event.target)) {
-                                                                  notificationPopup.classList.add('hidden');
-                                                              }
-                                                          });
-                                                          document.querySelector('.sidebar-toggle').addEventListener('click', () => {
-                                                              document.querySelector('.sidebar-container').classList.toggle('active');
-                                                          });
-                                                          function toggleUserLists() {
-                                                              const learnerRadio = document.getElementById('filterLearner');
-                                                              const instructorRadio = document.getElementById('filterInstructor');
-                                                              const searchForm = document.getElementById('searchForm');
-                                                              const currentRoleFilterInput = document.getElementById('currentRoleFilter');
-                                                              let selectedRole = '';
-                                                              if (learnerRadio.checked) {
-                                                                  selectedRole = 'Learner';
-                                                              } else if (instructorRadio.checked) {
-                                                                  selectedRole = 'Instructor';
-                                                              }
-                                                              currentRoleFilterInput.value = selectedRole;
-                                                              // gửi form để tải lại dữ liệu với cả searchName và roleFilter
-                                                              searchForm.submit();
-                                                          }
-                                                          document.addEventListener('DOMContentLoaded', () => {
-                                                              const urlParams = new URLSearchParams(window.location.search);
-                                                              const roleFilter = urlParams.get('roleFilter');
-                                                              const searchName = urlParams.get('searchName'); 
-                                                              if (roleFilter === 'Instructor') {
-                                                                  document.getElementById('filterInstructor').checked = true;
-                                                                  document.getElementById('learnerTable').style.display = 'none';
-                                                                  document.getElementById('instructorTable').style.display = 'block';
-                                                              } else {
-                                                                  document.getElementById('filterLearner').checked = true;
-                                                                  document.getElementById('learnerTable').style.display = 'block';
-                                                                  document.getElementById('instructorTable').style.display = 'none';
-                                                              }
-                                                              if (searchName) {
-                                                                  document.getElementById('searchName').value = searchName;
-                                                              }
-                                                          });
-        </script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const learnerRadio = document.getElementById('filterLearner');
+        const instructorRadio = document.getElementById('filterInstructor');
+        const searchForm = document.getElementById('searchForm');
+        const currentRoleFilterInput = document.getElementById('currentRoleFilter');
+        const searchNameInput = document.getElementById('searchName');
+        const urlParams = new URLSearchParams(window.location.search);
+        const roleFilterParam = urlParams.get('roleFilter');
+
+        if (roleFilterParam === 'Instructor') {
+            instructorRadio.checked = true;
+            document.getElementById('instructorTable').style.display = 'table';
+            document.getElementById('learnerTable').style.display = 'none';
+        } else { // mặc định là Learner
+            learnerRadio.checked = true;
+            document.getElementById('learnerTable').style.display = 'table';
+            document.getElementById('instructorTable').style.display = 'none';
+        }
+
+        learnerRadio.addEventListener('change', toggleUserLists);
+        instructorRadio.addEventListener('change', toggleUserLists);
+
+        function toggleUserLists() {
+            let selectedRole = '';
+            if (learnerRadio.checked) {
+                selectedRole = 'Learner';
+            } else if (instructorRadio.checked) {
+                selectedRole = 'Instructor';
+            }
+
+            currentRoleFilterInput.value = selectedRole;
+
+            //searchNameInput.value = ''; //neu muon xoa khi doi thi uncmt
+
+            searchForm.submit();
+        }
+    });
+</script>
+    <jsp:include page="/layout/toast.jsp" />
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

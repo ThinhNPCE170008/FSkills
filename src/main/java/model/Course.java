@@ -5,11 +5,12 @@ import java.util.List;
 import util.ImageBase64;
 
 public class Course {
+
     private int courseID;
     private String courseName;
     private Category category;
     private User user;
-    private int approveStatus; // 0: Default    1: Approved     2: Rejected   3: Processing
+    private int approveStatus; // 0: Default    1: Approved     2: Rejected     3: Processing   4. Hide
     private Timestamp publicDate;
     private Timestamp courseLastUpdate;
     private int salePrice;
@@ -18,7 +19,6 @@ public class Course {
     private byte[] courseImageLocation;
     private String courseSummary;
     private String courseHighlight;
-    private int status;
     private int totalEnrolled;
     private List<Module> modules;
 
@@ -37,8 +37,8 @@ public class Course {
     }
 
     public Course(int courseID, String courseName, Category category, User user, int approveStatus, Timestamp publicDate,
-                  Timestamp courseLastUpdate, int salePrice, int originalPrice, int isSale, byte[] courseImageLocation,
-                  String courseSummary, String courseHighlight, int status, int totalEnrolled, List<Module> modules) {
+            Timestamp courseLastUpdate, int salePrice, int originalPrice, int isSale, byte[] courseImageLocation,
+            String courseSummary, String courseHighlight, int totalEnrolled, List<Module> modules) {
         this.courseID = courseID;
         this.courseName = courseName;
         this.category = category;
@@ -52,65 +52,153 @@ public class Course {
         this.courseImageLocation = courseImageLocation;
         this.courseSummary = courseSummary;
         this.courseHighlight = courseHighlight;
-        this.status = status;
         this.totalEnrolled = totalEnrolled;
         this.modules = modules;
     }
 
     // Getters and Setters
-    public int getCourseID() { return courseID; }
-    public void setCourseID(int courseID) { this.courseID = courseID; }
-    public String getCourseName() { return courseName; }
-    public void setCourseName(String courseName) { this.courseName = courseName; }
-    public Category getCategory() { return category; }
-    public void setCategory(Category category) { this.category = category; }
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
-    public int getApproveStatus() { return approveStatus; }
-    public void setApproveStatus(int approveStatus) { this.approveStatus = approveStatus; }
-    public Timestamp getPublicDate() { return publicDate; }
-    public void setPublicDate(Timestamp publicDate) { this.publicDate = publicDate; }
-    public Timestamp getCourseLastUpdate() { return courseLastUpdate; }
-    public void setCourseLastUpdate(Timestamp courseLastUpdate) { this.courseLastUpdate = courseLastUpdate; }
-    public int getSalePrice() { return salePrice; }
-    public void setSalePrice(int salePrice) { this.salePrice = salePrice; }
-    public int getOriginalPrice() { return originalPrice; }
-    public void setOriginalPrice(int originalPrice) { this.originalPrice = originalPrice; }
-    public int getIsSale() { return isSale; }
-    public void setIsSale(int isSale) { this.isSale = isSale; }
-    public byte[] getCourseImageLocation() { return courseImageLocation; }
-    public void setCourseImageLocation(byte[] courseImageLocation) { this.courseImageLocation = courseImageLocation; }
-    public String getCourseSummary() { return courseSummary; }
-    public void setCourseSummary(String courseSummary) { this.courseSummary = courseSummary; }
-    public String getCourseHighlight() { return courseHighlight; }
-    public void setCourseHighlight(String courseHighlight) { this.courseHighlight = courseHighlight; }
-    public int getStatus() { return status; }
-    public void setStatus(int status) { this.status = status; }
-    public int getTotalEnrolled() { return totalEnrolled; }
-    public void setTotalEnrolled(int totalEnrolled) { this.totalEnrolled = totalEnrolled; }
-    public List<Module> getModules() { return modules; }
-    public void setModules(List<Module> modules) { this.modules = modules; }
-    public String getImageDataURI() { return ImageBase64.toDataURI(courseImageLocation, "image/jpeg"); }
+    public int getCourseID() {
+        return courseID;
+    }
+
+    public void setCourseID(int courseID) {
+        this.courseID = courseID;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public int getApproveStatus() {
+        return approveStatus;
+    }
+
+    public void setApproveStatus(int approveStatus) {
+        this.approveStatus = approveStatus;
+    }
+
+    public Timestamp getPublicDate() {
+        return publicDate;
+    }
+
+    public void setPublicDate(Timestamp publicDate) {
+        this.publicDate = publicDate;
+    }
+
+    public Timestamp getCourseLastUpdate() {
+        return courseLastUpdate;
+    }
+
+    public void setCourseLastUpdate(Timestamp courseLastUpdate) {
+        this.courseLastUpdate = courseLastUpdate;
+    }
+
+    public int getSalePrice() {
+        return salePrice;
+    }
+
+    public void setSalePrice(int salePrice) {
+        this.salePrice = salePrice;
+    }
+
+    public int getOriginalPrice() {
+        return originalPrice;
+    }
+
+    public void setOriginalPrice(int originalPrice) {
+        this.originalPrice = originalPrice;
+    }
+
+    public int getIsSale() {
+        return isSale;
+    }
+
+    public void setIsSale(int isSale) {
+        this.isSale = isSale;
+    }
+
+    public byte[] getCourseImageLocation() {
+        return courseImageLocation;
+    }
+
+    public void setCourseImageLocation(byte[] courseImageLocation) {
+        this.courseImageLocation = courseImageLocation;
+    }
+
+    public String getCourseSummary() {
+        return courseSummary;
+    }
+
+    public void setCourseSummary(String courseSummary) {
+        this.courseSummary = courseSummary;
+    }
+
+    public String getCourseHighlight() {
+        return courseHighlight;
+    }
+
+    public void setCourseHighlight(String courseHighlight) {
+        this.courseHighlight = courseHighlight;
+    }
+
+    public int getTotalEnrolled() {
+        return totalEnrolled;
+    }
+
+    public void setTotalEnrolled(int totalEnrolled) {
+        this.totalEnrolled = totalEnrolled;
+    }
+
+    public List<Module> getModules() {
+        return modules;
+    }
+
+    public void setModules(List<Module> modules) {
+        this.modules = modules;
+    }
+
+    public String getImageDataURI() {
+        return ImageBase64.toDataURI(courseImageLocation, "image/jpeg");
+    }
 
     @Override
     public String toString() {
-        return "Course{" +
-                "courseID:" + courseID +
-                ", courseName='" + courseName + '\'' +
-                ", category=" + category +
-                ", user=" + user +
-                ", approveStatus=" + approveStatus +
-                ", publicDate=" + publicDate +
-                ", courseLastUpdate=" + courseLastUpdate +
-                ", salePrice=" + salePrice +
-                ", originalPrice=" + originalPrice +
-                ", isSale=" + isSale +
-                ", courseImageLocation='" + courseImageLocation + '\'' +
-                ", courseSummary='" + courseSummary + '\'' +
-                ", courseHighlight='" + courseHighlight + '\'' +
-                ", status=" + status +
-                ", totalEnrolled=" + totalEnrolled +
-                ", modules=" + modules +
-                '}';
+        return "Course{"
+                + "courseID:" + courseID
+                + ", courseName='" + courseName + '\''
+                + ", category=" + category
+                + ", user=" + user
+                + ", approveStatus=" + approveStatus
+                + ", publicDate=" + publicDate
+                + ", courseLastUpdate=" + courseLastUpdate
+                + ", salePrice=" + salePrice
+                + ", originalPrice=" + originalPrice
+                + ", isSale=" + isSale
+                + ", courseImageLocation='" + courseImageLocation + '\''
+                + ", courseSummary='" + courseSummary + '\''
+                + ", courseHighlight='" + courseHighlight + '\''
+                + ", totalEnrolled=" + totalEnrolled
+                + ", modules=" + modules
+                + '}';
     }
 }

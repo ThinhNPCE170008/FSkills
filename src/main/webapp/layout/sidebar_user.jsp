@@ -78,23 +78,23 @@
 </div>
 
 <script>
-// Thêm vào cuối file
-document.addEventListener('DOMContentLoaded', function() {
+  // Thêm vào cuối file
+  document.addEventListener('DOMContentLoaded', function() {
     // Lấy tất cả các liên kết trong sidebar
     const sidebarLinks = document.querySelectorAll('.sidebar-nav a');
 
     // Thêm sự kiện click cho mỗi liên kết
     sidebarLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            // Thêm class để vô hiệu hóa transition
-            document.querySelector('.sidebar').classList.add('no-transition');
+      link.addEventListener('click', function() {
+        // Thêm class để vô hiệu hóa transition
+        document.querySelector('.sidebar').classList.add('no-transition');
 
-            // Các phần tử con trong sidebar
-            const elements = document.querySelectorAll('.sidebar *');
-            elements.forEach(el => {
-                el.style.transition = 'none';
-            });
+        // Các phần tử con trong sidebar
+        const elements = document.querySelectorAll('.sidebar *');
+        elements.forEach(el => {
+          el.style.transition = 'none';
         });
+      });
     });
-});
+  });
 </script>

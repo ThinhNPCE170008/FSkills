@@ -115,15 +115,10 @@
     </style>
 </head>
 <body>
-<jsp:include page="/layout/header.jsp" />
-<jsp:include page="/layout/sidebar_user.jsp" />
-<div class="container-detail">
-    <a href="${pageContext.request.contextPath}/announcements"
-       class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-full
-       hover:bg-blue-700 transition-colors shadow-md mb-6 text-lg">
-        <i class="fa-solid fa-arrow-left-long mr-2"></i> Return
-    </a>
 
+<div class="container-detail">
+    <jsp:include page="/layout/header.jsp" />
+    <jsp:include page="/layout/sidebar_user.jsp" />
     <c:if test="${empty announcement}">
         <p class="text-center text-gray-600 text-xl py-10">No announcement found with the given ID.</p>
     </c:if>

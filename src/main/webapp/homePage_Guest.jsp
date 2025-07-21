@@ -53,32 +53,11 @@
     </style>
 </head>
 
-<body 
+<body class="font-inter bg-white text-gray-800">
     <jsp:include page="/layout/sidebar_user.jsp" />
-   <jsp:include page="/layout/header.jsp" />
-    class="font-inter bg-white text-gray-800">
-
-    <div class="container mx-auto px-4 mt-4">
-        <div class="flex items-center justify-between">
-            <div class="flex-grow flex justify-center">
-                <div class="relative w-full max-w-xl"> 
-                    <input type="search" placeholder="Search for courses..."
-                           class="w-full pl-4 pr-10 py-2.5 border border-gray-200 rounded-full focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all duration-300 ease-in-out">
-                    <i class="fa-solid fa-magnifying-glass absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                </div>
-            </div>
-
-            <div class="flex items-center space-x-4">
-                <a href="login" class="hidden sm:inline-block text-secondary hover:text-primary font-semibold transition-colors">Sign In</a>
-                <a href="signup.jsp" class="px-5 py-2.5 rounded-full font-semibold bg-primary text-white hover:bg-primary-dark transition-all duration-300 shadow-md hover:shadow-lg">
-                    Sign Up
-                </a>
-            </div>
-        </div>
-    </div>
+    <jsp:include page="/layout/header.jsp" />
 
     <main>
-
         <section id="home" class="hero-gradient">
             <div class="container mx-auto px-4 py-20 lg:py-32">
                 <div class="grid lg:grid-cols-2 gap-12 items-center">

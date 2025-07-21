@@ -187,7 +187,7 @@ public class ProfileServlet extends HttpServlet {
             } else {
                 updateSuccess = profileDAO.updateProfile(profile);
             }
-
+            
             if (updateSuccess) {
                 UserDAO userDAO = new UserDAO();
                 User updatedUser = userDAO.getByUserID(user.getUserId());

@@ -48,12 +48,12 @@
         }
 
         .result-pass {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            background: #218334;
             color: white;
         }
 
         .result-fail {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            background: #B93636;
             color: white;
         }
 
@@ -61,7 +61,7 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
             border-radius: 50px;
-            padding: 12px 30px;
+            padding: 10px 25px;
             color: white;
             font-weight: 600;
             text-transform: uppercase;
@@ -76,19 +76,17 @@
         }
 
         .btn-back {
-            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
-            border: none;
+            border: 1px solid #eee;
             border-radius: 50px;
             padding: 10px 25px;
-            color: white;
+            color: #333;
             font-weight: 500;
             transition: all 0.3s ease;
         }
 
         .btn-back:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(132, 250, 176, 0.4);
-            color: white;
+            box-shadow: 0 8px 25px;
         }
 
         .history-table {
@@ -151,6 +149,14 @@
                                     <li class="breadcrumb-item active">Detail</li>
                                 </ol>
                             </nav>
+
+                            <!-- Back to Tests Button -->
+                            <div class="mb-3">
+                                <a href="${pageContext.request.contextPath}/learner/tests?action=list" 
+                                   class="btn btn-outline-primary">
+                                    <i class="bi bi-arrow-left me-2"></i>Back to Tests
+                                </a>
+                            </div>
 
                             <!-- Test Detail Card -->
                             <div class="row justify-content-center">
@@ -252,14 +258,6 @@
                                                                 <p class="mb-0 fs-5">#${latestResult.attempt}</p>
                                                             </div>
                                                         </div>
-                                                        <c:if test="${test.showAnswer}">
-                                                            <div class="mt-3">
-                                                                <a href="${pageContext.request.contextPath}/learner/tests?action=result&testResultId=${latestResult.testResultID}" 
-                                                                   class="btn btn-outline-primary">
-                                                                    <i class="bi bi-eye me-2"></i>View Detailed Results
-                                                                </a>
-                                                            </div>
-                                                        </c:if>
                                                     </div>
                                                 </div>
                                             </c:if>
@@ -272,36 +270,44 @@
                                                         Test History
                                                     </h4>
                                                     <div class="table-responsive">
-                                                        <table class="table history-table">
+                                                        <table class="table table-bordered table-hover shadow-sm bg-white rounded history-table">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>Attempt</th>
-                                                                    <th>Score</th>
+                                                                    <th>Attempt #</th>
                                                                     <th>Status</th>
-                                                                    <th>Date Taken</th>
-                                                                    <th>Actions</th>
+                                                                    <th>Test Type</th>
+                                                                    <th>Start Time</th>
+                                                                    <th>End Time</th>
+                                                                    <th>Score %</th>
+                                                                    <th>View Result</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
                                                                 <c:forEach var="result" items="${testHistory}">
                                                                     <tr>
                                                                         <td class="fw-bold">#${result.attempt}</td>
-                                                                        <td class="fw-bold">${result.result}%</td>
                                                                         <td>
-                                                                                                                                                    <span class="result-badge ${result.passed ? 'result-pass' : 'result-fail'}">
-                                                                            <i class="bi ${result.passed ? 'bi-check-circle' : 'bi-x-circle'} me-1"></i>
-                                                                            ${result.passed ? 'PASSED' : 'FAILED'}
-                                                                        </span>
+                                                                            <span class="result-badge ${result.passed ? 'result-pass' : 'result-fail'}">
+                                                                                <i class="bi ${result.passed ? 'bi-check-circle' : 'bi-x-circle'} me-1"></i>
+                                                                                ${result.passed ? 'PASSED' : 'FAILED'}
+                                                                            </span>
+                                                                        </td>
+                                                                        <td>
+                                                                            <span class="badge bg-info">${result.testType}</span>
                                                                         </td>
                                                                         <td>
                                                                             <fmt:formatDate value="${result.dateTaken}" pattern="MMM dd, yyyy HH:mm"/>
                                                                         </td>
                                                                         <td>
+                                                                            <fmt:formatDate value="${result.dateTaken}" pattern="MMM dd, yyyy HH:mm"/>
+                                                                        </td>
+                                                                        <td class="fw-bold">${result.result}%</td>
+                                                                        <td>
                                                                             <c:if test="${test.showAnswer}">
-                                                                                                                                                <a href="${pageContext.request.contextPath}/learner/tests?action=result&testResultId=${result.testResultID}" 
-                                                                   class="btn btn-sm btn-outline-primary">
-                                                                    <i class="bi bi-eye me-1"></i>View
-                                                                </a>
+                                                                                <a href="${pageContext.request.contextPath}/learner/tests?action=result&testResultId=${result.testResultID}" 
+                                                                                   class="btn btn-sm btn-outline-primary">
+                                                                                    <i class="bi bi-eye me-1"></i>View
+                                                                                </a>
                                                                             </c:if>
                                                                         </td>
                                                                     </tr>
@@ -314,14 +320,20 @@
 
                                             <!-- Action Buttons -->
                                             <div class="text-center mt-5">
-                                                <a href="${pageContext.request.contextPath}/learner/tests?action=list" 
-                                                   class="btn btn-back me-3">
-                                                    <i class="bi bi-arrow-left me-2"></i>Back to Tests
-                                                </a>
-                                                <a href="${pageContext.request.contextPath}/learner/tests?action=take&testId=${test.testID}" 
-                                                   class="btn btn-take-test">
-                                                    <i class="bi bi-play-circle me-2"></i>Take Test
-                                                </a>
+                                                <c:choose>
+                                                    <c:when test="${not empty latestResult}">
+                                                        <a href="${pageContext.request.contextPath}/learner/tests?action=take&testId=${test.testID}" 
+                                                           class="btn btn-take-test">
+                                                            <i class="bi bi-arrow-clockwise me-2"></i>Retake Test
+                                                        </a>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <a href="${pageContext.request.contextPath}/learner/tests?action=take&testId=${test.testID}" 
+                                                           class="btn btn-take-test">
+                                                            <i class="bi bi-play-circle me-2"></i>Take Test
+                                                        </a>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </div>
                                         </div>
                                     </div>

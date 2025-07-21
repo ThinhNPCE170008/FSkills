@@ -21,7 +21,9 @@ public class TestResultDAO extends DBContext {
      * Get latest test result for a user and test
      */
     public TestResult getLatestTestResult(int testID, int userID) {
-        String sql = "SELECT TOP 1 * FROM TestResult " +
+        String sql = "SELECT TOP 1 *,CASE WHEN EXISTS (SELECT 1 FROM Questions q WHERE q.TestID = t.TestID AND q.QuestionType = 'WRITING') " +
+                " THEN CASE WHEN EXISTS (SELECT 1 FROM Questions q WHERE q.TestID = t.TestID AND q.QuestionType = 'CHOICE') " +
+                " THEN 'Mixed' ELSE 'WRITING' END ELSE 'MultiChoice' END as TestType FROM TestResult t " +
                     "WHERE TestID = ? AND UserID = ? " +
                     "ORDER BY Attempt DESC";
 
@@ -45,7 +47,9 @@ public class TestResultDAO extends DBContext {
      */
     public List<TestResult> getTestResults(int testID, int userID) {
         List<TestResult> list = new ArrayList<>();
-        String sql = "SELECT * FROM TestResult " +
+        String sql = "SELECT *, CASE WHEN EXISTS (SELECT 1 FROM Questions q WHERE q.TestID = t.TestID AND q.QuestionType = 'WRITING') \n" +
+                "        THEN CASE WHEN EXISTS (SELECT 1 FROM Questions q WHERE q.TestID = t.TestID AND q.QuestionType = 'CHOICE')\n" +
+                "        THEN 'Mixed' ELSE 'WRITING' END ELSE 'MultiChoice' END as TestType FROM TestResult t " +
                     "WHERE TestID = ? AND UserID = ? " +
                     "ORDER BY Attempt DESC";
 
@@ -119,7 +123,9 @@ public class TestResultDAO extends DBContext {
      * Get test result by ID
      */
     public TestResult getTestResultByID(int testResultID) {
-        String sql = "SELECT * FROM TestResult WHERE TestResultID = ?";
+        String sql = "SELECT *, CASE WHEN EXISTS (SELECT 1 FROM Questions q WHERE q.TestID = t.TestID AND q.QuestionType = 'WRITING') \n" +
+                "THEN CASE WHEN EXISTS (SELECT 1 FROM Questions q WHERE q.TestID = t.TestID AND q.QuestionType = 'CHOICE')\n" +
+                " THEN 'Mixed' ELSE 'WRITING' END ELSE 'MultiChoice' END as TestType FROM TestResult t WHERE TestResultID = ?";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -136,6 +142,87 @@ public class TestResultDAO extends DBContext {
     }
 
     /**
+     * Get student results for instructor with optional course filter
+     */
+    public List<TestResult> getStudentResultsForInstructor(int instructorID, Integer courseID) {
+        List<TestResult> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT DISTINCT tr.*, u.DisplayName, u.email, t.testName, ");
+        sql.append("CASE WHEN EXISTS (SELECT 1 FROM Questions q WHERE q.TestID = t.TestID AND q.QuestionType = 'WRITING') ");
+        sql.append("THEN CASE WHEN EXISTS (SELECT 1 FROM Questions q WHERE q.TestID = t.TestID AND q.QuestionType = 'CHOICE') ");
+        sql.append("THEN 'Mixed' ELSE 'WRITING' END ELSE 'MultiChoice' END as TestType ");
+        sql.append("FROM TestResult tr ");
+        sql.append("INNER JOIN Users u ON tr.UserID = u.UserID ");
+        sql.append("INNER JOIN Tests t ON tr.TestID = t.TestID ");
+        sql.append("INNER JOIN Modules m ON t.ModuleID = m.ModuleID ");
+        sql.append("INNER JOIN Courses c ON m.CourseID = c.CourseID ");
+        sql.append("WHERE c.UserID = ? ");
+        
+        if (courseID != null) {
+            sql.append("AND c.CourseID = ? ");
+        }
+        
+        sql.append("ORDER BY tr.DateTaken DESC");
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql.toString());
+            ps.setInt(1, instructorID);
+            if (courseID != null) {
+                ps.setInt(2, courseID);
+            }
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                TestResult testResult = createTestResultFromResultSet(rs);
+                
+                // Add additional fields from join
+                testResult.setFullName(rs.getString("DisplayName"));
+                testResult.setEmail(rs.getString("email"));
+                testResult.setTestName(rs.getString("testName"));
+                testResult.setTestType(rs.getString("TestType"));
+                
+                list.add(testResult);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error in getStudentResultsForInstructor: " + e.getMessage());
+        }
+        return list;
+    }
+
+    /**
+     * Get student result detail with questions and answers
+     */
+    public TestResult getStudentResultDetail(int testResultID, int instructorID) {
+        String sql = "SELECT tr.*, CASE WHEN EXISTS (SELECT 1 FROM Questions q WHERE q.TestID = tr.TestID AND q.QuestionType = 'WRITING') \n" +
+                "THEN CASE WHEN EXISTS (SELECT 1 FROM Questions q WHERE q.TestID = tr.TestID AND q.QuestionType = 'CHOICE')\n" +
+                " THEN 'Mixed' ELSE 'WRITING' END ELSE 'MultiChoice' END as TestType, u.DisplayName, u.email, t.testName " +
+                    "FROM TestResult tr " +
+                    "INNER JOIN Users u ON tr.UserID = u.UserID " +
+                    "INNER JOIN Tests t ON tr.TestID = t.TestID " +
+                    "INNER JOIN Modules m ON t.ModuleID = m.ModuleID " +
+                    "INNER JOIN Courses c ON m.CourseID = c.CourseID " +
+                    "WHERE tr.TestResultID = ? AND c.UserID = ?";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, testResultID);
+            ps.setInt(2, instructorID);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                TestResult testResult = createTestResultFromResultSet(rs);
+                testResult.setFullName(rs.getString("DisplayName"));
+                testResult.setEmail(rs.getString("email"));
+                testResult.setTestName(rs.getString("testName"));
+                return testResult;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error in getStudentResultDetail: " + e.getMessage());
+        }
+        return null;
+    }
+
+    /**
      * Helper method to create TestResult object from ResultSet
      */
     private TestResult createTestResultFromResultSet(ResultSet rs) throws SQLException {
@@ -147,6 +234,7 @@ public class TestResultDAO extends DBContext {
         testResult.setResult(rs.getInt("Result"));
         testResult.setPassed(rs.getBoolean("IsPassed"));
         testResult.setDateTaken(rs.getTimestamp("DateTaken"));
+        testResult.setTestType(rs.getString("TestType"));
         return testResult;
     }
 } 

@@ -26,7 +26,7 @@ public class User {
 
     public User() {
     }
-
+    
     public User(int userId, String userName, String displayName, String email, String password, Role role, int gender, Timestamp dateOfBirth, Timestamp userCreateDate, byte[] avatar, String info, Ban ban, int reports, String phone, boolean isVerified, String googleID) {
         this.userId = userId;
         this.userName = userName;
@@ -45,7 +45,7 @@ public class User {
         this.isVerified = isVerified;
         this.googleID = googleID;
     }
-
+    
     public User(int userId, String userName, String displayName, String email, String password, Role role, int gender, Timestamp dateOfBirth, Timestamp userCreateDate, byte[] avatar, String info, Ban ban, int reports, String phone, boolean isVerified, String googleID, String avatarUrl) {
         this.userId = userId;
         this.userName = userName;
@@ -281,9 +281,6 @@ public class User {
     }
 
     public String getImageDataURI() {
-        if (avatarUrl != null && !avatarUrl.isEmpty()) {
-            return avatarUrl;
-        }
         return ImageBase64.toDataURI(avatar, "image/jpeg");
     }
 }

@@ -6,24 +6,27 @@ package dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import model.Enroll;
 import util.DBContext;
 
 /**
  *
  * @author CE191059 Phuong Gia Lac
  */
-public class EnrollDAO extends DBContext{
-    public EnrollDAO(){
-        
+public class EnrollDAO extends DBContext {
+
+    public EnrollDAO() {
+
     }
-    
-    public boolean checkBought(int UserID, int CourseID){
+
+    public boolean checkBought(int UserID, int CourseID) {
         String sql = "Select * From Enroll Where UserID = ? AND CourseID = ? AND EnrollDate IS NULL";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, UserID);
             ps.setInt(2, CourseID);
-            try (ResultSet rs = ps.executeQuery()) {
+            try ( ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;
                 }
@@ -33,14 +36,14 @@ public class EnrollDAO extends DBContext{
         }
         return false;
     }
-    
-    public boolean checkEnrollment(int UserID, int CourseID){
+
+    public boolean checkEnrollment(int UserID, int CourseID) {
         String sql = "Select * From Enroll Where UserID = ? AND CourseID = ? AND EnrollDate IS NOT NULL";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, UserID);
             ps.setInt(2, CourseID);
-            try (ResultSet rs = ps.executeQuery()) {
+            try ( ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;
                 }
@@ -50,10 +53,10 @@ public class EnrollDAO extends DBContext{
         }
         return false;
     }
-    
-    public int addLearnerEnrollment(int UserID, int CourseID){
+
+    public int addLearnerEnrollment(int UserID, int CourseID) {
         String sql = "Insert Into Enroll (UserID, CourseID) Values (?,?)";
-        try{
+        try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, UserID);
             ps.setInt(2, CourseID);
@@ -64,13 +67,13 @@ public class EnrollDAO extends DBContext{
         }
         return 0;
     }
-    
-    public int setEnrollDate(int UserID, int CourseID){
+
+    public int setEnrollDate(int UserID, int CourseID) {
         String sql
                 = "Update Enroll\n"
                 + "Set EnrollDate = GETDATE()\n"
                 + "Where UserID = ? AND CourseID = ?";
-        try{
+        try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, UserID);
             ps.setInt(2, CourseID);
@@ -81,13 +84,13 @@ public class EnrollDAO extends DBContext{
         }
         return 0;
     }
-    
-    public int setCompleteDate(int UserID, int CourseID){
+
+    public int setCompleteDate(int UserID, int CourseID) {
         String sql
                 = "Update Enroll\n"
                 + "Set CompleteDate = GETDATE()\n"
-                + "Where UserID = ? CourseID = ?";
-        try{
+                + "Where UserID = ? AND CourseID = ?";
+        try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, UserID);
             ps.setInt(2, CourseID);
@@ -97,5 +100,22 @@ public class EnrollDAO extends DBContext{
             System.out.println(e.getMessage());
         }
         return 0;
+    }
+
+    public ArrayList<Enroll> getEnrolledCourse(int UserID) {
+        String sql = "Select * From Enroll Where UserID = ?";
+        ArrayList<Enroll> list = new ArrayList<Enroll>();
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, UserID);
+            try ( ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new Enroll(rs.getInt(1), rs.getInt(2), rs.getTimestamp(3), rs.getTimestamp(4)));
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return list;
     }
 }

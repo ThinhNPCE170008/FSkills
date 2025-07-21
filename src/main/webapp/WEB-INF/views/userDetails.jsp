@@ -314,6 +314,12 @@
                         padding-right: 0;
                     }
                 }
+                .container-fluid {
+                width: 100%;
+                padding-left: 0;
+                padding-right: 0;
+                margin-left: 0;
+            }
             </style>
         </head>
         <body>
@@ -321,10 +327,10 @@
 
 
 
-        <div class="flex flex-grow w-full">
+        <div class="container-fluid flex px-4">
 
             <div class="main-content px-5 py-5">
-                <div class="container px-5">
+                <div class="container py-10">
                     <h2 class="flex items-center justify-between w-full gap-4 text-xl font-bold text-gray-800 mb-4">
                         <a href="alluser?roleFilter=${requestScope.currentListRoleFilter != null ? requestScope.currentListRoleFilter : 'Learner'}"
                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded">

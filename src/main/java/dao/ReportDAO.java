@@ -34,12 +34,12 @@ public class ReportDAO extends DBContext {
         String sql = "SELECT r.ReportID,r.ReportDetail, r.ReportDate, u.UserID, u.UserName, u.DisplayName,\n"
                 + "c.ReportCategoryID, c.ReportName AS CategoryName, co.CommentID, co.CommentContent,\n"
                 + "m.MaterialID, m.MaterialName, mo.ModuleID, mo.ModuleName, cs.CourseID, cs.CourseName,us.UserID as CourseUserID,us.UserName as CourseUserName, us.DisplayName as CourseDisplayName\n"
-                + "FROM [FLearn].[dbo].[Reports] r JOIN [FLearn].[dbo].[Users] u  ON r.UserID = u.UserID\n"
-                + "JOIN [FLearn].[dbo].[ReportCategory] c ON r.CategoryID = c.ReportCategoryID\n"
-                + "LEFT JOIN [FLearn].[dbo].[Comments] co ON r.CommentID = co.CommentID\n"
-                + "LEFT JOIN [FLearn].[dbo].[Materials] m ON r.MaterialID = m.MaterialID\n"
-                + "LEFT JOIN [FLearn].[dbo].[Modules] mo ON m.ModuleID = mo.ModuleID\n"
-                + "LEFT JOIN [FLearn].[dbo].[Courses] cs ON mo.CourseID = cs.CourseID JOIN [FLearn].[dbo].[Users] us  ON cs.UserID = us.UserID";
+                + "FROM [dbo].[Reports] r JOIN [dbo].[Users] u  ON r.UserID = u.UserID\n"
+                + "JOIN [dbo].[ReportCategory] c ON r.CategoryID = c.ReportCategoryID\n"
+                + "LEFT JOIN [dbo].[Comments] co ON r.CommentID = co.CommentID\n"
+                + "LEFT JOIN [dbo].[Materials] m ON r.MaterialID = m.MaterialID\n"
+                + "LEFT JOIN [dbo].[Modules] mo ON m.ModuleID = mo.ModuleID\n"
+                + "LEFT JOIN [dbo].[Courses] cs ON mo.CourseID = cs.CourseID JOIN [dbo].[Users] us  ON cs.UserID = us.UserID";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
@@ -141,12 +141,12 @@ public class ReportDAO extends DBContext {
         String sql = "SELECT r.ReportID,r.ReportDetail, r.ReportDate, u.UserID, u.UserName, u.DisplayName,\n"
                 + "c.ReportCategoryID, c.ReportName AS CategoryName, co.CommentID, co.CommentContent,\n"
                 + "m.MaterialID, m.MaterialName, mo.ModuleID, mo.ModuleName, cs.CourseID, cs.CourseName,us.UserID as CourseUserID,us.UserName as CourseUserName, us.DisplayName as CourseDisplayName\n"
-                + "FROM [FLearn].[dbo].[Reports] r JOIN [FLearn].[dbo].[Users] u  ON r.UserID = u.UserID\n"
-                + "JOIN [FLearn].[dbo].[ReportCategory] c ON r.CategoryID = c.ReportCategoryID\n"
-                + "LEFT JOIN [FLearn].[dbo].[Comments] co ON r.CommentID = co.CommentID\n"
-                + "LEFT JOIN [FLearn].[dbo].[Materials] m ON r.MaterialID = m.MaterialID\n"
-                + "LEFT JOIN [FLearn].[dbo].[Modules] mo ON m.ModuleID = mo.ModuleID\n"
-                + "LEFT JOIN [FLearn].[dbo].[Courses] cs ON mo.CourseID = cs.CourseID JOIN [FLearn].[dbo].[Users] us  ON cs.UserID = us.UserID "
+                + "FROM [dbo].[Reports] r JOIN [dbo].[Users] u  ON r.UserID = u.UserID\n"
+                + "JOIN [dbo].[ReportCategory] c ON r.CategoryID = c.ReportCategoryID\n"
+                + "LEFT JOIN [dbo].[Comments] co ON r.CommentID = co.CommentID\n"
+                + "LEFT JOIN [dbo].[Materials] m ON r.MaterialID = m.MaterialID\n"
+                + "LEFT JOIN [dbo].[Modules] mo ON m.ModuleID = mo.ModuleID\n"
+                + "LEFT JOIN [dbo].[Courses] cs ON mo.CourseID = cs.CourseID JOIN [dbo].[Users] us  ON cs.UserID = us.UserID "
                 + "WHERE r.ReportID = ?;";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -204,12 +204,12 @@ public class ReportDAO extends DBContext {
         String sql = "SELECT r.ReportID,r.ReportDetail, r.ReportDate, u.UserID, u.UserName, u.DisplayName,\n"
                 + "c.ReportCategoryID, c.ReportName AS CategoryName, co.CommentID, co.CommentContent,\n"
                 + "m.MaterialID, m.MaterialName, mo.ModuleID, mo.ModuleName, cs.CourseID, cs.CourseName,us.UserID as CourseUserID,us.UserName as CourseUserName, us.DisplayName as CourseDisplayName\n"
-                + "FROM [FLearn].[dbo].[Reports] r JOIN [FLearn].[dbo].[Users] u  ON r.UserID = u.UserID\n"
-                + "JOIN [FLearn].[dbo].[ReportCategory] c ON r.CategoryID = c.ReportCategoryID\n"
-                + "LEFT JOIN [FLearn].[dbo].[Comments] co ON r.CommentID = co.CommentID\n"
-                + "LEFT JOIN [FLearn].[dbo].[Materials] m ON r.MaterialID = m.MaterialID\n"
-                + "LEFT JOIN [FLearn].[dbo].[Modules] mo ON m.ModuleID = mo.ModuleID\n"
-                + "LEFT JOIN [FLearn].[dbo].[Courses] cs ON mo.CourseID = cs.CourseID JOIN [FLearn].[dbo].[Users] us  ON cs.UserID = us.UserID\n"
+                + "FROM [dbo].[Reports] r JOIN [dbo].[Users] u  ON r.UserID = u.UserID\n"
+                + "JOIN [dbo].[ReportCategory] c ON r.CategoryID = c.ReportCategoryID\n"
+                + "LEFT JOIN [dbo].[Comments] co ON r.CommentID = co.CommentID\n"
+                + "LEFT JOIN [dbo].[Materials] m ON r.MaterialID = m.MaterialID\n"
+                + "LEFT JOIN [dbo].[Modules] mo ON m.ModuleID = mo.ModuleID\n"
+                + "LEFT JOIN [dbo].[Courses] cs ON mo.CourseID = cs.CourseID JOIN [dbo].[Users] us  ON cs.UserID = us.UserID\n"
                 + "WHERE u.UserID=?;";
 
         try {

@@ -14,20 +14,27 @@
         body {
             font-family: 'Inter', sans-serif;
         }
-        /* Custom scrollbar for tables if needed */
-        .overflow-x-auto::-webkit-scrollbar {
-            height: 8px;
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
-        .overflow-x-auto::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
+        .status-default { background-color: #e5e7eb; color: #374151; }
+        .status-approved { background-color: #d1fae5; color: #065f46; }
+        .status-rejected { background-color: #fee2e2; color: #b91c1c; }
+        .status-processing { background-color: #bfdbfe; color: #1e40af; }
+        .status-hidden { background-color: #f3f4f6; color: #6b7280; }
+        .material-table {
+            min-width: 1000px;
         }
-        .overflow-x-auto::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 10px;
-        }
-        .overflow-x-auto::-webkit-scrollbar-thumb:hover {
-            background: #555;
+        @media (max-width: 768px) {
+            .table-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
         }
     </style>
 </head>
@@ -35,7 +42,6 @@
 <!-- Flex container for sidebar and main content -->
 <div class="flex">
     <!-- Header Section (Sidebar) -->
-    <!-- Assuming sidebar_admin.jsp handles its own width and positioning -->
     <jsp:include page="/layout/sidebar_admin.jsp"/>
 
     <!-- Main Content Area -->
@@ -61,63 +67,115 @@
                 </div>
             </c:if>
 
-            <!-- Course Header Section (Prominent top section) -->
+            <!-- Course Header Section -->
             <section class="mb-8 p-6 bg-blue-50 rounded-xl shadow-inner border border-blue-100">
                 <div class="flex flex-col lg:flex-row items-start lg:items-center gap-6">
                     <div class="flex-shrink-0 w-full lg:w-1/3">
-                        <c:if test="${not empty course.courseImageLocation}">
-                            <img src="${course.imageDataURI}" alt="Course Image" class="rounded-lg shadow-xl w-full h-64 object-cover border border-gray-200"/>
-                        </c:if>
-                        <c:if test="${empty course.courseImageLocation}">
-                            <!-- Placeholder image if no course image is available -->
-                            <img src="https://placehold.co/600x400/E0F2FE/2563EB?text=Course+Image" alt="Placeholder Image" class="rounded-lg shadow-xl w-full h-64 object-cover border border-gray-200"/>
-                        </c:if>
+                        <c:choose>
+                            <c:when test="${not empty course.courseImageLocation and not empty course.getImageDataURI()}">
+                                <img src="${course.getImageDataURI()}" alt="Course Image" class="rounded-lg shadow-xl w-full h-64 object-cover border border-gray-200"/>
+                            </c:when>
+                            <c:otherwise>
+                                <img src="https://placehold.co/600x400/E0F2FE/2563EB?text=Course+Image" alt="Placeholder Image" class="rounded-lg shadow-xl w-full h-64 object-cover border border-gray-200"/>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                     <div class="flex-1 space-y-3">
-                        <h2 class="text-3xl font-bold text-gray-900">${course.courseName}</h2>
+                        <div class="flex justify-between items-start">
+                            <h2 class="text-3xl font-bold text-gray-900">${course.courseName}</h2>
+                            <span class="status-badge status-${course.approveStatus == 0 ? 'default' :
+                                  course.approveStatus == 1 ? 'approved' :
+                                  course.approveStatus == 2 ? 'rejected' :
+                                  course.approveStatus == 3 ? 'processing' : 'hidden'}">
+                                ${course.approveStatus == 0 ? 'Default' :
+                                        course.approveStatus == 1 ? 'Approved' :
+                                                course.approveStatus == 2 ? 'Rejected' :
+                                                        course.approveStatus == 3 ? 'Processing' : 'Hidden'}
+                            </span>
+                        </div>
+
                         <p class="text-lg text-gray-700">
                             <span class="font-semibold text-gray-800">Instructor:</span> ${course.user.displayName}
                         </p>
+
                         <p class="text-gray-600 leading-relaxed">${course.courseSummary}</p>
+
                         <div class="flex flex-wrap items-center gap-4 text-sm mt-4">
-                            <span class="px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 font-medium shadow-sm">${course.category.name}</span>
-                            <span class="inline-block px-3 py-1 rounded-full text-sm font-medium shadow-sm
-                                        <c:choose>
-                                            <c:when test='${course.status == 1}'>bg-green-100 text-green-800</c:when>
-                                            <c:when test='${course.status == 2}'>bg-yellow-100 text-yellow-800</c:when>
-                                            <c:otherwise>bg-red-100 text-red-800</c:otherwise>
-                                        </c:choose>">
-                                        <c:choose>
-                                            <c:when test="${course.status == 1}">Active</c:when>
-                                            <c:when test="${course.status == 2}">Upcoming</c:when>
-                                            <c:otherwise>Ended</c:otherwise>
-                                        </c:choose>
-                                    </span>
-                            <span class="text-gray-600 flex items-center"><i class="fas fa-users mr-2 text-gray-500"></i> ${course.totalEnrolled} Enrolled Students</span>
+                            <span class="px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 font-medium shadow-sm">
+                                ${course.category.name}
+                            </span>
+
+                            <span class="text-gray-600 flex items-center">
+                                <i class="fas fa-users mr-2 text-gray-500"></i> ${course.totalEnrolled} Enrolled Students
+                            </span>
                         </div>
+
                         <div class="flex items-baseline gap-2 mt-4">
-                            <span class="text-3xl font-extrabold text-green-700">${course.salePrice}</span>
-                            <c:if test="${course.isSale == 1}">
-                                <span class="text-xl text-gray-500 line-through">${course.originalPrice}</span>
-                            </c:if>
+                            <c:choose>
+                                <c:when test="${course.isSale == 1}">
+                                    <span class="text-3xl font-extrabold text-green-700">$${course.salePrice}</span>
+                                    <span class="text-xl text-gray-500 line-through">$${course.originalPrice}</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <span class="text-3xl font-extrabold text-green-700">$${course.originalPrice}</span>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Detailed Course Information (Below the main header) -->
+            <!-- Detailed Course Information -->
             <section class="mb-8 p-6 bg-gray-50 rounded-xl shadow-inner border border-gray-100">
                 <h3 class="text-2xl font-bold text-gray-800 mb-4">Course Overview</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-6 text-gray-700">
                     <p><span class="font-medium text-gray-600">Course ID:</span> ${course.courseID}</p>
                     <p><span class="font-medium text-gray-600">Highlight:</span> ${course.courseHighlight}</p>
-                    <p><span class="font-medium text-gray-600">Is Sale:</span> ${course.isSale == 1 ? 'Yes' : 'No'}</p>
-                    <p><span class="font-medium text-gray-600">Public Date:</span> <fmt:formatDate value="${course.publicDate}" pattern="yyyy-MM-dd HH:mm:ss"/></p>
-                    <p><span class="font-medium text-gray-600">Last Update:</span> <fmt:formatDate value="${course.courseLastUpdate}" pattern="yyyy-MM-dd HH:mm:ss"/></p>
+                    <p><span class="font-medium text-gray-600">On Sale:</span> ${course.isSale == 1 ? 'Yes' : 'No'}</p>
+                    <p><span class="font-medium text-gray-600">Public Date:</span>
+                        <fmt:formatDate value="${course.publicDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                    </p>
+                    <p><span class="font-medium text-gray-600">Last Update:</span>
+                        <fmt:formatDate value="${course.courseLastUpdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                    </p>
+                    <p><span class="font-medium text-gray-600">Approval Status:</span>
+                        ${course.approveStatus == 0 ? 'Default' :
+                                course.approveStatus == 1 ? 'Approved' :
+                                        course.approveStatus == 2 ? 'Rejected' :
+                                                course.approveStatus == 3 ? 'Processing' : 'Hidden'}
+                    </p>
+                </div>
+
+                <!-- Admin Actions -->
+                <div class="flex flex-wrap gap-4 mt-6 pt-6 border-t border-gray-200">
+                    <c:if test="${course.approveStatus != 1}">
+                        <form action="ManageCourse" method="post" class="inline">
+                            <input type="hidden" name="action" value="updateStatus">
+                            <input type="hidden" name="courseID" value="${course.courseID}">
+                            <input type="hidden" name="status" value="1">
+                            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md flex items-center gap-2">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                        </form>
+                    </c:if>
+
+                    <c:if test="${course.approveStatus != 2}">
+                        <form action="ManageCourse" method="post" class="inline">
+                            <input type="hidden" name="action" value="updateStatus">
+                            <input type="hidden" name="courseID" value="${course.courseID}">
+                            <input type="hidden" name="status" value="2">
+                            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md flex items-center gap-2">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        </form>
+                    </c:if>
+
+                    
+                    
                 </div>
             </section>
 
-            <!-- Modules List (Accordion Style) -->
+            <!-- Modules List -->
             <section class="mb-8">
                 <h3 class="text-2xl font-bold text-gray-900 mb-6">Course Content</h3>
                 <div class="space-y-4">
@@ -129,8 +187,11 @@
                                     Module ${loop.index + 1}: ${module.moduleName}
                                 </h4>
                                 <div class="flex items-center gap-4">
-                                    <span class="text-sm text-gray-600 hidden md:inline">Last Update: <fmt:formatDate value="${module.moduleLastUpdate}" pattern="yyyy-MM-dd HH:mm:ss"/></span>
-                                    <form action="<c:url value='/admin/ManageCourse'/>" method="post" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this module? This will also delete all its materials.');">
+                                    <span class="text-sm text-gray-600 hidden md:inline">
+                                        Last Update: <fmt:formatDate value="${module.moduleLastUpdate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                    </span>
+                                    <form action="ManageCourse" method="post" class="inline-block"
+                                          onsubmit="return confirm('Are you sure you want to delete this module? This will also delete all its materials.');">
                                         <input type="hidden" name="action" value="deleteModule"/>
                                         <input type="hidden" name="courseID" value="${course.courseID}"/>
                                         <input type="hidden" name="moduleID" value="${module.moduleID}"/>
@@ -145,8 +206,8 @@
 
                                 <!-- Materials List -->
                                 <h5 class="text-md font-semibold text-gray-800 mb-3">Materials for this Module</h5>
-                                <div class="overflow-x-auto">
-                                    <table class="min-w-full bg-white rounded-lg shadow-sm border border-gray-200">
+                                <div class="table-container">
+                                    <table class="min-w-full bg-white rounded-lg shadow-sm border border-gray-200 material-table">
                                         <thead>
                                         <tr class="bg-gray-100 text-gray-700 uppercase text-xs tracking-wider">
                                             <th class="px-4 py-3 text-left rounded-tl-lg">ID</th>
@@ -155,9 +216,8 @@
                                             <th class="px-4 py-3 text-left">Order</th>
                                             <th class="px-4 py-3 text-left">Time</th>
                                             <th class="px-4 py-3 text-left">Description</th>
-                                            <th class="px-4 py-3 text-left">URL</th>
-                                            <th class="px-4 py-3 text-left">File</th>
-                                            <th class="px-4 py-3 text-center rounded-tr-lg">Actions</th>
+                                            <th class="px-4 py-3 text-left">File/Link</th>
+                                            <th class="px-4 py-3 text-left rounded-tr-lg">Actions</th>
                                         </tr>
                                         </thead>
                                         <tbody class="divide-y divide-gray-200">
@@ -165,36 +225,64 @@
                                             <tr class="hover:bg-gray-50 transition-colors duration-150">
                                                 <td class="px-4 py-3 text-gray-800">${material.materialId}</td>
                                                 <td class="px-4 py-3 font-medium text-gray-900">${material.materialName}</td>
-                                                <td class="px-4 py-3 text-gray-600">${material.type}</td>
-                                                <td class="px-4 py-3 text-gray-600">${material.materialOrder}</td>
-                                                <td class="px-4 py-3 text-gray-600">${material.time}</td>
-                                                <td class="px-4 py-3 text-gray-600 max-w-xs truncate">${material.materialDescription}</td>
-                                                <td class="px-4 py-3">
-                                                    <c:if test="${not empty material.materialUrl}">
-                                                        <a href="${material.materialUrl}" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center gap-1">
-                                                            <i class="fas fa-external-link-alt"></i> View Link
-                                                        </a>
-                                                    </c:if>
-                                                    <c:if test="${empty material.materialUrl}">-</c:if>
+                                                <td class="px-4 py-3 text-gray-600">
+                                                    <c:choose>
+                                                        <c:when test="${material.type == 'VIDEO'}">Video</c:when>
+                                                        <c:when test="${material.type == 'PDF'}">PDF Document</c:when>
+                                                        <c:when test="${material.type == 'QUIZ'}">Quiz</c:when>
+                                                        <c:when test="${material.type == 'LINK'}">External Link</c:when>
+                                                        <c:otherwise>${material.type}</c:otherwise>
+                                                    </c:choose>
                                                 </td>
-                                                <td class="px-4 py-3">
+                                                <td class="px-4 py-3 text-gray-600">${material.materialOrder}</td>
+                                                <td class="px-4 py-3 text-gray-600">
+                                                    <c:choose>
+                                                        <c:when test="${not empty material.time}">
+                                                            <c:choose>
+                                                                <c:when test="${material.time.length() <= 3 and material.time.trim().length() > 0}">
+                                                                    ${material.time} minutes
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    ${material.time}
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            -
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
+                                                <td class="px-4 py-3 text-gray-600 max-w-xs truncate">${material.materialDescription}</td>
+                                                <td class="px-4 py-3 text-gray-600">
                                                     <c:if test="${not empty material.fileName}">
-                                                        ${material.fileName}
-                                                        <c:if test="${not empty material.pdfDataURI}">
-                                                            <br/><a href="${material.pdfDataURI}" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium flex items-center gap-1 mt-1">
-                                                            <i class="fas fa-file-pdf"></i> View PDF
-                                                        </a>
-                                                        </c:if>
+                                                        <div class="flex items-center gap-1">
+                                                            <i class="fas fa-file-alt text-blue-500"></i>
+                                                            <span>${material.fileName}</span>
+                                                        </div>
                                                     </c:if>
-                                                    <c:if test="${empty material.fileName}">-</c:if>
+                                                    <c:if test="${not empty material.materialUrl}">
+                                                        <div class="mt-1">
+                                                            <a href="${material.materialUrl}" target="_blank" class="text-blue-600 hover:underline flex items-center gap-1">
+                                                                <i class="fas fa-external-link-alt"></i> External Link
+                                                            </a>
+                                                        </div>
+                                                    </c:if>
                                                 </td>
                                                 <td class="px-4 py-3 text-center">
-                                                    <form action="<c:url value='/admin/ManageCourse'/>" method="post" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this material?');">
+                                                    <c:if test="${not empty material.pdfDataURI}">
+                                                        <button onclick="showPdfPreview('${material.pdfDataURI}')"
+                                                                class="text-blue-500 hover:text-blue-700 p-1 rounded hover:bg-blue-50 mr-2"
+                                                                title="Preview PDF">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                    </c:if>
+                                                    <form action="ManageCourse" method="post" class="inline-block"
+                                                          onsubmit="return confirm('Are you sure you want to delete this material?');">
                                                         <input type="hidden" name="action" value="deleteMaterialAdmin"/>
                                                         <input type="hidden" name="courseID" value="${course.courseID}"/>
                                                         <input type="hidden" name="moduleID" value="${module.moduleID}"/>
                                                         <input type="hidden" name="materialID" value="${material.materialId}"/>
-                                                        <button type="submit" class="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-100 transition-colors duration-200" title="Delete Material">
+                                                        <button type="submit" class="text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-100 transition-colors duration-200" title="Delete Material">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </form>
@@ -203,7 +291,15 @@
                                         </c:forEach>
                                         <c:if test="${empty module.materials}">
                                             <tr>
-                                                <td colspan="9" class="px-4 py-3 text-center text-gray-500">No materials found for this module.</td>
+                                                <td colspan="8" class="px-4 py-3 text-center text-gray-500">
+                                                    <div class="flex flex-col items-center justify-center py-4">
+                                                        <i class="fas fa-folder-open text-gray-400 text-3xl mb-2"></i>
+                                                        <p>No materials found for this module</p>
+                                                        <a href="#" class="text-indigo-600 hover:text-indigo-800 mt-2 text-sm font-medium">
+                                                            <i class="fas fa-plus mr-1"></i> Add Material
+                                                        </a>
+                                                    </div>
+                                                </td>
                                             </tr>
                                         </c:if>
                                         </tbody>
@@ -214,7 +310,13 @@
                     </c:forEach>
                     <c:if test="${empty course.modules}">
                         <div class="bg-white rounded-xl shadow-md p-6 text-center text-gray-500 border border-gray-200">
-                            No modules found for this course.
+                            <div class="flex flex-col items-center justify-center py-4">
+                                <i class="fas fa-folder-open text-gray-400 text-4xl mb-3"></i>
+                                <p class="text-lg mb-2">No modules found for this course</p>
+                                <a href="#" class="text-indigo-600 hover:text-indigo-800 mt-2 text-sm font-medium">
+                                    <i class="fas fa-plus mr-1"></i> Add Module
+                                </a>
+                            </div>
                         </div>
                     </c:if>
                 </div>
@@ -222,5 +324,26 @@
         </main>
     </div>
 </div>
+
+<script>
+    function showPdfPreview(dataUri) {
+        const win = window.open();
+        win.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>PDF Preview</title>
+            <style>
+                body { margin: 0; }
+                iframe { width: 100%; height: 100vh; border: none; }
+            </style>
+        </head>
+        <body>
+            <iframe src="${dataUri}"></iframe>
+        </body>
+        </html>
+    `);
+    }
+</script>
 </body>
 </html>

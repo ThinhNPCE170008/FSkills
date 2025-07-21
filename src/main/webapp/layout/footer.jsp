@@ -1,5 +1,4 @@
 <%-- Footer Component - No HTML/HEAD/BODY tags as this is included in other pages --%>
-<!-- Tailwind CSS Config for Footer -->
 <script>
     if (typeof tailwind === 'undefined') {
         document.write('<script src="https://cdn.tailwindcss.com"><\/script>');
@@ -20,7 +19,7 @@
         }
     }
 </script>
-<!-- Font Awesome for icons (only loaded if not already present) -->
+
 <script>
     if (!document.querySelector('link[href*="font-awesome"]')) {
         const link = document.createElement('link');
@@ -129,7 +128,7 @@
 
             <!-- Copyright section, adjusted padding -->
             <div class="border-t border-gray-200 pt-4 text-center text-gray-600 text-sm">
-                <p>&copy; 2025 F-Skills. All rights reserved. | From Group 3 With <i class="bi bi-heart-fill text-danger text-xs"></i></p>
+                <p>&copy; 2025 F-Skills. All rights reserved. | From Group 3</p>
             </div>
         </div>
     </footer>
