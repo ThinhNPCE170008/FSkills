@@ -46,7 +46,8 @@ public class User {
         this.googleID = googleID;
     }
     
-    public User(int userId, String userName, String displayName, String email, String password, Role role, int gender, Timestamp dateOfBirth, Timestamp userCreateDate, byte[] avatar, String info, Ban ban, int reports, String phone, boolean isVerified, String googleID, String avatarUrl) {
+    // Use Login
+    public User(int userId, String userName, String displayName, String email, String password, Role role, int gender, Timestamp dateOfBirth, Timestamp userCreateDate, byte[] avatar, String info, Ban ban, String phone, boolean isVerified, String googleID, String avatarUrl) {
         this.userId = userId;
         this.userName = userName;
         this.displayName = displayName;
@@ -59,7 +60,6 @@ public class User {
         this.avatar = avatar;
         this.info = info;
         this.ban = ban;
-        this.reports = reports;
         this.phone = phone;
         this.isVerified = isVerified;
         this.googleID = googleID;
