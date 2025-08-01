@@ -81,7 +81,7 @@
                                 <span style="border-bottom: 4px solid #0d6efd; padding-bottom: 6px;">All Material</span>
                             </h1>
 
-                            <table class="table table-bordered table-hover shadow-sm bg-white rounded mt-4">
+                            <table class="table table-bordered table-hover shadow-sm bg-white rounded">
                                 <thead>
                                     <tr>
                                         <th>Order</th>

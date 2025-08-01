@@ -13,11 +13,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * LearnerTestServlet handles all test-related functionality for learners
+ *
  * @author Generated for learner test functionality
  */
 @WebServlet("/learner/tests")
@@ -309,30 +311,92 @@ public class LearnerTestServlet extends HttpServlet {
         for (Question question : questions) {
             totalPoints += question.getPoint();
 
-            String userAnswer = request.getParameter("answer_" + question.getQuestionID());
-            if (userAnswer == null) userAnswer = "";
+            String userAnswer = "";
 
+// MULTIPLE: dùng getParameterValues để lấy tất cả đáp án học viên chọn
+            if ("MULTIPLE".equals(question.getQuestionType())) {
+                String[] selected = request.getParameterValues("answer_" + question.getQuestionID());
+                if (selected != null) {
+                    userAnswer = String.join(",", selected);  // sẽ ra "1,3" hoặc "2,4", v.v.
+                }
+            } else {
+                userAnswer = request.getParameter("answer_" + question.getQuestionID());
+            }
+
+            if (userAnswer == null) {
+                userAnswer = "";
+            }
+
+            String answerToStore = ""; // This will be the letter format to store in database
             boolean isCorrect = false;
+
             if (question.getQuestionType().equals("CHOICE")) {
                 // Map user answer (1,2,3,4) to option letters (A,B,C,D)
-                String selectedOptionLetter = "";
                 switch (userAnswer) {
                     case "1":
-                        selectedOptionLetter = "A";
+                        answerToStore = "A";
                         break;
                     case "2":
-                        selectedOptionLetter = "B";
+                        answerToStore = "B";
                         break;
                     case "3":
-                        selectedOptionLetter = "C";
+                        answerToStore = "C";
                         break;
                     case "4":
-                        selectedOptionLetter = "D";
+                        answerToStore = "D";
                         break;
+                    default:
+                        answerToStore = ""; // No answer selected
                 }
-                isCorrect = selectedOptionLetter.equals(question.getRightOption());
+                isCorrect = answerToStore.equals(question.getRightOption());
+
+            } else if (question.getQuestionType().equals("MULTIPLE")) {
+                // Handle multiple choice answers (userAnswer could be "1,3" for A,C)
+                if (!userAnswer.trim().isEmpty()) {
+                    String[] userSelections = userAnswer.split(",");
+                    StringBuilder selectedOptions = new StringBuilder();
+                    for (String selection : userSelections) {
+                        String letter = "";
+                        switch (selection.trim()) {
+                            case "1":
+                                letter = "A";
+                                break;
+                            case "2":
+                                letter = "B";
+                                break;
+                            case "3":
+                                letter = "C";
+                                break;
+                            case "4":
+                                letter = "D";
+                                break;
+                        }
+                        if (!letter.isEmpty()) {
+                            if (selectedOptions.length() > 0) {
+                                selectedOptions.append(",");
+                            }
+                            selectedOptions.append(letter);
+                        }
+                    }
+                    answerToStore = selectedOptions.toString();
+                } else {
+                    answerToStore = ""; // No answers selected
+                }
+
+                // Compare selected options with correct options
+                if (!answerToStore.isEmpty() && !question.getRightOption().isEmpty()) {
+                    String[] correctOptions = question.getRightOption().split(",");
+                    String[] selectedOptionsArray = answerToStore.split(",");
+                    Arrays.sort(correctOptions);
+                    Arrays.sort(selectedOptionsArray);
+                    isCorrect = Arrays.equals(correctOptions, selectedOptionsArray);
+                }
+
             } else if (question.getQuestionType().equals("WRITING")) {
-                isCorrect = !userAnswer.trim().equalsIgnoreCase(question.getRightOption().trim());
+                answerToStore = userAnswer; // Store the text as-is for writing questions
+                // For writing questions, manual grading is typically required
+                // This logic might need to be adjusted based on your requirements
+                isCorrect = false; // Writing questions should be manually graded
             }
 
             if (isCorrect) {
@@ -342,7 +406,7 @@ public class LearnerTestServlet extends HttpServlet {
             UserAnswer ua = new UserAnswer();
             ua.setQuestionID(question.getQuestionID());
             ua.setUserID(user.getUserId());
-            ua.setAnswer(userAnswer);
+            ua.setAnswer(answerToStore); // Store the converted letter format
             ua.setCorrected(isCorrect);
             userAnswers.add(ua);
         }
@@ -426,4 +490,4 @@ public class LearnerTestServlet extends HttpServlet {
 
         request.getRequestDispatcher("/WEB-INF/views/learnerTestResult.jsp").forward(request, response);
     }
-} 
+}

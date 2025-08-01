@@ -622,8 +622,11 @@ public class InstructorTestServlet extends HttpServlet {
                     questionType = "CHOICE";
                 }
 
-                // For writing questions, use the writing answer as the right option
-                if ("WRITING".equals(questionType) && writingAnswer != null && !writingAnswer.trim().isEmpty()) {
+                // Handle MULTIPLE choice answers
+                if ("MULTIPLE".equals(questionType)) {
+                    String[] selectedOptions = request.getParameterValues("multipleChoice_" + i);
+                    rightOption = (selectedOptions != null) ? String.join(",", selectedOptions) : "";
+                } else if ("WRITING".equals(questionType) && writingAnswer != null && !writingAnswer.trim().isEmpty()) {
                     rightOption = writingAnswer.trim();
                 }
 

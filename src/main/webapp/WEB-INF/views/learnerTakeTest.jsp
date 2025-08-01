@@ -108,6 +108,40 @@
             transform: scale(1.2);
         }
 
+        .multiple-choice-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .multiple-choice-option {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .multiple-choice-option:hover {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            border-color: #84fab0;
+            color: white;
+        }
+
+        .multiple-choice-option.selected {
+            background: linear-gradient(135deg, #a8e6cf 0%, #88d8c0 100%);
+            border-color: #a8e6cf;
+            color: white;
+        }
+
+        .multiple-choice-option input[type="checkbox"] {
+            margin-right: 0.8rem;
+            transform: scale(1.2);
+        }
+
         .writing-textarea {
             border: 2px solid #e9ecef;
             border-radius: 10px;
@@ -177,6 +211,11 @@
 
         .badge-choice {
             background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            color: white;
+        }
+
+        .badge-multiple {
+            background: linear-gradient(135deg, #a8e6cf 0%, #88d8c0 100%);
             color: white;
         }
 
@@ -270,10 +309,10 @@
                                         <div class="question-number">${status.index + 1}</div>
                                         <div class="flex-grow-1">
                                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                                                <span class="question-type-badge ${question.questionType == 'CHOICE' ? 'badge-choice' : 'badge-writing'}">
-                                                                    <i class="bi ${question.questionType == 'CHOICE' ? 'bi-check2-square' : 'bi-pencil-square'} me-1"></i>
-                                                                    ${question.questionType}
-                                                                </span>
+                                                <span class="question-type-badge ${question.questionType == 'CHOICE' ? 'badge-choice' : (question.questionType == 'MULTIPLE' ? 'badge-multiple' : 'badge-writing')}">
+                                                    <i class="bi ${question.questionType == 'CHOICE' ? 'bi-check2-square' : (question.questionType == 'MULTIPLE' ? 'bi-check2-all' : 'bi-pencil-square')} me-1"></i>
+                                                    ${question.questionType}
+                                                </span>
                                                 <span class="text-muted">
                                                                     <i class="bi bi-star-fill text-warning me-1"></i>
                                                                     ${question.point} ${question.point == 1 ? 'point' : 'points'}
@@ -330,13 +369,59 @@
                                                 </c:if>
                                             </div>
                                         </c:when>
+                                        <c:when test="${question.questionType == 'MULTIPLE'}">
+                                            <div class="multiple-choice-options">
+                                                <p class="text-info mb-3"><i class="bi bi-info-circle me-1"></i>Select all correct answers:</p>
+                                                <c:if test="${not empty question.option1}">
+                                                    <label class="multiple-choice-option" for="q${question.questionID}_1">
+                                                        <input type="checkbox"
+                                                               id="q${question.questionID}_1"
+                                                               name="answer_${question.questionID}"
+                                                               value="1"
+                                                               onchange="updateMultipleChoiceAnswer(this); updateProgress()">
+                                                        <span class="option-text">A. ${question.option1}</span>
+                                                    </label>
+                                                </c:if>
+                                                <c:if test="${not empty question.option2}">
+                                                    <label class="multiple-choice-option" for="q${question.questionID}_2">
+                                                        <input type="checkbox"
+                                                               id="q${question.questionID}_2"
+                                                               name="answer_${question.questionID}"
+                                                               value="2"
+                                                               onchange="updateMultipleChoiceAnswer(this); updateProgress()">
+                                                        <span class="option-text">B. ${question.option2}</span>
+                                                    </label>
+                                                </c:if>
+                                                <c:if test="${not empty question.option3}">
+                                                    <label class="multiple-choice-option" for="q${question.questionID}_3">
+                                                        <input type="checkbox"
+                                                               id="q${question.questionID}_3"
+                                                               name="answer_${question.questionID}"
+                                                               value="3"
+                                                               onchange="updateMultipleChoiceAnswer(this); updateProgress()">
+                                                        <span class="option-text">C. ${question.option3}</span>
+                                                    </label>
+                                                </c:if>
+                                                <c:if test="${not empty question.option4}">
+                                                    <label class="multiple-choice-option" for="q${question.questionID}_4">
+                                                        <input type="checkbox"
+                                                               id="q${question.questionID}_4"
+                                                               name="answer_${question.questionID}"
+                                                               value="4"
+                                                               onchange="updateMultipleChoiceAnswer(this); updateProgress()">
+                                                        <span class="option-text">D. ${question.option4}</span>
+                                                    </label>
+                                                </c:if>
+                                                <input type="hidden" name="answer_${question.questionID}" value="" id="hidden_answer_${question.questionID}">
+                                            </div>
+                                        </c:when>
                                         <c:otherwise>
                                             <div class="writing-question">
-                                                                <textarea class="form-control writing-textarea"
-                                                                          name="answer_${question.questionID}"
-                                                                          placeholder="Enter your answer here..."
-                                                                          onchange="updateProgress()"
-                                                                          oninput="updateProgress()"></textarea>
+                                                <textarea class="form-control writing-textarea"
+                                                          name="answer_${question.questionID}"
+                                                          placeholder="Enter your answer here..."
+                                                          onchange="updateProgress()"
+                                                          oninput="updateProgress()"></textarea>
                                                 <small class="text-muted mt-2 d-block">
                                                     <i class="bi bi-info-circle me-1"></i>
                                                     Provide a detailed written response to this question.
@@ -352,9 +437,7 @@
                 </form>
             </div>
         </div>
-    </div>
-    </div>
-    </div>
+        </div>
     </div>
 </main>
 
@@ -384,11 +467,33 @@
         });
     });
 
+    // Update multiple choice option selection visual feedback
+    document.querySelectorAll('.multiple-choice-option').forEach(option => {
+        option.addEventListener('click', function() {
+            const checkbox = this.querySelector('input[type="checkbox"]');
+            if (checkbox) {
+                // Toggle checkbox
+                checkbox.checked = !checkbox.checked;
+                
+                // Toggle selected class
+                if (checkbox.checked) {
+                    this.classList.add('selected');
+                } else {
+                    this.classList.remove('selected');
+                }
+                
+                // Update the multiple choice answer and progress
+                updateMultipleChoiceAnswer(checkbox);
+                updateProgress();
+            }
+        });
+    });
+
     // Update progress function
     function updateProgress() {
         let answeredCount = 0;
 
-        // Count answered multiple choice questions
+        // Count answered single choice questions
         const allRadioNames = new Set();
         document.querySelectorAll('input[type="radio"][name^="answer_"]').forEach(radio => {
             allRadioNames.add(radio.name);
@@ -396,6 +501,13 @@
 
         allRadioNames.forEach(name => {
             if (document.querySelector(`input[name="` + name +`"]:checked`)) {
+                answeredCount++;
+            }
+        });
+
+        // Count answered multiple choice questions
+        document.querySelectorAll('input[type="hidden"][name^="answer_"]').forEach(hidden => {
+            if (hidden.value.trim() !== "") {
                 answeredCount++;
             }
         });
@@ -458,6 +570,17 @@
                 }
             });
             updateProgress();
+        }
+    }
+
+    // Function to handle multiple choice answers update
+    function updateMultipleChoiceAnswer(checkbox) {
+        const questionId = checkbox.name.split('_')[1];
+        const checkedBoxes = document.querySelectorAll('input[name="answer_' + questionId + '"]:checked');
+        const selectedValues = Array.from(checkedBoxes).map(cb => cb.value).join(',');
+        const hiddenAnswerInput = document.getElementById('hidden_answer_' + questionId);
+        if (hiddenAnswerInput) {
+            hiddenAnswerInput.value = selectedValues;
         }
     }
 

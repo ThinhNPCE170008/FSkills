@@ -64,7 +64,7 @@
         <script>
             const YOUTUBE_API_KEY = '${sessionScope.apiKey}';
         </script>
-        
+
         <jsp:include page="/layout/sidebar_user.jsp"/>
         <div class="container-fluid flex px-4">
             <div class="container py-5">
@@ -90,8 +90,9 @@
                     </ol>
                 </nav>
                 <div class="bg-white p-5 rounded-4 shadow-lg mx-auto" style="max-width: 900px;">
-                    <h1 class="mb-4 text-primary fw-semibold text-center fs-1">
-                        <i class="bi bi-journal-plus"></i> Update Material
+                    <h1 class="text-center mb-4 fw-bold text-primary-emphasis display-5" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">
+                        <i class="bi bi-journal-text me-2" style="font-size: 2rem;"></i>
+                        <span style="border-bottom: 4px solid #0d6efd; padding-bottom: 6px;">Update Material</span>
                     </h1>
                     <form method="POST" action="${pageContext.request.contextPath}/instructor/courses/modules/material?action=update"
                           enctype="multipart/form-data" onsubmit="return validateYoutubeFields()">
@@ -417,8 +418,6 @@
                     previewYoutubeThumbnail();
                 } else if (type === "pdf" || type === "doc") {
                     fileDiv.classList.remove("d-none");
-                    if (fileInput)
-                        fileInput.setAttribute("required", "required");
                 } else if (type === "link") {
                     linkDiv.classList.remove("d-none");
                     if (linkInput)

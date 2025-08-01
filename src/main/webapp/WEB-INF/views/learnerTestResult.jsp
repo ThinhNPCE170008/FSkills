@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -407,10 +408,10 @@
                                                 <div class="question-number">${status.index + 1}</div>
                                                 <div class="flex-grow-1">
                                                     <div class="d-flex justify-content-between align-items-center mb-2">
-                                                                        <span class="badge ${qa.question.questionType == 'CHOICE' ? 'bg-info' : 'bg-warning'} text-white">
-                                                                            <i class="bi ${qa.question.questionType == 'CHOICE' ? 'bi-check2-square' : 'bi-pencil-square'} me-1"></i>
-                                                                            ${qa.question.questionType}
-                                                                        </span>
+                                                        <span class="badge ${qa.question.questionType == 'CHOICE' ? 'bg-info' : (qa.question.questionType == 'MULTIPLE' ? 'bg-success' : 'bg-warning')} text-white">
+                                                            <i class="bi ${qa.question.questionType == 'CHOICE' ? 'bi-check2-square' : (qa.question.questionType == 'MULTIPLE' ? 'bi-check2-all' : 'bi-pencil-square')} me-1"></i>
+                                                            ${qa.question.questionType}
+                                                        </span>
                                                         <span class="points-badge ${qa.corrected ? 'points-earned' : 'points-lost'}">
                                                                             ${qa.corrected ? qa.question.point : 0} / ${qa.question.point} points
                                                                         </span>
@@ -437,11 +438,11 @@
                                                 <c:when test="${qa.question.questionType == 'CHOICE'}">
                                                     <div class="choice-review">
                                                         <c:if test="${not empty qa.question.option1}">
-                                                            <div class="answer-option ${qa.answer == '1' ? 'user-choice' : ''} ${qa.question.rightOption == 'A' ? 'correct-answer' : ''}">
+                                                            <div class="answer-option ${qa.answer == 'A' ? 'user-choice' : ''} ${qa.question.rightOption == 'A' ? 'correct-answer' : ''}">
                                                                 <div class="d-flex justify-content-between align-items-center">
                                                                     <span><strong>A.</strong> ${qa.question.option1}</span>
                                                                     <div>
-                                                                        <c:if test="${qa.answer == '1'}">
+                                                                        <c:if test="${qa.answer == 'A'}">
                                                                             <span class="badge bg-warning text-dark me-2">Your Choice</span>
                                                                         </c:if>
                                                                         <c:if test="${qa.question.rightOption == 'A'}">
@@ -452,11 +453,11 @@
                                                             </div>
                                                         </c:if>
                                                         <c:if test="${not empty qa.question.option2}">
-                                                            <div class="answer-option ${qa.answer == '2' ? 'user-choice' : ''} ${qa.question.rightOption == 'B' ? 'correct-answer' : ''}">
+                                                            <div class="answer-option ${qa.answer == 'B' ? 'user-choice' : ''} ${qa.question.rightOption == 'B' ? 'correct-answer' : ''}">
                                                                 <div class="d-flex justify-content-between align-items-center">
                                                                     <span><strong>B.</strong> ${qa.question.option2}</span>
                                                                     <div>
-                                                                        <c:if test="${qa.answer == '2'}">
+                                                                        <c:if test="${qa.answer == 'B'}">
                                                                             <span class="badge bg-warning text-dark me-2">Your Choice</span>
                                                                         </c:if>
                                                                         <c:if test="${qa.question.rightOption == 'B'}">
@@ -467,11 +468,11 @@
                                                             </div>
                                                         </c:if>
                                                         <c:if test="${not empty qa.question.option3}">
-                                                            <div class="answer-option ${qa.answer == '3' ? 'user-choice' : ''} ${qa.question.rightOption == 'C' ? 'correct-answer' : ''}">
+                                                            <div class="answer-option ${qa.answer == 'C' ? 'user-choice' : ''} ${qa.question.rightOption == 'C' ? 'correct-answer' : ''}">
                                                                 <div class="d-flex justify-content-between align-items-center">
                                                                     <span><strong>C.</strong> ${qa.question.option3}</span>
                                                                     <div>
-                                                                        <c:if test="${qa.answer == '3'}">
+                                                                        <c:if test="${qa.answer == 'C'}">
                                                                             <span class="badge bg-warning text-dark me-2">Your Choice</span>
                                                                         </c:if>
                                                                         <c:if test="${qa.question.rightOption == 'C'}">
@@ -482,14 +483,79 @@
                                                             </div>
                                                         </c:if>
                                                         <c:if test="${not empty qa.question.option4}">
-                                                            <div class="answer-option ${qa.answer == '4' ? 'user-choice' : ''} ${qa.question.rightOption == 'D' ? 'correct-answer' : ''}">
+                                                            <div class="answer-option ${qa.answer == 'D' ? 'user-choice' : ''} ${qa.question.rightOption == 'D' ? 'correct-answer' : ''}">
                                                                 <div class="d-flex justify-content-between align-items-center">
                                                                     <span><strong>D.</strong> ${qa.question.option4}</span>
                                                                     <div>
-                                                                        <c:if test="${qa.answer == '4'}">
+                                                                        <c:if test="${qa.answer == 'D'}">
                                                                             <span class="badge bg-warning text-dark me-2">Your Choice</span>
                                                                         </c:if>
                                                                         <c:if test="${qa.question.rightOption == 'D'}">
+                                                                            <span class="badge bg-success">Correct</span>
+                                                                        </c:if>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </c:if>
+                                                    </div>
+                                                </c:when>
+                                                <c:when test="${qa.question.questionType == 'MULTIPLE'}">
+                                                    <div class="multiple-choice-review">
+                                                        <p class="text-info mb-3"><i class="bi bi-info-circle me-1"></i>Multiple correct answers possible</p>
+                                                        <c:if test="${not empty qa.question.option1}">
+                                                            <div class="answer-option ${fn:contains(qa.answer, 'A') ? 'user-choice' : ''} ${fn:contains(qa.question.rightOption, 'A') ? 'correct-answer' : ''}">
+                                                                <div class="d-flex justify-content-between align-items-center">
+                                                                    <span><strong>A.</strong> ${qa.question.option1}</span>
+                                                                    <div>
+                                                                        <c:if test="${fn:contains(qa.answer, 'A')}">
+                                                                            <span class="badge bg-warning text-dark me-2">Your Choice</span>
+                                                                        </c:if>
+                                                                        <c:if test="${fn:contains(qa.question.rightOption, 'A')}">
+                                                                            <span class="badge bg-success">Correct</span>
+                                                                        </c:if>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </c:if>
+                                                        <c:if test="${not empty qa.question.option2}">
+                                                            <div class="answer-option ${fn:contains(qa.answer, 'B') ? 'user-choice' : ''} ${fn:contains(qa.question.rightOption, 'B') ? 'correct-answer' : ''}">
+                                                                <div class="d-flex justify-content-between align-items-center">
+                                                                    <span><strong>B.</strong> ${qa.question.option2}</span>
+                                                                    <div>
+                                                                        <c:if test="${fn:contains(qa.answer, 'B')}">
+                                                                            <span class="badge bg-warning text-dark me-2">Your Choice</span>
+                                                                        </c:if>
+                                                                        <c:if test="${fn:contains(qa.question.rightOption, 'B')}">
+                                                                            <span class="badge bg-success">Correct</span>
+                                                                        </c:if>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </c:if>
+                                                        <c:if test="${not empty qa.question.option3}">
+                                                            <div class="answer-option ${fn:contains(qa.answer, 'C') ? 'user-choice' : ''} ${fn:contains(qa.question.rightOption, 'C') ? 'correct-answer' : ''}">
+                                                                <div class="d-flex justify-content-between align-items-center">
+                                                                    <span><strong>C.</strong> ${qa.question.option3}</span>
+                                                                    <div>
+                                                                        <c:if test="${fn:contains(qa.answer, 'C')}">
+                                                                            <span class="badge bg-warning text-dark me-2">Your Choice</span>
+                                                                        </c:if>
+                                                                        <c:if test="${fn:contains(qa.question.rightOption, 'C')}">
+                                                                            <span class="badge bg-success">Correct</span>
+                                                                        </c:if>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </c:if>
+                                                        <c:if test="${not empty qa.question.option4}">
+                                                            <div class="answer-option ${fn:contains(qa.answer, 'D') ? 'user-choice' : ''} ${fn:contains(qa.question.rightOption, 'D') ? 'correct-answer' : ''}">
+                                                                <div class="d-flex justify-content-between align-items-center">
+                                                                    <span><strong>D.</strong> ${qa.question.option4}</span>
+                                                                    <div>
+                                                                        <c:if test="${fn:contains(qa.answer, 'D')}">
+                                                                            <span class="badge bg-warning text-dark me-2">Your Choice</span>
+                                                                        </c:if>
+                                                                        <c:if test="${fn:contains(qa.question.rightOption, 'D')}">
                                                                             <span class="badge bg-success">Correct</span>
                                                                         </c:if>
                                                                     </div>

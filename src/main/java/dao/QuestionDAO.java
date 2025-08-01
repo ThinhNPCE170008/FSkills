@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * QuestionDAO class for CRUD operations on Questions table
- * @author Generated for InstructorTestServlet functionality
+ * Used for InstructorTestServlet and other test-related operations
  */
 public class QuestionDAO extends DBContext {
 
@@ -125,14 +125,10 @@ public class QuestionDAO extends DBContext {
 
             int insert = ps.executeUpdate();
             if (insert > 0) {
-                // Get the generated question ID
                 ResultSet generatedKeys = ps.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     int questionID = generatedKeys.getInt(1);
-
-                    // Update test last update
                     updateTestLastUpdate(question.getTestID());
-
                     return questionID;
                 }
             }
@@ -166,7 +162,6 @@ public class QuestionDAO extends DBContext {
 
             int update = ps.executeUpdate();
             if (update > 0) {
-                // Update test last update
                 updateTestLastUpdate(question.getTestID());
                 return 1;
             }
@@ -183,18 +178,14 @@ public class QuestionDAO extends DBContext {
         String sql = "DELETE FROM Questions WHERE QuestionID = ?";
 
         try {
-            // Get test ID before deletion for updating test last update
             Question question = getQuestionByID(questionID);
-            if (question == null) {
-                return 0;
-            }
+            if (question == null) return 0;
 
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, questionID);
-
             int delete = ps.executeUpdate();
+
             if (delete > 0) {
-                // Update test last update
                 updateTestLastUpdate(question.getTestID());
                 return 1;
             }
@@ -205,7 +196,7 @@ public class QuestionDAO extends DBContext {
     }
 
     /**
-     * Delete all questions for a test
+     * Delete all questions by test ID
      */
     public int deleteQuestionsByTestID(int testID) {
         String sql = "DELETE FROM Questions WHERE TestID = ?";
@@ -213,9 +204,8 @@ public class QuestionDAO extends DBContext {
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, testID);
-
             int delete = ps.executeUpdate();
-            // Update test last update
+
             updateTestLastUpdate(testID);
             return delete;
         } catch (SQLException e) {
@@ -225,7 +215,7 @@ public class QuestionDAO extends DBContext {
     }
 
     /**
-     * Get next question order for a test
+     * Get next question order
      */
     public int getNextQuestionOrder(int testID) {
         String sql = "SELECT ISNULL(MAX(QuestionOrder), 0) + 1 as NextOrder FROM Questions WHERE TestID = ?";
@@ -285,7 +275,7 @@ public class QuestionDAO extends DBContext {
     }
 
     /**
-     * Batch insert questions
+     * Insert a batch of questions
      */
     public int insertQuestions(List<Question> questions) {
         String sql = "INSERT INTO Questions (TestID, Point, QuestionOrder, QuestionType, Question, " +
@@ -316,7 +306,6 @@ public class QuestionDAO extends DBContext {
             conn.commit();
             conn.setAutoCommit(true);
 
-            // Update test last update
             if (testID != -1) {
                 updateTestLastUpdate(testID);
             }
@@ -335,21 +324,7 @@ public class QuestionDAO extends DBContext {
     }
 
     /**
-     * Helper method to update test's last update timestamp
-     */
-    private void updateTestLastUpdate(int testID) {
-        String sql = "UPDATE Tests SET TestLastUpdate = SYSUTCDATETIME() WHERE TestID = ?";
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, testID);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Error in updateTestLastUpdate: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Get questions for test in randomized order (for learners taking test)
+     * Get questions (optionally randomized)
      */
     public List<Question> getQuestionsForTest(int testID, boolean randomize) {
         List<Question> list = new ArrayList<>();
@@ -390,4 +365,18 @@ public class QuestionDAO extends DBContext {
         }
         return list;
     }
-} 
+
+    /**
+     * Update test last updated timestamp
+     */
+    private void updateTestLastUpdate(int testID) {
+        String sql = "UPDATE Tests SET TestLastUpdate = SYSUTCDATETIME() WHERE TestID = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, testID);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Error in updateTestLastUpdate: " + e.getMessage());
+        }
+    }
+}

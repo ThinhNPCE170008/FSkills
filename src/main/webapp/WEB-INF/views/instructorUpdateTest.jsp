@@ -260,7 +260,7 @@
                     <div class="mb-3">
                         <label for="testName" class="form-label">Test Name <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="testName" name="testName"
-                               value="${test.testName}" placeholder="Enter test name" required maxlength="255">
+                               value="${test.testName}" placeholder="Enter test name" maxlength="255">
                     </div>
                 </div>
             </div>
@@ -270,7 +270,7 @@
                     <div class="mb-3">
                         <label for="testOrder" class="form-label">Test Order</label>
                         <input type="number" class="form-control" id="testOrder" name="testOrder"
-                               value="${test.testOrder}" min="1" required>
+                               value="${test.testOrder}" min="1">
                     </div>
                 </div>
 
@@ -278,7 +278,7 @@
                     <div class="mb-3">
                         <label for="requiredCorrectAnswers" class="form-label">Required Correct Answers</label>
                         <input type="number" class="form-control" id="requiredCorrectAnswers" name="requiredCorrectAnswers"
-                               min="1" required onchange="calculatePassPercentage()">
+                               min="1" onchange="calculatePassPercentage()">
                         <input type="hidden" id="passPercentage" name="passPercentage" value="${test.passPercentage}">
                         <small class="form-text text-muted" style="display: none;">
                             Equivalent percentage: <span id="calculatedPercentage">${test.passPercentage}</span>%
@@ -424,8 +424,9 @@
             '<div class="mb-3">' +
             '<label class="form-label">Question Type</label>' +
             '<select class="form-select" name="questionType_' + questionCounter + '" onchange="toggleQuestionType(this, ' + questionCounter + ')">' +
-            '<option value="CHOICE"' + (data.questionType == 'CHOICE' ? ' selected' : '') + '>Multiple Choice</option>' +
-            // '<option value="WRITING"' + (data.questionType == 'WRITING' ? ' selected' : '') + '>Writing</option>' +
+            '\<option value="CHOICE"' + (data.questionType == 'CHOICE' ? ' selected' : '') + '\>Single Choice\</option\>' +
+            '\<option value="MULTIPLE"' + (data.questionType == 'MULTIPLE' ? ' selected' : '') + '\>Multiple Choice\</option\>' +
+            // '\<option value="WRITING"' + (data.questionType == 'WRITING' ? ' selected' : '') + '\>Writing\</option\>' +
             '</select>' +
             '<input type="hidden" name="point_' + questionCounter + '" value="' + (data.point || '1') + '">' +
             '</div>' +
@@ -437,28 +438,28 @@
             '<label class="form-label">Answer Options</label>' +
 
             '<div class="option-group">' +
-            '<input type="radio" name="rightOption_' + questionCounter + '" value="A"' + (data.rightOption == 'A' ? ' checked' : '') + '>' +
+            (data.questionType !== 'MULTIPLE' ? '<input type="radio" name="rightOption_' + questionCounter + '" value="A"' + (data.rightOption == 'A' ? ' checked' : '') + '>' : '') +
             '<strong>A.</strong>' +
             '<input type="text" class="form-control" name="option1_' + questionCounter + '" ' +
-            'placeholder="Option A" value="' + (data.option1 || '') + '" required>' +
+            'placeholder="Option A" value="' + (data.option1 || '') + '">' +
             '</div>' +
 
             '<div class="option-group">' +
-            '<input type="radio" name="rightOption_' + questionCounter + '" value="B"' + (data.rightOption == 'B' ? ' checked' : '') + '>' +
+            (data.questionType !== 'MULTIPLE' ? '<input type="radio" name="rightOption_' + questionCounter + '" value="B"' + (data.rightOption == 'B' ? ' checked' : '') + '>' : '') +
             '<strong>B.</strong>' +
             '<input type="text" class="form-control" name="option2_' + questionCounter + '" ' +
-            'placeholder="Option B" value="' + (data.option2 || '') + '" required>' +
+            'placeholder="Option B" value="' + (data.option2 || '') + '">' +
             '</div>' +
 
             '<div class="option-group">' +
-            '<input type="radio" name="rightOption_' + questionCounter + '" value="C"' + (data.rightOption == 'C' ? ' checked' : '') + '>' +
+            (data.questionType !== 'MULTIPLE' ? '<input type="radio" name="rightOption_' + questionCounter + '" value="C"' + (data.rightOption == 'C' ? ' checked' : '') + '>' : '') +
             '<strong>C.</strong>' +
             '<input type="text" class="form-control" name="option3_' + questionCounter + '" ' +
             'placeholder="Option C" value="' + (data.option3 || '') + '">' +
             '</div>' +
 
             '<div class="option-group">' +
-            '<input type="radio" name="rightOption_' + questionCounter + '" value="D"' + (data.rightOption == 'D' ? ' checked' : '') + '>' +
+            (data.questionType !== 'MULTIPLE' ? '<input type="radio" name="rightOption_' + questionCounter + '" value="D"' + (data.rightOption == 'D' ? ' checked' : '') + '>' : '') +
             '<strong>D.</strong>' +
             '<input type="text" class="form-control" name="option4_' + questionCounter + '" ' +
             'placeholder="Option D" value="' + (data.option4 || '') + '">' +
@@ -497,6 +498,42 @@
         // Initialize question type display
         if (data.questionType == 'WRITING') {
             toggleQuestionType(questionDiv.querySelector('select'), questionCounter);
+        } else if (data.questionType == 'MULTIPLE') {
+            // Handle MULTIPLE choice question initialization
+            toggleQuestionType(questionDiv.querySelector('select'), questionCounter);
+            
+            // Set the correct checkboxes based on rightOption
+            if (data.rightOption) {
+                const selectedOptions = data.rightOption.split(',');
+                const uniqueOptions = [...new Set(selectedOptions)]; // Remove duplicates
+                
+                // Use multiple attempts to ensure checkboxes are created and checked
+                let attempts = 0;
+                const maxAttempts = 50; // Max 1 second (50 * 20ms)
+                
+                function setCheckboxes() {
+                    attempts++;
+                    const allCheckboxes = questionDiv.querySelectorAll('input[name="multipleChoice_' + questionCounter + '"]');
+                    
+                    if (allCheckboxes.length > 0) {
+                        // Checkboxes are created, now set them
+                        uniqueOptions.forEach(option => {
+                            const checkbox = questionDiv.querySelector('input[name="multipleChoice_' + questionCounter + '"][value="' + option.trim() + '"]');
+                            if (checkbox) {
+                                checkbox.checked = true;
+                            }
+                        });
+                        
+                        // Update the hidden field with clean values
+                        updateMultipleChoiceAnswerForQuestion(questionCounter);
+                    } else if (attempts < maxAttempts) {
+                        // Checkboxes not created yet, try again
+                        setTimeout(setCheckboxes, 20);
+                    }
+                }
+                
+                setCheckboxes();
+            }
         }
 
         // After appending, add event listener to check for duplicates on blur/input
@@ -621,7 +658,7 @@
         if (!hasContent && !validationMessage) {
             const div = document.createElement('div');
             div.className = 'invalid-feedback';
-            div.textContent = 'Question text is required.';
+            div.textContent = 'Question text is.';
             element.parentNode.appendChild(div);
         } else if (hasContent && validationMessage) {
             validationMessage.remove();
@@ -676,10 +713,61 @@
             options[0].required = true; // Option A
             options[1].required = true; // Option B
 
-            // Reset rightOption to selected radio button value
-            const selectedRadio = choiceOptions.querySelector('input[type="radio"]:checked');
-            rightOptionHidden.value = selectedRadio ? selectedRadio.value : 'A';
-        }
+            // Handle input type change for CHOICE vs MULTIPLE
+            // Remove ALL existing input elements (radio/checkbox) first
+            const allInputs = choiceOptions.querySelectorAll('input[type="radio"], input[type="checkbox"]');
+            allInputs.forEach(input => input.remove());
+            
+            const optionGroups = choiceOptions.querySelectorAll('.option-group');
+            optionGroups.forEach((group, index) => {
+                const optionLetter = String.fromCharCode(65 + index); // A, B, C, D
+                let answerInput;
+                
+                if (select.value === 'MULTIPLE') {
+                    answerInput = document.createElement('input');
+                    answerInput.type = 'checkbox';
+                    answerInput.name = 'multipleChoice_' + questionId;
+                    answerInput.value = optionLetter;
+                    answerInput.addEventListener('change', updateMultipleChoiceAnswer);
+                } else { // CHOICE
+                    answerInput = document.createElement('input');
+                    answerInput.type = 'radio';
+                    answerInput.name = 'rightOption_' + questionId;
+                    answerInput.value = optionLetter;
+                    if (index === 0) answerInput.checked = true;
+                    // Add change event listener for radio buttons too
+                    answerInput.addEventListener('change', function() {
+                        rightOptionHidden.value = this.value;
+                    });
+                }
+                
+                group.insertBefore(answerInput, group.querySelector('strong'));
+            });
+
+            // Set initial rightOption value
+            if (select.value === 'MULTIPLE') {
+                // For MULTIPLE choice, update the hidden field based on checked checkboxes
+                updateMultipleChoiceAnswerForQuestion(questionId);
+            } else {
+                const selectedRadio = choiceOptions.querySelector('input[type="radio"]:checked');
+                rightOptionHidden.value = selectedRadio ? selectedRadio.value : 'A';
+            }
+                }
+    }
+
+    // Function to update hidden field for multiple choice answers
+    function updateMultipleChoiceAnswer() {
+        const questionId = this.name.split('_')[1];
+        updateMultipleChoiceAnswerForQuestion(questionId);
+    }
+    
+    // Helper function to update multiple choice answer for a specific question
+    function updateMultipleChoiceAnswerForQuestion(questionId) {
+        const rightOptionHidden = document.querySelector('input[name="rightOption_' + questionId + '"]');
+        const checkedBoxes = document.querySelectorAll('input[name="multipleChoice_' + questionId + '"]:checked');
+        const selectedValues = Array.from(checkedBoxes).map(cb => cb.value).sort();
+        const uniqueValues = [...new Set(selectedValues)]; // Remove duplicates
+        rightOptionHidden.value = uniqueValues.join(',');
     }
 
     // Function to check for duplicate questions by content (ignoring HTML tags and whitespace)
@@ -726,7 +814,7 @@
             return;
         }
 
-        // Check required correct answers vs total questions
+        // Check correct answers vs total questions
         const requiredAnswers = parseInt(document.getElementById('requiredCorrectAnswers').value) || 0;
         const totalQuestions = questions.length;
 
@@ -737,13 +825,13 @@
         }
 
         if (requiredAnswers === 0) {
-            showJsToast('Please specify the number of required correct answers.', 'danger');
+            showJsToast('Please specify the number of correct answers.', 'danger');
             document.getElementById('requiredCorrectAnswers').focus();
             return;
         }
 
         if (totalQuestions < requiredAnswers) {
-            showJsToast('You must add at least ' + requiredAnswers + ' questions to match the required correct answers.', 'danger');
+            showJsToast('You must add at least ' + requiredAnswers + ' questions to match the correct answers.', 'danger');
             return;
         }
 
@@ -751,7 +839,7 @@
         this.submit();
     });
 
-    // Calculate pass percentage based on required correct answers and total questions
+    // Calculate pass percentage based on correct answers and total questions
     function calculatePassPercentage() {
         const requiredAnswers = parseInt(document.getElementById('requiredCorrectAnswers').value) || 0;
         const totalQuestions = document.querySelectorAll('.question-container').length;
@@ -765,7 +853,7 @@
         }
     }
 
-    // Calculate required answers from current percentage and total questions
+    // Calculate answers from current percentage and total questions
     function calculateRequiredAnswers() {
         const passPercentage = parseInt(document.getElementById('passPercentage').value) || 0;
         const totalQuestions = document.querySelectorAll('.question-container').length;
@@ -839,7 +927,7 @@
                 break;
             }
 
-            if (questionType === 'CHOICE') {
+            if (questionType === 'CHOICE' || questionType === 'MULTIPLE') {
                 // Validate answer options
                 const option1 = questions[i].querySelector('input[name^="option1_"]');
                 const option2 = questions[i].querySelector('input[name^="option2_"]');
@@ -870,7 +958,19 @@
                 const option4 = questions[i].querySelector('input[name^="option4_"]');
                 if (option3.value) option3.value = trimAndValidateInput(option3.value);
                 if (option4.value) option4.value = trimAndValidateInput(option4.value);
-            } else {
+            }
+
+            if (questionType === 'MULTIPLE') {
+                // Ensure at least one correct option is selected
+                const questionId = questions[i].id.split('_')[1];
+                const checkedOptions = Array.from(questions[i].querySelectorAll('input[name="multipleChoice_' + questionId + '"]:checked'));
+                if (checkedOptions.length === 0) {
+                    showJsToast(`Question ${i + 1}: At least one correct option must be selected.`, 'danger');
+                    questions[i].querySelector('input[name="multipleChoice_' + questionId + '"]').focus();
+                    isValid = false;
+                    break;
+                }
+            } else if (questionType === 'WRITING') {
                 // Validate writing answer
                 const writingAnswer = questions[i].querySelector('textarea[name^="writingAnswer_"]');
                 const trimmedWritingAnswer = trimAndValidateInput(writingAnswer.value);
@@ -902,7 +1002,7 @@
             addQuestion();
         }
 
-        // Calculate required answers from existing percentage
+        // Calculate answers from existing percentage
         calculateRequiredAnswers();
 
         // Add event listeners for real-time validation

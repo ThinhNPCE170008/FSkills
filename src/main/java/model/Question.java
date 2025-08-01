@@ -2,7 +2,6 @@ package model;
 
 /**
  * Question model class representing the Questions table
- * @author Generated for InstructorTestServlet functionality
  */
 public class Question {
     private int questionID;
@@ -165,4 +164,4 @@ public class Question {
                 ", rightOption='" + rightOption + '\'' +
                 '}';
     }
-} 
+}

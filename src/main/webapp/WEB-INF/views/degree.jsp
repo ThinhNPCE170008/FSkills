@@ -46,10 +46,6 @@
                 <c:choose>
                     <c:when test="${not empty listDegree}">
                         <div class="text-center my-5">
-                            <a href="${pageContext.request.contextPath}/instructor/profile"
-                               class="btn btn-sucess btn-lg px-4 ms-2">
-                                <i class="bi bi-back"></i> Back
-                            </a>
                             <h2 class="fw-bold text-uppercase text-gradient bg-gradient mb-0 display-5">
                                 Your Degree
                             </h2>
@@ -455,6 +451,7 @@
         </div>
     </c:forEach>
     <jsp:include page="/layout/toast.jsp"/>
+    <jsp:include page="/layout/footer.jsp"/>
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

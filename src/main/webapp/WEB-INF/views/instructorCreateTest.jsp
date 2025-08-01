@@ -3,207 +3,319 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Create Test | F-Skill</title>
-    <meta charset="UTF-8">
-    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
-        h2 { color: #343a40; margin-bottom: 25px; }
-        .question-container { border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin-bottom: 20px; background-color: white; position: relative; }
-        .question-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .question-number { background-color: #4f46e5; color: white; padding: 5px 12px; border-radius: 20px; font-weight: bold; }
-        .remove-question { background: none; border: none; color: #dc3545; font-size: 1.2rem; cursor: pointer; }
-        .remove-question:hover { color: #a71e2a; }
-        .option-group { display: flex; align-items: center; margin-bottom: 10px; }
-        .option-group input[type="radio"] { margin-right: 10px; }
-        .option-group input[type="text"] { flex: 1; margin-left: 10px; }
-        .add-question-btn { width: 100%; padding: 15px; border: 2px dashed #6c757d; background: white; color: #6c757d; border-radius: 8px; transition: all 0.3s ease; }
-        .add-question-btn:hover { border-color: #4f46e5; color: #4f46e5; background-color: #f8f9fa; }
-        .test-settings { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #dee2e6; }
-        .form-check-input:checked { background-color: #4f46e5; border-color: #4f46e5; }
-        .btn-primary { background-color: #4f46e5; border-color: #4f46e5; }
-        .btn-primary:hover { background-color: #3730a3; border-color: #3730a3; }
-        .writing-area { display: none; }
-        .choice-options { display: block; }
-        .question-image { max-width: 100%; margin: 10px 0; max-height: 400px; }
-        .image-preview { max-width: 300px; margin-top: 10px; }
-        .image-upload-container { margin-bottom: 15px; }
-        .image-upload-icon { position: absolute; top: 10px; right: 10px; z-index: 10; cursor: pointer; padding: 5px 10px; border-radius: 4px; color: #4f46e5; background-color: white; border: 1px solid #e5e7eb; transition: all 0.2s ease; }
-        .image-upload-icon:hover { background-color: #f3f4f6; border-color: #4f46e5; }
-        .image-upload-icon i { font-size: 1.2em; }
-    </style>
-</head>
-<body>
-<jsp:include page="/layout/sidebar_user.jsp"/>
-<div class="container px-5 py-6">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <a href="${pageContext.request.contextPath}/instructor/tests?action=list" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back to Tests
-        </a>
-    </div>
-    <h2 class="mb-4 fw-bold fs-3">Create Test</h2>
-    <form id="createTestForm" action="${pageContext.request.contextPath}/instructor/tests" method="POST">
-        <input type="hidden" name="action" value="create" />
-        <input type="hidden" name="questionCount" id="questionCount" value="0">
-        <!-- Course and Module Selection -->
-        <div class="test-settings">
-            <h4 class="mb-3"><i class="fas fa-graduation-cap"></i> Course & Module</h4>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="courseSelect" class="form-label">Course <span class="text-danger">*</span></label>
-                        <select class="form-select" id="courseSelect" name="courseId" required onchange="loadModules()">
-                            <option value="">Select a course</option>
-                            <c:forEach var="course" items="${courses}">
-                                <option value="${course.courseID}">${course.courseName}</option>
-                            </c:forEach>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="moduleSelect" class="form-label">Module <span class="text-danger">*</span></label>
-                        <select class="form-select" id="moduleSelect" name="moduleId" required>
-                            <option value="">Select a module</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Test Settings -->
-        <div class="test-settings">
-            <h4 class="mb-3"><i class="fas fa-cog"></i> Test Settings</h4>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="mb-3">
-                        <label for="testName" class="form-label">Test Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="testName" name="testName" placeholder="Enter test name" required maxlength="255" onblur="checkTestDuplicate()">
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="testOrder" class="form-label">Test Order</label>
-                        <input type="number" class="form-control" id="testOrder" name="testOrder" value="" min="1" required onblur="checkTestDuplicate()">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="requiredCorrectAnswers" class="form-label">Required Correct Answers</label>
-                        <input type="number" class="form-control" id="requiredCorrectAnswers" name="requiredCorrectAnswers" min="1" required onchange="calculatePassPercentage(); validateRequiredAnswers()">
-                        <input type="hidden" id="passPercentage" name="passPercentage" value="70">
-                        <small class="form-text text-muted">
-                            Equivalent percentage: <span id="calculatedPercentage">--</span>%
-                        </small>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="isRandomize" name="isRandomize" value="1">
-                        <label class="form-check-label" for="isRandomize">
-                            <i class="fas fa-random"></i> Randomize Questions
-                        </label>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="showAnswer" name="showAnswer" value="1">
-                        <label class="form-check-label" for="showAnswer">
-                            <i class="fas fa-eye"></i> Show Answers After Submit
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Questions Section -->
-        <div class="mb-4">
-            <h4 class="mb-3"><i class="fas fa-question-circle"></i> Questions</h4>
-            <div id="questionsContainer"></div>
-            <button type="button" class="btn add-question-btn" onclick="addQuestion()">
-                <i class="fas fa-plus"></i> Add Question
-            </button>
-        </div>
-        <div class="d-flex gap-2 justify-content-end">
-            <a href="${pageContext.request.contextPath}/instructor/tests?action=list" class="btn btn-secondary">Cancel</a>
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save"></i> Create Test
-            </button>
-        </div>
-    </form>
-</div>
-<jsp:include page="/layout/footer.jsp"/>
-<jsp:include page="/layout/toast.jsp"/>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    function validateRequiredAnswers() {
-        const requiredInput = document.getElementById('requiredCorrectAnswers');
-        const totalQuestions = document.querySelectorAll('.question-container').length;
-        const value = parseInt(requiredInput.value);
-        const percentageText = document.getElementById('calculatedPercentage');
-
-        if (!isNaN(value) && value > totalQuestions) {
-            requiredInput.classList.add('is-invalid');
-            percentageText.innerText = 'Error';
-            showJsToast('Required correct answers cannot exceed total number of questions.', 'danger');
-        } else {
-            requiredInput.classList.remove('is-invalid');
-        }
-    }
-
-    // 👇 Fake test list - bạn cần thay thế đoạn này bằng JSTL sinh từ backend
-    const existingTests = [
-        <c:forEach var="test" items="${allTestsByInstructor}" varStatus="loop">
-        {
-            name: "${fn:escapeXml(test.testName)}",
-            order: ${test.testOrder},
-            moduleId: ${test.module.moduleID}
-        }<c:if test="${!loop.last}">,</c:if>
-        </c:forEach>
-    ];
-
-
-    function checkTestDuplicate() {
-        const nameInput = document.getElementById('testName');
-        const orderInput = document.getElementById('testOrder');
-        const moduleId = document.getElementById('moduleSelect').value;
-
-        const name = nameInput.value.trim().toLowerCase();
-        const order = parseInt(orderInput.value);
-
-        let hasError = false;
-
-        // Filter tests by selected module only
-        const testsInModule = existingTests.filter(t => t.moduleId == moduleId);
-
-        const nameExists = testsInModule.some(t => t.name.toLowerCase() === name);
-        if (nameExists) {
-            nameInput.classList.add('is-invalid');
-            showJsToast('Test name already exists in this module.', 'danger');
-            hasError = true;
-        } else {
-            nameInput.classList.remove('is-invalid');
-        }
-
-        if (!isNaN(order)) {
-            const orderExists = testsInModule.some(t => t.order === order);
-            if (orderExists) {
-                orderInput.classList.add('is-invalid');
-                showJsToast('Test order already exists in this module.', 'danger');
-                hasError = true;
-            } else {
-                orderInput.classList.remove('is-invalid');
+    <head>
+        <title>Create Test | F-Skill</title>
+        <meta charset="UTF-8">
+        <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon_io/favicon.ico">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        <style>
+            body {
+                background-color: #f8f9fa;
+                font-family: 'Segoe UI', sans-serif;
             }
-        }
-    }
+            h2 {
+                color: #343a40;
+                margin-bottom: 25px;
+            }
+            .question-container {
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                padding: 20px;
+                margin-bottom: 20px;
+                background-color: white;
+                position: relative;
+            }
+            .question-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 15px;
+            }
+            .question-number {
+                background-color: #4f46e5;
+                color: white;
+                padding: 5px 12px;
+                border-radius: 20px;
+                font-weight: bold;
+            }
+            .remove-question {
+                background: none;
+                border: none;
+                color: #dc3545;
+                font-size: 1.2rem;
+                cursor: pointer;
+            }
+            .remove-question:hover {
+                color: #a71e2a;
+            }
+            .option-group {
+                display: flex;
+                align-items: center;
+                margin-bottom: 10px;
+            }
+            .option-group input[type="radio"] {
+                margin-right: 10px;
+            }
+            .option-group input[type="text"] {
+                flex: 1;
+                margin-left: 10px;
+            }
+            .add-question-btn {
+                width: 100%;
+                padding: 15px;
+                border: 2px dashed #6c757d;
+                background: white;
+                color: #6c757d;
+                border-radius: 8px;
+                transition: all 0.3s ease;
+            }
+            .add-question-btn:hover {
+                border-color: #4f46e5;
+                color: #4f46e5;
+                background-color: #f8f9fa;
+            }
+            .test-settings {
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                border: 1px solid #dee2e6;
+            }
+            .form-check-input:checked {
+                background-color: #4f46e5;
+                border-color: #4f46e5;
+            }
+            .btn-primary {
+                background-color: #4f46e5;
+                border-color: #4f46e5;
+            }
+            .btn-primary:hover {
+                background-color: #3730a3;
+                border-color: #3730a3;
+            }
+            .writing-area {
+                display: none;
+            }
+            .choice-options {
+                display: block;
+            }
+            .question-image {
+                max-width: 100%;
+                margin: 10px 0;
+                max-height: 400px;
+            }
+            .image-preview {
+                max-width: 300px;
+                margin-top: 10px;
+            }
+            .image-upload-container {
+                margin-bottom: 15px;
+            }
+            .image-upload-icon {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                z-index: 10;
+                cursor: pointer;
+                padding: 5px 10px;
+                border-radius: 4px;
+                color: #4f46e5;
+                background-color: white;
+                border: 1px solid #e5e7eb;
+                transition: all 0.2s ease;
+            }
+            .image-upload-icon:hover {
+                background-color: #f3f4f6;
+                border-color: #4f46e5;
+            }
+            .image-upload-icon i {
+                font-size: 1.2em;
+            }
+        </style>
+    </head>
+    <body>
+        <jsp:include page="/layout/sidebar_user.jsp"/>
+        <div class="container px-5 py-6">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <a href="${pageContext.request.contextPath}/instructor/tests?action=list" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Tests
+                </a>
+            </div>
+            <h2 class="mb-4 fw-bold fs-3">Create Test</h2>
+            <form id="createTestForm" action="${pageContext.request.contextPath}/instructor/tests" method="POST">
+                <input type="hidden" name="action" value="create" />
+                <input type="hidden" name="questionCount" id="questionCount" value="0">
+                <!-- Course and Module Selection -->
+                <div class="test-settings">
+                    <h4 class="mb-3"><i class="fas fa-graduation-cap"></i> Course & Module</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="courseSelect" class="form-label">Course <span class="text-danger">*</span></label>
+                                <select class="form-select" id="courseSelect" name="courseId" required onchange="loadModules()">
+                                    <option value="">Select a course</option>
+                                    <c:forEach var="course" items="${courses}">
+                                        <option value="${course.courseID}">${course.courseName}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="moduleSelect" class="form-label">Module <span class="text-danger">*</span></label>
+                                <select class="form-select" id="moduleSelect" name="moduleId" required>
+                                    <option value="">Select a module</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Test Settings -->
+                <div class="test-settings">
+                    <h4 class="mb-3"><i class="fas fa-cog"></i> Test Settings</h4>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="testName" class="form-label">Test Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="testName" name="testName" placeholder="Enter test name" required maxlength="255" onblur="checkTestDuplicate()">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="testOrder" class="form-label">Test Order</label>
+                                <input type="number" class="form-control" id="testOrder" name="testOrder" value="" min="1" required onblur="checkTestDuplicate()">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="requiredCorrectAnswers" class="form-label">Required Correct Answers</label>
+                                <input type="number" class="form-control" id="requiredCorrectAnswers" name="requiredCorrectAnswers" min="1" required onchange="calculatePassPercentage(); validateRequiredAnswers()">
+                                <input type="hidden" id="passPercentage" name="passPercentage" value="70">
+                                <small id="percentageDisplay" class="form-text text-muted" style="display: inline">
+                                    Equivalent percentage: <span id="calculatedPercentage">--</span>%
+                                </small>
 
-</script>
-</body>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="isRandomize" name="isRandomize" value="1">
+                                <label class="form-check-label" for="isRandomize">
+                                    <i class="fas fa-random"></i> Randomize Questions
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="showAnswer" name="showAnswer" value="1">
+                                <label class="form-check-label" for="showAnswer">
+                                    <i class="fas fa-eye"></i> Show Answers After Submit
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Questions Section -->
+                <div class="mb-4">
+                    <h4 class="mb-3"><i class="fas fa-question-circle"></i> Questions</h4>
+                    <div id="questionsContainer"></div>
+                    <button type="button" class="btn add-question-btn" onclick="addQuestion()">
+                        <i class="fas fa-plus"></i> Add Question
+                    </button>
+                </div>
+                <div class="d-flex gap-2 justify-content-end">
+                    <a href="${pageContext.request.contextPath}/instructor/tests?action=list" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Create Test
+                    </button>
+                </div>
+            </form>
+        </div>
+        <jsp:include page="/layout/footer.jsp"/>
+        <jsp:include page="/layout/toast.jsp"/>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+                        function validateRequiredAnswers() {
+                            const requiredInput = document.getElementById('requiredCorrectAnswers');
+                            const totalQuestions = document.querySelectorAll('.question-container').length;
+                            const value = parseInt(requiredInput.value);
+                            const percentageText = document.getElementById('calculatedPercentage');
+                            const percentageContainer = document.getElementById('percentageDisplay');
+
+                            if (isNaN(value) || value < 1) {
+                                requiredInput.classList.add('is-invalid');
+                                percentageText.innerText = 'Error';
+                                percentageContainer.style.display = 'inline';
+                                showJsToast('Required correct answers must be at least 1.', 'danger');
+                                return false;
+                            }
+
+                            if (value > totalQuestions) {
+                                requiredInput.classList.add('is-invalid');
+                                percentageText.innerText = 'Error';
+                                percentageContainer.style.display = 'inline';
+                                showJsToast('Required correct answers cannot exceed total number of questions.', 'danger');
+                                return false;
+                            }
+
+                            requiredInput.classList.remove('is-invalid');
+                            return true;
+                        }
+
+
+                        // 👇 Fake test list - bạn cần thay thế đoạn này bằng JSTL sinh từ backend
+                        const existingTests = [
+            <c:forEach var="test" items="${allTestsByInstructor}" varStatus="loop">
+                        {
+                        name: "${fn:escapeXml(test.testName)}",
+                                order: ${test.testOrder},
+                                moduleId: ${test.module.moduleID}
+                        }<c:if test="${!loop.last}">,</c:if>
+            </c:forEach>
+                        ];
+
+
+                        function checkTestDuplicate() {
+                            const nameInput = document.getElementById('testName');
+                            const orderInput = document.getElementById('testOrder');
+                            const moduleId = document.getElementById('moduleSelect').value;
+
+                            const name = nameInput.value.trim().toLowerCase();
+                            const order = parseInt(orderInput.value);
+
+                            let hasError = false;
+
+                            // Filter tests by selected module only
+                            const testsInModule = existingTests.filter(t => t.moduleId == moduleId);
+
+                            const nameExists = testsInModule.some(t => t.name.toLowerCase() === name);
+                            if (nameExists) {
+                                nameInput.classList.add('is-invalid');
+                                showJsToast('Test name already exists in this module.', 'danger');
+                                hasError = true;
+                            } else {
+                                nameInput.classList.remove('is-invalid');
+                            }
+
+                            if (!isNaN(order)) {
+                                const orderExists = testsInModule.some(t => t.order === order);
+                                if (orderExists) {
+                                    orderInput.classList.add('is-invalid');
+                                    showJsToast('Test order already exists in this module.', 'danger');
+                                    hasError = true;
+                                } else {
+                                    orderInput.classList.remove('is-invalid');
+                                }
+                            }
+                        }
+
+        </script>
+    </body>
 </html>
 
 
@@ -245,90 +357,82 @@
         questionDiv.id = 'question_' + questionCounter;
 
         questionDiv.innerHTML =
-            '<div class="question-header">' +
-            '<span class="question-number">Question ' + questionCounter + '</span>' +
-            '<button type="button" class="remove-question" onclick="removeQuestion(' + questionCounter + ')">' +
-            '<i class="fas fa-times"></i>' +
-            '</button>' +
-            '</div>' +
-
-            '<div class="mb-3" id="question-container_' + questionCounter + '">' +
-            '<label class="form-label">Question Text *</label>' +
-            '<div class="position-relative">' +
-            '<div class="image-upload-icon" onclick="triggerImageUpload(' + questionCounter + ')">' +
-            '<i class="fas fa-image"></i>' +
-            '</div>' +
-            '<div contenteditable="true" class="form-control" id="question-content_' + questionCounter + '" ' +
-            'style="min-height: 100px;" ' +
-            'onblur="updateHiddenField(this, ' + questionCounter + ')" ' +
-            'oninput="updateHiddenField(this, ' + questionCounter + ')" ' +
-            'onpaste="setTimeout(() => updateHiddenField(this, ' + questionCounter + '), 0)"></div>' +
-            '<input type="file" id="imageUpload_' + questionCounter + '" ' +
-            'accept="image/*" style="display: none;" ' +
-            'onchange="handleImageUpload(this, ' + questionCounter + ')">' +
-            '<input type="hidden" name="question_' + questionCounter + '" value="">' +
-            '</div>' +
-            '</div>' +
-
-            '<div class="row">' +
-            '<div class="col-md-12">' +
-            '<div class="mb-3">' +
-            '<label class="form-label">Question Type</label>' +
-            '<select class="form-select" name="questionType_' + questionCounter + '" onchange="toggleQuestionType(this, ' + questionCounter + ')">' +
-            '<option value="CHOICE">Multiple Choice</option>' +
-            // '<option value="WRITING">Writing</option>' +
-            '</select>' +
-            '<input type="hidden" name="point_' + questionCounter + '" value="1">' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-
-            '<div class="choice-options" id="choiceOptions_' + questionCounter + '">' +
-            '<div class="mb-3">' +
-            '<label class="form-label">Answer Options</label>' +
-
-            '<div class="option-group">' +
-            '<input type="radio" name="rightOption_' + questionCounter + '" value="A" checked>' +
-            '<strong>A.</strong>' +
-            '<input type="text" class="form-control" name="option1_' + questionCounter + '" ' +
-            'placeholder="Option A" required>' +
-            '</div>' +
-
-            '<div class="option-group">' +
-            '<input type="radio" name="rightOption_' + questionCounter + '" value="B">' +
-            '<strong>B.</strong>' +
-            '<input type="text" class="form-control" name="option2_' + questionCounter + '" ' +
-            'placeholder="Option B" required>' +
-            '</div>' +
-
-            '<div class="option-group">' +
-            '<input type="radio" name="rightOption_' + questionCounter + '" value="C">' +
-            '<strong>C.</strong>' +
-            '<input type="text" class="form-control" name="option3_' + questionCounter + '" ' +
-            'placeholder="Option C">' +
-            '</div>' +
-
-            '<div class="option-group">' +
-            '<input type="radio" name="rightOption_' + questionCounter + '" value="D">' +
-            '<strong>D.</strong>' +
-            '<input type="text" class="form-control" name="option4_' + questionCounter + '" ' +
-            'placeholder="Option D">' +
-            '</div>' +
-            '</div>' +
-
-            '<div class="alert alert-info">' +
-            '<small><i class="fas fa-info-circle"></i> Select the radio button next to the correct answer.</small>' +
-            '</div>' +
-            '</div>' +
-
-            '<div class="writing-area" id="writingArea_' + questionCounter + '">' +
-            '<div class="mb-3">' +
-            '<label class="form-label">Model Answer</label>' +
-            '<textarea class="form-control" name="writingAnswer_' + questionCounter + '" rows="3" ' +
-            'placeholder="Enter the model answer here..."></textarea>' +
-            '<input type="hidden" name="rightOption_' + questionCounter + '" value="A">' +
-            '</div>' +
-            '</div>';
+                '<div class="question-header">' +
+                '<span class="question-number">Question ' + questionCounter + '</span>' +
+                '<button type="button" class="remove-question" onclick="removeQuestion(' + questionCounter + ')">' +
+                '<i class="fas fa-times"></i>' +
+                '</button>' +
+                '</div>' +
+                '<div class="mb-3" id="question-container_' + questionCounter + '">' +
+                '<label class="form-label">Question Text *</label>' +
+                '<div class="position-relative">' +
+                '<div class="image-upload-icon" onclick="triggerImageUpload(' + questionCounter + ')">' +
+                '<i class="fas fa-image"></i>' +
+                '</div>' +
+                '<div contenteditable="true" class="form-control" id="question-content_' + questionCounter + '" ' +
+                'style="min-height: 100px;" ' +
+                'onblur="updateHiddenField(this, ' + questionCounter + ')" ' +
+                'oninput="updateHiddenField(this, ' + questionCounter + ')" ' +
+                'onpaste="setTimeout(() => updateHiddenField(this, ' + questionCounter + '), 0)"></div>' +
+                '<input type="file" id="imageUpload_' + questionCounter + '" ' +
+                'accept="image/*" style="display: none;" ' +
+                'onchange="handleImageUpload(this, ' + questionCounter + ')">' +
+                '<input type="hidden" name="question_' + questionCounter + '" value="">' +
+                '</div>' +
+                '</div>' +
+                '<div class="row">' +
+                '<div class="col-md-12">' +
+                '<div class="mb-3">' +
+                '<label class="form-label">Question Type</label>' +
+                '<select class="form-select" name="questionType_' + questionCounter + '" onchange="toggleQuestionType(this, ' + questionCounter + ')">' +
+                '\<option value="CHOICE"\>Single Choice\</option\>' +
+                '\<option value="MULTIPLE"\>Multiple Choice\</option\>' +
+                // '\<option value="WRITING"\>Writing\</option\>' +
+                '</select>' +
+                '<input type="hidden" name="point_' + questionCounter + '" value="1">' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="choice-options" id="choiceOptions_' + questionCounter + '">' +
+                '<div class="mb-3">' +
+                '<label class="form-label">Answer Options</label>' +
+                '<div class="option-group">' +
+                '<input type="radio" name="rightOption_' + questionCounter + '" value="A" checked>' +
+                '<strong>A.</strong>' +
+                '<input type="text" class="form-control" name="option1_' + questionCounter + '" ' +
+                'placeholder="Option A" required>' +
+                '</div>' +
+                '<div class="option-group">' +
+                '<input type="radio" name="rightOption_' + questionCounter + '" value="B">' +
+                '<strong>B.</strong>' +
+                '<input type="text" class="form-control" name="option2_' + questionCounter + '" ' +
+                'placeholder="Option B" required>' +
+                '</div>' +
+                '<div class="option-group">' +
+                '<input type="radio" name="rightOption_' + questionCounter + '" value="C">' +
+                '<strong>C.</strong>' +
+                '<input type="text" class="form-control" name="option3_' + questionCounter + '" ' +
+                'placeholder="Option C">' +
+                '</div>' +
+                '<div class="option-group">' +
+                '<input type="radio" name="rightOption_' + questionCounter + '" value="D">' +
+                '<strong>D.</strong>' +
+                '<input type="text" class="form-control" name="option4_' + questionCounter + '" ' +
+                'placeholder="Option D">' +
+                '</div>' +
+                '</div>' +
+                '<div class="alert alert-info">' +
+                '<small><i class="fas fa-info-circle"></i> Select the radio button next to the correct answer.</small>' +
+                '</div>' +
+                '</div>' +
+                '<div class="writing-area" id="writingArea_' + questionCounter + '">' +
+                '<div class="mb-3">' +
+                '<label class="form-label">Model Answer</label>' +
+                '<textarea class="form-control" name="writingAnswer_' + questionCounter + '" rows="3" ' +
+                'placeholder="Enter the model answer here..."></textarea>' +
+                '<input type="hidden" name="rightOption_' + questionCounter + '" value="A">' +
+                '</div>' +
+                '</div>';
 
         container.appendChild(questionDiv);
         updateQuestionCount();
@@ -338,10 +442,10 @@
         setTimeout(() => {
             const newQuestionDiv = document.getElementById('question-content_' + questionCounter);
             if (newQuestionDiv) {
-                newQuestionDiv.addEventListener('blur', function() {
+                newQuestionDiv.addEventListener('blur', function () {
                     checkDuplicateQuestions();
                 });
-                newQuestionDiv.addEventListener('input', function() {
+                newQuestionDiv.addEventListener('input', function () {
                     checkDuplicateQuestions();
                 });
             }
@@ -382,7 +486,7 @@
         const file = input.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 const img = document.createElement('img');
                 img.src = e.target.result;
                 img.className = 'question-image';
@@ -500,7 +604,7 @@
             rightOptionHidden.value = writingAnswer.value;
 
             // Add event listener to sync writing answer with rightOption
-            writingAnswer.addEventListener('input', function() {
+            writingAnswer.addEventListener('input', function () {
                 rightOptionHidden.value = this.value;
             });
         } else {
@@ -511,10 +615,62 @@
             options[0].required = true; // Option A
             options[1].required = true; // Option B
 
-            // Reset rightOption to selected radio button value
-            const selectedRadio = choiceOptions.querySelector('input[type="radio"]:checked');
-            rightOptionHidden.value = selectedRadio ? selectedRadio.value : 'A';
+            // Handle input type change for CHOICE vs MULTIPLE
+            // Remove ALL existing input elements (radio/checkbox) first
+            const allInputs = choiceOptions.querySelectorAll('input[type="radio"], input[type="checkbox"]');
+            allInputs.forEach(input => input.remove());
+
+            const optionGroups = choiceOptions.querySelectorAll('.option-group');
+            optionGroups.forEach((group, index) => {
+                const optionLetter = String.fromCharCode(65 + index); // A, B, C, D
+                let answerInput;
+
+                if (select.value === 'MULTIPLE') {
+                    answerInput = document.createElement('input');
+                    answerInput.type = 'checkbox';
+                    answerInput.name = 'multipleChoice_' + questionId;
+                    answerInput.value = optionLetter;
+                    answerInput.addEventListener('change', updateMultipleChoiceAnswer);
+                } else { // CHOICE
+                    answerInput = document.createElement('input');
+                    answerInput.type = 'radio';
+                    answerInput.name = 'rightOption_' + questionId;
+                    answerInput.value = optionLetter;
+                    if (index === 0)
+                        answerInput.checked = true;
+                    // Add change event listener for radio buttons too
+                    answerInput.addEventListener('change', function () {
+                        rightOptionHidden.value = this.value;
+                    });
+                }
+
+                group.insertBefore(answerInput, group.querySelector('strong'));
+            });
+
+            // Set initial rightOption value
+            if (select.value === 'MULTIPLE') {
+                // For MULTIPLE choice, update the hidden field based on checked checkboxes
+                updateMultipleChoiceAnswerForQuestion(questionId);
+            } else {
+                const selectedRadio = choiceOptions.querySelector('input[type="radio"]:checked');
+                rightOptionHidden.value = selectedRadio ? selectedRadio.value : 'A';
+            }
         }
+    }
+
+    // Function to update hidden field for multiple choice answers
+    function updateMultipleChoiceAnswer() {
+        const questionId = this.name.split('_')[1];
+        updateMultipleChoiceAnswerForQuestion(questionId);
+    }
+
+    // Helper function to update multiple choice answer for a specific question
+    function updateMultipleChoiceAnswerForQuestion(questionId) {
+        const rightOptionHidden = document.querySelector('input[name="rightOption_' + questionId + '"]');
+        const checkedBoxes = document.querySelectorAll('input[name="multipleChoice_' + questionId + '"]:checked');
+        const selectedValues = Array.from(checkedBoxes).map(cb => cb.value).sort();
+        const uniqueValues = [...new Set(selectedValues)]; // Remove duplicates
+        rightOptionHidden.value = uniqueValues.join(',');
     }
 
     // Function to check for duplicate questions by content (ignoring HTML tags and whitespace)
@@ -540,13 +696,14 @@
     }
 
     // Form validation
-    document.getElementById('createTestForm').addEventListener('submit', function(e) {
+    document.getElementById('createTestForm').addEventListener('submit', function (e) {
         e.preventDefault();
 
         const isValidInputs = validateInputs();
         const isNameValid = validateTestName();
         const isOrderValid = validateTestOrder();
-        const isRequiredValid = validateRequiredCorrectAnswers();
+        const isRequiredValid = validateRequiredAnswers();
+        // const isRequiredValid = validateRequiredCorrectAnswers();
 
         if (!isValidInputs || !isNameValid || !isOrderValid || !isRequiredValid) {
             return;
@@ -557,7 +714,7 @@
 
 
     // Add first question by default
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         addQuestion();
 
         // Add event listeners for real-time validation
@@ -565,36 +722,36 @@
         document.getElementById('testName').addEventListener('blur', validateTestName);
 
         // Add event listener for module selection to update test order validation
-        document.getElementById('moduleSelect').addEventListener('change', function() {
+        document.getElementById('moduleSelect').addEventListener('change', function () {
             document.getElementById('testOrder').value = '';
             document.getElementById('calculatedPercentage').textContent = '--';
-            
+
             // Clear validation state when module changes
             document.getElementById('testOrder').classList.remove('is-invalid');
             document.getElementById('testName').classList.remove('is-invalid');
         });
     });
 
-    function validateRequiredCorrectAnswers() {
-        const requiredInput = document.getElementById('requiredCorrectAnswers');
-        const value = parseInt(requiredInput.value);
-        const totalQuestions = document.querySelectorAll('.question-container').length;
-
-        if (isNaN(value) || value < 1) {
-            requiredInput.classList.add('is-invalid');
-            showJsToast('Required correct answers must be at least 1.', 'danger');
-            return false;
-        }
-
-        if (value > totalQuestions) {
-            requiredInput.classList.add('is-invalid');
-            showJsToast('Required correct answers cannot exceed total number of questions.', 'danger');
-            return false;
-        }
-
-        requiredInput.classList.remove('is-invalid');
-        return true;
-    }
+//    function validateRequiredCorrectAnswers() {
+//        const requiredInput = document.getElementById('requiredCorrectAnswers');
+//        const value = parseInt(requiredInput.value);
+//        const totalQuestions = document.querySelectorAll('.question-container').length;
+//
+//        if (isNaN(value) || value < 1) {
+//            requiredInput.classList.add('is-invalid');
+//            showJsToast('Required correct answers must be at least 1.', 'danger');
+//            return false;
+//        }
+//
+//        if (value > totalQuestions) {
+//            requiredInput.classList.add('is-invalid');
+//            showJsToast('Required correct answers cannot exceed total number of questions.', 'danger');
+//            return false;
+//        }
+//
+//        requiredInput.classList.remove('is-invalid');
+//        return true;
+//    }
 
     // Load modules when course is selected
     function loadModules() {
@@ -616,20 +773,20 @@
 
         // Fetch modules for the selected course
         fetch(contextPath + '/instructor/tests?action=getModules&courseId=' + courseId)
-            .then(response => response.json())
-            .then(modules => {
-                moduleSelect.innerHTML = '<option value="">Select a module</option>';
-                modules.forEach(module => {
-                    const option = document.createElement('option');
-                    option.value = module.moduleID;
-                    option.textContent = module.moduleName;
-                    moduleSelect.appendChild(option);
+                .then(response => response.json())
+                .then(modules => {
+                    moduleSelect.innerHTML = '<option value="">Select a module</option>';
+                    modules.forEach(module => {
+                        const option = document.createElement('option');
+                        option.value = module.moduleID;
+                        option.textContent = module.moduleName;
+                        moduleSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading modules:', error);
+                    moduleSelect.innerHTML = '<option value="">Error loading modules</option>';
                 });
-            })
-            .catch(error => {
-                console.error('Error loading modules:', error);
-                moduleSelect.innerHTML = '<option value="">Error loading modules</option>';
-            });
     }
 
 
@@ -637,15 +794,19 @@
     function calculatePassPercentage() {
         const requiredAnswers = parseInt(document.getElementById('requiredCorrectAnswers').value) || 0;
         const totalQuestions = document.querySelectorAll('.question-container').length;
+        const displayElement = document.getElementById('percentageDisplay');
 
         if (totalQuestions > 0 && requiredAnswers > 0) {
             const percentage = Math.round((requiredAnswers / totalQuestions) * 100);
             document.getElementById('calculatedPercentage').textContent = percentage;
             document.getElementById('passPercentage').value = percentage;
+            displayElement.style.display = 'inline';
         } else {
             document.getElementById('calculatedPercentage').textContent = '--';
+            displayElement.style.display = 'inline';
         }
     }
+
 
     // Validate test order for duplicates
     function validateTestOrder() {
@@ -698,7 +859,8 @@
 
     // Trim whitespace and validate inputs
     function trimAndValidateInput(input) {
-        if (!input) return '';
+        if (!input)
+            return '';
 
         // Trim leading, trailing, and multiple consecutive spaces
         let trimmed = input.trim().replace(/\s+/g, ' ');
@@ -734,7 +896,7 @@
                 break;
             }
 
-            if (questionType === 'CHOICE') {
+            if (questionType === 'CHOICE' || questionType === 'MULTIPLE') {
                 // Validate answer options
                 const option1 = questions[i].querySelector('input[name^="option1_"]');
                 const option2 = questions[i].querySelector('input[name^="option2_"]');
@@ -763,9 +925,23 @@
                 // Trim optional options
                 const option3 = questions[i].querySelector('input[name^="option3_"]');
                 const option4 = questions[i].querySelector('input[name^="option4_"]');
-                if (option3.value) option3.value = trimAndValidateInput(option3.value);
-                if (option4.value) option4.value = trimAndValidateInput(option4.value);
-            } else {
+                if (option3.value)
+                    option3.value = trimAndValidateInput(option3.value);
+                if (option4.value)
+                    option4.value = trimAndValidateInput(option4.value);
+            }
+
+            if (questionType === 'MULTIPLE') {
+                // Ensure at least one correct option is selected
+                const questionId = questions[i].id.split('_')[1];
+                const checkedOptions = Array.from(questions[i].querySelectorAll('input[name="multipleChoice_' + questionId + '"]:checked'));
+                if (checkedOptions.length === 0) {
+                    showJsToast('Question ' + (i + 1) + ': At least one correct option must be selected.', 'danger');
+                    questions[i].querySelector('input[name="multipleChoice_' + questionId + '"]').focus();
+                    isValid = false;
+                    break;
+                }
+            } else if (questionType === 'WRITING') {
                 // Validate writing answer
                 const writingAnswer = questions[i].querySelector('textarea[name^="writingAnswer_"]');
                 const trimmedWritingAnswer = trimAndValidateInput(writingAnswer.value);
@@ -780,14 +956,13 @@
                 }
             }
         }
-
         return isValid;
     }
 
     // Auto-hide alerts after 5 seconds
-    setTimeout(function() {
+    setTimeout(function () {
         const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(function(alert) {
+        alerts.forEach(function (alert) {
             if (alert.classList.contains('show')) {
                 const bsAlert = new bootstrap.Alert(alert);
                 bsAlert.close();

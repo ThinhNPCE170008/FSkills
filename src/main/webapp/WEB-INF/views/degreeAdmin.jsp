@@ -136,11 +136,11 @@
                                                 <td class="py-3 px-4 border-b text-center">
                                                     <div class="d-flex justify-content-between align-items-center">
                                                         <div class="d-flex gap-2">
-                                                            <button class="btn btn-outline-info btn-sm" type="button"
+<!--                                                            <button class="btn btn-outline-info btn-sm" type="button"
                                                                     data-bs-toggle="modal"
-                                                                    data-bs-target="#viewModal${deg.degreeId}">
+                                                                    data-bs-target="#viewModal">
                                                                 <i class="fas fa-eye"></i>
-                                                            </button>
+                                                            </button>-->
 
                                                             <c:if test="${deg.status == 1 || deg.status == 2}">
                                                                 <button class="btn btn-danger btn-sm trash" type="button"
@@ -155,7 +155,7 @@
                                                             <button class="btn btn-success btn-sm fw-bold px-3 shadow" type="button"
                                                                     data-bs-toggle="modal"
                                                                     data-bs-target="#approveModal${deg.degreeId}">
-                                                                <i class="fas fa-check-circle me-1"></i> Approve
+                                                                <i class="fas me-1"></i>Approve
                                                             </button>
                                                         </c:if>
                                                     </div>

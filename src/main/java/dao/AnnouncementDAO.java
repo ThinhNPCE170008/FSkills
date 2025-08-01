@@ -26,7 +26,7 @@ public class AnnouncementDAO extends DBContext {
         List<Announcement> list = new ArrayList<>();
         String sql = "SELECT A.AnnoucementID,A.Title,A.AnnouncementText,A.CreateAt,\n"
                 + "A.TakeDownDate,A.AnnouncementImage,U.UserID,U.UserName,U.DisplayName\n"
-                + "FROM  Announcement A JOIN Users U ON A.UserID = U.UserID;";
+                + "FROM Announcement A JOIN Users U ON A.UserID = U.UserID;";
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();

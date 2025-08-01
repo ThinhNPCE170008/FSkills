@@ -38,6 +38,7 @@
             </div>
         </c:if>
     </div>
+    
 </header>
 
 <style>
