@@ -201,7 +201,8 @@ public class UserDAO extends DBContext {
                 + "         JOIN Courses co ON mo.CourseID = co.CourseID "
                 + "         WHERE m.MaterialID = r.MaterialID AND co.UserID = u.UserID)) "
                 + ")) AS ReportCount "
-                + "FROM Users u WHERE u.Role = 0";
+                + "FROM Users u WHERE u.Role = 0 "
+                + "ORDER BY ReportCount DESC";
         PreparedStatement ps = conn.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
@@ -232,7 +233,9 @@ public class UserDAO extends DBContext {
                 + "         JOIN Courses co ON mo.CourseID = co.CourseID "
                 + "         WHERE m.MaterialID = r.MaterialID AND co.UserID = u.UserID)) "
                 + ")) AS ReportCount "
-                + "FROM Users u WHERE u.Role = 1";
+                + "FROM Users u "
+                + "WHERE u.Role = 1 "
+                + "ORDER BY ReportCount DESC";
         PreparedStatement ps = conn.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
         while (rs.next()) {
@@ -263,7 +266,9 @@ public class UserDAO extends DBContext {
                 + "         JOIN Courses co ON mo.CourseID = co.CourseID "
                 + "         WHERE m.MaterialID = r.MaterialID AND co.UserID = u.UserID)) "
                 + ")) AS ReportCount "
-                + "FROM Users u WHERE u.Role = 0 AND u.UserName LIKE ?";
+                + "FROM Users u "
+                + "WHERE u.Role = 0 AND u.UserName LIKE ? "
+                + "ORDER BY ReportCount DESC";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, "%" + name + "%");
         ResultSet rs = ps.executeQuery();
@@ -295,7 +300,9 @@ public class UserDAO extends DBContext {
                 + "         JOIN Courses co ON mo.CourseID = co.CourseID "
                 + "         WHERE m.MaterialID = r.MaterialID AND co.UserID = u.UserID)) "
                 + ")) AS ReportCount "
-                + "FROM Users u WHERE u.Role = 1 AND u.UserName LIKE ?";
+                + "FROM Users u "
+                + "WHERE u.Role = 1 AND u.UserName LIKE ? "
+                + "ORDER BY ReportCount DESC";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, "%" + name + "%");
         ResultSet rs = ps.executeQuery();
@@ -1570,9 +1577,9 @@ public class UserDAO extends DBContext {
 //    }
     public static void main(String[] args) {
         UserDAO dao = new UserDAO();
-        
+
         User acc = dao.getByUsername("learner1");
-        
+
         System.out.println(acc);
     }
 }
